@@ -1,6 +1,6 @@
 ﻿namespace FurryFriends.API.Models
 {
-    public class DotGiamGia
+    public class DotGiamGiaSanPham
     {
     }
 }
