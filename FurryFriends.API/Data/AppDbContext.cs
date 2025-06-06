@@ -1,5 +1,5 @@
-﻿using FurryFriends.API.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using FurryFriends.API.Models;
 
 namespace FurryFriends.API.Data
 {
@@ -9,38 +9,35 @@ namespace FurryFriends.API.Data
         {
         }
 
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		{
-			optionsBuilder.UseSqlServer("Data Source=xxx;Initial Catalog=xxxx;Trusted_Connection=True;TrustServerCertificate=True");
-		}
-
-		protected AppDbContext()
-		{
-		}
-
-		public DbSet<ChucVu> ChucVus { get; set; }
+        // DbSet cho các entities
+        public DbSet<TaiKhoan> TaiKhoans { get; set; }
         public DbSet<NhanVien> NhanViens { get; set; }
+        public DbSet<ChucVu> ChucVus { get; set; }
+        public DbSet<KhachHang> KhachHangs { get; set; }
+        public DbSet<DiaChiKhachHang> DiaChiKhachHangs { get; set; }
+        public DbSet<ThuongHieu> ThuongHieus { get; set; }
         public DbSet<SanPham> SanPhams { get; set; }
+        public DbSet<SanPhamChiTiet> SanPhamChiTiets { get; set; }
+        public DbSet<BangKichCo> BangKichCos { get; set; }
+        public DbSet<MauSac> MauSacs { get; set; }
         public DbSet<GiamGia> GiamGias { get; set; }
         public DbSet<DotGiamGiaSanPham> DotGiamGiaSanPhams { get; set; }
-        public DbSet<Anh> anhs { get; set; }
-        public DbSet<BangKichCo> bangKichCos { get; set; }
-        public DbSet<ChucVu> chucVus { get; set; }
-        public DbSet<DiaChiKhachHang> diaChiKhachHangs { get; set; }
+        public DbSet<Voucher> Vouchers { get; set; }
         public DbSet<GioHang> GioHangs { get; set; }
-        public DbSet<HinhThucThanhToan> hinhThucThanhToans { get; set; }
-        public DbSet<HoaDon> hoaDons { get; set; }
-        public DbSet<HoaDonChiTiet> hoaDonsChiTiet { get; set; }
-        public DbSet<KhachHang> khachHangs { get; set; }
-        public DbSet<MauSac> mauSacs { get; set; }
-        public DbSet<SanPhamChiTiet> sanPhamChiTiets { get; set; }
-        public DbSet<TaiKhoan> taiKhoans { get; set; }
-        public DbSet<ThuongHieu> thuongHieus { get; set; }
-        public DbSet<Voucher> vouchers { get; set; }
+        public DbSet<GioHangChiTiet> GioHangChiTiets { get; set; }
+        public DbSet<HoaDon> HoaDons { get; set; }
+        public DbSet<HoaDonChiTiet> HoaDonChiTiets { get; set; }
+        public DbSet<HinhThucThanhToan> HinhThucThanhToans { get; set; }
+        public DbSet<Anh> Anhs { get; set; }
+        public DbSet<ThanhPhan> ThanhPhans { get; set; }
+        public DbSet<ChatLieu> ChatLieus { get; set; }
+        public DbSet<SanPhamThanhPhan> SanPhamThanhPhans { get; set; }
+        public DbSet<SanPhamChatLieu> SanPhamChatLieus { get; set; }
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             // Cấu hình quan hệ TaiKhoan - NhanVien (1:1)
             modelBuilder.Entity<NhanVien>()
                 .HasOne(nv => nv.TaiKhoan)
@@ -104,12 +101,50 @@ namespace FurryFriends.API.Data
                 .HasForeignKey(spct => spct.MauSacId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Cấu hình quan hệ Anh - SanPhamChiTiet (1:N) - Bat Buoc
+            // Cấu hình quan hệ Anh - SanPhamChiTiet (1:N) - Optional
             modelBuilder.Entity<SanPhamChiTiet>()
                 .HasOne(spct => spct.Anh)
                 .WithMany(a => a.SanPhamChiTiets)
                 .HasForeignKey(spct => spct.AnhId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // Cấu hình quan hệ ThanhPhan - SanPhamThanhPhan (1:N)
+            modelBuilder.Entity<SanPhamThanhPhan>()
+                .HasOne(sptp => sptp.ThanhPhan)
+                .WithMany(tp => tp.SanPhamThanhPhans)
+                .HasForeignKey(sptp => sptp.ThanhPhanId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Cấu hình quan hệ SanPham - SanPhamThanhPhan (1:N)
+            modelBuilder.Entity<SanPhamThanhPhan>()
+                .HasOne(sptp => sptp.SanPham)
+                .WithMany(sp => sp.SanPhamThanhPhans)
+                .HasForeignKey(sptp => sptp.SanPhamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Cấu hình quan hệ ChatLieu - SanPhamChatLieu (1:N)
+            modelBuilder.Entity<SanPhamChatLieu>()
+                .HasOne(spcl => spcl.ChatLieu)
+                .WithMany(cl => cl.SanPhamChatLieus)
+                .HasForeignKey(spcl => spcl.ChatLieuId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Cấu hình quan hệ SanPham - SanPhamChatLieu (1:N)
+            modelBuilder.Entity<SanPhamChatLieu>()
+                .HasOne(spcl => spcl.SanPham)
+                .WithMany(sp => sp.SanPhamChatLieus)
+                .HasForeignKey(spcl => spcl.SanPhamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Cấu hình composite key cho SanPhamThanhPhan (tránh trùng lặp)
+            modelBuilder.Entity<SanPhamThanhPhan>()
+                .HasIndex(sptp => new { sptp.SanPhamId, sptp.ThanhPhanId })
+                .IsUnique();
+
+            // Cấu hình composite key cho SanPhamChatLieu (tránh trùng lặp)
+            modelBuilder.Entity<SanPhamChatLieu>()
+                .HasIndex(spcl => new { spcl.SanPhamId, spcl.ChatLieuId })
+                .IsUnique();
 
             // Cấu hình quan hệ GiamGia - DotGiamGiaSanPham (1:N)
             modelBuilder.Entity<DotGiamGiaSanPham>()
@@ -146,12 +181,13 @@ namespace FurryFriends.API.Data
                 .HasForeignKey(ghct => ghct.GioHangId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Cấu hình quan hệ SanPhamChiTiet - GioHangChiTiet (1:N)
+            // Cấu hình quan hệ SanPham - GioHangChiTiet (1:N)
             modelBuilder.Entity<GioHangChiTiet>()
-                .HasOne(ghct => ghct.SanPhamChiTiet)
-                .WithMany(spct => spct.GioHangChiTiets)
-                .HasForeignKey(ghct => ghct.SanPhamChiTietId)
+                .HasOne(ghct => ghct.SanPham)
+                .WithMany(sp => sp.GioHangChiTiets)
+                .HasForeignKey(ghct => ghct.SanPhamId)
                 .OnDelete(DeleteBehavior.Restrict);
+
 
             // Cấu hình quan hệ TaiKhoan - HoaDon (1:N)
             modelBuilder.Entity<HoaDon>()
@@ -188,14 +224,14 @@ namespace FurryFriends.API.Data
                 .HasForeignKey(hdct => hdct.HoaDonId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Cấu hình quan hệ SanPhamChiTiet - HoaDonChiTiet (1:N)
+            // Cấu hình quan hệ SanPham - HoaDonChiTiet (1:N)
             modelBuilder.Entity<HoaDonChiTiet>()
-                .HasOne(hdct => hdct.SanPhamChiTiet)
-                .WithMany(spct => spct.HoaDonChiTiets)
-                .HasForeignKey(hdct => hdct.SanPhamChiTietId)
+                .HasOne(hdct => hdct.SanPham)
+                .WithMany(sp => sp.HoaDonChiTiets)
+                .HasForeignKey(hdct => hdct.SanPhamId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Cau hinh gia
+            // Cấu hình precision cho decimal
             modelBuilder.Entity<SanPhamChiTiet>()
                 .Property(sp => sp.Gia)
                 .HasPrecision(18, 2);
@@ -216,7 +252,7 @@ namespace FurryFriends.API.Data
                 .Property(hd => hd.Gia)
                 .HasPrecision(18, 2);
 
-            // de truy van hon
+            // Cấu hình index cho các trường thường xuyên query
             modelBuilder.Entity<KhachHang>()
                 .HasIndex(kh => kh.SDT)
                 .IsUnique(false);
@@ -233,7 +269,7 @@ namespace FurryFriends.API.Data
                 .HasIndex(tk => tk.UserName)
                 .IsUnique();
 
-            // Cho trang thai mac dinh la true
+            // Cấu hình default values
             modelBuilder.Entity<TaiKhoan>()
                 .Property(tk => tk.TrangThai)
                 .HasDefaultValue(true);
@@ -252,6 +288,14 @@ namespace FurryFriends.API.Data
 
             modelBuilder.Entity<Anh>()
                 .Property(a => a.TrangThai)
+                .HasDefaultValue(true);
+
+            modelBuilder.Entity<ThanhPhan>()
+                .Property(tp => tp.TrangThai)
+                .HasDefaultValue(true);
+
+            modelBuilder.Entity<ChatLieu>()
+                .Property(cl => cl.TrangThai)
                 .HasDefaultValue(true);
         }
     }

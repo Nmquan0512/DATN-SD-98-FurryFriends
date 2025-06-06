@@ -2,20 +2,20 @@
 
 namespace FurryFriends.API.Models
 {
-    public class ChatLieu
+    public class ThanhPhan
     {
         [Key]
-        public Guid ChatLieuId { get; set; }
+        public Guid ThanhPhanId { get; set; }
 
         [Required]
         [StringLength(100)]
-        public string TenChatLieu { get; set; }
+        public string TenThanhPhan { get; set; }
 
         public string MoTa { get; set; }
 
         [Required]
         public bool TrangThai { get; set; }
 
-        public virtual ICollection<SanPhamChatLieu> SanPhamChatLieus { get; set; }
+        public virtual ICollection<SanPhamThanhPhan> SanPhamThanhPhans { get; set; }
     }
 }

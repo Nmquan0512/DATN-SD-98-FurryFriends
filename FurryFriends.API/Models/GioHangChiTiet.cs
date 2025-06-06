@@ -12,7 +12,7 @@ namespace FurryFriends.API.Models
 		public Guid GioHangId { get; set; }
 
 		[Required]
-		public Guid SanPhamChiTietId { get; set; } // Đổi từ SanPhamId thành SanPhamChiTietId
+		public Guid SanPhamId { get; set; } 
 
 		[Required]
 		public int SoLuong { get; set; }
@@ -34,7 +34,7 @@ namespace FurryFriends.API.Models
 		[ForeignKey("GioHangId")]
 		public virtual GioHang GioHang { get; set; }
 
-		[ForeignKey("SanPhamChiTietId")]
-		public virtual SanPhamChiTiet SanPhamChiTiet { get; set; }
+		[ForeignKey("SanPhamId")]
+		public virtual SanPham SanPham { get; set; }
 	}
 }

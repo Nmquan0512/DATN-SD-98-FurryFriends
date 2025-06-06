@@ -15,7 +15,7 @@ namespace FurryFriends.API.Models
 		public Guid SanPhamId { get; set; }
 
 		[Required]
-		public string PhanTramGiamGia { get; set; }
+		public decimal PhanTramGiamGia { get; set; }
 
 		[Required]
 		public bool TrangThai { get; set; }
