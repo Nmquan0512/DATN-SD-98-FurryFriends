@@ -8,7 +8,9 @@ namespace FurryFriends.API.Models
 	{
 		[Key]
 		public Guid GiamGiaId { get; set; }
-
+		
+	
+		public Guid  TaiKhoanId { get; set; }
 		[Required]
 		[StringLength(100)]
 		public string TenGiamGia { get; set; }
@@ -35,6 +37,9 @@ namespace FurryFriends.API.Models
 		public DateTime NgayCapNhat { get; set; }
 
 		public virtual ICollection<DotGiamGiaSanPham> DotGiamGiaSanPhams { get; set; }
+
+		[ForeignKey("TaiKhoanId")]
+		public virtual TaiKhoan TaiKhoan { get; set; }
 	}
 
 }

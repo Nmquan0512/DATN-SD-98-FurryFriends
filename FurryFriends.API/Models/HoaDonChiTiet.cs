@@ -25,5 +25,6 @@ namespace FurryFriends.API.Models
 
 		[ForeignKey("SanPhamId")]
 		public virtual SanPham SanPham { get; set; }
+		
 	}
 }

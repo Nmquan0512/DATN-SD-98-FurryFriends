@@ -20,6 +20,7 @@ namespace FurryFriends.API.Models
 
 		[Required]
 		public bool TrangThai { get; set; }
+		
 
 		public TaiKhoan()
 		{
@@ -27,10 +28,11 @@ namespace FurryFriends.API.Models
 			TrangThai = true;
 		}
 
-		public virtual NhanVien NhanVien { get; set; }
+		public virtual NhanVien ? NhanVien { get; set; }
 		public virtual ICollection<SanPham> SanPhams { get; set; }
 		public virtual ICollection<Voucher> Vouchers { get; set; }
 		public virtual ICollection<KhachHang> KhachHangs { get; set; }
 		public virtual ICollection<HoaDon> HoaDons { get; set; }
+		public virtual ICollection<GiamGia> GiamGias { get; set; }
 	}
 }

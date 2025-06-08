@@ -26,6 +26,8 @@ namespace FurryFriends.API.Models
 		[Required]
 		public DateTime NgayTao { get; set; }
 		public DateTime? NgayNhanHang { get; set; }
+		required
+		public decimal TongTien { get; set; }	
 
 		[Required]
 		public decimal TongTienSauKhiGiam { get; set; }
