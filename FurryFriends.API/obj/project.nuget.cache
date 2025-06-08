@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "OuOiuP4Ilug=",
+  "dgSpecHash": "B6ZN+TCVEy0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\x\\source\\repos\\FurryFriends.Blazor\\FurryFriends.API\\FurryFriends.API.csproj",
+  "projectFilePath": "C:\\Users\\x\\source\\repos\\DATN-SD98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\x\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
