@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FurryFriends.Blazor")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c67cd78ad5c01385eaf3822fddd3470141d7ca97")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ee68d5681bd8e750e92e333e43b93793fd950ed9")]
 [assembly: System.Reflection.AssemblyProductAttribute("FurryFriends.Blazor")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FurryFriends.Blazor")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
