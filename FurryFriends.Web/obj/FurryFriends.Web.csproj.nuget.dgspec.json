@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\x\\source\\repos\\DATN-SD98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj": {}
+    "C:\\Users\\truon\\Source\\DATN_98\\FurryFriends.Web\\FurryFriends.Web.csproj": {}
   },
   "projects": {
-    "C:\\Users\\x\\source\\repos\\DATN-SD98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {
+    "C:\\Users\\truon\\Source\\DATN_98\\FurryFriends.API\\FurryFriends.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\x\\source\\repos\\DATN-SD98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
+        "projectUniqueName": "C:\\Users\\truon\\Source\\DATN_98\\FurryFriends.API\\FurryFriends.API.csproj",
         "projectName": "FurryFriends.API",
-        "projectPath": "C:\\Users\\x\\source\\repos\\DATN-SD98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
-        "packagesPath": "C:\\Users\\x\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\x\\source\\repos\\DATN-SD98-FurryFriends\\FurryFriends.API\\obj\\",
+        "projectPath": "C:\\Users\\truon\\Source\\DATN_98\\FurryFriends.API\\FurryFriends.API.csproj",
+        "packagesPath": "C:\\Users\\truon\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\truon\\Source\\DATN_98\\FurryFriends.API\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\x\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\truon\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -90,21 +94,25 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\x\\source\\repos\\DATN-SD98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj": {
+    "C:\\Users\\truon\\Source\\DATN_98\\FurryFriends.Web\\FurryFriends.Web.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\x\\source\\repos\\DATN-SD98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
+        "projectUniqueName": "C:\\Users\\truon\\Source\\DATN_98\\FurryFriends.Web\\FurryFriends.Web.csproj",
         "projectName": "FurryFriends.Web",
-        "projectPath": "C:\\Users\\x\\source\\repos\\DATN-SD98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
-        "packagesPath": "C:\\Users\\x\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\x\\source\\repos\\DATN-SD98-FurryFriends\\FurryFriends.Web\\obj\\",
+        "projectPath": "C:\\Users\\truon\\Source\\DATN_98\\FurryFriends.Web\\FurryFriends.Web.csproj",
+        "packagesPath": "C:\\Users\\truon\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\truon\\Source\\DATN_98\\FurryFriends.Web\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "C:\\Users\\x\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\truon\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -119,8 +127,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\x\\source\\repos\\DATN-SD98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {
-                "projectPath": "C:\\Users\\x\\source\\repos\\DATN-SD98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj"
+              "C:\\Users\\truon\\Source\\DATN_98\\FurryFriends.API\\FurryFriends.API.csproj": {
+                "projectPath": "C:\\Users\\truon\\Source\\DATN_98\\FurryFriends.API\\FurryFriends.API.csproj"
               }
             }
           }
@@ -158,7 +166,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
