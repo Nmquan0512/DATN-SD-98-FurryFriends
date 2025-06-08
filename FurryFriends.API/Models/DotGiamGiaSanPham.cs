@@ -27,10 +27,10 @@ namespace FurryFriends.API.Models
 		public DateTime NgayCapNhat { get; set; }
 
 		[ForeignKey("GiamGiaId")]
-		public virtual GiamGia GiamGia { get; set; }
+		public virtual GiamGia GiamGias { get; set; }
 
 		[ForeignKey("SanPhamId")]
-		public virtual SanPham SanPham { get; set; }
+		public virtual SanPham SanPhams { get; set; }
 	}
 
 }

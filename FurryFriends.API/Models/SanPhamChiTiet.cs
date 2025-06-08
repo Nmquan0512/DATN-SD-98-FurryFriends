@@ -47,5 +47,5 @@ public class SanPhamChiTiet
 	public virtual Anh Anh { get; set; }
 
 	public virtual ICollection<GioHangChiTiet> GioHangChiTiets { get; set; }
-	public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }
+
 }

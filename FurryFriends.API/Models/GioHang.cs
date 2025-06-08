@@ -20,7 +20,7 @@ namespace FurryFriends.API.Models
 		public bool TrangThai { get; set; }
 
 		[ForeignKey("KhachHangId")]
-		public virtual KhachHang KhachHang { get; set; }
+		public virtual KhachHang KhachHangs { get; set; }
 		public virtual ICollection<GioHangChiTiet> GioHangChiTiets { get; set; }
 	}
 }

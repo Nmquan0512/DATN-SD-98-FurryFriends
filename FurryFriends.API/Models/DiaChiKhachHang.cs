@@ -34,6 +34,6 @@ namespace FurryFriends.API.Models
 		public Guid KhachHangId { get; set; }
 
 		[ForeignKey("KhachHangId")]
-		public virtual KhachHang KhachHang { get; set; }
+		public virtual KhachHang KhachHangs { get; set; }
 	}
 }

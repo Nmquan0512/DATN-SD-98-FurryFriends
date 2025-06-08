@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\truon\\Source\\Repos\\DATN-SD-98\\FurryFriends.Blazor\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\FurryFriends.Blazor.bundle.scp.css",
+      "PackagePath": "staticwebassets\\FurryFriends.Blazor.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\truon\\Source\\Repos\\DATN-SD-98\\FurryFriends.Blazor\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\truon\\Source\\Repos\\DATN-SD-98\\FurryFriends.Blazor\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\truon\\Source\\Repos\\DATN-SD-98\\FurryFriends.Blazor\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\truon\\Source\\Repos\\DATN-SD-98\\FurryFriends.Blazor\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.FurryFriends.Blazor.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.FurryFriends.Blazor.props",
+      "PackagePath": "build\\FurryFriends.Blazor.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.FurryFriends.Blazor.props",
+      "PackagePath": "buildMultiTargeting\\FurryFriends.Blazor.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.FurryFriends.Blazor.props",
+      "PackagePath": "buildTransitive\\FurryFriends.Blazor.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

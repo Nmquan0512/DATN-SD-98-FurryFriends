@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\FurryFriends.Blazor.props" />
+</Project>
