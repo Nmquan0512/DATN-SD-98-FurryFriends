@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "OKiqgkdUKg8=",
+  "dgSpecHash": "OHq+jt+0TRg=",
   "success": true,
-  "projectFilePath": "C:\\Users\\truon\\Source\\Repos\\DATN-SD-98\\FurryFriends.API\\FurryFriends.API.csproj",
+  "projectFilePath": "C:\\Users\\truon\\source\\repos\\DATN-SD-98\\FurryFriends.API\\FurryFriends.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\truon\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\truon\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
