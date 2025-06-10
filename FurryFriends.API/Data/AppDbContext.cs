@@ -26,7 +26,7 @@ namespace FurryFriends.API.Data
 		public DbSet<ThuongHieu> ThuongHieus { get; set; }
 		public DbSet<SanPham> SanPhams { get; set; }
 		public DbSet<SanPhamChiTiet> SanPhamChiTiets { get; set; }
-		public DbSet<BangKichCo> BangKichCos { get; set; }
+		public DbSet<KichCo> BangKichCos { get; set; }
 		public DbSet<MauSac> MauSacs { get; set; }
 		public DbSet<GiamGia> GiamGias { get; set; }
 		public DbSet<DotGiamGiaSanPham> DotGiamGiaSanPhams { get; set; }
