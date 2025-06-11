@@ -1,7 +1,19 @@
+using FurryFriends.Web.Services;
+using FurryFriends.Web.Services.IService;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Add HttpClient configuration
+builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7294/");
+});
+
+// Register HoaDonService
+builder.Services.AddScoped<IHoaDonService, HoaDonService>();
 
 var app = builder.Build();
 
