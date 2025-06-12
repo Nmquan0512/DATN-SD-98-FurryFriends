@@ -30,12 +30,25 @@ namespace FurryFriends.API.Repository
         }
         public async Task AddAsync(NhanVien nhanVien)
         {
-            nhanVien.TaiKhoanId = Guid.NewGuid(); // Tạo Guid mới cho bản ghi
-            nhanVien.NgayTao = DateTime.Now;
-            nhanVien.NgayCapNhat = DateTime.Now;
-            _context.NhanViens.Add(nhanVien);
-            await _context.SaveChangesAsync();
-        }
+			nhanVien.NgayTao = DateTime.Now;
+			nhanVien.NgayCapNhat = DateTime.Now;
+			if (nhanVien.ChucVuId == Guid.Empty)
+			{
+				throw new ArgumentException("ChucVuId is required.");
+			}
+			if (!await _context.ChucVus.AnyAsync(cv => cv.ChucVuId == nhanVien.ChucVuId))
+			{
+				throw new ArgumentException("ChucVuId does not exist.");
+			}
+			// TaiKhoanId is both PK and FK, ensure it matches an existing TaiKhoan
+			var taiKhoan = await _context.TaiKhoans.FindAsync(nhanVien.TaiKhoanId);
+			if (taiKhoan == null)
+			{
+				throw new ArgumentException("TaiKhoanId does not exist.");
+			}
+			_context.NhanViens.Add(nhanVien);
+			await _context.SaveChangesAsync();
+		}
         public async Task UpdateAsync(NhanVien nhanVien)
         {
             var existingNhanVien = await _context.NhanViens.FindAsync(nhanVien.TaiKhoanId);
@@ -52,9 +65,12 @@ namespace FurryFriends.API.Repository
             existingNhanVien.ChucVuId = nhanVien.ChucVuId;
             existingNhanVien.TrangThai = nhanVien.TrangThai;
             existingNhanVien.NgayCapNhat = DateTime.Now;
-            _context.NhanViens.Update(existingNhanVien);
-            await _context.SaveChangesAsync();
-        }
+			if (!await _context.ChucVus.AnyAsync(cv => cv.ChucVuId == nhanVien.ChucVuId))
+			{
+				throw new ArgumentException("ChucVuId does not exist.");
+			}
+			await _context.SaveChangesAsync();
+		}
         public async Task DeleteAsync(Guid id)
         {
             var nhanVien = await _context.NhanViens.FindAsync(id);
@@ -69,11 +85,8 @@ namespace FurryFriends.API.Repository
         {
             if (string.IsNullOrWhiteSpace(hoVaTen))
             {
-                return await _context.NhanViens
-                    .Include(nv => nv.ChucVu) // Bao gồm thông tin ChucVu
-                    .Include(nv => nv.TaiKhoan) // Bao gồm thông tin TaiKhoan
-                    .ToListAsync(); // Trả về tất cả nếu hoVaTen rỗng
-            }
+				return await GetAllAsync();
+			}
 
             return await _context.NhanViens
                 .Include(nv => nv.ChucVu) // Bao gồm thông tin ChucVu
