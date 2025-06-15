@@ -22,8 +22,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Repository Services
+builder.Services.AddScoped<IChucVuRepository, ChucVuRepository>();
 builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
-
+builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
+builder.Services.AddScoped<INhanVienRepository, NhanVIenRepository>();
 // Add CORS
 builder.Services.AddCors(options =>
 {

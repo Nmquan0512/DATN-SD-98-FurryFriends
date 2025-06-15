@@ -1,0 +1,60 @@
+﻿@model IEnumerable<FurryFriends.API.Models.TaiKhoan>
+
+@{
+    ViewData["Title"] = "Danh sách tài khoản";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Tạo mới</a>
+</p>
+
+<form asp-action="Search" method="post" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="userName" class="form-control" placeholder="Tìm theo tên đăng nhập..." />
+        <button type="submit" class="btn btn-outline-secondary">Tìm</button>
+    </div>
+</form>
+
+<table class="table table-bordered table-hover">
+    <thead class="thead-dark">
+        <tr>
+            <th>Tên đăng nhập</th>
+            <th>Trạng thái</th>
+            <th>Ngày tạo</th>
+            <th>Ngày cập nhật</th>
+            <th>Khách hàng</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.UserName)</td>
+                <td>@(item.TrangThai ? "Hoạt động" : "Không hoạt động")</td>
+                <td>@Html.DisplayFor(modelItem => item.NgayTaoTaiKhoan)</td>
+                <td>@Html.DisplayFor(modelItem => item.NgayCapNhatCuoiCung)</td>
+                <td>@(item.KhachHang != null ? item.KhachHang.TenKhachHang : "N/A")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.TaiKhoanId" class="btn btn-sm btn-warning">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@item.TaiKhoanId" class="btn btn-sm btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

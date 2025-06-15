@@ -5,6 +5,152 @@
     "version": "1.0"
   },
   "paths": {
+    "/api/ChucVuApi": {
+      "get": {
+        "tags": [
+          "ChucVuApi"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ChucVuApi"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChucVu"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChucVu"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChucVu"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/ChucVuApi/{id}": {
+      "get": {
+        "tags": [
+          "ChucVuApi"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ChucVuApi"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChucVu"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChucVu"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChucVu"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "ChucVuApi"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/ChucVuApi/search": {
+      "get": {
+        "tags": [
+          "ChucVuApi"
+        ],
+        "parameters": [
+          {
+            "name": "tenChucVu",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/HoaDon": {
       "get": {
         "tags": [
@@ -153,10 +299,10 @@
         }
       }
     },
-    "/api/NhanVien": {
+    "/api/NhanVienApi": {
       "get": {
         "tags": [
-          "NhanVien"
+          "NhanVienApi"
         ],
         "responses": {
           "200": {
@@ -166,7 +312,7 @@
       },
       "post": {
         "tags": [
-          "NhanVien"
+          "NhanVienApi"
         ],
         "requestBody": {
           "content": {
@@ -194,14 +340,14 @@
         }
       }
     },
-    "/api/NhanVien/{taiKhoanId}": {
+    "/api/NhanVienApi/{nhanVienId}": {
       "get": {
         "tags": [
-          "NhanVien"
+          "NhanVienApi"
         ],
         "parameters": [
           {
-            "name": "taiKhoanId",
+            "name": "nhanVienId",
             "in": "path",
             "required": true,
             "schema": {
@@ -218,11 +364,11 @@
       },
       "put": {
         "tags": [
-          "NhanVien"
+          "NhanVienApi"
         ],
         "parameters": [
           {
-            "name": "taiKhoanId",
+            "name": "nhanVienId",
             "in": "path",
             "required": true,
             "schema": {
@@ -258,11 +404,11 @@
       },
       "delete": {
         "tags": [
-          "NhanVien"
+          "NhanVienApi"
         ],
         "parameters": [
           {
-            "name": "taiKhoanId",
+            "name": "nhanVienId",
             "in": "path",
             "required": true,
             "schema": {
@@ -278,14 +424,160 @@
         }
       }
     },
-    "/api/NhanVien/search": {
+    "/api/NhanVienApi/search": {
       "get": {
         "tags": [
-          "NhanVien"
+          "NhanVienApi"
         ],
         "parameters": [
           {
             "name": "hoVaTen",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/TaiKhoanApi": {
+      "get": {
+        "tags": [
+          "TaiKhoanApi"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "TaiKhoanApi"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaiKhoan"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaiKhoan"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaiKhoan"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/TaiKhoanApi/{id}": {
+      "get": {
+        "tags": [
+          "TaiKhoanApi"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "TaiKhoanApi"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaiKhoan"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaiKhoan"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaiKhoan"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "TaiKhoanApi"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/TaiKhoanApi/search": {
+      "get": {
+        "tags": [
+          "TaiKhoanApi"
+        ],
+        "parameters": [
+          {
+            "name": "userName",
             "in": "query",
             "schema": {
               "type": "string"
@@ -1066,10 +1358,15 @@
           "ngaySinh",
           "ngayTao",
           "sdt",
+          "taiKhoanId",
           "trangThai"
         ],
         "type": "object",
         "properties": {
+          "nhanVienId": {
+            "type": "string",
+            "format": "uuid"
+          },
           "taiKhoanId": {
             "type": "string",
             "format": "uuid"
@@ -1345,7 +1642,6 @@
       },
       "TaiKhoan": {
         "required": [
-          "khachHangId",
           "ngayTaoTaiKhoan",
           "password",
           "trangThai",
@@ -1379,7 +1675,8 @@
           },
           "khachHangId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
           },
           "khachHang": {
             "$ref": "#/components/schemas/KhachHang"

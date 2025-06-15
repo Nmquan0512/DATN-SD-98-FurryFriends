@@ -1,0 +1,38 @@
+﻿@model FurryFriends.API.Models.ChucVu
+
+@{
+    ViewData["Title"] = "Tạo chức vụ mới";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="TenChucVu" class="control-label"></label>
+        <input asp-for="TenChucVu" class="form-control" />
+        <span asp-validation-for="TenChucVu" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="MoTaChucVu" class="control-label"></label>
+        <textarea asp-for="MoTaChucVu" class="form-control"></textarea>
+        <span asp-validation-for="MoTaChucVu" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TrangThai" class="control-label"></label>
+        <input asp-for="TrangThai" type="checkbox" class="form-check-input" checked />
+        <span asp-validation-for="TrangThai" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Tạo</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

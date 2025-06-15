@@ -708,10 +708,10 @@ C:\dant1\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\staticwebasse
 C:\dant1\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.FurryFriends.API.props
 C:\dant1\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.FurryFriends.API.props
 C:\dant1\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\staticwebassets.pack.json
-C:\dant1\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\dant1\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\FurryFri.C155C5F1.Up2Date
 C:\dant1\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\FurryFriends.API.dll
 C:\dant1\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\refint\FurryFriends.API.dll
 C:\dant1\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\FurryFriends.API.pdb
 C:\dant1\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\FurryFriends.API.genruntimeconfig.cache
 C:\dant1\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\ref\FurryFriends.API.dll
+C:\dant1\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

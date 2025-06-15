@@ -22,11 +22,11 @@ namespace FurryFriends.API.Models
         [Required]
         public bool TrangThai { get; set; }
 
-        [Required]
-        public Guid KhachHangId { get; set; }
+        
+        public Guid? KhachHangId { get; set; }
 
         [ForeignKey("KhachHangId")]
-        public virtual KhachHang KhachHang { get; set; }
+        public virtual KhachHang? KhachHang { get; set; }
         public TaiKhoan()
         {
             TaiKhoanId = Guid.NewGuid();
@@ -34,10 +34,10 @@ namespace FurryFriends.API.Models
         }
 
         public virtual NhanVien? NhanVien { get; set; }
-        public virtual ICollection<SanPham> SanPhams { get; set; }
-        public virtual ICollection<Voucher> Vouchers { get; set; }
+		public virtual ICollection<SanPham> SanPhams { get; set; } = new List<SanPham>();
+		public virtual ICollection<Voucher> Vouchers { get; set; } = new List<Voucher>();
+		public virtual ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
 
-        public virtual ICollection<HoaDon> HoaDons { get; set; }
 
-    }
+	}
 }

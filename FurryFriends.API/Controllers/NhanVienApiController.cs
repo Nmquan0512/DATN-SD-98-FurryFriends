@@ -7,16 +7,15 @@ namespace FurryFriends.API.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
-	public class NhanVienController : Controller
+	public class NhanVienApiController : ControllerBase
     {
 		private readonly INhanVienRepository _nhanVienRepository;
 
-		public NhanVienController(INhanVienRepository nhanVienRepository)
+		public NhanVienApiController(INhanVienRepository nhanVienRepository)
 		{
 			_nhanVienRepository = nhanVienRepository;
 		}
 
-		// GET: api/NhanVien
 		[HttpGet]
 		public async Task<IActionResult> GetAll()
 		{
@@ -31,16 +30,15 @@ namespace FurryFriends.API.Controllers
 			}
 		}
 
-		// GET: api/NhanVien/{taiKhoanId}
-		[HttpGet("{taiKhoanId}")]
-		public async Task<IActionResult> GetById(Guid taiKhoanId)
+		[HttpGet("{nhanVienId}")]
+		public async Task<IActionResult> GetById(Guid nhanVienId)
 		{
 			try
 			{
-				var nhanVien = await _nhanVienRepository.GetByIdAsync(taiKhoanId);
+				var nhanVien = await _nhanVienRepository.GetByIdAsync(nhanVienId);
 				if (nhanVien == null)
 				{
-					return NotFound($"Nhân viên với TaiKhoanId {taiKhoanId} không tồn tại.");
+					return NotFound($"Nhân viên với NhanVienId {nhanVienId} không tồn tại.");
 				}
 				return Ok(nhanVien);
 			}
@@ -50,7 +48,6 @@ namespace FurryFriends.API.Controllers
 			}
 		}
 
-		// POST: api/NhanVien
 		[HttpPost]
 		public async Task<IActionResult> Create([FromBody] NhanVien nhanVien)
 		{
@@ -62,7 +59,7 @@ namespace FurryFriends.API.Controllers
 			try
 			{
 				await _nhanVienRepository.AddAsync(nhanVien);
-				return CreatedAtAction(nameof(GetById), new { taiKhoanId = nhanVien.TaiKhoanId }, nhanVien);
+				return CreatedAtAction(nameof(GetById), new { nhanVienId = nhanVien.NhanVienId }, nhanVien);
 			}
 			catch (ArgumentException ex)
 			{
@@ -74,13 +71,12 @@ namespace FurryFriends.API.Controllers
 			}
 		}
 
-		// PUT: api/NhanVien/{taiKhoanId}
-		[HttpPut("{taiKhoanId}")]
-		public async Task<IActionResult> Update(Guid taiKhoanId, [FromBody] NhanVien nhanVien)
+		[HttpPut("{nhanVienId}")]
+		public async Task<IActionResult> Update(Guid nhanVienId, [FromBody] NhanVien nhanVien)
 		{
-			if (taiKhoanId != nhanVien.TaiKhoanId)
+			if (nhanVienId != nhanVien.NhanVienId)
 			{
-				return BadRequest("TaiKhoanId không khớp.");
+				return BadRequest("NhanVienId không khớp.");
 			}
 
 			if (!ModelState.IsValid)
@@ -93,6 +89,10 @@ namespace FurryFriends.API.Controllers
 				await _nhanVienRepository.UpdateAsync(nhanVien);
 				return NoContent();
 			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(ex.Message);
+			}
 			catch (ArgumentException ex)
 			{
 				return BadRequest(ex.Message);
@@ -103,14 +103,17 @@ namespace FurryFriends.API.Controllers
 			}
 		}
 
-		// DELETE: api/NhanVien/{taiKhoanId}
-		[HttpDelete("{taiKhoanId}")]
-		public async Task<IActionResult> Delete(Guid taiKhoanId)
+		[HttpDelete("{nhanVienId}")]
+		public async Task<IActionResult> Delete(Guid nhanVienId)
 		{
 			try
 			{
-				await _nhanVienRepository.DeleteAsync(taiKhoanId);
+				await _nhanVienRepository.DeleteAsync(nhanVienId);
 				return NoContent();
+			}
+			catch (KeyNotFoundException ex)
+			{
+				return NotFound(ex.Message);
 			}
 			catch (Exception ex)
 			{
@@ -118,7 +121,6 @@ namespace FurryFriends.API.Controllers
 			}
 		}
 
-		// GET: api/NhanVien/search?hoVaTen={hoVaTen}
 		[HttpGet("search")]
 		public async Task<IActionResult> SearchByHoVaTen([FromQuery] string hoVaTen)
 		{
