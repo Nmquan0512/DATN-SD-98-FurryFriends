@@ -5,8 +5,20 @@
       "PackagePath": "staticwebassets\\FurryFriends.Web.bundle.scp.css"
     },
     {
-      "Id": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\site.css",
-      "PackagePath": "staticwebassets\\css\\site.css"
+      "Id": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\._styles.css",
+      "PackagePath": "staticwebassets\\css\\._styles.css"
+    },
+    {
+      "Id": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\style.css",
+      "PackagePath": "staticwebassets\\css\\style.css"
+    },
+    {
+      "Id": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\styleadmin.css",
+      "PackagePath": "staticwebassets\\css\\styleadmin.css"
+    },
+    {
+      "Id": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\styles.css",
+      "PackagePath": "staticwebassets\\css\\styles.css"
     },
     {
       "Id": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\favicon.ico",
@@ -21,8 +33,8 @@
       "PackagePath": "staticwebassets\\images\\hihihi.png"
     },
     {
-      "Id": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\js\\site.js",
-      "PackagePath": "staticwebassets\\js\\site.js"
+      "Id": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\js\\siteadmin.js",
+      "PackagePath": "staticwebassets\\js\\siteadmin.js"
     },
     {
       "Id": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\LICENSE",

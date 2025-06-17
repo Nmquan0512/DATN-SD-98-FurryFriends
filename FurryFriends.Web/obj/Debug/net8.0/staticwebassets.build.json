@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "+/fAEAY7dysUwODyI22eTCXJWPtFlvkhAVLYCjjEEE4=",
+  "Hash": "fas/WdUHEAMEtrvwO66ZqJrYgUmd8p/jCSBRS6dK0Js=",
   "Source": "FurryFriends.Web",
   "BasePath": "_content/FurryFriends.Web",
   "Mode": "Default",
@@ -67,12 +67,12 @@
       "OriginalItemSpec": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\FurryFriends.Web.bundle.scp.css"
     },
     {
-      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\site.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\._styles.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
-      "RelativePath": "css/site.css",
+      "RelativePath": "css/._styles.css",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -83,7 +83,64 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\css\\site.css"
+      "OriginalItemSpec": "wwwroot\\css\\._styles.css"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\style.css",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "css/style.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\style.css"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\styleadmin.css",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "css/styleadmin.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\styleadmin.css"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\styles.css",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "css/styles.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\styles.css"
     },
     {
       "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\favicon.ico",
@@ -143,12 +200,12 @@
       "OriginalItemSpec": "wwwroot\\images\\Thumbs.db"
     },
     {
-      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\js\\site.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\js\\siteadmin.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
-      "RelativePath": "js/site.js",
+      "RelativePath": "js/siteadmin.js",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -159,7 +216,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\js\\site.js"
+      "OriginalItemSpec": "wwwroot\\js\\siteadmin.js"
     },
     {
       "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
