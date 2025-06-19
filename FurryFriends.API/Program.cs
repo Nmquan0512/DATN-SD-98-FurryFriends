@@ -1,4 +1,5 @@
 using FurryFriends.API.Data;
+using FurryFriends.API.Models;
 using FurryFriends.API.Repository;
 using FurryFriends.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Add Repository Services
 builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
-
+builder.Services.AddScoped<IDiaChiKhachHangRepository, DiaChiKhachHangRepository>();
+builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 // Add CORS
 builder.Services.AddCors(options =>
 {
