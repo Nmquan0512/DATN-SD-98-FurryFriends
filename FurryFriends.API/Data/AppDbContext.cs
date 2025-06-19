@@ -13,7 +13,8 @@ namespace FurryFriends.API.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=ANH2005\\SQLEXPRESS;Initial Catalog=duantn;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+                //optionsBuilder.UseSqlServer("Data Source=ANH2005\\SQLEXPRESS;Initial Catalog=duantn;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Data Source=PHUNGHUYTRUONG\\SQLEXPRESS01;Initial Catalog=datnph48831;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
             }
         }
 
@@ -170,7 +171,7 @@ namespace FurryFriends.API.Data
         private void ConfigureDotGiamGia(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DotGiamGiaSanPham>()
-                .HasOne(dg => dg.GiamGias)
+                .HasOne(dg => dg.GiamGia)
                 .WithMany(gg => gg.DotGiamGiaSanPhams)
                 .HasForeignKey(dg => dg.GiamGiaId)
                 .OnDelete(DeleteBehavior.Cascade);

@@ -1,0 +1,77 @@
+﻿@model FurryFriends.API.Models.DotGiamGiaSanPham
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="modal-content rounded-4 shadow-lg border-0" style="margin-left: 150px; width: 1360px">
+    <!-- Header -->
+    <div class="modal-header bg-warning text-white">
+        <h5 class="modal-title fw-bold">
+            <i class="bi bi-pencil-square me-2"></i> Chỉnh sửa đợt giảm giá
+        </h5>
+        <button type="button" class="btn-close btn-close-white" onclick="window.location.href='@Url.Action("Index", "DotGiamGias", new { area = "Admin" })'" aria-label="Đóng"></button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body p-4">
+        <form asp-action="Edit" method="post" novalidate>
+            <input type="hidden" asp-for="DotGiamGiaSanPhamId" />
+
+            <!-- Chương trình giảm giá -->
+            <div class="mb-3">
+                <label asp-for="GiamGiaId" class="form-label fw-semibold">Chương trình giảm giá:</label>
+                <select asp-for="GiamGiaId" asp-items="ViewBag.GiamGiaList" class="form-control"></select>
+                <span asp-validation-for="GiamGiaId" class="text-danger small"></span>
+            </div>
+
+            <!-- Sản phẩm áp dụng -->
+            <div class="mb-3">
+                <label asp-for="SanPhamId" class="form-label fw-semibold">Sản phẩm áp dụng:</label>
+                <select asp-for="SanPhamId" asp-items="ViewBag.SanPhamList" class="form-control"></select>
+                <span asp-validation-for="SanPhamId" class="text-danger small"></span>
+            </div>
+
+            <!-- Phần trăm giảm giá -->
+            <div class="mb-3">
+                <label asp-for="PhanTramGiamGia" class="form-label fw-semibold">Phần trăm giảm giá:</label>
+                <div class="input-group">
+                    <input asp-for="PhanTramGiamGia" class="form-control" placeholder="0 - 100" />
+                    <span class="input-group-text">%</span>
+                </div>
+                <span asp-validation-for="PhanTramGiamGia" class="text-danger small"></span>
+            </div>
+
+            <!-- Trạng thái -->
+            <div class="form-group mb-3">
+                <label class="form-label fw-semibold d-block">Trạng thái</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" asp-for="TrangThai" value="true" id="TrangThaiTrue" />
+                    <label class="form-check-label" for="TrangThaiTrue">Áp dụng</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" asp-for="TrangThai" value="false" id="TrangThaiFalse" />
+                    <label class="form-check-label" for="TrangThaiFalse">Không áp dụng</label>
+                </div>
+                <span asp-validation-for="TrangThai" class="text-danger small d-block"></span>
+            </div>
+
+            <!-- Hiển thị lỗi logic -->
+            <div id="editError" class="text-danger fw-bold mb-2"></div>
+
+            <!-- Nút -->
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="bi bi-save2-fill me-1"></i> Lưu thay đổi
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "DotGiamGias", new { area = "Admin" })'">
+                    <i class="bi bi-x-circle me-1"></i> Hủy
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

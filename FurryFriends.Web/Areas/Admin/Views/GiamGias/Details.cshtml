@@ -1,0 +1,27 @@
+﻿@model FurryFriends.API.Models.GiamGia
+
+@{
+    ViewData["Title"] = "Chi tiết giảm giá";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<dl class="row">
+    <dt class="col-sm-3">Tên</dt>
+    <dd class="col-sm-9">@Model.TenGiamGia</dd>
+
+    <dt class="col-sm-3">Phần trăm khuyến mãi</dt>
+    <dd class="col-sm-9">@Model.PhanTramKhuyenMai %</dd>
+
+    <dt class="col-sm-3">Ngày bắt đầu</dt>
+    <dd class="col-sm-9">@Model.NgayBatDau?.ToShortDateString()</dd>
+
+    <dt class="col-sm-3">Ngày kết thúc</dt>
+    <dd class="col-sm-9">@Model.NgayKetThuc?.ToShortDateString()</dd>
+
+    <dt class="col-sm-3">Trạng thái</dt>
+    <dd class="col-sm-9">@((Model.TrangThai) ? "Đang áp dụng" : "Ngừng áp dụng")</dd>
+</dl>
+
+<a asp-action="Edit" asp-route-id="@Model.GiamGiaId" class="btn btn-primary">Sửa</a>
+<a asp-action="Index" class="btn btn-secondary">Quay lại</a>

@@ -15,5 +15,7 @@ namespace FurryFriends.API.Repository.IRepository
         void Update(GiamGia entity);
         void Delete(GiamGia entity);
         Task SaveAsync();
+        Task<bool> ExistsByTenAsync(string tenGiamGia);
+
     }
 }

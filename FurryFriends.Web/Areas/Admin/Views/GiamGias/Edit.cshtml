@@ -1,0 +1,80 @@
+﻿@model FurryFriends.API.Models.GiamGia
+
+<div class="modal-content rounded-4 shadow-lg border-0" style="margin-left: 150px; width: 1360px">
+    <!-- Header -->
+    <div class="modal-header bg-warning text-white">
+        <h5 class="modal-title fw-bold">
+            <i class="bi bi-pencil-square me-2"></i> Chỉnh sửa giảm giá
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Đóng"></button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body p-4">
+        <form id="form-edit-giamgia" asp-action="Edit" method="post" novalidate>
+            <input type="hidden" asp-for="GiamGiaId" />
+
+            <!-- Tên Giảm Giá -->
+            <div class="mb-3">
+                <label asp-for="TenGiamGia" class="form-label fw-semibold">Tên giảm giá: </label>
+                <input asp-for="TenGiamGia" class="form-control" />
+                <span asp-validation-for="TenGiamGia" class="text-danger small"></span>
+            </div>
+
+            <!-- Phần Trăm Khuyến Mãi -->
+            <div class="mb-3">
+                <label asp-for="PhanTramKhuyenMai" class="form-label fw-semibold">Phần trăm khuyến mãi:</label>
+                <div class="input-group">
+                    <input asp-for="PhanTramKhuyenMai" class="form-control" />
+                    <span class="input-group-text">%</span>
+                </div>
+                <span asp-validation-for="PhanTramKhuyenMai" class="text-danger small"></span>
+            </div>
+
+            <!-- Ngày Bắt Đầu -->
+            <div class="mb-3">
+                <label asp-for="NgayBatDau" class="form-label fw-semibold">Ngày bắt đầu: </label>
+                <input asp-for="NgayBatDau" type="date" class="form-control" />
+                <span asp-validation-for="NgayBatDau" class="text-danger small"></span>
+            </div>
+
+            <!-- Ngày Kết Thúc -->
+            <div class="mb-3">
+                <label asp-for="NgayKetThuc" class="form-label fw-semibold">Ngày kết thúc</label>
+                <input asp-for="NgayKetThuc" type="date" class="form-control" />
+                <span asp-validation-for="NgayKetThuc" class="text-danger small"></span>
+            </div>
+
+            <!-- Trạng Thái -->
+            <div class="form-group mb-3">
+                <label class="form-label fw-semibold d-block">Trạng thái</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" asp-for="TrangThai" value="true" id="EditTrangThaiTrue" />
+                    <label class="form-check-label" for="EditTrangThaiTrue">Hoạt động</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" asp-for="TrangThai" value="false" id="EditTrangThaiFalse" />
+                    <label class="form-check-label" for="EditTrangThaiFalse">Không hoạt động</label>
+                </div>
+                <span asp-validation-for="TrangThai" class="text-danger small d-block"></span>
+            </div>
+
+            <!-- Chỗ để hiện lỗi -->
+            <div class="text-danger fw-bold mb-2" id="editError"></div>
+
+            <!-- Nút -->
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="bi bi-save2-fill me-1"></i> Lưu thay đổi
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "GiamGias", new { area = "Admin" })'">
+                    <i class="bi bi-x-circle me-1"></i> Hủy
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

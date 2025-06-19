@@ -1,0 +1,111 @@
+﻿@model FurryFriends.API.Models.DotGiamGiaSanPham
+
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="modal-content rounded-4 shadow-lg border-0" style="margin-left: 150px; width: 1360px">
+    <!-- Header -->
+    <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold">
+            <i class="bi bi-plus-circle me-2"></i> Thêm đợt giảm giá
+        </h5>
+        <button type="button" class="btn-close btn-close-white" onclick="window.location.href='@Url.Action("Index", "DotGiamGias", new { area = "Admin" })'" aria-label="Đóng"></button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body p-4">
+        <form id="form-create-dotgiamgia" asp-action="Create" method="post" novalidate>
+            <!-- Giảm Giá -->
+            <div class="mb-3">
+                <label asp-for="GiamGiaId" class="form-label fw-semibold">Chương trình giảm giá:</label>
+                <select asp-for="GiamGiaId" asp-items="ViewBag.GiamGiaList" class="form-control"></select>
+                <span asp-validation-for="GiamGiaId" class="text-danger small"></span>
+            </div>
+
+            <!-- Sản Phẩm -->
+            <div class="mb-3">
+                <label asp-for="SanPhamId" class="form-label fw-semibold">Sản phẩm áp dụng:</label>
+                <select asp-for="SanPhamId" asp-items="ViewBag.SanPhamList" class="form-control"></select>
+                <span asp-validation-for="SanPhamId" class="text-danger small"></span>
+            </div>
+
+            <!-- Phần Trăm Giảm Giá -->
+            @* <div class="mb-3">
+                <label asp-for="PhanTramGiamGia" class="form-label fw-semibold">Phần trăm giảm giá:</label>
+                <div class="input-group">
+                    <input asp-for="PhanTramGiamGia" class="form-control" placeholder="0 - 100" />
+                    <span class="input-group-text">%</span>
+                </div>
+                <span asp-validation-for="PhanTramGiamGia" class="text-danger small"></span>
+            </div> *@
+
+            <div class="mb-3">
+                <label asp-for="PhanTramGiamGia" class="form-label fw-semibold">Phần trăm giảm giá:</label>
+                <div class="input-group">
+                    <input asp-for="PhanTramGiamGia" class="form-control" placeholder="0 - 100" id="PhanTramGiamGia" readonly />
+                    <span class="input-group-text">%</span>
+                </div>
+                <span asp-validation-for="PhanTramGiamGia" class="text-danger small"></span>
+            </div>
+
+
+            <!-- Trạng Thái -->
+            <div class="form-group mb-3">
+                <label class="form-label fw-semibold d-block">Trạng thái</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" asp-for="TrangThai" value="true" id="TrangThai_True" />
+                    <label class="form-check-label" for="TrangThai_True">Áp dụng</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" asp-for="TrangThai" value="false" id="TrangThai_False" />
+                    <label class="form-check-label" for="TrangThai_False">Không áp dụng</label>
+                </div>
+                <span asp-validation-for="TrangThai" class="text-danger small d-block"></span>
+            </div>
+
+            <!-- Lỗi logic -->
+            <div id="createError" class="text-danger fw-bold mb-2"></div>
+
+            <!-- Nút -->
+            <div class="text-end mt-4">
+                <button type="submit" class="btn btn-success me-2">
+                    <i class="bi bi-save2-fill me-1"></i> Lưu
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='@Url.Action("Index", "DotGiamGias", new { area = "Admin" })'">
+                    <i class="bi bi-x-circle me-1"></i> Hủy
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#GiamGiaId').change(function () {
+                var giamGiaId = $(this).val();
+                if (giamGiaId) {
+                    $.ajax({
+                        url: `/api/giamgia/${giamGiaId}/phantram`,
+                        type: 'GET',
+                        success: function (data) {
+                            $('#PhanTramGiamGia').val(data);
+                        },
+                        error: function () {
+                            $('#PhanTramGiamGia').val('');
+                        }
+                    });
+                } else {
+                    $('#PhanTramGiamGia').val('');
+                }
+            });
+
+            // Trigger load nếu đã có sẵn GiamGiaId
+            $('#GiamGiaId').trigger('change');
+        });
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

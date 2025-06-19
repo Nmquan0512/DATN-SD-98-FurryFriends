@@ -24,24 +24,24 @@ namespace FurryFriends.API.Repositories
         public async Task<IEnumerable<DotGiamGiaSanPham>> GetAllAsync()
         {
             return await _dbSet
-                .Include(d => d.GiamGias)
-                .Include(d => d.SanPhams)
+                .Include(d => d.GiamGia)
+                .Include(d => d.SanPham)
                 .ToListAsync();
         }
 
         public async Task<DotGiamGiaSanPham?> GetByIdAsync(Guid id)
         {
             return await _dbSet
-                .Include(d => d.GiamGias)
-                .Include(d => d.SanPhams)
+                .Include(d => d.GiamGia)
+                .Include(d => d.SanPham)
                 .FirstOrDefaultAsync(d => d.DotGiamGiaSanPhamId == id);
         }
 
         public async Task<IEnumerable<DotGiamGiaSanPham>> FindAsync(Expression<Func<DotGiamGiaSanPham, bool>> predicate)
         {
             return await _dbSet
-                .Include(d => d.GiamGias)
-                .Include(d => d.SanPhams)
+                .Include(d => d.GiamGia)
+                .Include(d => d.SanPham)
                 .Where(predicate)
                 .ToListAsync();
         }

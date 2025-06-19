@@ -46,9 +46,9 @@ namespace FurryFriends.API.Models
 		public DateTime NgayCapNhat { get; set; }
 
 		[ForeignKey("ChucVuId")]
-		public virtual ChucVu ChucVu { get; set; }
+		public virtual ChucVu? ChucVu { get; set; }
 
 		[ForeignKey("TaiKhoanId")]
-		public virtual TaiKhoan TaiKhoan { get; set; }
+		public virtual TaiKhoan? TaiKhoan { get; set; }
 	}
 }

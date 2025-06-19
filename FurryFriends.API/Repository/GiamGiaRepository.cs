@@ -62,5 +62,11 @@ namespace FurryFriends.API.Repositories
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> ExistsByTenAsync(string tenGiamGia)
+        {
+            return await _context.GiamGias
+                .AnyAsync(g => g.TenGiamGia.ToLower().Trim() == tenGiamGia.ToLower().Trim());
+        }
     }
 }

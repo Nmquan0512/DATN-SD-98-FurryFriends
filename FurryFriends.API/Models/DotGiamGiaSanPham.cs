@@ -9,10 +9,10 @@ namespace FurryFriends.API.Models
 		public Guid DotGiamGiaSanPhamId { get; set; }
 
 		[Required]
-		public Guid GiamGiaId { get; set; }
+		public Guid? GiamGiaId { get; set; }
 
 		[Required]
-		public Guid SanPhamId { get; set; }
+		public Guid? SanPhamId { get; set; }
 
 		[Required]
 		public decimal PhanTramGiamGia { get; set; }
@@ -27,10 +27,10 @@ namespace FurryFriends.API.Models
 		public DateTime NgayCapNhat { get; set; }
 
 		[ForeignKey("GiamGiaId")]
-		public virtual GiamGia GiamGias { get; set; }
+		public virtual GiamGia? GiamGia { get; set; }
 
 		[ForeignKey("SanPhamId")]
-		public virtual SanPham SanPhams { get; set; }
+		public virtual SanPham? SanPham { get; set; }
 	}
 
 }
