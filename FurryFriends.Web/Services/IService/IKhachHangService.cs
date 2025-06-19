@@ -1,14 +1,15 @@
-﻿using FurryFriends.API.Models;
+﻿
 
-  namespace FurryFriends.Web.IServices
+using FurryFriends.API.Models;
+
+namespace FurryFriends.Web.Services.IService
+{
+    public interface IKhachHangService
     {
-        public interface IKhachHangService
-        {
-            Task<IEnumerable<KhachHang>> GetAllKhachHangAsync();
-            Task<KhachHang> GetKhachHangByIdAsync(Guid id);
-            Task AddKhachHangAsync(KhachHang khachHang);
-            Task UpdateKhachHangAsync(KhachHang khachHang);
-            Task DeleteKhachHangAsync(Guid id);
-        }
+        Task AddKhachHangAsync(KhachHang model);
+        Task DeleteKhachHangAsync(Guid id);
+        Task<string?> GetAllKhachHangAsync();
+        Task<string?> GetKhachHangByIdAsync(Guid id);
+        Task UpdateKhachHangAsync(KhachHang model);
     }
-
+}

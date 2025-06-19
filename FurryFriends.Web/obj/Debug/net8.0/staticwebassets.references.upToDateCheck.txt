@@ -1,2 +1,6 @@
 D:\học\dự án\FurryFriends.API\obj\Debug\net8.0\staticwebassets.build.json
 D:\học\dự án\FurryFriends.API\obj\Debug\net8.0\staticwebassets.build.json
+D:\học\dự án\FurryFriends.API\obj\Debug\net8.0\staticwebassets.build.json
+D:\học\dự án\FurryFriends.API\obj\Debug\net8.0\staticwebassets.build.json
+D:\học\dự án\FurryFriends.API\obj\Debug\net8.0\staticwebassets.build.json
+D:\học\dự án\FurryFriends.API\obj\Debug\net8.0\staticwebassets.build.json

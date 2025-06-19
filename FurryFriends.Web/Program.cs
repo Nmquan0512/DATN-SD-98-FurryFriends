@@ -1,4 +1,4 @@
-﻿using FurryFriends.Web.IServices;
+﻿using FurryFriends.Web.Services;
 using FurryFriends.Web.Service.IService;
 using FurryFriends.Web.Service;
 using FurryFriends.Web.Services;
@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Cấu hình HttpClient cho các Service dùng để gọi API
-builder.Services.AddHttpClient<IKhachHangService, KhachHangService>(client =>
+builder.Services.AddHttpClient<IKhachHangService, KhachHangService>(static client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/"); 
 });
