@@ -1,0 +1,18 @@
+﻿@model FurryFriends.API.Models.NhanVien
+
+@{
+    ViewData["Title"] = "Xoá nhân viên";
+}
+
+<div class="container mt-4">
+    <h2>Bạn có chắc muốn xoá nhân viên này?</h2>
+    <div class="alert alert-warning">
+        <strong>@Model.HoVaTen</strong> - @Model.Email
+    </div>
+
+    <form asp-action="DeleteConfirmed" method="post">
+        <input type="hidden" asp-for="NhanVienId" />
+        <button type="submit" class="btn btn-danger">Xoá</button>
+        <a asp-action="Index" class="btn btn-secondary">Huỷ</a>
+    </form>
+</div>

@@ -1,0 +1,53 @@
+﻿@model IEnumerable<FurryFriends.API.Models.ChucVu>
+
+@{
+    ViewData["Title"] = "Danh sách chức vụ";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<!-- Form tìm kiếm -->
+<form asp-action="Search" asp-controller="ChucVu" method="post" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="tenChucVu" class="form-control" placeholder="Nhập tên chức vụ để tìm kiếm..." />
+        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+    </div>
+</form>
+
+<!-- Nút Tạo mới -->
+<p>
+    <a asp-action="Create" asp-controller="ChucVu" class="btn btn-primary">Tạo mới</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Tên chức vụ</th>
+            <th>Mô tả</th>
+            <th>Trạng thái</th>
+            <th>Ngày tạo</th>
+            <th>Ngày cập nhật</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var chucVu in Model)
+        {
+            <tr>
+                <td>@chucVu.TenChucVu</td>
+                <td>@chucVu.MoTaChucVu</td>
+                <td>@(chucVu.TrangThai ? "Hoạt động" : "Không hoạt động")</td>
+                <td>@chucVu.NgayTao.ToString("dd/MM/yyyy")</td>
+                <td>@chucVu.NgayCapNhat.ToString("dd/MM/yyyy")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@chucVu.ChucVuId" class="btn btn-sm btn-warning">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@chucVu.ChucVuId" class="btn btn-sm btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -354,6 +354,16 @@
             <li><a href="/Admin/SanPham"><i class="fas fa-box"></i> Sản phẩm</a></li>
             <li><a href="/Admin/DonHang"><i class="fas fa-shopping-cart"></i> Đơn hàng</a></li>
             <li><a href="/Admin/HoaDon" class="active"><i class="fas fa-file-invoice-dollar"></i> Quản lý hoá đơn</a></li>
+            <li>
+                <a asp-area="Admin" asp-controller="NhanVien" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "NhanVien" ? "active" : "")">
+                    <i class="fas fa-id-badge"></i> Quản lý nhân viên
+                </a>
+            </li>
+            <li>
+                <a asp-area="Admin" asp-controller="TaiKhoan" asp-action="Index" class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "TaiKhoan" ? "active" : "")">
+                    <i class="fas fa-user-lock me-2"></i> Quản lý tài khoản
+                </a>
+            </li>
             <li><a href="/Admin/KhachHang"><i class="fas fa-users"></i> Khách hàng</a></li>
             <li><a href="/Admin/BaoCao"><i class="fas fa-chart-line"></i> Báo cáo</a></li>
             <li><a href="/Admin/CaiDat"><i class="fas fa-cog"></i> Cài đặt</a></li>

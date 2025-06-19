@@ -1,0 +1,25 @@
+﻿@model FurryFriends.API.Models.ChucVu
+
+@{
+    ViewData["Title"] = "Xóa chức vụ";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>Bạn có chắc muốn xóa chức vụ này?</h3>
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">Tên chức vụ</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.TenChucVu)</dd>
+        <dt class="col-sm-2">Mô tả</dt>
+        <dd class="col-sm-10">@Html.DisplayFor(model => model.MoTaChucVu)</dd>
+        <dt class="col-sm-2">Trạng thái</dt>
+        <dd class="col-sm-10">@(Model.TrangThai ? "Hoạt động" : "Không hoạt động")</dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ChucVuId" />
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>

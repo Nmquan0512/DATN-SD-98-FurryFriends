@@ -25,7 +25,7 @@ namespace FurryFriends.API.Models
 		[Required]
 		public DateTime NgayCapNhat { get; set; }
 
-		public virtual ICollection<NhanVien> NhanViens { get; set; }
+		public virtual ICollection<NhanVien>? NhanViens { get; set; }
 	}
 
 }
