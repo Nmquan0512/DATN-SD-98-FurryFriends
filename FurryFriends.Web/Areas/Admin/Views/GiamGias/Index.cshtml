@@ -1,0 +1,140 @@
+﻿@model IEnumerable<FurryFriends.API.Models.GiamGia>
+
+@{
+    ViewData["Title"] = "Quản lý giảm giá";
+}
+
+<div class="main-content" id="mainContent">
+    <div class="top-bar">
+        <h1>@ViewData["Title"]</h1>
+        <div class="user-info" role="region" aria-label="User information">
+            <span>Admin</span>
+            <div class="avatar" aria-hidden="true">AD</div>
+        </div>
+    </div>
+
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-area="Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Quản lý giảm giá</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-tags me-2"></i>
+                <span>Danh sách giảm giá</span>
+            </div>
+            <div>
+  
+                <a asp-area="Admin" asp-controller="DotGiamGias" asp-action="Index" class="btn btn-info btn-sm me-2">
+                    <i class="fas fa-calendar-alt"></i> Quản lý đợt giảm giá
+                </a>
+                <a asp-area="Admin" asp-controller="GiamGias" asp-action="Create" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus"></i> Thêm giảm giá mới
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["error"]
+                </div>
+            }
+            <div class="table-responsive">
+            <table id="giamGiaTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Tên giảm giá</th>
+                        <th>Phần trăm KM</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.TenGiamGia</td>
+                            <td>@item.PhanTramKhuyenMai %</td>
+                            <td>@item.NgayBatDau?.ToString("dd/MM/yyyy")</td>
+                            <td>@item.NgayKetThuc?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (item.TrangThai)
+                                {
+                                    <span class="badge bg-success">Đang áp dụng</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Ngừng áp dụng</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a asp-area="Admin" asp-controller="GiamGias" asp-action="Edit" asp-route-id="@item.GiamGiaId" class="btn btn-warning btn-sm action-btn">
+                                        <i class="fas fa-edit"></i> Sửa
+                                    </a>
+                                    <button type="button" class="btn btn-danger btn-sm action-btn" onclick="confirmDelete('@item.GiamGiaId', '@item.TenGiamGia')">
+                                        <i class="fas fa-trash-alt"></i> Xóa
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Modal xác nhận xoá -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="deleteForm" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Xác nhận xoá</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Đóng">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc muốn xoá <strong id="deleteItemName"></strong> không?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+                    <button type="submit" class="btn btn-danger">Có</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+   
+    <script>
+        $(document).ready(function () {
+            $('#giamGiaTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json',
+                },
+                order: [[2, 'desc']],
+                responsive: true
+            });
+        });
+
+        function confirmDelete(id, ten) {
+            const form = document.getElementById('deleteForm');
+            form.action = '/Admin/GiamGias/Delete/' + id;
+            document.getElementById('deleteItemName').innerText = ten;
+
+            $('#deleteConfirmModal').modal('show');
+        }
+    </script>
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>

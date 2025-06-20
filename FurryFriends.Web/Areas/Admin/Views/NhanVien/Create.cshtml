@@ -1,0 +1,95 @@
+﻿@model FurryFriends.API.Models.NhanVien
+
+@{
+    ViewData["Title"] = "Tạo nhân viên mới";
+}
+
+<div class="main-content" id="mainContent">
+    <div class="top-bar">
+        <h1>@ViewData["Title"]</h1>
+        <div class="user-info" role="region" aria-label="User information">
+            <span>Admin</span>
+            <div class="avatar" aria-hidden="true">AD</div>
+        </div>
+    </div>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-area="Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item active">@ViewData["Title"]</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="HoVaTen" class="form-label"></label>
+                    <input asp-for="HoVaTen" class="form-control" />
+                    <span asp-validation-for="HoVaTen" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NgaySinh" class="form-label">Ngày Sinh</label>
+                    <input asp-for="NgaySinh" class="form-control" type="date" />
+                    <span asp-validation-for="NgaySinh" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DiaChi" class="form-label">Địa Chỉ</label>
+                    <input asp-for="DiaChi" class="form-control" />
+                    <span asp-validation-for="DiaChi" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SDT" class="form-label">Số Điện Thoại</label>
+                    <input asp-for="SDT" class="form-control" />
+                    <span asp-validation-for="SDT" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="GioiTinh" class="form-label">Giới Tính</label>
+                    <select asp-for="GioiTinh" class="form-select">
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                    </select>
+                    <span asp-validation-for="GioiTinh" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ChucVuId" class="form-label">Chức Vụ</label>
+                    <select asp-for="ChucVuId" class="form-select" asp-items="ViewBag.ChucVuId"></select>
+                    <span asp-validation-for="ChucVuId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="TaiKhoanId" class="form-label">Tài Khoản</label>
+                    <select asp-for="TaiKhoanId" class="form-select" asp-items="ViewBag.TaiKhoanId"></select>
+                    <span asp-validation-for="TaiKhoanId" class="text-danger"></span>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input asp-for="TrangThai" type="checkbox" class="form-check-input" />
+                    <label asp-for="TrangThai" class="form-check-label"></label>
+                    <span asp-validation-for="TrangThai" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Tạo</button>
+                    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />

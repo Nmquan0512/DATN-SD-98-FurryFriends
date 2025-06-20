@@ -28,17 +28,18 @@ namespace FurryFriends.API.Models
         [Required]
         public int TrangThai { get; set; }
 
-        [Required]
-        public Guid TaiKhoanId { get; set; }
+        
+        public Guid? TaiKhoanId { get; set; }
 
         public KhachHang()
         {
             KhachHangId = Guid.NewGuid();
         }
 
-        public virtual ICollection<TaiKhoan> TaiKhoans { get; set; }
-        public virtual ICollection<DiaChiKhachHang> DiaChiKhachHangs { get; set; }
-        public virtual ICollection<HoaDon> HoaDons { get; set; }
-        public virtual ICollection<GioHang> GioHangs { get; set; }
+        public virtual ICollection<TaiKhoan>? TaiKhoans { get; set; }
+        public virtual ICollection<DiaChiKhachHang>? DiaChiKhachHangs { get; set; }
+        public virtual ICollection<HoaDon>? HoaDons { get; set; }
+        public virtual ICollection<GioHang>? GioHangs { get; set; }
     }
+
 }

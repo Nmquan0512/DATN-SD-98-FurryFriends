@@ -19,7 +19,7 @@ namespace FurryFriends.API.Repository
             return await _context.NhanViens
                 .Include(nv => nv.ChucVu)
                 .Include(nv => nv.TaiKhoan)
-                .FirstOrDefaultAsync(nv => nv.TaiKhoanId == id);
+                .FirstOrDefaultAsync(nv => nv.NhanVienId == id);
         }
         public async Task<IEnumerable<NhanVien>> GetAllAsync()
         {
@@ -30,29 +30,80 @@ namespace FurryFriends.API.Repository
         }
         public async Task AddAsync(NhanVien nhanVien)
         {
-            nhanVien.TaiKhoanId = Guid.NewGuid(); // Tạo Guid mới cho bản ghi
+            nhanVien.NhanVienId = Guid.NewGuid();
             nhanVien.NgayTao = DateTime.Now;
             nhanVien.NgayCapNhat = DateTime.Now;
+
+            if (nhanVien.ChucVuId == Guid.Empty)
+            {
+                throw new ArgumentException("ChucVuId is required.");
+            }
+            if (!await _context.ChucVus.AnyAsync(cv => cv.ChucVuId == nhanVien.ChucVuId))
+            {
+                throw new ArgumentException("ChucVuId does not exist.");
+            }
+
+            if (nhanVien.TaiKhoanId != Guid.Empty)
+            {
+                var taiKhoan = await _context.TaiKhoans.FindAsync(nhanVien.TaiKhoanId);
+                if (taiKhoan == null)
+                {
+                    throw new ArgumentException("TaiKhoanId does not exist.");
+                }
+                if (!taiKhoan.TrangThai)
+                {
+                    throw new ArgumentException("Tài khoản không ở trạng thái hoạt động.");
+                }
+                if (await _context.NhanViens.AnyAsync(nv => nv.TaiKhoanId == nhanVien.TaiKhoanId))
+                {
+                    throw new ArgumentException("TaiKhoanId is already associated with another NhanVien.");
+                }
+            }
+
             _context.NhanViens.Add(nhanVien);
             await _context.SaveChangesAsync();
         }
         public async Task UpdateAsync(NhanVien nhanVien)
         {
-            var existingNhanVien = await _context.NhanViens.FindAsync(nhanVien.TaiKhoanId);
-            if (existingNhanVien == null)
+            var existing = await _context.NhanViens.FindAsync(nhanVien.NhanVienId);
+            if (existing == null)
             {
-                throw new Exception("Nhan vien khong ton tai");
+                throw new KeyNotFoundException("Nhân viên không tồn tại.");
             }
-            existingNhanVien.HoVaTen = nhanVien.HoVaTen;
-            existingNhanVien.NgaySinh = nhanVien.NgaySinh;
-            existingNhanVien.DiaChi = nhanVien.DiaChi;
-            existingNhanVien.SDT = nhanVien.SDT;
-            existingNhanVien.Email = nhanVien.Email;
-            existingNhanVien.GioiTinh = nhanVien.GioiTinh;
-            existingNhanVien.ChucVuId = nhanVien.ChucVuId;
-            existingNhanVien.TrangThai = nhanVien.TrangThai;
-            existingNhanVien.NgayCapNhat = DateTime.Now;
-            _context.NhanViens.Update(existingNhanVien);
+
+            existing.HoVaTen = nhanVien.HoVaTen;
+            existing.NgaySinh = nhanVien.NgaySinh;
+            existing.DiaChi = nhanVien.DiaChi;
+            existing.SDT = nhanVien.SDT;
+            existing.Email = nhanVien.Email;
+            existing.GioiTinh = nhanVien.GioiTinh;
+            existing.ChucVuId = nhanVien.ChucVuId;
+            existing.TaiKhoanId = nhanVien.TaiKhoanId;
+            existing.TrangThai = nhanVien.TrangThai;
+            existing.NgayCapNhat = DateTime.Now;
+
+            if (!await _context.ChucVus.AnyAsync(cv => cv.ChucVuId == nhanVien.ChucVuId))
+            {
+                throw new ArgumentException("ChucVuId does not exist.");
+            }
+
+            if (nhanVien.TaiKhoanId != Guid.Empty)
+            {
+                var taiKhoan = await _context.TaiKhoans.FindAsync(nhanVien.TaiKhoanId);
+                if (taiKhoan == null)
+                {
+                    throw new ArgumentException("TaiKhoanId does not exist.");
+                }
+                if (!taiKhoan.TrangThai)
+                {
+                    throw new ArgumentException("Tài khoản không ở trạng thái hoạt động.");
+                }
+                if (await _context.NhanViens.AnyAsync(nv => nv.TaiKhoanId == nhanVien.TaiKhoanId && nv.NhanVienId != nhanVien.NhanVienId))
+                {
+                    throw new ArgumentException("TaiKhoanId is already associated with another NhanVien.");
+                }
+            }
+
             await _context.SaveChangesAsync();
         }
         public async Task DeleteAsync(Guid id)
@@ -60,7 +111,7 @@ namespace FurryFriends.API.Repository
             var nhanVien = await _context.NhanViens.FindAsync(id);
             if (nhanVien == null)
             {
-                throw new Exception("Nhan vien khong ton tai");
+                throw new KeyNotFoundException("Nhân viên không tồn tại.");
             }
             _context.NhanViens.Remove(nhanVien);
             await _context.SaveChangesAsync();
@@ -69,18 +120,28 @@ namespace FurryFriends.API.Repository
         {
             if (string.IsNullOrWhiteSpace(hoVaTen))
             {
-                return await _context.NhanViens
-                    .Include(nv => nv.ChucVu) // Bao gồm thông tin ChucVu
-                    .Include(nv => nv.TaiKhoan) // Bao gồm thông tin TaiKhoan
-                    .ToListAsync(); // Trả về tất cả nếu hoVaTen rỗng
+                return await GetAllAsync();
             }
 
             return await _context.NhanViens
                 .Include(nv => nv.ChucVu) // Bao gồm thông tin ChucVu
                 .Include(nv => nv.TaiKhoan) // Bao gồm thông tin TaiKhoan
-                .Where(nv => nv.HoVaTen.Contains(hoVaTen, StringComparison.OrdinalIgnoreCase))
+                .Where(nv => EF.Functions.Like(nv.HoVaTen, $"%{hoVaTen}%"))
                 .ToListAsync();
         }
+        public async Task<bool> CheckTaiKhoanExistsAsync(Guid taiKhoanId)
+        {
+            return await _context.TaiKhoans.AnyAsync(tk => tk.TaiKhoanId == taiKhoanId);
+        }
 
+        public async Task<bool> CheckChucVuExistsAsync(Guid chucVuId)
+        {
+            return await _context.ChucVus.AnyAsync(cv => cv.ChucVuId == chucVuId);
+        }
+
+        public async Task<bool> CheckTaiKhoanLinkedAsync(Guid taiKhoanId, Guid? nhanVienId = null)
+        {
+            return await _context.NhanViens.AnyAsync(nv => nv.TaiKhoanId == taiKhoanId && (nhanVienId == null || nv.NhanVienId != nhanVienId));
+        }
     }
 }

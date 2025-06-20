@@ -1,3 +1,7 @@
+﻿using FurryFriends.API.Repository;
+using FurryFriends.API.Repository.IRepository;
+using FurryFriends.Web.Service.IService;
+using FurryFriends.Web.Service;
 using FurryFriends.Web.Services;
 using FurryFriends.Web.Services.IService;
 
@@ -11,6 +15,42 @@ builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
 
+builder.Services.AddHttpClient<IGiamGiaService, GiamGiaService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/");
+});
+
+builder.Services.AddHttpClient<IDotGiamGiaService, DotGiamGiaService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/");
+});
+builder.Services.AddHttpClient<ISanPhamRepository, SanPhamRepository>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/");
+});
+builder.Services.AddHttpClient<IDiaChiKhachHangService, DiaChiKhachHangService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
+builder.Services.AddHttpClient<IKhachHangService, KhachHangService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
+builder.Services.AddHttpClient<IChucVuService, ChucVuService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/"); // Địa chỉ API, thay đổi port nếu cần
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+builder.Services.AddHttpClient<ITaiKhoanService, TaiKhoanService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/"); // Địa chỉ API, thay đổi port nếu cần
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+builder.Services.AddHttpClient<INhanVienService, NhanVienService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/"); // Địa chỉ API, thay đổi port nếu cần
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
 
 
 

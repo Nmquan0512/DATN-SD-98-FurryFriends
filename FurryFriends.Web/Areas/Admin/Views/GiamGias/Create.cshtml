@@ -1,0 +1,97 @@
+﻿@model FurryFriends.API.Models.GiamGia
+
+@{
+    ViewData["Title"] = "Thêm giảm giá";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-content" id="mainContent">
+    <div class="top-bar mb-3">
+        <h1>@ViewData["Title"]</h1>
+        <div class="user-info" role="region" aria-label="User information">
+            <span>Admin</span>
+            <div class="avatar" aria-hidden="true">AD</div>
+        </div>
+    </div>
+
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-area="Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="GiamGias" asp-area="Admin">Quản lý giảm giá</a></li>
+        <li class="breadcrumb-item active">Thêm giảm giá</li>
+    </ol>
+
+    <div class="card shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <i class="fas fa-plus-circle me-2"></i>
+            <span class="fw-bold">Thêm giảm giá mới</span>
+        </div>
+        <div class="card-body">
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["error"]</div>
+            }
+
+            <form asp-action="Create" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <!-- Tên Giảm Giá -->
+                <div class="mb-3">
+                    <label asp-for="TenGiamGia" class="form-label fw-semibold"></label>
+                    <input asp-for="TenGiamGia" class="form-control" placeholder="Nhập tên giảm giá" />
+                    <span asp-validation-for="TenGiamGia" class="text-danger small"></span>
+                </div>
+
+                <!-- Phần Trăm Khuyến Mãi -->
+                <div class="mb-3">
+                    <label asp-for="PhanTramKhuyenMai" class="form-label fw-semibold"></label>
+                    <div class="input-group">
+                        <input asp-for="PhanTramKhuyenMai" class="form-control" placeholder="0 - 100" />
+                        <span class="input-group-text">%</span>
+                    </div>
+                    <span asp-validation-for="PhanTramKhuyenMai" class="text-danger small"></span>
+                </div>
+
+                <!-- Ngày Bắt Đầu -->
+                <div class="mb-3">
+                    <label asp-for="NgayBatDau" class="form-label fw-semibold"></label>
+                    <input asp-for="NgayBatDau" type="date" class="form-control" />
+                    <span asp-validation-for="NgayBatDau" class="text-danger small"></span>
+                </div>
+
+                <!-- Ngày Kết Thúc -->
+                <div class="mb-3">
+                    <label asp-for="NgayKetThuc" class="form-label fw-semibold"></label>
+                    <input asp-for="NgayKetThuc" type="date" class="form-control" />
+                    <span asp-validation-for="NgayKetThuc" class="text-danger small"></span>
+                </div>
+
+                <!-- Trạng Thái -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold d-block">Trạng thái</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="TrangThai" value="true" id="TrangThai_True" checked />
+                        <label class="form-check-label" for="TrangThai_True">Hoạt động</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="TrangThai" value="false" id="TrangThai_False" />
+                        <label class="form-check-label" for="TrangThai_False">Không hoạt động</label>
+                    </div>
+                    <span asp-validation-for="TrangThai" class="text-danger small d-block"></span>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Lưu
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

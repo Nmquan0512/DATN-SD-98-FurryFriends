@@ -1,0 +1,120 @@
+﻿@model FurryFriends.API.Models.DotGiamGiaSanPham
+
+@{
+    ViewData["Title"] = "Chỉnh sửa đợt giảm giá";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-content" id="mainContent">
+    <div class="top-bar mb-3">
+        <h1>@ViewData["Title"]</h1>
+        <div class="user-info" role="region" aria-label="User information">
+            <span>Admin</span>
+            <div class="avatar" aria-hidden="true">AD</div>
+        </div>
+    </div>
+
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-area="Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-controller="GiamGias" asp-action="Index" asp-area="Admin">Quản lý giảm giá</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="DotGiamGias" asp-area="Admin">Quản lý đợt giảm giá</a></li>
+        <li class="breadcrumb-item active">Chỉnh sửa đợt giảm giá</li>
+    </ol>
+
+    <div class="card shadow mb-4">
+        <div class="card-header bg-warning text-white d-flex align-items-center">
+            <i class="fas fa-edit me-2"></i>
+            <span class="fw-bold">Chỉnh sửa đợt giảm giá</span>
+        </div>
+        <div class="card-body">
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["error"]</div>
+            }
+
+            <form asp-action="Edit" method="post" novalidate>
+                <input type="hidden" asp-for="DotGiamGiaSanPhamId" />
+
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <!-- Giảm Giá -->
+                <div class="mb-3">
+                    <label asp-for="GiamGiaId" class="form-label fw-semibold"></label>
+                    <select asp-for="GiamGiaId" asp-items="ViewBag.GiamGiaList" class="form-control" id="GiamGiaId"></select>
+                    <span asp-validation-for="GiamGiaId" class="text-danger small"></span>
+                </div>
+
+                <!-- Sản Phẩm -->
+                <div class="mb-3">
+                    <label asp-for="SanPhamId" class="form-label fw-semibold"></label>
+                    <select asp-for="SanPhamId" asp-items="ViewBag.SanPhamList" class="form-control"></select>
+                    <span asp-validation-for="SanPhamId" class="text-danger small"></span>
+                </div>
+
+                <!-- Phần Trăm Giảm Giá -->
+                <div class="mb-3">
+                    <label asp-for="PhanTramGiamGia" class="form-label fw-semibold"></label>
+                    <div class="input-group">
+                        <input asp-for="PhanTramGiamGia" class="form-control" placeholder="0 - 100" id="PhanTramGiamGia" readonly />
+                        <span class="input-group-text">%</span>
+                    </div>
+                    <span asp-validation-for="PhanTramGiamGia" class="text-danger small"></span>
+                </div>
+
+                <!-- Trạng Thái -->
+                <div class="mb-3">
+                    <label class="form-label fw-semibold d-block">Trạng thái</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="TrangThai" value="true" id="TrangThai_True" />
+                        <label class="form-check-label" for="TrangThai_True">Áp dụng</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="TrangThai" value="false" id="TrangThai_False" />
+                        <label class="form-check-label" for="TrangThai_False">Không áp dụng</label>
+                    </div>
+                    <span asp-validation-for="TrangThai" class="text-danger small d-block"></span>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save me-1"></i> Lưu thay đổi
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Quay lại
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#GiamGiaId').change(function () {
+                var giamGiaId = $(this).val();
+                if (giamGiaId) {
+                    $.ajax({
+                        url: `/api/giamgia/${giamGiaId}/phantram`,
+                        type: 'GET',
+                        success: function (data) {
+                            $('#PhanTramGiamGia').val(data);
+                        },
+                        error: function () {
+                            $('#PhanTramGiamGia').val('');
+                        }
+                    });
+                } else {
+                    $('#PhanTramGiamGia').val('');
+                }
+            });
+
+            // Trigger change event on load if value exists
+            $('#GiamGiaId').trigger('change');
+        });
+    </script>
+}

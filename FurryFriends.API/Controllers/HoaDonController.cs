@@ -18,20 +18,22 @@ namespace FurryFriends.API.Controllers
             _hoaDonRepository = hoaDonRepository;
         }
 
-        // GET: api/HoaDon
         [HttpGet]
         public async Task<ActionResult<IEnumerable<HoaDon>>> GetHoaDons()
         {
             try
             {
                 var hoaDons = await _hoaDonRepository.GetHoaDonListAsync();
+
                 return Ok(hoaDons);
             }
             catch (Exception ex)
             {
+                
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
 
         // GET: api/HoaDon/{id}
         [HttpGet("{id}")]

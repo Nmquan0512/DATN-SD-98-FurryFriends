@@ -1,0 +1,114 @@
+﻿@model IEnumerable<FurryFriends.API.Models.ChucVu>
+
+@{
+    ViewData["Title"] = "Quản lý chức vụ";
+}
+
+<div class="main-content" id="mainContent">
+    <div class="top-bar">
+        <h1>@ViewData["Title"]</h1>
+        <div class="user-info" role="region" aria-label="User information">
+            <span>Admin</span>
+            <div class="avatar" aria-hidden="true">AD</div>
+        </div>
+    </div>
+
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-area="Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Quản lý chức vụ</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fas fa-table me-2"></i>
+                <span>Danh sách chức vụ</span>
+            </div>
+            <a asp-action="Create" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus"></i> Thêm chức vụ
+            </a>
+        </div>
+        <div class="card-body">
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["error"]
+                </div>
+            }
+            @if (TempData["success"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["success"]
+                </div>
+            }
+
+            <div class="table-responsive">
+
+                <table id="chucVuTable" class="table table-border table-hover">
+                <thead>
+                    <tr>
+                        <th>Tên chức vụ</th>
+                        <th>Mô tả</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Ngày cập nhật</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.TenChucVu</td>
+                            <td>@item.MoTaChucVu</td>
+                            <td>
+                                @if (item.TrangThai)
+                                {
+                                    <span class="badge bg-success">Hoạt động</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                }
+                            </td>
+                            <td>@item.NgayTao.ToString("dd/MM/yyyy")</td>
+                            <td>@item.NgayCapNhat.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a asp-action="Edit" asp-route-id="@item.ChucVuId" class="btn btn-warning btn-sm action-btn">
+                                        <i class="fas fa-edit"></i> Sửa
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.ChucVuId" class="btn btn-danger btn-sm action-btn">
+                                        <i class="fas fa-trash"></i> Xóa
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#chucVuTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json',
+                },
+                order: [[3, 'desc']], // Sắp xếp theo Ngày tạo mới nhất
+                responsive: true
+            });
+
+            // Xử lý click cho các button (nếu cần)
+            $('.action-btn').on('click', function (e) {
+                // Có thể bổ sung hiệu ứng loading nếu muốn
+            });
+        });
+    </script>
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>

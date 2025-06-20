@@ -197,9 +197,7 @@
                 var originalText = $btn.html();
                 var href = $btn.attr('href');
                 
-                // Thay đổi text và thêm spinner
-                $btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...');
-                $btn.prop('disabled', true);
+
 
                 // Nếu là link PDF, mở trong tab mới
                 if (href.includes('ExportPdf')) {
