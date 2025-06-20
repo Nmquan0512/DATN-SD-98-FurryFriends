@@ -36,9 +36,10 @@ namespace FurryFriends.API.Models
             KhachHangId = Guid.NewGuid();
         }
 
-        public virtual ICollection<TaiKhoan> TaiKhoans { get; set; }
-        public virtual ICollection<DiaChiKhachHang> DiaChiKhachHangs { get; set; }
-        public virtual ICollection<HoaDon> HoaDons { get; set; }
-        public virtual ICollection<GioHang> GioHangs { get; set; }
+        public virtual ICollection<TaiKhoan>? TaiKhoans { get; set; }
+        public virtual ICollection<DiaChiKhachHang>? DiaChiKhachHangs { get; set; }
+        public virtual ICollection<HoaDon>? HoaDons { get; set; }
+        public virtual ICollection<GioHang>? GioHangs { get; set; }
     }
+
 }

@@ -713,7 +713,7 @@
             "type": "string",
             "format": "uuid"
           },
-          "khachHangs": {
+          "khachHang": {
             "$ref": "#/components/schemas/KhachHang"
           }
         },

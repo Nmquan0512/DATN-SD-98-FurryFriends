@@ -21,18 +21,18 @@ namespace FurryFriends.API.Models
 		public async Task<IEnumerable<DiaChiKhachHang>> GetAllAsync()
 		{
 			return await _context.DiaChiKhachHangs
-				.Include(dc => dc.KhachHangs)
+				.Include(dc => dc.KhachHang)
 				.ToListAsync();
 		}
 
-		public async Task<DiaChiKhachHang> GetByIdAsync(Guid id)
-		{
-			return await _context.DiaChiKhachHangs
-				.Include(dc => dc.KhachHangs)
-				.FirstOrDefaultAsync(dc => dc.DiaChiId == id);
-		}
+        public async Task<DiaChiKhachHang> GetByIdAsync(Guid id)
+        {
+            return await _context.DiaChiKhachHangs
+                .Include(dc => dc.KhachHang)
+                .FirstOrDefaultAsync(dc => dc.DiaChiId == id);
+        }
 
-		public async Task<IEnumerable<DiaChiKhachHang>> GetByKhachHangIdAsync(Guid khachHangId)
+        public async Task<IEnumerable<DiaChiKhachHang>> GetByKhachHangIdAsync(Guid khachHangId)
 		{
 			return await _context.DiaChiKhachHangs
 				.Where(dc => dc.KhachHangId == khachHangId)
