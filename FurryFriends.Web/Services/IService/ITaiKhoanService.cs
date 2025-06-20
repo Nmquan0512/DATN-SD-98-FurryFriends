@@ -9,6 +9,6 @@ namespace FurryFriends.Web.Services.IService
 		Task AddAsync(TaiKhoan taiKhoan);
 		Task UpdateAsync(TaiKhoan taiKhoan);
 		Task DeleteAsync(Guid taiKhoanId);
-		Task<TaiKhoan?> FindByUserNameAsync(string userName);
+		Task<IEnumerable<TaiKhoan>> FindByUserNameAsync(string userName);
 	}
 }

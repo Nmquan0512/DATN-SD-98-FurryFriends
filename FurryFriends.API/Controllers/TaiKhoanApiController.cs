@@ -129,12 +129,19 @@ namespace FurryFriends.API.Controllers
 		{
 			try
 			{
-				var taiKhoan = await _taiKhoanRepository.FindByUserNameAsync(userName);
-				if (taiKhoan == null)
+				IEnumerable<TaiKhoan> taiKhoans;
+
+				if (string.IsNullOrWhiteSpace(userName))
 				{
-					return NotFound($"Tài khoản với UserName {userName} không tồn tại.");
+					taiKhoans = await _taiKhoanRepository.GetAllAsync();
 				}
-				return Ok(taiKhoan);
+				else
+				{
+					var tk = await _taiKhoanRepository.FindByUserNameAsync(userName);
+					taiKhoans = tk != null ? new List<TaiKhoan> { tk } : new List<TaiKhoan>();
+				}
+
+				return Ok(taiKhoans);
 			}
 			catch (Exception ex)
 			{

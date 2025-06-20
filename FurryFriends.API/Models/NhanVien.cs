@@ -8,34 +8,34 @@ namespace FurryFriends.API.Models
 	{
 		[Key]
 		public Guid NhanVienId { get; set; }
-		[Required]
-		public Guid TaiKhoanId { get; set; }
-		[Required]
-		[StringLength(50)]
+
+		public Guid? TaiKhoanId { get; set; }  // Cho phép null nếu không bắt buộc
+		[ForeignKey("TaiKhoanId")]
+		public virtual TaiKhoan? TaiKhoan { get; set; }
+
+		[Required, StringLength(50)]
 		public string HoVaTen { get; set; }
 
 		[Required]
 		public DateTime NgaySinh { get; set; }
 
-		[Required]
-		[StringLength(100)]
+		[Required, StringLength(100)]
 		public string DiaChi { get; set; }
 
-		[Required]
-		[StringLength(20)]
+		[Required, StringLength(20)]
 		public string SDT { get; set; }
 
-		[Required]
-		[StringLength(100)]
-		[EmailAddress]
+		[Required, EmailAddress, StringLength(100)]
 		public string Email { get; set; }
 
-		[Required]
-		[StringLength(100)]
+		[Required, StringLength(100)]
 		public string GioiTinh { get; set; }
 
 		[Required]
 		public Guid ChucVuId { get; set; }
+
+		[ForeignKey("ChucVuId")]
+		public virtual ChucVu? ChucVu { get; set; }
 
 		[Required]
 		public bool TrangThai { get; set; }
@@ -45,11 +45,5 @@ namespace FurryFriends.API.Models
 
 		[Required]
 		public DateTime NgayCapNhat { get; set; }
-
-		[ForeignKey("ChucVuId")]
-		public virtual ChucVu? ChucVu { get; set; }
-
-		[ForeignKey("TaiKhoanId")]
-		public virtual TaiKhoan? TaiKhoan { get; set; }
 	}
 }

@@ -8,16 +8,17 @@ namespace FurryFriends.Web.Services
 {
 	public class NhanVienService : INhanVienService
 	{
-		private readonly INhanVienRepository _nhanVienRepository;
+		private readonly HttpClient _httpClient;
 
-		public NhanVienService(INhanVienRepository nhanVienRepository)
+		public NhanVienService(HttpClient httpClient)
 		{
-			_nhanVienRepository = nhanVienRepository;
+			_httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 		}
 
 		public async Task<IEnumerable<NhanVien>> GetAllAsync()
 		{
-			return await _nhanVienRepository.GetAllAsync();
+			return await _httpClient.GetFromJsonAsync<IEnumerable<NhanVien>>("NhanVienApi")
+				?? throw new HttpRequestException("Không thể lấy danh sách nhân viên.");
 		}
 
 		public async Task<NhanVien?> GetByIdAsync(Guid nhanVienId)
@@ -25,7 +26,8 @@ namespace FurryFriends.Web.Services
 			if (nhanVienId == Guid.Empty)
 				throw new ArgumentException("NhanVienId không hợp lệ.");
 
-			return await _nhanVienRepository.GetByIdAsync(nhanVienId);
+			return await _httpClient.GetFromJsonAsync<NhanVien>($"NhanVienApi/{nhanVienId}")
+				?? throw new HttpRequestException($"Không tìm thấy nhân viên với ID {nhanVienId}.");
 		}
 
 		public async Task AddAsync(NhanVien nhanVien)
@@ -57,16 +59,15 @@ namespace FurryFriends.Web.Services
 			if (nhanVien.ChucVuId == Guid.Empty)
 				throw new ArgumentException("ChucVuId không hợp lệ.");
 			if (nhanVien.NgayTao == default)
-				nhanVien.NgayTao = DateTime.Now; // Đồng bộ với repository
+				nhanVien.NgayTao = DateTime.Now;
 			if (nhanVien.NgayCapNhat == default)
-				nhanVien.NgayCapNhat = DateTime.Now; // Đồng bộ
+				nhanVien.NgayCapNhat = DateTime.Now;
 
-			// Bỏ qua navigation properties
 			nhanVien.TaiKhoan = null;
 			nhanVien.ChucVu = null;
 
-			// Repository sẽ kiểm tra TaiKhoanId, ChucVuId, và liên kết
-			await _nhanVienRepository.AddAsync(nhanVien);
+			var response = await _httpClient.PostAsJsonAsync("NhanVienApi", nhanVien);
+			response.EnsureSuccessStatusCode();
 		}
 
 		public async Task UpdateAsync(NhanVien nhanVien)
@@ -102,14 +103,13 @@ namespace FurryFriends.Web.Services
 			if (nhanVien.NgayTao == default)
 				throw new ArgumentException("Ngày tạo không được để trống.");
 			if (nhanVien.NgayCapNhat == default)
-				nhanVien.NgayCapNhat = DateTime.Now; // Đồng bộ
+				nhanVien.NgayCapNhat = DateTime.Now;
 
-			// Bỏ qua navigation properties
 			nhanVien.TaiKhoan = null;
 			nhanVien.ChucVu = null;
 
-			// Repository sẽ kiểm tra TaiKhoanId, ChucVuId, và liên kết
-			await _nhanVienRepository.UpdateAsync(nhanVien);
+			var response = await _httpClient.PutAsJsonAsync($"NhanVienApi/{nhanVien.NhanVienId}", nhanVien);
+			response.EnsureSuccessStatusCode();
 		}
 
 		public async Task DeleteAsync(Guid nhanVienId)
@@ -117,7 +117,8 @@ namespace FurryFriends.Web.Services
 			if (nhanVienId == Guid.Empty)
 				throw new ArgumentException("NhanVienId không hợp lệ.");
 
-			await _nhanVienRepository.DeleteAsync(nhanVienId);
+			var response = await _httpClient.DeleteAsync($"NhanVienApi/{nhanVienId}");
+			response.EnsureSuccessStatusCode();
 		}
 
 		public async Task<IEnumerable<NhanVien>> FindByHoVaTenAsync(string hoVaTen)
@@ -125,7 +126,8 @@ namespace FurryFriends.Web.Services
 			if (string.IsNullOrWhiteSpace(hoVaTen))
 				throw new ArgumentException("Họ và tên không được để trống.");
 
-			return await _nhanVienRepository.FindByNameAsync(hoVaTen);
+			return await _httpClient.GetFromJsonAsync<IEnumerable<NhanVien>>($"NhanVienApi/search?hoVaTen={Uri.EscapeDataString(hoVaTen)}")
+				?? throw new HttpRequestException("Không thể tìm kiếm nhân viên.");
 		}
 
 		private bool IsValidEmail(string email)

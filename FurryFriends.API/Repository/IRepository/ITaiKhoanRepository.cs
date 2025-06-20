@@ -9,6 +9,6 @@ namespace FurryFriends.API.Repository.IRepository
         Task AddAsync(TaiKhoan taiKhoan);
         Task UpdateAsync(TaiKhoan taiKhoan);
         Task DeleteAsync(Guid id);
-        Task<TaiKhoan?> FindByUserNameAsync(string userName);
-    }
+		Task<TaiKhoan?> FindByUserNameAsync(string userName);
+	}
 }

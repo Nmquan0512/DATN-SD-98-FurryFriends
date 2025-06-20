@@ -36,9 +36,9 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 					taiKhoan.TrangThai = taiKhoan.TrangThai; // giữ nguyên từ form
 
 					// Khởi tạo các collection để tránh null
-					taiKhoan.SanPhams = new List<SanPham>();
-					taiKhoan.Vouchers = new List<Voucher>();
-					taiKhoan.HoaDons = new List<HoaDon>();
+					taiKhoan.SanPhams = null;
+					taiKhoan.Vouchers = null;
+					taiKhoan.HoaDons = null;
 
 					// Nếu bạn không dùng tài khoản cho khách hàng, để KhachHangId null
 					taiKhoan.KhachHang = null;
@@ -78,6 +78,13 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 			{
 				try
 				{
+					// Lấy bản ghi cũ để giữ lại Password nếu bị null
+					var taiKhoanCu = await _taiKhoanService.GetByIdAsync(id);
+					if (string.IsNullOrWhiteSpace(taiKhoan.Password) && taiKhoanCu != null)
+					{
+						taiKhoan.Password = taiKhoanCu.Password;
+					}
+
 					await _taiKhoanService.UpdateAsync(taiKhoan);
 					TempData["Success"] = "Tài khoản đã được cập nhật thành công.";
 					return RedirectToAction(nameof(Index));
@@ -139,15 +146,22 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
 			try
 			{
-				var taiKhoan = await _taiKhoanService.FindByUserNameAsync(userName);
-				if (taiKhoan == null)
+				var taiKhoans = await _taiKhoanService.FindByUserNameAsync(userName);
+
+				if (taiKhoans == null || !taiKhoans.Any())
 				{
 					TempData["Error"] = "Không tìm thấy tài khoản.";
 					return RedirectToAction(nameof(Index));
 				}
-				return View("Index", new List<TaiKhoan> { taiKhoan });
+
+				return View("Index", taiKhoans); // ✅ vì taiKhoans là IEnumerable<TaiKhoan>
 			}
 			catch (ArgumentException ex)
+			{
+				ModelState.AddModelError("", ex.Message);
+				return View("Index", new List<TaiKhoan>());
+			}
+			catch (HttpRequestException ex)
 			{
 				ModelState.AddModelError("", ex.Message);
 				return View("Index", new List<TaiKhoan>());

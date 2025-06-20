@@ -1,6 +1,15 @@
 [
   {
     "Name": "New Profile",
-    "Projects": []
+    "Projects": [
+      {
+        "Path": "FurryFriends.API\\FurryFriends.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "FurryFriends.Web\\FurryFriends.Web.csproj",
+        "Action": "Start"
+      }
+    ]
   }
 ]

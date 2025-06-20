@@ -123,13 +123,12 @@ namespace FurryFriends.API.Repository
 		public async Task<TaiKhoan?> FindByUserNameAsync(string userName)
 		{
 			if (string.IsNullOrWhiteSpace(userName))
-			{
 				return null;
-			}
+
 			return await _context.TaiKhoans
 				.Include(tk => tk.NhanVien)
 				.Include(tk => tk.KhachHang)
-				.FirstOrDefaultAsync(tk => EF.Functions.Like(tk.UserName, $"%{userName}%"));
+				.FirstOrDefaultAsync(tk => tk.UserName == userName); // Khớp chính xác
 		}
 	}
 }

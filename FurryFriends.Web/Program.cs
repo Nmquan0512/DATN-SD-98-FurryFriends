@@ -1,4 +1,4 @@
-using FurryFriends.API.Repository.IRepository;
+﻿using FurryFriends.API.Repository.IRepository;
 using FurryFriends.API.Repository;
 using FurryFriends.Web.Services;
 using FurryFriends.Web.Services.IService;
@@ -18,15 +18,22 @@ builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
+builder.Services.AddHttpClient<IChucVuService, ChucVuService>(client =>
+{
+	client.BaseAddress = new Uri("https://localhost:7289/api/"); // Địa chỉ API, thay đổi port nếu cần
+	client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+builder.Services.AddHttpClient<ITaiKhoanService, TaiKhoanService>(client =>
+{
+	client.BaseAddress = new Uri("https://localhost:7289/api/"); // Địa chỉ API, thay đổi port nếu cần
+	client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
+builder.Services.AddHttpClient<INhanVienService, NhanVienService>(client =>
+{
+	client.BaseAddress = new Uri("https://localhost:7289/api/"); // Địa chỉ API, thay đổi port nếu cần
+	client.DefaultRequestHeaders.Add("Accept", "application/json");
+});
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<INhanVienRepository, NhanVIenRepository>();
-builder.Services.AddScoped<IChucVuRepository, ChucVuRepository>();
-builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
-builder.Services.AddScoped<INhanVienService, NhanVienService>();
-builder.Services.AddScoped<IChucVuService, ChucVuService>();
-builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
 
 var app = builder.Build();
 

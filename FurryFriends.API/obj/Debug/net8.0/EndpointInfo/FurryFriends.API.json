@@ -1203,7 +1203,6 @@
       "KhachHang": {
         "required": [
           "ngayTaoTaiKhoan",
-          "taiKhoanId",
           "tenKhachHang",
           "trangThai"
         ],
@@ -1245,10 +1244,6 @@
           "trangThai": {
             "type": "integer",
             "format": "int32"
-          },
-          "taiKhoanId": {
-            "type": "string",
-            "format": "uuid"
           },
           "taiKhoans": {
             "type": "array",
@@ -1358,7 +1353,6 @@
           "ngaySinh",
           "ngayTao",
           "sdt",
-          "taiKhoanId",
           "trangThai"
         ],
         "type": "object",
@@ -1369,7 +1363,11 @@
           },
           "taiKhoanId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
+          },
+          "taiKhoan": {
+            "$ref": "#/components/schemas/TaiKhoan"
           },
           "hoVaTen": {
             "maxLength": 50,
@@ -1405,6 +1403,9 @@
             "type": "string",
             "format": "uuid"
           },
+          "chucVu": {
+            "$ref": "#/components/schemas/ChucVu"
+          },
           "trangThai": {
             "type": "boolean"
           },
@@ -1415,12 +1416,6 @@
           "ngayCapNhat": {
             "type": "string",
             "format": "date-time"
-          },
-          "chucVu": {
-            "$ref": "#/components/schemas/ChucVu"
-          },
-          "taiKhoan": {
-            "$ref": "#/components/schemas/TaiKhoan"
           }
         },
         "additionalProperties": false

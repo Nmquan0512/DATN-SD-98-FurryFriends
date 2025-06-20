@@ -17,20 +17,26 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="mb-3">
-                    <label asp-for="UserName" class="form-label"></label>
-                    <input asp-for="UserName" class="form-control" />
+                    <label asp-for="UserName" class="form-label">Tên đăng nhập</label>
+                    <input asp-for="UserName" class="form-control" placeholder="Nhập tên đăng nhập" />
                     <span asp-validation-for="UserName" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Password" class="form-label"></label>
-                    <input asp-for="Password" type="password" class="form-control" />
+                    <label asp-for="Password" class="form-label">Mật khẩu</label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu" />
                     <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NgayTaoTaiKhoan" class="form-label">Ngày tạo tài khoản</label>
+                    <input asp-for="NgayTaoTaiKhoan" type="datetime-local" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                    <span asp-validation-for="NgayTaoTaiKhoan" class="text-danger"></span>
                 </div>
 
                 <div class="form-check mb-3">
                     <input asp-for="TrangThai" type="checkbox" class="form-check-input" checked />
-                    <label asp-for="TrangThai" class="form-check-label"></label>
+                    <label asp-for="TrangThai" class="form-check-label">Trạng thái hoạt động</label>
                     <span asp-validation-for="TrangThai" class="text-danger"></span>
                 </div>
 

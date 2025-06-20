@@ -6,16 +6,17 @@ namespace FurryFriends.Web.Services
 {
 	public class ChucVuService:IChucVuService
 	{
-		private readonly IChucVuRepository _chucVuRepository;
+		private readonly HttpClient _httpClient;
 
-		public ChucVuService(IChucVuRepository chucVuRepository)
+		public ChucVuService(HttpClient httpClient)
 		{
-			_chucVuRepository = chucVuRepository;
+			_httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 		}
 
 		public async Task<IEnumerable<ChucVu>> GetAllAsync()
 		{
-			return await _chucVuRepository.GetAllAsync();
+			return await _httpClient.GetFromJsonAsync<IEnumerable<ChucVu>>("ChucVuApi")
+				?? throw new HttpRequestException("Không thể lấy danh sách chức vụ.");
 		}
 
 		public async Task<ChucVu?> GetByIdAsync(Guid chucVuId)
@@ -23,7 +24,8 @@ namespace FurryFriends.Web.Services
 			if (chucVuId == Guid.Empty)
 				throw new ArgumentException("ChucVuId không hợp lệ.");
 
-			return await _chucVuRepository.GetByIdAsync(chucVuId);
+			return await _httpClient.GetFromJsonAsync<ChucVu>($"ChucVuApi/{chucVuId}")
+				?? throw new HttpRequestException($"Không tìm thấy chức vụ với ID {chucVuId}.");
 		}
 
 		public async Task AddAsync(ChucVu chucVu)
@@ -45,11 +47,10 @@ namespace FurryFriends.Web.Services
 			if (chucVu.NgayCapNhat == default)
 				chucVu.NgayCapNhat = DateTime.Now;
 
-			// Bỏ qua navigation property
-			chucVu.NhanViens = null;
+			chucVu.NhanViens = null; // Bỏ qua navigation property
 
-			// Repository sẽ thêm ChucVu
-			await _chucVuRepository.AddAsync(chucVu);
+			var response = await _httpClient.PostAsJsonAsync("ChucVuApi", chucVu);
+			response.EnsureSuccessStatusCode();
 		}
 
 		public async Task UpdateAsync(ChucVu chucVu)
@@ -73,11 +74,10 @@ namespace FurryFriends.Web.Services
 			if (chucVu.NgayCapNhat == default)
 				chucVu.NgayCapNhat = DateTime.Now;
 
-			// Bỏ qua navigation property
-			chucVu.NhanViens = null;
+			chucVu.NhanViens = null; // Bỏ qua navigation property
 
-			// Repository sẽ cập nhật ChucVu
-			await _chucVuRepository.UpdateAsync(chucVu);
+			var response = await _httpClient.PutAsJsonAsync($"ChucVuApi/{chucVu.ChucVuId}", chucVu);
+			response.EnsureSuccessStatusCode();
 		}
 
 		public async Task DeleteAsync(Guid chucVuId)
@@ -85,8 +85,8 @@ namespace FurryFriends.Web.Services
 			if (chucVuId == Guid.Empty)
 				throw new ArgumentException("ChucVuId không hợp lệ.");
 
-			// Repository sẽ kiểm tra liên kết với NhanVien
-			await _chucVuRepository.DeleteAsync(chucVuId);
+			var response = await _httpClient.DeleteAsync($"ChucVuApi/{chucVuId}");
+			response.EnsureSuccessStatusCode();
 		}
 
 		public async Task<IEnumerable<ChucVu>> FindByTenChucVuAsync(string tenChucVu)
@@ -94,7 +94,8 @@ namespace FurryFriends.Web.Services
 			if (string.IsNullOrWhiteSpace(tenChucVu))
 				throw new ArgumentException("Tên chức vụ không được để trống.");
 
-			return await _chucVuRepository.FindByTenChucVuAsync(tenChucVu);
+			return await _httpClient.GetFromJsonAsync<IEnumerable<ChucVu>>($"ChucVuApi/search?tenChucVu={tenChucVu}")
+				?? throw new HttpRequestException("Không thể tìm kiếm chức vụ.");
 		}
 	}
 }

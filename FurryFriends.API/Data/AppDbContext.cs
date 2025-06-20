@@ -13,7 +13,7 @@ namespace FurryFriends.API.Data
 		{
 			if (!optionsBuilder.IsConfigured)
 			{
-				optionsBuilder.UseSqlServer("Data Source=ANH2005\\SQLEXPRESS;Initial Catalog=duantn7;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+				optionsBuilder.UseSqlServer("Data Source=ANH2005\\SQLEXPRESS;Initial Catalog=duantn10;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
 			}
 		}
 
