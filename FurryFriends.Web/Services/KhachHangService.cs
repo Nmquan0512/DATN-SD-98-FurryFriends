@@ -51,5 +51,10 @@ namespace FurryFriends.Web.Services
         {
             throw new NotImplementedException();
         }
+
+        public Task<bool> CreateKhachHangAsync(KhachHang model)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

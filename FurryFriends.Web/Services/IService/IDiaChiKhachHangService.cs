@@ -10,5 +10,6 @@ namespace FurryFriends.Web.Service.IService
         Task AddAsync(DiaChiKhachHang diaChi);
         Task UpdateAsync(DiaChiKhachHang diaChi);
         Task DeleteAsync(Guid id);
+        Task<string?> GetDiaChiByKhachHangIdAsync(Guid id);
     }
 }

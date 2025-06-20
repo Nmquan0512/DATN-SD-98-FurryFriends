@@ -8,5 +8,6 @@ namespace FurryFriends.Web.Services.IService
         Task<HoaDon> GetHoaDonByIdAsync(Guid hoaDonId);
         Task<IEnumerable<HoaDon>> SearchHoaDonAsync(string keyword);
         Task<byte[]> ExportHoaDonToPdfAsync(Guid hoaDonId);
+        Task<string?> GetHoaDonByKhachHangIdAsync(Guid id);
     }
 }
