@@ -15,6 +15,7 @@ namespace FurryFriends.API.Models
 			AnhId = Guid.NewGuid();
 			TrangThai = true;
 		}
+		public IFormFile? FileAnh { get; set; }
 
 		public virtual ICollection<SanPhamChiTiet> SanPhamChiTiets { get; set; }
 	}

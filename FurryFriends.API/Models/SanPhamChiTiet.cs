@@ -38,7 +38,7 @@ public class SanPhamChiTiet
 	public virtual SanPham SanPham { get; set; }
 
 	[ForeignKey("KichCoId")]
-	public virtual KichCo BangKichCo { get; set; }
+	public virtual KichCo KichCo { get; set; }
 
 	[ForeignKey("MauSacId")]
 	public virtual MauSac MauSac { get; set; }

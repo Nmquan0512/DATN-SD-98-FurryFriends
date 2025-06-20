@@ -7,12 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FurryFriends.API\FurryFriends.API.csproj" />
+    <Compile Remove="IService\**" />
+    <Compile Remove="Service\**" />
+    <Content Remove="IService\**" />
+    <Content Remove="Service\**" />
+    <EmbeddedResource Remove="IService\**" />
+    <EmbeddedResource Remove="Service\**" />
+    <None Remove="IService\**" />
+    <None Remove="Service\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="IService\" />
-    <Folder Include="Service\" />
+    <ProjectReference Include="..\FurryFriends.API\FurryFriends.API.csproj" />
   </ItemGroup>
 
   <ItemGroup>

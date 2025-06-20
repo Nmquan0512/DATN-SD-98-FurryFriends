@@ -1,10 +1,12 @@
-using FurryFriends.API.Data;
+﻿using FurryFriends.API.Data;
 using FurryFriends.API.Repository;
 using FurryFriends.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+// Cho phép truy cập file tĩnh (bao gồm ảnh upload)
 
 // Add services to the container.
 builder.Services.AddControllers()
@@ -37,7 +39,15 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+app.UseStaticFiles();
 
+// Nếu bạn lưu ảnh trong thư mục "uploads"
+app.UseStaticFiles(new StaticFileOptions
+{
+	FileProvider = new PhysicalFileProvider(
+		Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads")),
+	RequestPath = "/uploads"
+});
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
