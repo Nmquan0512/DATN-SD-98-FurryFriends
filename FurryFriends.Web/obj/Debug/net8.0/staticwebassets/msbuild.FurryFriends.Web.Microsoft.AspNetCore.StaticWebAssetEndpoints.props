@@ -52,13 +52,13 @@
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\FurryFriends.Web.fhmp6gmjoc.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"integrity","Value":"sha256-E2S4y2HuYyMhfARK4FE97oyiCbou0aWmnz8rmu1BDeM="}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1134"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022E2S4y2HuYyMhfARK4FE97oyiCbou0aWmnz8rmu1BDeM=\u0022"},{"Name":"Last-Modified","Value":"Fri, 20 Jun 2025 18:08:46 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"no-cache"},{"Name":"Content-Length","Value":"1134"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022E2S4y2HuYyMhfARK4FE97oyiCbou0aWmnz8rmu1BDeM=\u0022"},{"Name":"Last-Modified","Value":"Mon, 23 Jun 2025 14:36:20 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/FurryFriends.Web/FurryFriends.Web.fhmp6gmjoc.bundle.scp.css">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\FurryFriends.Web.fhmp6gmjoc.bundle.scp.css'))</AssetFile>
       <Selectors><![CDATA[[]]]></Selectors>
       <EndpointProperties><![CDATA[[{"Name":"fingerprint","Value":"fhmp6gmjoc"},{"Name":"integrity","Value":"sha256-E2S4y2HuYyMhfARK4FE97oyiCbou0aWmnz8rmu1BDeM="},{"Name":"label","Value":"_content/FurryFriends.Web/FurryFriends.Web.bundle.scp.css"}]]]></EndpointProperties>
-      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1134"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022E2S4y2HuYyMhfARK4FE97oyiCbou0aWmnz8rmu1BDeM=\u0022"},{"Name":"Last-Modified","Value":"Fri, 20 Jun 2025 18:08:46 GMT"}]]]></ResponseHeaders>
+      <ResponseHeaders><![CDATA[[{"Name":"Accept-Ranges","Value":"bytes"},{"Name":"Cache-Control","Value":"max-age=31536000, immutable"},{"Name":"Content-Length","Value":"1134"},{"Name":"Content-Type","Value":"text/css"},{"Name":"ETag","Value":"\u0022E2S4y2HuYyMhfARK4FE97oyiCbou0aWmnz8rmu1BDeM=\u0022"},{"Name":"Last-Modified","Value":"Mon, 23 Jun 2025 14:36:20 GMT"}]]]></ResponseHeaders>
     </StaticWebAssetEndpoint>
     <StaticWebAssetEndpoint Include="_content/FurryFriends.Web/images/hihihi.png">
       <AssetFile>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\images\hihihi.png'))</AssetFile>

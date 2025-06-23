@@ -17,42 +17,55 @@ namespace FurryFriends.Web.Services
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<KhachHang>> GetAllKhachHangAsync()
+        public async Task<IEnumerable<KhachHang>> GetAllAsync()
         {
             return await _httpClient.GetFromJsonAsync<IEnumerable<KhachHang>>("api/KhachHang");
         }
 
-        public async Task<KhachHang> GetKhachHangByIdAsync(Guid id)
+        public async Task<KhachHang> GetByIdAsync(Guid id)
         {
             return await _httpClient.GetFromJsonAsync<KhachHang>($"api/KhachHang/{id}");
         }
 
-        public async Task AddKhachHangAsync(KhachHang khachHang)
+        public async Task<bool> CreateAsync(KhachHang khachHang)
         {
-            await _httpClient.PostAsJsonAsync("api/KhachHang", khachHang);
+            var response = await _httpClient.PostAsJsonAsync("api/KhachHang", khachHang);
+            return response.IsSuccessStatusCode;
         }
 
-        public async Task UpdateKhachHangAsync(KhachHang khachHang)
+        public async Task<bool> UpdateAsync(Guid id, KhachHang khachHang)
         {
-            await _httpClient.PutAsJsonAsync($"api/KhachHang/{khachHang.KhachHangId}", khachHang);
+            var response = await _httpClient.PutAsJsonAsync($"api/KhachHang/{id}", khachHang);
+            return response.IsSuccessStatusCode;
         }
 
-        public async Task DeleteKhachHangAsync(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            await _httpClient.DeleteAsync($"api/KhachHang/{id}");
+            var response = await _httpClient.DeleteAsync($"api/KhachHang/{id}");
+            return response.IsSuccessStatusCode;
         }
 
-        Task<string?> IKhachHangService.GetAllKhachHangAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<string?> IKhachHangService.GetKhachHangByIdAsync(Guid id)
+        public Task<string?> GetAllKhachHangAsync()
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> CreateKhachHangAsync(KhachHang model)
+        public Task<string?> GetKhachHangByIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteKhachHangAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AddKhachHangAsync(KhachHang model)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateKhachHangAsync(KhachHang model)
         {
             throw new NotImplementedException();
         }

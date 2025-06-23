@@ -18,7 +18,7 @@ namespace FurryFriends.API.Repository
 			public async Task<IEnumerable<KhachHang>> GetAllAsync()
 			{
 				return await _context.KhachHangs
-									 .Include(k => k.DiaChiKhachHangs) // đúng tên
+									 .Include(k => k.DiaChiKhachHangs)
 									 .ToListAsync();
 			}
 
