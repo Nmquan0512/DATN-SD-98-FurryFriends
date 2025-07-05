@@ -1,8 +1,0 @@
-﻿@model FurryFriends.API.Models.KhachHang
-<h2>Xoá Khách Hàng</h2>
-<form asp-action="DeleteConfirmed">
-    <input type="hidden" asp-for="KhachHangId" />
-    <p>Bạn có chắc chắn muốn xoá khách hàng <strong>@Model.TenKhachHang</strong> không?</p>
-    <button type="submit" class="btn btn-danger">Xoá</button>
-    <a asp-action="Index" class="btn btn-secondary">Huỷ</a>
-</form>

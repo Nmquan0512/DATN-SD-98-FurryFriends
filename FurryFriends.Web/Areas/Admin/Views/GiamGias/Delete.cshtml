@@ -1,0 +1,24 @@
+﻿@model FurryFriends.API.Models.GiamGia
+
+@{
+    ViewData["Title"] = "Xóa giảm giá";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h4>Bạn có chắc chắn muốn xóa giảm giá sau?</h4>
+<div>
+    <dl class="row">
+        <dt class="col-sm-3">Tên</dt>
+        <dd class="col-sm-9">@Model.TenGiamGia</dd>
+
+        <dt class="col-sm-3">Phần trăm khuyến mãi</dt>
+        <dd class="col-sm-9">@Model.PhanTramKhuyenMai %</dd>
+    </dl>
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="GiamGiaId" />
+    <input type="submit" value="Xóa" class="btn btn-danger" />
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+</form>

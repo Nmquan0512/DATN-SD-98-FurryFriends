@@ -1,4 +1,7 @@
 ﻿using FurryFriends.API.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FurryFriends.API.Repository.IRepository
 {
@@ -6,8 +9,8 @@ namespace FurryFriends.API.Repository.IRepository
     {
         Task<IEnumerable<Voucher>> GetAllAsync();
         Task<Voucher?> GetByIdAsync(Guid id);
-        Task<Voucher> CreateAsync(Voucher voucher);
-        Task<Voucher?> UpdateAsync(Guid id, Voucher voucher);
-        Task<bool> DeleteAsync(Guid id);
+        Task AddAsync(Voucher voucher);
+        Task UpdateAsync(Voucher voucher);
+        Task DeleteAsync(Guid id);
     }
 }

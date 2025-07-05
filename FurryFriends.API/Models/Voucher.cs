@@ -16,7 +16,7 @@ namespace FurryFriends.API.Models
 
 		[Required]
 		public DateTime NgayKetThuc { get; set; }
-		[Range(0, 1)]
+		[Range(0, 100)]
 		public decimal PhanTramGiam { get; set; }
 
 		[Required]

@@ -1,0 +1,152 @@
+﻿@model FurryFriends.API.Models.GiamGia
+
+@{
+    ViewData["Title"] = "Thêm giảm giá mới";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="top-bar" style="padding-left: 50px;">
+    <h1>@ViewData["Title"]</h1>
+    <div class="user-info" role="region" aria-label="User information">
+        <span>Admin</span>
+        <div class="avatar" aria-hidden="true">AD</div>
+    </div>
+</div>
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Quản lý giảm giá</a></li>
+        <li class="breadcrumb-item active">Thêm mới</li>
+    </ol>
+</nav>
+
+<div class="form-container" style="margin-left: 10px; margin-right: 40px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-0 py-3">
+            <div class="d-flex align-items-center">
+                <div class="card-icon primary me-3">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div>
+                    <h5 class="card-title mb-0">Thông tin giảm giá</h5>
+                    <small class="text-muted">Nhập thông tin để tạo giảm giá mới</small>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            @if (TempData["error"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>@TempData["error"]
+                </div>
+            }
+
+            <form asp-action="Create" method="post" id="createForm" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: none;"></div>
+
+                <div class="row g-4">
+                    <!-- Tên Giảm Giá -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="TenGiamGia" class="form-label fw-semibold">
+                                <i class="fas fa-percent me-2 text-primary"></i>Tên giảm giá
+                            </label>
+                            <input asp-for="TenGiamGia" class="form-control form-control-lg" placeholder="Nhập tên giảm giá" />
+                            <span asp-validation-for="TenGiamGia" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Phần Trăm Khuyến Mãi -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PhanTramKhuyenMai" class="form-label fw-semibold">
+                                <i class="fas fa-percentage me-2 text-primary"></i>Phần trăm khuyến mãi
+                            </label>
+                            <div class="input-group input-group-lg">
+                                <input asp-for="PhanTramKhuyenMai" class="form-control" placeholder="0 - 100" />
+                                <span class="input-group-text bg-light border-start-0">
+                                    <i class="fas fa-percent text-muted"></i>
+                                </span>
+                            </div>
+                            <span asp-validation-for="PhanTramKhuyenMai" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Ngày Bắt Đầu -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="NgayBatDau" class="form-label fw-semibold">
+                                <i class="fas fa-calendar-plus me-2 text-primary"></i>Ngày bắt đầu
+                            </label>
+                            <input asp-for="NgayBatDau" type="date" class="form-control form-control-lg" />
+                            <span asp-validation-for="NgayBatDau" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Ngày Kết Thúc -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="NgayKetThuc" class="form-label fw-semibold">
+                                <i class="fas fa-calendar-minus me-2 text-primary"></i>Ngày kết thúc
+                            </label>
+                            <input asp-for="NgayKetThuc" type="date" class="form-control form-control-lg" />
+                            <span asp-validation-for="NgayKetThuc" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Trạng Thái -->
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-toggle-on me-2 text-primary"></i>Trạng thái
+                            </label>
+                            <div class="d-flex gap-4 mt-2">
+                                <div class="form-check form-check-lg">
+                                    <input class="form-check-input" type="radio" asp-for="TrangThai" value="true" id="TrangThai_True" checked />
+                                    <label class="form-check-label fw-medium" for="TrangThai_True">
+                                        <i class="fas fa-check-circle text-success me-2"></i>Hoạt động
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-lg">
+                                    <input class="form-check-input" type="radio" asp-for="TrangThai" value="false" id="TrangThai_False" />
+                                    <label class="form-check-label fw-medium" for="TrangThai_False">
+                                        <i class="fas fa-times-circle text-danger me-2"></i>Không hoạt động
+                                    </label>
+                                </div>
+                            </div>
+                            <span asp-validation-for="TrangThai" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top">
+                    <a asp-action="Index" class="btn btn-light btn-lg px-4">
+                        <i class="fas fa-arrow-left me-2"></i>Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-save me-2"></i>Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Form validation
+            $('#createForm').on('submit', function(e) {
+                if ($(this).valid()) {
+                    // Form hợp lệ, cho phép submit
+                    return true;
+                }
+            });
+        });
+    </script>
+}

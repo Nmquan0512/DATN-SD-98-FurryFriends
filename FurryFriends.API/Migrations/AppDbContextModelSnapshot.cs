@@ -152,7 +152,8 @@ namespace FurryFriends.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("GiamGiaId")
+                    b.Property<Guid?>("GiamGiaId")
+                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("NgayCapNhat")
@@ -164,7 +165,8 @@ namespace FurryFriends.API.Migrations
                     b.Property<decimal>("PhanTramGiamGia")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("SanPhamId")
+                    b.Property<Guid?>("SanPhamId")
+                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("TrangThai")
@@ -185,13 +187,15 @@ namespace FurryFriends.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("NgayBatDau")
+                    b.Property<DateTime?>("NgayBatDau")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("NgayCapNhat")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("NgayKetThuc")
+                    b.Property<DateTime?>("NgayKetThuc")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("NgayTao")
@@ -199,10 +203,6 @@ namespace FurryFriends.API.Migrations
 
                     b.Property<decimal>("PhanTramKhuyenMai")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("SanPhamApDung")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TenGiamGia")
                         .IsRequired()
@@ -423,7 +423,7 @@ namespace FurryFriends.API.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<Guid>("TaiKhoanId")
+                    b.Property<Guid?>("TaiKhoanId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TenKhachHang")
@@ -487,7 +487,8 @@ namespace FurryFriends.API.Migrations
 
             modelBuilder.Entity("FurryFriends.API.Models.NhanVien", b =>
                 {
-                    b.Property<Guid>("TaiKhoanId")
+                    b.Property<Guid>("NhanVienId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ChucVuId")
@@ -527,12 +528,19 @@ namespace FurryFriends.API.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<Guid?>("TaiKhoanId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("TrangThai")
                         .HasColumnType("bit");
 
-                    b.HasKey("TaiKhoanId");
+                    b.HasKey("NhanVienId");
 
                     b.HasIndex("ChucVuId");
+
+                    b.HasIndex("TaiKhoanId")
+                        .IsUnique()
+                        .HasFilter("[TaiKhoanId] IS NOT NULL");
 
                     b.ToTable("NhanViens");
                 });
@@ -543,14 +551,14 @@ namespace FurryFriends.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TaiKhoanId")
+                    b.Property<Guid?>("TaiKhoanId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TenSanPham")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ThuongHieuId")
+                    b.Property<Guid?>("ThuongHieuId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("TrangThai")
@@ -615,7 +623,7 @@ namespace FurryFriends.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("KhachHangId")
+                    b.Property<Guid?>("KhachHangId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("NgayCapNhatCuoiCung")
@@ -668,6 +676,35 @@ namespace FurryFriends.API.Migrations
                     b.HasKey("ThanhPhanId");
 
                     b.ToTable("ThanhPhans");
+                });
+
+            modelBuilder.Entity("FurryFriends.API.Models.ThongBao", b =>
+                {
+                    b.Property<Guid>("ThongBaoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("DaDoc")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Loai")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("NgayTao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("NoiDung")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ThongBaoId");
+
+                    b.ToTable("ThongBaos");
                 });
 
             modelBuilder.Entity("FurryFriends.API.Models.ThuongHieu", b =>
@@ -799,32 +836,32 @@ namespace FurryFriends.API.Migrations
 
             modelBuilder.Entity("FurryFriends.API.Models.DiaChiKhachHang", b =>
                 {
-                    b.HasOne("FurryFriends.API.Models.KhachHang", "KhachHangs")
+                    b.HasOne("FurryFriends.API.Models.KhachHang", "KhachHang")
                         .WithMany("DiaChiKhachHangs")
                         .HasForeignKey("KhachHangId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("KhachHangs");
+                    b.Navigation("KhachHang");
                 });
 
             modelBuilder.Entity("FurryFriends.API.Models.DotGiamGiaSanPham", b =>
                 {
-                    b.HasOne("FurryFriends.API.Models.GiamGia", "GiamGias")
+                    b.HasOne("FurryFriends.API.Models.GiamGia", "GiamGia")
                         .WithMany("DotGiamGiaSanPhams")
                         .HasForeignKey("GiamGiaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FurryFriends.API.Models.SanPham", "SanPhams")
+                    b.HasOne("FurryFriends.API.Models.SanPham", "SanPham")
                         .WithMany("DotGiamGiaSanPhams")
                         .HasForeignKey("SanPhamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("GiamGias");
+                    b.Navigation("GiamGia");
 
-                    b.Navigation("SanPhams");
+                    b.Navigation("SanPham");
                 });
 
             modelBuilder.Entity("FurryFriends.API.Models.GioHang", b =>
@@ -925,8 +962,7 @@ namespace FurryFriends.API.Migrations
                     b.HasOne("FurryFriends.API.Models.TaiKhoan", "TaiKhoan")
                         .WithOne("NhanVien")
                         .HasForeignKey("FurryFriends.API.Models.NhanVien", "TaiKhoanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("ChucVu");
 
@@ -938,14 +974,12 @@ namespace FurryFriends.API.Migrations
                     b.HasOne("FurryFriends.API.Models.TaiKhoan", "TaiKhoan")
                         .WithMany("SanPhams")
                         .HasForeignKey("TaiKhoanId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("FurryFriends.API.Models.ThuongHieu", "ThuongHieu")
                         .WithMany("SanPhams")
                         .HasForeignKey("ThuongHieuId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("TaiKhoan");
 
@@ -994,9 +1028,7 @@ namespace FurryFriends.API.Migrations
                 {
                     b.HasOne("FurryFriends.API.Models.KhachHang", "KhachHang")
                         .WithMany("TaiKhoans")
-                        .HasForeignKey("KhachHangId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("KhachHangId");
 
                     b.Navigation("KhachHang");
                 });

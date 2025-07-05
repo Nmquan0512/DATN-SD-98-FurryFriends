@@ -1,42 +1,110 @@
-﻿using FurryFriends.Web.Services;
+﻿using FurryFriends.API.Repository;
+using FurryFriends.API.Repository.IRepository;
 using FurryFriends.Web.Service.IService;
 using FurryFriends.Web.Service;
 using FurryFriends.Web.Services;
 using FurryFriends.Web.Services.IService;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Facebook;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+// Add services to the container.
 builder.Services.AddControllersWithViews();
-
-// Cấu hình HttpClient cho các Service dùng để gọi API
-builder.Services.AddHttpClient<IKhachHangService, KhachHangService>(static client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7289/");
-});
 
 builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+builder.Services.AddHttpClient<IGiamGiaService, GiamGiaService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+builder.Services.AddHttpClient<IDotGiamGiaService, DotGiamGiaService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+builder.Services.AddHttpClient<ISanPhamRepository, SanPhamRepository>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/");
+    client.Timeout = TimeSpan.FromSeconds(30);
 });
 builder.Services.AddHttpClient<IDiaChiKhachHangService, DiaChiKhachHangService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+builder.Services.AddHttpClient<IKhachHangService, KhachHangService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+builder.Services.AddHttpClient<IChucVuService, ChucVuService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/"); // Địa chỉ API, thay đổi port nếu cần
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+builder.Services.AddHttpClient<ITaiKhoanService, TaiKhoanService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/"); // Địa chỉ API, thay đổi port nếu cần
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+builder.Services.AddHttpClient<INhanVienService, NhanVienService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/"); // Địa chỉ API, thay đổi port nếu cần
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+    client.Timeout = TimeSpan.FromSeconds(30);
 });
 builder.Services.AddHttpClient<IVoucherService, VoucherService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+    client.Timeout = TimeSpan.FromSeconds(30);
 });
-builder.Services.AddHttpClient<IVoucherService, VoucherService>(client =>
+
+// Register SanPhamService for Dashboard
+builder.Services.AddScoped<ISanPhamService, SanPhamService>();
+
+// Thêm cấu hình xác thực Google
+builder.Services.AddAuthentication(options =>
 {
-    client.BaseAddress = new Uri("https://localhost:7289/");
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(options =>
+{
+    options.ClientId = "968410379877-vk3bu6n1711b6ip9756ranke5uc7rvmd.apps.googleusercontent.com";
+    options.ClientSecret = "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";
+    options.CallbackPath = "/DangKy/signin-google";
 });
+
+builder.Services.AddAuthentication()
+    .AddFacebook(options =>
+    {
+        options.AppId = "1749364632375525";
+        options.AppSecret = "717e10cb8b4a6db09ac7287506fc2629";
+        options.CallbackPath = "/signin-facebook";
+        options.Fields.Add("email");
+        options.Fields.Add("name");
+        options.Fields.Add("picture");
+    });
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -47,12 +115,11 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-// Điều hướng nếu dùng Area
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
         name: "Areas",
-        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+        pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
     endpoints.MapControllerRoute(
         name: "default",

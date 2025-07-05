@@ -21,18 +21,28 @@ namespace FurryFriends.API.Repository
 
         public async Task<IEnumerable<HoaDon>> GetHoaDonListAsync()
         {
-            var hoaDons = await _context.HoaDons
-                .Include(h => h.HoaDonChiTiets)
-                .ThenInclude(ct => ct.SanPham)
-                .ToListAsync();
-
-            if (hoaDons == null || !hoaDons.Any())
+            try
             {
-                throw new InvalidOperationException("Không tìm thấy hóa đơn nào trong hệ thống");
-            }
+                var hoaDons = await _context.HoaDons
+                    .Include(h => h.HoaDonChiTiets)
+                        .ThenInclude(ct => ct.SanPham)
+                    .Include(h => h.KhachHang)
+                    .Include(h => h.TaiKhoan)
+                    .Include(h => h.Voucher)
+                    .Include(h => h.HinhThucThanhToan)
+                    .AsNoTracking() // Tối ưu performance
+                    .ToListAsync();
 
-            return hoaDons;
+                return hoaDons;
+            }
+            catch (Exception ex)
+            {
+                // Log error và trả về empty list thay vì throw exception
+                Console.WriteLine($"Error in GetHoaDonListAsync: {ex.Message}");
+                return new List<HoaDon>();
+            }
         }
+
 
         public async Task<HoaDon> GetHoaDonByIdAsync(Guid hoaDonId)
         {
@@ -42,9 +52,9 @@ namespace FurryFriends.API.Repository
             }
 
             var hoaDon = await _context.Set<HoaDon>()
-                .Include(h => h.HoaDonChiTiets)
-                .ThenInclude(ct => ct.SanPham)
-                .FirstOrDefaultAsync(h => h.HoaDonId == hoaDonId);
+                                 .Include(h => h.HoaDonChiTiets)
+                                 .ThenInclude(ct => ct.SanPham)
+                                 .FirstOrDefaultAsync(h => h.HoaDonId == hoaDonId);
 
             if (hoaDon == null)
             {
@@ -70,42 +80,42 @@ namespace FurryFriends.API.Repository
             }
 
             var hoaDon = await GetHoaDonByIdAsync(hoaDonId);
-            if (hoaDon == null)
-            {
-                throw new KeyNotFoundException($"Không tìm thấy hóa đơn với ID: {hoaDonId}");
-            }
+            //if (hoaDon == null)
+            //{
+            //    throw new KeyNotFoundException($"Không tìm thấy hóa đơn với ID: {hoaDonId}");
+            //}
 
-            if (hoaDon.HoaDonChiTiets == null || !hoaDon.HoaDonChiTiets.Any())
-            {
-                throw new InvalidOperationException($"Hóa đơn {hoaDonId} không có chi tiết sản phẩm");
-            }
+            //if (hoaDon.HoaDonChiTiets == null || !hoaDon.HoaDonChiTiets.Any())
+            //{
+            //    throw new InvalidOperationException($"Hóa đơn {hoaDonId} không có chi tiết sản phẩm");
+            //}
 
-            // Kiểm tra thông tin khách hàng
-            if (string.IsNullOrWhiteSpace(hoaDon.TenCuaKhachHang))
-            {
-                throw new InvalidOperationException("Hóa đơn thiếu thông tin tên khách hàng");
-            }
+            //// Kiểm tra thông tin khách hàng
+            //if (string.IsNullOrWhiteSpace(hoaDon.TenCuaKhachHang))
+            //{
+            //    throw new InvalidOperationException("Hóa đơn thiếu thông tin tên khách hàng");
+            //}
 
-            if (string.IsNullOrWhiteSpace(hoaDon.SdtCuaKhachHang))
-            {
-                throw new InvalidOperationException("Hóa đơn thiếu thông tin số điện thoại khách hàng");
-            }
+            //if (string.IsNullOrWhiteSpace(hoaDon.SdtCuaKhachHang))
+            //{
+            //    throw new InvalidOperationException("Hóa đơn thiếu thông tin số điện thoại khách hàng");
+            //}
 
-            // Kiểm tra thông tin thanh toán
-            if (hoaDon.TongTien <= 0)
-            {
-                throw new InvalidOperationException("Tổng tiền hóa đơn không hợp lệ");
-            }
+            //// Kiểm tra thông tin thanh toán
+            //if (hoaDon.TongTien <= 0)
+            //{
+            //    throw new InvalidOperationException("Tổng tiền hóa đơn không hợp lệ");
+            //}
 
-            if (hoaDon.TongTienSauKhiGiam <= 0)
-            {
-                throw new InvalidOperationException("Tổng tiền sau khi giảm giá không hợp lệ");
-            }
+            //if (hoaDon.TongTienSauKhiGiam <= 0)
+            //{
+            //    throw new InvalidOperationException("Tổng tiền sau khi giảm giá không hợp lệ");
+            //}
 
-            if (hoaDon.TongTienSauKhiGiam > hoaDon.TongTien)
-            {
-                throw new InvalidOperationException("Tổng tiền sau khi giảm giá không được lớn hơn tổng tiền");
-            }
+            //if (hoaDon.TongTienSauKhiGiam > hoaDon.TongTien)
+            //{
+            //    throw new InvalidOperationException("Tổng tiền sau khi giảm giá không được lớn hơn tổng tiền");
+            //}
 
             using (var memoryStream = new MemoryStream())
             {

@@ -14,5 +14,7 @@ namespace FurryFriends.Web.Services.IService
         Task DeleteKhachHangAsync(Guid id);
         Task AddKhachHangAsync(KhachHang model);
         Task UpdateKhachHangAsync(KhachHang model);
+        Task<KhachHang?> FindByEmailAsync(string email);
+        Task<int> GetTotalCustomersAsync();
     }
 }

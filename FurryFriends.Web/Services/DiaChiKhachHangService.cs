@@ -41,10 +41,5 @@ namespace FurryFriends.Web.Service
         {
             await _httpClient.DeleteAsync($"api/DiaChiKhachHang/{id}");
         }
-
-        public Task<string?> GetDiaChiByKhachHangIdAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -69,5 +69,17 @@ namespace FurryFriends.Web.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<KhachHang?> FindByEmailAsync(string email)
+        {
+            var all = await GetAllAsync();
+            return all.FirstOrDefault(kh => kh.EmailCuaKhachHang == email);
+        }
+
+        public async Task<int> GetTotalCustomersAsync()
+        {
+            var all = await GetAllAsync();
+            return all.Count();
+        }
     }
 }

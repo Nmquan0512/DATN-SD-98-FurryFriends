@@ -15,42 +15,24 @@ namespace FurryFriends.Web.Services
 
         public async Task<IEnumerable<Voucher>> GetAllAsync()
         {
-            var response = await _httpClient.GetAsync("api/Voucher");
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<IEnumerable<Voucher>>() ?? new List<Voucher>();
-            }
-
-            return new List<Voucher>();
+            return await _httpClient.GetFromJsonAsync<IEnumerable<Voucher>>("api/Voucher");
         }
 
         public async Task<Voucher?> GetByIdAsync(Guid id)
         {
-            var response = await _httpClient.GetAsync($"api/Voucher/{id}");
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<Voucher>();
-            }
-
-            return null;
+            return await _httpClient.GetFromJsonAsync<Voucher>($"api/Voucher/{id}");
         }
 
-        public async Task<Voucher> CreateAsync(Voucher voucher)
+        public async Task<bool> CreateAsync(Voucher voucher)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Voucher", voucher);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<Voucher>();
+            return response.IsSuccessStatusCode;
         }
 
-        public async Task<Voucher?> UpdateAsync(Guid id, Voucher voucher)
+        public async Task<bool> UpdateAsync(Guid id, Voucher voucher)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Voucher/{id}", voucher);
-            if (response.IsSuccessStatusCode)
-            {
-                return await response.Content.ReadFromJsonAsync<Voucher>();
-            }
-
-            return null;
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<bool> DeleteAsync(Guid id)

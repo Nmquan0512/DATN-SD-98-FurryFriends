@@ -9,18 +9,17 @@ namespace FurryFriends.API.Controllers
     [ApiController]
     public class VoucherController : ControllerBase
     {
-        private readonly IVoucherRepository _voucherRepository;
+        private readonly IVoucherRepository _repository;
 
-        public VoucherController(IVoucherRepository voucherRepository)
+        public VoucherController(IVoucherRepository repository)
         {
-            _voucherRepository = voucherRepository;
+            _repository = repository;
         }
 
-       
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var vouchers = await _voucherRepository.GetAllAsync();
+            var vouchers = await _repository.GetAllAsync();
             return Ok(vouchers);
         }
 
@@ -28,7 +27,7 @@ namespace FurryFriends.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var voucher = await _voucherRepository.GetByIdAsync(id);
+            var voucher = await _repository.GetByIdAsync(id);
             if (voucher == null)
                 return NotFound();
             return Ok(voucher);
@@ -41,32 +40,29 @@ namespace FurryFriends.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var created = await _voucherRepository.CreateAsync(voucher);
-            return CreatedAtAction(nameof(GetById), new { id = created.VoucherId }, created);
+            voucher.VoucherId = Guid.NewGuid();
+            voucher.NgayTao = DateTime.UtcNow;
+            await _repository.AddAsync(voucher);
+            return CreatedAtAction(nameof(GetById), new { id = voucher.VoucherId }, voucher);
         }
 
         // PUT: api/Voucher/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] Voucher voucher)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (id != voucher.VoucherId)
+                return BadRequest();
 
-            var updated = await _voucherRepository.UpdateAsync(id, voucher);
-            if (updated == null)
-                return NotFound();
-
-            return Ok(updated);
+            voucher.NgayCapNhat = DateTime.UtcNow;
+            await _repository.UpdateAsync(voucher);
+            return NoContent();
         }
 
         // DELETE: api/Voucher/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var deleted = await _voucherRepository.DeleteAsync(id);
-            if (!deleted)
-                return NotFound();
-
+            await _repository.DeleteAsync(id);
             return NoContent();
         }
     }

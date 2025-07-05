@@ -13,7 +13,8 @@ namespace FurryFriends.API.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=DESKTOP-PN5I41O\\SQLEXPRESS;Initial Catalog=DuanNhom11ModelsBanHang;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+                //optionsBuilder.UseSqlServer("Data Source=ANH2005\\SQLEXPRESS;Initial Catalog=duantn;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Data Source=XCBA2\\SQLEXPRESS;Initial Catalog=DuanNhom11ModelsBanHang;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
             }
         }
 
@@ -41,6 +42,7 @@ namespace FurryFriends.API.Data
         public DbSet<ChatLieu> ChatLieus { get; set; }
         public DbSet<SanPhamThanhPhan> SanPhamThanhPhans { get; set; }
         public DbSet<SanPhamChatLieu> SanPhamChatLieus { get; set; }
+        public DbSet<ThongBao> ThongBaos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -63,10 +65,9 @@ namespace FurryFriends.API.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<TaiKhoan>()
-                .HasOne(kh => kh.KhachHang)
-                .WithMany(tk => tk.TaiKhoans)
-                .HasForeignKey(kh => kh.KhachHangId)
-                .OnDelete(DeleteBehavior.Cascade);
+                  .HasOne(tk => tk.KhachHang)
+                .WithMany(kh => kh.TaiKhoans)
+                .HasForeignKey(tk => tk.KhachHangId);
 
             modelBuilder.Entity<Voucher>()
                 .HasOne(v => v.TaiKhoan)
@@ -170,7 +171,7 @@ namespace FurryFriends.API.Data
         private void ConfigureDotGiamGia(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DotGiamGiaSanPham>()
-                .HasOne(dg => dg.GiamGias)
+                .HasOne(dg => dg.GiamGia)
                 .WithMany(gg => gg.DotGiamGiaSanPhams)
                 .HasForeignKey(dg => dg.GiamGiaId)
                 .OnDelete(DeleteBehavior.Cascade);

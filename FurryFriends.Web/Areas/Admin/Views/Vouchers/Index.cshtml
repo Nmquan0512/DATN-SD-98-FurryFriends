@@ -1,0 +1,83 @@
+@model IEnumerable<FurryFriends.API.Models.Voucher>
+@{
+    ViewData["Title"] = "Quản lý Voucher";
+}
+<div class="top-bar" style="padding-left: 50px;">
+    <h1>@ViewData["Title"]</h1>
+    <a asp-action="Create" asp-controller="Vouchers" class="btn btn-primary">
+        <i class="fas fa-plus"></i>
+        Thêm mới
+    </a>
+</div>
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Quản lý Voucher</li>
+    </ol>
+</nav>
+<div class="form-container table-responsive" id="voucherTableContainer" style="margin-left: 10px; margin-right: 40px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="voucherTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tên voucher</th>
+                            <th>Phần trăm giảm</th>
+                            <th>Ngày bắt đầu</th>
+                            <th>Ngày kết thúc</th>
+                            <th>Số lượng</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.TenVoucher</td>
+                                <td>@(item.PhanTramGiam * 100)%</td>
+                                <td>@item.NgayBatDau.ToString("dd/MM/yyyy")</td>
+                                <td>@item.NgayKetThuc.ToString("dd/MM/yyyy")</td>
+                                <td>@item.SoLuong</td>
+                                <td>
+                                    @if (item.TrangThai == 1)
+                                    {
+                                        <span class="badge bg-success">Hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Không hoạt động</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.VoucherId" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                    <a asp-action="Delete" asp-route-id="@item.VoucherId" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#voucherTable').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json' },
+                responsive: true,
+                order: [[1, 'desc']]
+            });
+        });
+    </script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.min.css" />
+}
