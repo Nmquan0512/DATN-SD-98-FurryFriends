@@ -4,56 +4,54 @@ using FurryFriends.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace FurryFriends.API.Repositories
+namespace FurryFriends.API.Repository
 {
-	public class KichCoRepository : IKichCoRepository
-	{
-		private readonly AppDbContext _context;
-		private readonly DbSet<KichCo> _dbSet;
+    public class KichCoRepository : IKichCoRepository
+    {
+        private readonly AppDbContext _context;
 
-		public KichCoRepository(AppDbContext context)
-		{
-			_context = context;
-			_dbSet = _context.Set<KichCo>();
-		}
+        public KichCoRepository(AppDbContext context)
+        {
+            _context = context;
+        }
 
-		public async Task<IEnumerable<KichCo>> GetAllAsync()
-		{
-			return await _dbSet.ToListAsync();
-		}
+        public async Task<IEnumerable<KichCo>> GetAllAsync()
+        {
+            return await _context.KichCos.ToListAsync();
+        }
 
-		public async Task<KichCo?> GetByIdAsync(Guid id)
-		{
-			return await _dbSet.FirstOrDefaultAsync(x => x.KichCoId == id);
-		}
+        public async Task<KichCo> GetByIdAsync(Guid id)
+        {
+            return await _context.KichCos.FindAsync(id);
+        }
 
-		public async Task<IEnumerable<KichCo>> FindAsync(Expression<Func<KichCo, bool>> predicate)
-		{
-			return await _dbSet.Where(predicate).ToListAsync();
-		}
+        public async Task AddAsync(KichCo entity)
+        {
+            await _context.KichCos.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
 
-		public async Task AddAsync(KichCo entity)
-		{
-			await _dbSet.AddAsync(entity);
-		}
+        public async Task UpdateAsync(KichCo entity)
+        {
+            _context.KichCos.Update(entity);
+            await _context.SaveChangesAsync();
+        }
 
-		public void Update(KichCo entity)
-		{
-			_dbSet.Update(entity);
-		}
+        public async Task DeleteAsync(Guid id)
+        {
+            var entity = await _context.KichCos.FindAsync(id);
+            if (entity != null)
+            {
+                _context.KichCos.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
 
-		public void Delete(KichCo entity)
-		{
-			_dbSet.Remove(entity);
-		}
-
-		public async Task SaveAsync()
-		{
-			await _context.SaveChangesAsync();
-		}
-	}
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await _context.KichCos.AnyAsync(e => e.KichCoId == id);
+        }
+    }
 }

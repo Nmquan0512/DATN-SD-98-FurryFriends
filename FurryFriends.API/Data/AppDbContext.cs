@@ -11,11 +11,9 @@ namespace FurryFriends.API.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Data Source=ANH2005\\SQLEXPRESS;Initial Catalog=duantn;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
-            }
+            optionsBuilder.UseSqlServer(@"Data Source=.\SQLEXPRESS;Initial Catalog=DuanNhomTN_98;Trusted_Connection=True;Integrated Security=True;TrustServerCertificate=True");
         }
+
 
         // DbSets
         public DbSet<TaiKhoan> TaiKhoans { get; set; }
@@ -26,7 +24,7 @@ namespace FurryFriends.API.Data
         public DbSet<ThuongHieu> ThuongHieus { get; set; }
         public DbSet<SanPham> SanPhams { get; set; }
         public DbSet<SanPhamChiTiet> SanPhamChiTiets { get; set; }
-        public DbSet<KichCo> BangKichCos { get; set; }
+        public DbSet<KichCo> KichCos { get; set; }
         public DbSet<MauSac> MauSacs { get; set; }
         public DbSet<GiamGia> GiamGias { get; set; }
         public DbSet<DotGiamGiaSanPham> DotGiamGiaSanPhams { get; set; }

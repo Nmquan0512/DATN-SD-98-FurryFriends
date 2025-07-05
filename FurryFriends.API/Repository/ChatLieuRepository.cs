@@ -1,59 +1,57 @@
 ﻿using FurryFriends.API.Data;
 using FurryFriends.API.Models;
-using FurryFriends.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using FurryFriends.API.Repository.IRepository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace FurryFriends.API.Repositories
+namespace FurryFriends.API.Repository
 {
-	public class ChatLieuRepository : IChatLieuRepository
-	{
-		private readonly AppDbContext _context;
-		private readonly DbSet<ChatLieu> _dbSet;
+    public class ChatLieuRepository : IChatLieuRepository
+    {
+        private readonly AppDbContext _context;
 
-		public ChatLieuRepository(AppDbContext context)
-		{
-			_context = context;
-			_dbSet = _context.Set<ChatLieu>();
-		}
+        public ChatLieuRepository(AppDbContext context)
+        {
+            _context = context;
+        }
 
-		public async Task<IEnumerable<ChatLieu>> GetAllAsync()
-		{
-			return await _dbSet.ToListAsync();
-		}
+        public async Task<IEnumerable<ChatLieu>> GetAllAsync()
+        {
+            return await _context.ChatLieus.ToListAsync();
+        }
 
-		public async Task<ChatLieu?> GetByIdAsync(Guid id)
-		{
-			return await _dbSet.FirstOrDefaultAsync(x => x.ChatLieuId == id);
-		}
+        public async Task<ChatLieu> GetByIdAsync(Guid id)
+        {
+            return await _context.ChatLieus.FindAsync(id);
+        }
 
-		public async Task<IEnumerable<ChatLieu>> FindAsync(Expression<Func<ChatLieu, bool>> predicate)
-		{
-			return await _dbSet.Where(predicate).ToListAsync();
-		}
+        public async Task AddAsync(ChatLieu entity)
+        {
+            await _context.ChatLieus.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
 
-		public async Task AddAsync(ChatLieu entity)
-		{
-			await _dbSet.AddAsync(entity);
-		}
+        public async Task UpdateAsync(ChatLieu entity)
+        {
+            _context.ChatLieus.Update(entity);
+            await _context.SaveChangesAsync();
+        }
 
-		public void Update(ChatLieu entity)
-		{
-			_dbSet.Update(entity);
-		}
+        public async Task DeleteAsync(Guid id)
+        {
+            var entity = await _context.ChatLieus.FindAsync(id);
+            if (entity != null)
+            {
+                _context.ChatLieus.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
 
-		public void Delete(ChatLieu entity)
-		{
-			_dbSet.Remove(entity);
-		}
-
-		public async Task SaveAsync()
-		{
-			await _context.SaveChangesAsync();
-		}
-	}
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await _context.ChatLieus.AnyAsync(e => e.ChatLieuId == id);
+        }
+    }
 }

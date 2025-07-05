@@ -1,6 +1,9 @@
 using FurryFriends.API.Data;
+using FurryFriends.API.Repositories;
 using FurryFriends.API.Repository;
 using FurryFriends.API.Repository.IRepository;
+using FurryFriends.API.Services.IServices;
+using FurryFriends.API.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -20,7 +23,6 @@ builder.Services.AddSwaggerGen();
 // Add DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 // Add Repository Services
 builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 
@@ -35,9 +37,22 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader();
         });
 });
-
+builder.Services.AddScoped<IChatLieuRepository, ChatLieuRepository>();
+// Trong FurryFriends.API.Program.cs
+builder.Services.AddScoped<IChatLieuService, ChatLieuService>();
+builder.Services.AddScoped<IThanhPhanRepository, ThanhPhanRepository>();
+// Trong FurryFriends.API.Program.cs
+builder.Services.AddScoped<IThanhPhanService, ThanhPhanService>();
+builder.Services.AddScoped<IThuongHieuService, ThuongHieuService>();
+// Trong FurryFriends.API.Program.cs
+builder.Services.AddScoped<IThuongHieuRepository, ThuongHieuRepository>();
+builder.Services.AddScoped<IMauSacRepository, MauSacRepository>();
+// Trong FurryFriends.API.Program.cs
+builder.Services.AddScoped<IMauSacService, MauSacService>();
+builder.Services.AddScoped<IKichCoService, KichCoService>();
+// Trong FurryFriends.API.Program.cs
+builder.Services.AddScoped<IKichCoRepository, KichCoRepository>();
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
