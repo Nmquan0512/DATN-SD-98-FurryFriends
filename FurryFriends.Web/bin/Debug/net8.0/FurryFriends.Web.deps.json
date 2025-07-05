@@ -2660,7 +2660,10 @@
           "itext7": "9.2.0"
         },
         "runtime": {
-          "FurryFriends.API.dll": {}
+          "FurryFriends.API.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       }
     }

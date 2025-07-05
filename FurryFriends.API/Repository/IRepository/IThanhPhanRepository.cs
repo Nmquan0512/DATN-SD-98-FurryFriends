@@ -3,10 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FurryFriends.API.Repositories
+namespace FurryFriends.API.Repository.IRepository
 {
-	public interface IThanhPhanRepository : IRepository<ThanhPhan>
-	{
-		Task<IEnumerable<ThanhPhan>> GetActiveAsync(); // Lấy danh sách trạng thái active (TrangThai == true)
-	}
+    public interface IThanhPhanRepository
+    {
+        Task<IEnumerable<ThanhPhan>> GetAllAsync();
+        Task<ThanhPhan> GetByIdAsync(Guid id);
+        Task AddAsync(ThanhPhan entity);
+        Task UpdateAsync(ThanhPhan entity);
+        Task DeleteAsync(Guid id);
+        Task<bool> ExistsAsync(Guid id);
+    }
 }

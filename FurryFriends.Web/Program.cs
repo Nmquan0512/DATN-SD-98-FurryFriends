@@ -18,6 +18,28 @@ builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
     client.BaseAddress = new Uri("https://localhost:7289/");
     client.Timeout = TimeSpan.FromSeconds(30);
 });
+builder.Services.AddHttpClient<IChatLieuService, ChatLieuService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
+builder.Services.AddHttpClient<IThanhPhanService, ThanhPhanService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
+builder.Services.AddHttpClient<IThuongHieuService, ThuongHieuService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
+builder.Services.AddHttpClient<IMauSacService, MauSacService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
+builder.Services.AddHttpClient<IKichCoService, KichCoService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
+
+
 
 builder.Services.AddHttpClient<IGiamGiaService, GiamGiaService>(client =>
 {

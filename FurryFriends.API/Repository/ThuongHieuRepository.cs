@@ -1,63 +1,57 @@
 ﻿using FurryFriends.API.Data;
 using FurryFriends.API.Models;
+using FurryFriends.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace FurryFriends.API.Repositories
+namespace FurryFriends.API.Repository
 {
-	public class ThuongHieuRepository : IThuongHieuRepository
-	{
-		private readonly AppDbContext _context;
-		private readonly DbSet<ThuongHieu> _dbSet;
+    public class ThuongHieuRepository : IThuongHieuRepository
+    {
+        private readonly AppDbContext _context;
 
-		public ThuongHieuRepository(AppDbContext context)
-		{
-			_context = context;
-			_dbSet = _context.Set<ThuongHieu>();
-		}
+        public ThuongHieuRepository(AppDbContext context)
+        {
+            _context = context;
+        }
 
-		public async Task<IEnumerable<ThuongHieu>> GetAllAsync()
-		{
-			return await _dbSet.ToListAsync();
-		}
+        public async Task<IEnumerable<ThuongHieu>> GetAllAsync()
+        {
+            return await _context.ThuongHieus.ToListAsync();
+        }
 
-		public async Task<ThuongHieu?> GetByIdAsync(Guid id)
-		{
-			return await _dbSet.FindAsync(id);
-		}
+        public async Task<ThuongHieu> GetByIdAsync(Guid id)
+        {
+            return await _context.ThuongHieus.FindAsync(id);
+        }
 
-		public async Task<IEnumerable<ThuongHieu>> FindAsync(Expression<Func<ThuongHieu, bool>> predicate)
-		{
-			return await _dbSet.Where(predicate).ToListAsync();
-		}
+        public async Task AddAsync(ThuongHieu entity)
+        {
+            await _context.ThuongHieus.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
 
-		public async Task AddAsync(ThuongHieu entity)
-		{
-			await _dbSet.AddAsync(entity);
-		}
+        public async Task UpdateAsync(ThuongHieu entity)
+        {
+            _context.ThuongHieus.Update(entity);
+            await _context.SaveChangesAsync();
+        }
 
-		public void Update(ThuongHieu entity)
-		{
-			_dbSet.Update(entity);
-		}
+        public async Task DeleteAsync(Guid id)
+        {
+            var entity = await _context.ThuongHieus.FindAsync(id);
+            if (entity != null)
+            {
+                _context.ThuongHieus.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
 
-		public void Delete(ThuongHieu entity)
-		{
-			_dbSet.Remove(entity);
-		}
-
-		public async Task SaveAsync()
-		{
-			await _context.SaveChangesAsync();
-		}
-
-		public async Task<IEnumerable<ThuongHieu>> GetActiveBrandsAsync()
-		{
-			return await _dbSet.Where(x => x.TrangThai).ToListAsync();
-		}
-	}
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await _context.ThuongHieus.AnyAsync(e => e.ThuongHieuId == id);
+        }
+    }
 }

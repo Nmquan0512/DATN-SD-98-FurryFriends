@@ -2,57 +2,47 @@
 using FurryFriends.API.Models;
 using FurryFriends.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
-namespace FurryFriends.API.Repositories
+namespace FurryFriends.API.Repository
 {
-	public class MauSacRepository : IMauSacRepository
-	{
-		private readonly AppDbContext _context;
-		private readonly DbSet<MauSac> _dbSet;
+    public class MauSacRepository : IMauSacRepository
+    {
+        private readonly AppDbContext _context;
 
-		public MauSacRepository(AppDbContext context)
-		{
-			_context = context;
-			_dbSet = _context.Set<MauSac>();
-		}
+        public MauSacRepository(AppDbContext context)
+        {
+            _context = context;
+        }
 
-		public async Task<IEnumerable<MauSac>> GetAllAsync()
-		{
-			return await _dbSet.ToListAsync();
-		}
+        public async Task<IEnumerable<MauSac>> GetAllAsync() =>
+            await _context.MauSacs.ToListAsync();
 
-		public async Task<MauSac?> GetByIdAsync(Guid id)
-		{
-			return await _dbSet.FirstOrDefaultAsync(x => x.MauSacId == id);
-		}
+        public async Task<MauSac> GetByIdAsync(Guid id) =>
+            await _context.MauSacs.FindAsync(id);
 
-		public async Task<IEnumerable<MauSac>> FindAsync(Expression<Func<MauSac, bool>> predicate)
-		{
-			return await _dbSet.Where(predicate).ToListAsync();
-		}
+        public async Task AddAsync(MauSac entity)
+        {
+            await _context.MauSacs.AddAsync(entity);
+            await _context.SaveChangesAsync();
+        }
 
-		public async Task AddAsync(MauSac entity)
-		{
-			await _dbSet.AddAsync(entity);
-		}
+        public async Task UpdateAsync(MauSac entity)
+        {
+            _context.MauSacs.Update(entity);
+            await _context.SaveChangesAsync();
+        }
 
-		public void Update(MauSac entity)
-		{
-			_dbSet.Update(entity);
-		}
+        public async Task DeleteAsync(Guid id)
+        {
+            var entity = await _context.MauSacs.FindAsync(id);
+            if (entity != null)
+            {
+                _context.MauSacs.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
 
-		public void Delete(MauSac entity)
-		{
-			_dbSet.Remove(entity);
-		}
-
-		public async Task SaveAsync()
-		{
-			await _context.SaveChangesAsync();
-		}
-	}
+        public async Task<bool> ExistsAsync(Guid id) =>
+            await _context.MauSacs.AnyAsync(x => x.MauSacId == id);
+    }
 }

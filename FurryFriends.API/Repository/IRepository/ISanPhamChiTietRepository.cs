@@ -2,7 +2,7 @@
 
 namespace FurryFriends.API.Repository.IRepository
 {
-	public interface ISanPhamChiTietRepository : IRepository<SanPhamChiTiet>
+	public interface ISanPhamChiTietRepository
 	{
 	}
 }

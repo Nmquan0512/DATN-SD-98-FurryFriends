@@ -11,8 +11,8 @@ namespace FurryFriends.API.Models
 		[StringLength(50)]
 		[RegularExpression(@"^[a-zA-Z0-9\s]+$")]
 		public string TenMau { get; set; }
-
-		public string MoTa { get; set; }
+		public string MaMau { get; set; }
+        public string MoTa { get; set; }
 		public bool TrangThai { get; set; }
 
 		public virtual ICollection<SanPhamChiTiet> SanPhamChiTiets { get; set; }
