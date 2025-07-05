@@ -361,6 +361,15 @@
             <li><a href="/Admin/KhachHang"><i class="fas fa-users"></i> Quản lý khách hàng</a></li>
             <li><a href="/Admin/BaoCao"><i class="fas fa-chart-line"></i> Báo cáo</a></li>
             <li><a href="/Admin/CaiDat"><i class="fas fa-cog"></i> Cài đặt</a></li>
+            <li>
+                @if (Context.Session.GetString("Role") != null)
+                {
+                <li class="nav-item">
+                    <!-- ĐÚNG: Chỉ rõ area="" để quay về controller nằm ngoài Area -->
+                    <a asp-action="Logout" asp-controller="Auth" asp-area="">Đăng xuất</a>
+
+                </li>
+                }</li>
 
         </ul>
     </div>

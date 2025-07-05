@@ -1,5 +1,7 @@
 ﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models.Dtos;
 using FurryFriends.API.Repository.IRepository;
+using FurryFriends.API.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FurryFriends.API.Controllers
@@ -9,13 +11,16 @@ namespace FurryFriends.API.Controllers
     public class TaiKhoanApiController : ControllerBase
     {
         private readonly ITaiKhoanRepository _taiKhoanRepository;
+		private readonly ITaiKhoanService _taiKhoanService;
+		public TaiKhoanApiController(
+		ITaiKhoanService taiKhoanService,
+		ITaiKhoanRepository taiKhoanRepository)
+		{
+			_taiKhoanService = taiKhoanService;
+			_taiKhoanRepository = taiKhoanRepository;
+		}
 
-        public TaiKhoanApiController(ITaiKhoanRepository taiKhoanRepository)
-        {
-            _taiKhoanRepository = taiKhoanRepository;
-        }
-
-        [HttpGet]
+		[HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
@@ -47,30 +52,28 @@ namespace FurryFriends.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TaiKhoan taiKhoan)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+		[HttpPost("dang-nhap-admin")]
+		public async Task<IActionResult> DangNhapAdmin([FromBody] LoginRequest model)
+		{
+			var result = await _taiKhoanService.DangNhapAdminNhanVienAsync(model);
+			if (result == null)
+				return Unauthorized("Sai tên đăng nhập hoặc mật khẩu hoặc không có quyền.");
 
-            try
-            {
-                await _taiKhoanRepository.AddAsync(taiKhoan);
-                return CreatedAtAction(nameof(GetById), new { id = taiKhoan.TaiKhoanId }, taiKhoan);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+			return Ok(result);
+		}
+		[HttpPost("dang-nhap-khachhang")]
+		public async Task<IActionResult> DangNhapKhachHang([FromBody] LoginRequest model)
+		{
+			var result = await _taiKhoanService.DangNhapKhachHangAsync(model);
+			if (result == null)
+				return Unauthorized("Sai tên đăng nhập hoặc mật khẩu.");
 
-        [HttpPut("{id}")]
+			return Ok(result);
+		}
+
+
+
+		[HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] TaiKhoan taiKhoan)
         {
             if (id != taiKhoan.TaiKhoanId)

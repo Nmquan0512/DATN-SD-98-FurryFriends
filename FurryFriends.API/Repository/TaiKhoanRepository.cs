@@ -13,8 +13,9 @@ namespace FurryFriends.API.Repository
         {
             _context = context;
         }
+		
 
-        public async Task<IEnumerable<TaiKhoan>> GetAllAsync()
+		public async Task<IEnumerable<TaiKhoan>> GetAllAsync()
         {
             return await _context.TaiKhoans
                 .Include(tk => tk.NhanVien)

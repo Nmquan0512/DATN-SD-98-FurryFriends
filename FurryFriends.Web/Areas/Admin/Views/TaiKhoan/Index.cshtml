@@ -3,13 +3,32 @@
 @{
     ViewData["Title"] = "Danh sách tài khoản";
 }
+@{
+    var error = Context.Session.GetString("AccessDenied");
+    if (!string.IsNullOrEmpty(error))
+    {
+        <div class="alert alert-danger">@error</div>;
+        Context.Session.Remove("AccessDenied");
+    }
+}
+
 
 <div class="main-content" id="mainContent">
     <div class="top-bar">
         <h1>@ViewData["Title"]</h1>
         <div class="user-info" role="region" aria-label="User information">
-            <span>Admin</span>
-            <div class="avatar" aria-hidden="true">AD</div>
+            @inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+            @{
+                var hoTen = HttpContextAccessor.HttpContext.Session.GetString("HoTen");
+                var role = HttpContextAccessor.HttpContext.Session.GetString("Role");
+            }
+
+            @if (!string.IsNullOrEmpty(hoTen))
+            {
+                <div>Xin chào: @hoTen - Vai trò: @role</div>
+            }
+
         </div>
     </div>
     <ol class="breadcrumb mb-4">

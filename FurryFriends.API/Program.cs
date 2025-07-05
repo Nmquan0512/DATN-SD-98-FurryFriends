@@ -2,6 +2,8 @@ using FurryFriends.API.Data;
 using FurryFriends.API.Repositories;
 using FurryFriends.API.Repository;
 using FurryFriends.API.Repository.IRepository;
+using FurryFriends.API.Services.IService;
+using FurryFriends.API.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -30,6 +32,9 @@ builder.Services.AddScoped<IChucVuRepository, ChucVuRepository>();
 
 builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
 builder.Services.AddScoped<INhanVienRepository, NhanVIenRepository>();
+
+builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
+
 // Add CORS
 builder.Services.AddCors(options =>
 {

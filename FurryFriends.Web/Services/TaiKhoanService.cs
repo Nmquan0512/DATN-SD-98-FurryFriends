@@ -1,81 +1,101 @@
 ﻿using FurryFriends.API.Models;
-using FurryFriends.API.Repository.IRepository;
+using FurryFriends.Web.Models;
 using FurryFriends.Web.Services.IService;
-using System.Net.Http;
 
 namespace FurryFriends.Web.Services
 {
-    public class TaiKhoanService : ITaiKhoanService
-    {
-        private readonly HttpClient _httpClient;
+	public class TaiKhoanService : ITaiKhoanService
+	{
+		private readonly HttpClient _httpClient;
 
-        public TaiKhoanService(HttpClient httpClient)
-        {
-            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        }
+		// TaiKhoanService.cs
+		public async Task<LoginResponse?> DangNhapAdminAsync(LoginRequest model)
+		{
+			var response = await _httpClient.PostAsJsonAsync("taikhoanapi/dang-nhap-admin", model);
+			if (!response.IsSuccessStatusCode) return null;
 
-        public async Task<IEnumerable<TaiKhoan>> GetAllAsync()
-        {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<TaiKhoan>>("TaiKhoanApi")
-                ?? throw new HttpRequestException("Không thể lấy danh sách tài khoản.");
-        }
+			return await response.Content.ReadFromJsonAsync<LoginResponse>();
+		}
+		public async Task<LoginResponse?> DangNhapKhachHangAsync(LoginRequest request)
+		{
+			var response = await _httpClient.PostAsJsonAsync("taikhoan/dang-nhap-khachhang", request);
 
-        public async Task<TaiKhoan?> GetByIdAsync(Guid taiKhoanId)
-        {
-            if (taiKhoanId == Guid.Empty)
-                throw new ArgumentException("TaiKhoanId không hợp lệ.");
+			if (response.IsSuccessStatusCode)
+			{
+				return await response.Content.ReadFromJsonAsync<LoginResponse>();
+			}
 
-            return await _httpClient.GetFromJsonAsync<TaiKhoan>($"TaiKhoanApi/{taiKhoanId}")
-                ?? throw new HttpRequestException($"Không tìm thấy tài khoản với ID {taiKhoanId}.");
-        }
+			return null;
+		}
 
-        public async Task AddAsync(TaiKhoan taiKhoan)
-        {
-            if (taiKhoan == null)
-                throw new ArgumentNullException(nameof(taiKhoan));
 
-            taiKhoan.NhanVien = null;
-            taiKhoan.KhachHang = null;
-            taiKhoan.SanPhams = null;
-            taiKhoan.Vouchers = null;
-            taiKhoan.HoaDons = null;
+		public TaiKhoanService(HttpClient httpClient)
+		{
+			_httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+		}
 
-            var response = await _httpClient.PostAsJsonAsync("TaiKhoanApi", taiKhoan);
-            response.EnsureSuccessStatusCode();
-        }
+		public async Task<IEnumerable<TaiKhoan>> GetAllAsync()
+		{
+			return await _httpClient.GetFromJsonAsync<IEnumerable<TaiKhoan>>("TaiKhoanApi")
+				?? throw new HttpRequestException("Không thể lấy danh sách tài khoản.");
+		}
 
-        public async Task UpdateAsync(TaiKhoan taiKhoan)
-        {
-            if (taiKhoan == null || taiKhoan.TaiKhoanId == Guid.Empty)
-                throw new ArgumentException("Tài khoản không hợp lệ.");
+		public async Task<TaiKhoan?> GetByIdAsync(Guid taiKhoanId)
+		{
+			if (taiKhoanId == Guid.Empty)
+				throw new ArgumentException("TaiKhoanId không hợp lệ.");
 
-            taiKhoan.NhanVien = null;
-            taiKhoan.KhachHang = null;
-            taiKhoan.SanPhams = null;
-            taiKhoan.Vouchers = null;
-            taiKhoan.HoaDons = null;
+			return await _httpClient.GetFromJsonAsync<TaiKhoan>($"TaiKhoanApi/{taiKhoanId}")
+				?? throw new HttpRequestException($"Không tìm thấy tài khoản với ID {taiKhoanId}.");
+		}
 
-            var response = await _httpClient.PutAsJsonAsync($"TaiKhoanApi/{taiKhoan.TaiKhoanId}", taiKhoan);
-            response.EnsureSuccessStatusCode();
-        }
+		public async Task AddAsync(TaiKhoan taiKhoan)
+		{
+			if (taiKhoan == null)
+				throw new ArgumentNullException(nameof(taiKhoan));
 
-        public async Task DeleteAsync(Guid taiKhoanId)
-        {
-            if (taiKhoanId == Guid.Empty)
-                throw new ArgumentException("TaiKhoanId không hợp lệ.");
+			taiKhoan.NhanVien = null;
+			taiKhoan.KhachHang = null;
+			taiKhoan.SanPhams = null;
+			taiKhoan.Vouchers = null;
+			taiKhoan.HoaDons = null;
 
-            var response = await _httpClient.DeleteAsync($"TaiKhoanApi/{taiKhoanId}");
-            response.EnsureSuccessStatusCode();
-        }
+			var response = await _httpClient.PostAsJsonAsync("TaiKhoanApi", taiKhoan);
+			response.EnsureSuccessStatusCode();
+		}
 
-        public async Task<IEnumerable<TaiKhoan>> FindByUserNameAsync(string userName)
-        {
-            if (string.IsNullOrWhiteSpace(userName))
-                throw new ArgumentException("Tên đăng nhập không được để trống.");
+		public async Task UpdateAsync(TaiKhoan taiKhoan)
+		{
+			if (taiKhoan == null || taiKhoan.TaiKhoanId == Guid.Empty)
+				throw new ArgumentException("Tài khoản không hợp lệ.");
 
-            return await _httpClient.GetFromJsonAsync<IEnumerable<TaiKhoan>>(
-                $"api/TaiKhoanApi/search?userName={Uri.EscapeDataString(userName)}")
-                ?? Enumerable.Empty<TaiKhoan>();
-        }
-    }
+			taiKhoan.NhanVien = null;
+			taiKhoan.KhachHang = null;
+			taiKhoan.SanPhams = null;
+			taiKhoan.Vouchers = null;
+			taiKhoan.HoaDons = null;
+
+			var response = await _httpClient.PutAsJsonAsync($"TaiKhoanApi/{taiKhoan.TaiKhoanId}", taiKhoan);
+			response.EnsureSuccessStatusCode();
+		}
+
+		public async Task DeleteAsync(Guid taiKhoanId)
+		{
+			if (taiKhoanId == Guid.Empty)
+				throw new ArgumentException("TaiKhoanId không hợp lệ.");
+
+			var response = await _httpClient.DeleteAsync($"TaiKhoanApi/{taiKhoanId}");
+			response.EnsureSuccessStatusCode();
+		}
+
+		public async Task<IEnumerable<TaiKhoan>> FindByUserNameAsync(string userName)
+		{
+			if (string.IsNullOrWhiteSpace(userName))
+				throw new ArgumentException("Tên đăng nhập không được để trống.");
+
+			return await _httpClient.GetFromJsonAsync<IEnumerable<TaiKhoan>>(
+				$"api/TaiKhoanApi/search?userName={Uri.EscapeDataString(userName)}")
+				?? Enumerable.Empty<TaiKhoan>();
+		}
+	}
 }
