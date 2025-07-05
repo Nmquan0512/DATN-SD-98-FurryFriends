@@ -1,0 +1,36 @@
+﻿@model IEnumerable<FurryFriends.API.Models.KhachHang>
+
+<h2>Danh sách Khách Hàng</h2>
+<a asp-action="Create" class="btn btn-primary">Thêm Khách Hàng</a>
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr>
+            <th>Tên</th>
+            <th>Email</th>
+            <th>SĐT</th>
+            <th>Điểm</th>
+            <th>Ngày Tạo</th>
+            <th>Trạng Thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.TenKhachHang</td>
+                <td>@item.EmailCuaKhachHang</td>
+                <td>@item.SDT</td>
+                <td>@item.DiemKhachHang</td>
+                <td>@item.NgayTaoTaiKhoan.ToString("dd/MM/yyyy")</td>
+                <td>@(item.TrangThai == 1 ? "Hoạt động" : "Khoá")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.KhachHangId">Chi tiết</a> |
+                    <a asp-action="Edit" asp-route-id="@item.KhachHangId">Sửa</a> |
+                    <a asp-action="Delete" asp-route-id="@item.KhachHangId">Xoá</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

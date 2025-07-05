@@ -1,0 +1,78 @@
+﻿@model FurryFriends.API.Models.Voucher
+
+@{
+    ViewData["Title"] = "Thêm Voucher";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Thêm Voucher</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Voucher" asp-action="Index">Quản lý Voucher</a></li>
+        <li class="breadcrumb-item active">Thêm Voucher</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div class="mb-3">
+                    <label asp-for="TenVoucher" class="form-label">Tên Voucher</label>
+                    <input asp-for="TenVoucher" class="form-control" />
+                    <span asp-validation-for="TenVoucher" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="PhanTramGiam" class="form-label">Phần trăm giảm (0 đến 1)</label>
+                    <input asp-for="PhanTramGiam" class="form-control" />
+                    <span asp-validation-for="PhanTramGiam" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NgayBatDau" class="form-label">Ngày bắt đầu</label>
+                    <input asp-for="NgayBatDau" type="date" class="form-control" />
+                    <span asp-validation-for="NgayBatDau" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NgayKetThuc" class="form-label">Ngày kết thúc</label>
+                    <input asp-for="NgayKetThuc" type="date" class="form-control" />
+                    <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="SoLuong" class="form-label">Số lượng</label>
+                    <input asp-for="SoLuong" class="form-control" />
+                    <span asp-validation-for="SoLuong" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="TrangThai" class="form-label">Trạng thái</label>
+                    <select asp-for="TrangThai" class="form-select">
+                        <option value="0">Ẩn</option>
+                        <option value="1">Hoạt động</option>
+                        <option value="2">Hết hạn</option>
+                    </select>
+                    <span asp-validation-for="TrangThai" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="TaiKhoanId" class="form-label">ID tài khoản tạo</label>
+                    <input asp-for="TaiKhoanId" class="form-control" />
+                    <span asp-validation-for="TaiKhoanId" class="text-danger"></span>
+                </div>
+
+                <input type="hidden" asp-for="NgayTao" value="@DateTime.Now" />
+                <input type="hidden" asp-for="NgayCapNhat" value="@DateTime.Now" />
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+}

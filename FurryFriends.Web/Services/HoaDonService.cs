@@ -103,5 +103,10 @@ namespace FurryFriends.Web.Services
                 throw new Exception($"Lỗi khi xuất hóa đơn PDF: {ex.Message}");
             }
         }
+
+        public Task<string?> GetHoaDonByKhachHangIdAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
     }
 } 
