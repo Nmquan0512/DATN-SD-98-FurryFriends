@@ -1,10 +1,10 @@
 ﻿using FurryFriends.API.Models;
-using FurryFriends.Web.Services.IService;
-using System;
-using System.Collections.Generic;
+using FurryFriends.Web.Services;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using FurryFriends.Web.Services.IService;
 
 namespace FurryFriends.Web.Services
 {
@@ -17,29 +17,33 @@ namespace FurryFriends.Web.Services
             _httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<KhachHang>> GetAllKhachHangAsync()
+        public async Task<IEnumerable<KhachHang>> GetAllAsync()
         {
             return await _httpClient.GetFromJsonAsync<IEnumerable<KhachHang>>("api/KhachHang");
         }
 
-        public async Task<KhachHang> GetKhachHangByIdAsync(Guid id)
+        public async Task<KhachHang> GetByIdAsync(Guid id)
         {
             return await _httpClient.GetFromJsonAsync<KhachHang>($"api/KhachHang/{id}");
         }
 
-        public async Task AddKhachHangAsync(KhachHang khachHang)
+        public async Task<bool> CreateAsync(KhachHang khachHang)
         {
-            await _httpClient.PostAsJsonAsync("api/KhachHang", khachHang);
+            var response = await _httpClient.PostAsJsonAsync("api/KhachHang", khachHang);
+            return response.IsSuccessStatusCode;
         }
 
-        public async Task UpdateKhachHangAsync(KhachHang khachHang)
+        public async Task<bool> UpdateAsync(Guid id, KhachHang khachHang)
         {
-            await _httpClient.PutAsJsonAsync($"api/KhachHang/{khachHang.KhachHangId}", khachHang);
+            var response = await _httpClient.PutAsJsonAsync($"api/KhachHang/{id}", khachHang);
+            return response.IsSuccessStatusCode;
         }
 
-        public async Task DeleteKhachHangAsync(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            await _httpClient.DeleteAsync($"api/KhachHang/{id}");
+            var response = await _httpClient.DeleteAsync($"api/KhachHang/{id}");
+            return response.IsSuccessStatusCode;
         }
     }
+
 }

@@ -10,18 +10,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     public class DotGiamGiasController : Controller
     {
         private readonly IDotGiamGiaService _dotGiamGiaService;
-        //private readonly IGiamGiaService _giamGiaService;
-        //private readonly ISanPhamService _sanPhamService;
+        private readonly ILichSuThaoTacService _lichSuService;
 
         public DotGiamGiasController(
-            IDotGiamGiaService dotGiamGiaService
-            /*IGiamGiaService giamGiaService*/)
-        //ISanPhamService sanPhamService)
+            IDotGiamGiaService dotGiamGiaService,
+            ILichSuThaoTacService lichSuService)
         {
             _dotGiamGiaService = dotGiamGiaService;
-            //_giamGiaService = giamGiaService;
-            //_sanPhamService = sanPhamService;
+            _lichSuService = lichSuService;
         }
+
 
 
         // GET: DotGiamGia
@@ -75,8 +73,18 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             var success = await _dotGiamGiaService.AddAsync(dot);
             if (success)
             {
+                var log = new LichSuThaoTac
+                {
+                    TaiKhoan = User.Identity?.Name,
+                    HanhDong = "Thêm đợt giảm giá",
+                    NoiDung = $"Thêm đợt giảm giá cho sản phẩm ID: {dot.SanPhamId}, Giảm giá ID: {dot.GiamGiaId}",
+                    ThoiGian = DateTime.Now
+                };
+                await _lichSuService.AddLogAsync(log);
+
                 return RedirectToAction(nameof(Index));
             }
+
 
             ModelState.AddModelError("", "Tạo đợt giảm giá thất bại.");
 
@@ -124,7 +132,20 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
 
             var success = await _dotGiamGiaService.UpdateAsync(id, dot);
-            if (success) return RedirectToAction(nameof(Index));
+            if (success)
+            {
+                var log = new LichSuThaoTac
+                {
+                    TaiKhoan = User.Identity?.Name,
+                    HanhDong = "Cập nhật đợt giảm giá",
+                    NoiDung = $"Cập nhật đợt giảm giá ID: {dot.DotGiamGiaSanPhamId}, Sản phẩm ID: {dot.SanPhamId}, Giảm giá ID: {dot.GiamGiaId}",
+                    ThoiGian = DateTime.Now
+                };
+                await _lichSuService.AddLogAsync(log);
+
+                return RedirectToAction(nameof(Index));
+            }
+
 
             // Nếu thất bại, cũng load lại danh sách
             ModelState.AddModelError("", "Cập nhật thất bại.");
@@ -150,11 +171,23 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
+            var dot = await _dotGiamGiaService.GetByIdAsync(id);
             var success = await _dotGiamGiaService.DeleteAsync(id);
-            if (success) return RedirectToAction(nameof(Index));
+            if (success)
+            {
+                var log = new LichSuThaoTac
+                {
+                    TaiKhoan = User.Identity?.Name,
+                    HanhDong = "Xóa đợt giảm giá",
+                    NoiDung = $"Đã xóa đợt giảm giá ID: {dot?.DotGiamGiaSanPhamId}, Sản phẩm ID: {dot?.SanPhamId}, Giảm giá ID: {dot?.GiamGiaId}",
+                    ThoiGian = DateTime.Now
+                };
+                await _lichSuService.AddLogAsync(log);
+
+                return RedirectToAction(nameof(Index));
+            }
 
             ModelState.AddModelError("", "Xóa thất bại.");
-            var dot = await _dotGiamGiaService.GetByIdAsync(id);
             return View("Delete", dot);
         }
 

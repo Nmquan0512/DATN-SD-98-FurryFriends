@@ -14,7 +14,7 @@ namespace FurryFriends.API.Data
             if (!optionsBuilder.IsConfigured)
             {
                 //optionsBuilder.UseSqlServer("Data Source=ANH2005\\SQLEXPRESS;Initial Catalog=duantn;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
-                optionsBuilder.UseSqlServer("Data Source=XCBA2\\SQLEXPRESS;Initial Catalog=datnph48831;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Data Source=PHUNGHUYTRUONG\\SQLEXPRESS01;Initial Catalog=DATN1;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
             }
         }
 
@@ -42,6 +42,8 @@ namespace FurryFriends.API.Data
         public DbSet<ChatLieu> ChatLieus { get; set; }
         public DbSet<SanPhamThanhPhan> SanPhamThanhPhans { get; set; }
         public DbSet<SanPhamChatLieu> SanPhamChatLieus { get; set; }
+
+        public DbSet<LichSuThaoTac> LichSuThaoTacs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -165,6 +167,9 @@ namespace FurryFriends.API.Data
                 .WithMany(spct => spct.HoaDonChiTiets)
                 .HasForeignKey(hdct => hdct.SanPhamId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<LichSuThaoTac>().ToTable("LichSuThaoTac");
+
         }
 
         private void ConfigureDotGiamGia(ModelBuilder modelBuilder)

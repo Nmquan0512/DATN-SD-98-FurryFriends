@@ -1,0 +1,37 @@
+﻿@model List<FurryFriends.API.Models.LichSuThaoTac>
+
+<div class="card mt-3 shadow">
+@*     <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Lịch sử thao tác</h5>
+    </div> *@
+    <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+        @if (Model.Count == 0)
+        {
+            <p class="text-muted">Không có thông báo nào</p>
+        }
+        else
+        {
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Hành động</th>
+                        <th>Nội dung</th>
+                        <th>Tài khoản</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.ThoiGian.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td><strong>@item.HanhDong</strong></td>
+                            <td>@item.NoiDung</td>
+                            <td>@item.TaiKhoan</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

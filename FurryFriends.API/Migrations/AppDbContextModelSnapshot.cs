@@ -462,6 +462,31 @@ namespace FurryFriends.API.Migrations
                     b.ToTable("BangKichCos");
                 });
 
+            modelBuilder.Entity("FurryFriends.API.Models.LichSuThaoTac", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("HanhDong")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NoiDung")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TaiKhoan")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ThoiGian")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LichSuThaoTac", (string)null);
+                });
+
             modelBuilder.Entity("FurryFriends.API.Models.MauSac", b =>
                 {
                     b.Property<Guid>("MauSacId")
@@ -528,7 +553,7 @@ namespace FurryFriends.API.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<Guid>("TaiKhoanId")
+                    b.Property<Guid?>("TaiKhoanId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("TrangThai")
@@ -539,7 +564,8 @@ namespace FurryFriends.API.Migrations
                     b.HasIndex("ChucVuId");
 
                     b.HasIndex("TaiKhoanId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[TaiKhoanId] IS NOT NULL");
 
                     b.ToTable("NhanViens");
                 });
@@ -932,8 +958,7 @@ namespace FurryFriends.API.Migrations
                     b.HasOne("FurryFriends.API.Models.TaiKhoan", "TaiKhoan")
                         .WithOne("NhanVien")
                         .HasForeignKey("FurryFriends.API.Models.NhanVien", "TaiKhoanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("ChucVu");
 

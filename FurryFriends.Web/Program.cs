@@ -52,6 +52,12 @@ builder.Services.AddHttpClient<INhanVienService, NhanVienService>(client =>
     client.DefaultRequestHeaders.Add("Accept", "application/json");
 });
 
+builder.Services.AddHttpClient<ILichSuThaoTacService, LichSuThaoTacService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");// URL của API backend
+});
+
 
 
 var app = builder.Build();
@@ -71,15 +77,12 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllerRoute(
-        name: "Areas",
-        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
-});
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

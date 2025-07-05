@@ -30,6 +30,13 @@ builder.Services.AddScoped<IChucVuRepository, ChucVuRepository>();
 
 builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
 builder.Services.AddScoped<INhanVienRepository, NhanVIenRepository>();
+
+builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
+
+builder.Services.AddScoped<IDotGiamGiaSanPhamRepository, DotGiamGiaSanPhamRepository>();
+
+builder.Services.AddScoped<ILichSuThaoTacRepository, LichSuThaoTacRepository>();
+
 // Add CORS
 builder.Services.AddCors(options =>
 {

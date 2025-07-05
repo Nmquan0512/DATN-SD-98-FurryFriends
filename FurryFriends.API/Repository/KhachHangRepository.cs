@@ -17,38 +17,48 @@ namespace FurryFriends.API.Repository
 
         public async Task<IEnumerable<KhachHang>> GetAllAsync()
         {
-            return await _context.KhachHangs
-                                 .Include(k => k.DiaChiKhachHangs) // đúng tên
-                                 .ToListAsync();
+            return await _context.KhachHangs.ToListAsync();
         }
 
-        public async Task<KhachHang> GetByIdAsync(Guid id)
+        public async Task<KhachHang?> GetByIdAsync(Guid id)
         {
-            return await _context.KhachHangs
-                                 .Include(k => k.DiaChiKhachHangs)
-                                 .FirstOrDefaultAsync(k => k.KhachHangId == id);
+            return await _context.KhachHangs.FindAsync(id);
         }
 
-        public async Task AddAsync(KhachHang khachHang)
+        public async Task<KhachHang> AddAsync(KhachHang khachHang)
         {
+            khachHang.KhachHangId = Guid.NewGuid();
+            khachHang.NgayTaoTaiKhoan = DateTime.Now;
             await _context.KhachHangs.AddAsync(khachHang);
             await _context.SaveChangesAsync();
+            return khachHang;
         }
 
-        public async Task UpdateAsync(KhachHang khachHang)
+        public async Task<KhachHang?> UpdateAsync(Guid id, KhachHang khachHang)
         {
-            _context.KhachHangs.Update(khachHang);
+            var existing = await _context.KhachHangs.FindAsync(id);
+            if (existing == null) return null;
+
+            existing.TenKhachHang = khachHang.TenKhachHang;
+            existing.SDT = khachHang.SDT;
+            existing.EmailCuaKhachHang = khachHang.EmailCuaKhachHang;
+            existing.DiemKhachHang = khachHang.DiemKhachHang;
+            existing.TrangThai = khachHang.TrangThai;
+            existing.NgayCapNhatCuoiCung = DateTime.Now;
+            existing.TaiKhoanId = khachHang.TaiKhoanId;
+
             await _context.SaveChangesAsync();
+            return existing;
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            var khachHang = await _context.KhachHangs.FindAsync(id);
-            if (khachHang != null)
-            {
-                _context.KhachHangs.Remove(khachHang);
-                await _context.SaveChangesAsync();
-            }
+            var existing = await _context.KhachHangs.FindAsync(id);
+            if (existing == null) return false;
+
+            _context.KhachHangs.Remove(existing);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

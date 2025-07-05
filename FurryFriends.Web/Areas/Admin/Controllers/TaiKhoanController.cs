@@ -8,10 +8,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     public class TaiKhoanController : Controller
     {
         public readonly ITaiKhoanService _taiKhoanService;
+        private readonly ILichSuThaoTacService _lichSuService;
 
-        public TaiKhoanController(ITaiKhoanService taiKhoanService)
+        public TaiKhoanController(ITaiKhoanService taiKhoanService, ILichSuThaoTacService lichSuService)
         {
             _taiKhoanService = taiKhoanService;
+            _lichSuService = lichSuService;
         }
         public async Task<IActionResult> Index()
         {
@@ -45,8 +47,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     taiKhoan.KhachHangId = null;
 
                     await _taiKhoanService.AddAsync(taiKhoan);
-                    TempData["Success"] = "Tài khoản đã được tạo thành công.";
-                    return RedirectToAction(nameof(Index));
+
+                    // Ghi log
+                    var log = new LichSuThaoTac
+                    {
+                        TaiKhoan = User.Identity?.Name,
+                        HanhDong = "Tạo tài khoản",
+                        NoiDung = $"Tạo tài khoản: {taiKhoan.UserName}",
+                        ThoiGian = DateTime.Now
+                    };
+                    await _lichSuService.AddLogAsync(log);
+
                 }
                 catch (ArgumentException ex)
                 {
@@ -86,8 +97,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     }
 
                     await _taiKhoanService.UpdateAsync(taiKhoan);
-                    TempData["Success"] = "Tài khoản đã được cập nhật thành công.";
-                    return RedirectToAction(nameof(Index));
+
+                    // Ghi log
+                    var log = new LichSuThaoTac
+                    {
+                        TaiKhoan = User.Identity?.Name,
+                        HanhDong = "Cập nhật tài khoản",
+                        NoiDung = $"Cập nhật tài khoản: {taiKhoan.UserName}",
+                        ThoiGian = DateTime.Now
+                    };
+                    await _lichSuService.AddLogAsync(log);
+
                 }
                 catch (ArgumentException ex)
                 {

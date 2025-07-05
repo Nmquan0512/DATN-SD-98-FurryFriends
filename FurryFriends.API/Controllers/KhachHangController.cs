@@ -11,47 +11,48 @@ namespace FurryFriends.API.Controllers
     [ApiController]
     public class KhachHangController : ControllerBase
     {
-        private readonly IKhachHangRepository _repository;
+        private readonly IKhachHangRepository _repo;
 
-        public KhachHangController(IKhachHangRepository repository)
+        public KhachHangController(IKhachHangRepository repo)
         {
-            _repository = repository;
+            _repo = repo;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<KhachHang>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var khachHangs = await _repository.GetAllAsync();
-            return Ok(khachHangs);
+            var result = await _repo.GetAllAsync();
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<KhachHang>> GetById(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            var khachHang = await _repository.GetByIdAsync(id);
-            if (khachHang == null) return NotFound();
-            return Ok(khachHang);
+            var result = await _repo.GetByIdAsync(id);
+            if (result == null) return NotFound();
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(KhachHang khachHang)
+        public async Task<IActionResult> Create([FromBody] KhachHang khachHang)
         {
-            await _repository.AddAsync(khachHang);
-            return CreatedAtAction(nameof(GetById), new { id = khachHang.KhachHangId }, khachHang);
+            var created = await _repo.AddAsync(khachHang);
+            return CreatedAtAction(nameof(GetById), new { id = created.KhachHangId }, created);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, KhachHang khachHang)
+        public async Task<IActionResult> Update(Guid id, [FromBody] KhachHang khachHang)
         {
-            if (id != khachHang.KhachHangId) return BadRequest();
-            await _repository.UpdateAsync(khachHang);
-            return NoContent();
+            var updated = await _repo.UpdateAsync(id, khachHang);
+            if (updated == null) return NotFound();
+            return Ok(updated);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _repository.DeleteAsync(id);
+            var deleted = await _repo.DeleteAsync(id);
+            if (!deleted) return NotFound();
             return NoContent();
         }
     }

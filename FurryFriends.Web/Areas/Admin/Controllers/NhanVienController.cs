@@ -11,12 +11,20 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         private readonly INhanVienService _nhanVienService;
         private readonly ITaiKhoanService _taiKhoanService;
         private readonly IChucVuService _chucVuService;
-        public NhanVienController(INhanVienService nhanVienService, ITaiKhoanService taiKhoanService, IChucVuService chucVuService)
+        private readonly ILichSuThaoTacService _lichSuService;
+
+        public NhanVienController(
+            INhanVienService nhanVienService,
+            ITaiKhoanService taiKhoanService,
+            IChucVuService chucVuService,
+            ILichSuThaoTacService lichSuService)
         {
             _nhanVienService = nhanVienService;
             _taiKhoanService = taiKhoanService;
             _chucVuService = chucVuService;
+            _lichSuService = lichSuService;
         }
+
         public async Task<IActionResult> Index()
         {
             var nhanViens = await _nhanVienService.GetAllAsync();
@@ -44,8 +52,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 try
                 {
                     await _nhanVienService.AddAsync(nhanVien);
-                    TempData["Success"] = "Nhân viên đã được tạo thành công.";
-                    return RedirectToAction(nameof(Index));
+
+                    // Ghi log
+                    var log = new LichSuThaoTac
+                    {
+                        TaiKhoan = User.Identity?.Name,
+                        HanhDong = "Thêm nhân viên",
+                        NoiDung = $"Thêm nhân viên: {nhanVien.HoVaTen}, Tài khoản: {nhanVien.TaiKhoanId}, Chức vụ: {nhanVien.ChucVuId}",
+                        ThoiGian = DateTime.Now
+                    };
+                    await _lichSuService.AddLogAsync(log);
+
                 }
                 catch (ArgumentException ex)
                 {
@@ -89,8 +106,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 try
                 {
                     await _nhanVienService.UpdateAsync(nhanVien);
-                    TempData["Success"] = "Nhân viên đã được cập nhật thành công.";
-                    return RedirectToAction(nameof(Index));
+
+                    // Ghi log
+                    var log = new LichSuThaoTac
+                    {
+                        TaiKhoan = User.Identity?.Name,
+                        HanhDong = "Cập nhật nhân viên",
+                        NoiDung = $"Cập nhật nhân viên ID: {nhanVien.NhanVienId}, Họ tên: {nhanVien.HoVaTen}",
+                        ThoiGian = DateTime.Now
+                    };
+                    await _lichSuService.AddLogAsync(log);
+
                 }
                 catch (ArgumentException ex)
                 {

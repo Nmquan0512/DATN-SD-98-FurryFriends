@@ -3,10 +3,19 @@
 @{
     ViewData["Title"] = "Quản lý giảm giá";
 }
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
 
 <div class="main-content" id="mainContent">
     <div class="top-bar">
         <h1>@ViewData["Title"]</h1>
+        <li class="nav-item dropdown position-relative" style="list-style: none;">
+            <button type="button" class="btn nav-link" id="notificationDropdown" style="background: none; border: none; margin-left: 900px">
+                🔔 <span class="badge bg-danger" id="notificationCount">!</span>
+            </button>
+            <div id="notificationContent" class="dropdown-menu dropdown-menu-end" style="max-height: 300px; overflow-y: auto; position: absolute; max-width: 500px; margin-left: 500px">
+                <!-- Nội dung sẽ được load tại đây -->
+            </div>
+        </li>
         <div class="user-info" role="region" aria-label="User information">
             <span>Admin</span>
             <div class="avatar" aria-hidden="true">AD</div>
@@ -113,7 +122,10 @@
 </div>
 
 @section Scripts {
-   
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#giamGiaTable').DataTable({
@@ -132,9 +144,37 @@
 
             $('#deleteConfirmModal').modal('show');
         }
+
+        $(document).ready(function () {
+            $('#notificationDropdown').on('click', function (e) {
+                e.preventDefault();
+
+                var dropdown = $('#notificationContent');
+
+                // Toggle thủ công class .show
+                dropdown.toggleClass('show');
+
+                // Nếu đang hiển thị thì load dữ liệu
+                if (dropdown.hasClass('show')) {
+                    $.get('/Admin/LichSuThaoTacs/GetRecent', function (data) {
+                        dropdown.html(data);
+                    }).fail(function (xhr) {
+                        console.error("Lỗi khi tải thông báo:", xhr.responseText);
+                        dropdown.html('<div class="dropdown-item text-danger">Không thể tải thông báo</div>');
+                    });
+                } else {
+                    // Nếu đang ẩn → xóa nội dung nếu bạn muốn
+                    dropdown.empty();
+                }
+            });
+
+            // Click ngoài dropdown thì ẩn đi
+            $(document).on('click', function (e) {
+                if (!$(e.target).closest('#notificationDropdown').length &&
+                    !$(e.target).closest('#notificationContent').length) {
+                    $('#notificationContent').removeClass('show').empty();
+                }
+            });
+        });
     </script>
 }
-
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
-<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>

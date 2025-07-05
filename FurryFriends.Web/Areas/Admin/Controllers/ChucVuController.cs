@@ -7,12 +7,13 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     [Area("Admin")]
     public class ChucVuController : Controller
     {
-        public ChucVuController(IChucVuService chucVuService)
+        private readonly ILichSuThaoTacService _lichSuService;
+        private readonly IChucVuService _chucVuService;
+        public ChucVuController(IChucVuService chucVuService, ILichSuThaoTacService lichSuService)
         {
             _chucVuService = chucVuService;
+            _lichSuService = lichSuService;
         }
-
-        private readonly IChucVuService _chucVuService;
         // GET: ChucVu
         public async Task<IActionResult> Index()
         {
@@ -36,8 +37,20 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 try
                 {
                     await _chucVuService.AddAsync(chucVu);
+
+                    // Ghi log
+                    var log = new LichSuThaoTac
+                    {
+                        TaiKhoan = User.Identity?.Name,
+                        HanhDong = "Thêm chức vụ",
+                        NoiDung = $"Đã thêm chức vụ: {chucVu.TenChucVu}",
+                        ThoiGian = DateTime.Now
+                    };
+                    await _lichSuService.AddLogAsync(log);
+
                     TempData["Success"] = "Chức vụ đã được tạo thành công.";
                     return RedirectToAction(nameof(Index));
+
                 }
                 catch (ArgumentException ex)
                 {
@@ -73,8 +86,20 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 try
                 {
                     await _chucVuService.UpdateAsync(chucVu);
+
+                    // Ghi log
+                    var log = new LichSuThaoTac
+                    {
+                        TaiKhoan = User.Identity?.Name,
+                        HanhDong = "Cập nhật chức vụ",
+                        NoiDung = $"Đã cập nhật chức vụ: {chucVu.TenChucVu}",
+                        ThoiGian = DateTime.Now
+                    };
+                    await _lichSuService.AddLogAsync(log);
+
                     TempData["Success"] = "Chức vụ đã được cập nhật thành công.";
                     return RedirectToAction(nameof(Index));
+
                 }
                 catch (ArgumentException ex)
                 {
@@ -106,11 +131,25 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
+            ChucVu chucVu = null;
             try
             {
+                chucVu = await _chucVuService.GetByIdAsync(id);
                 await _chucVuService.DeleteAsync(id);
+
+                // Ghi log
+                var log = new LichSuThaoTac
+                {
+                    TaiKhoan = User.Identity?.Name,
+                    HanhDong = "Xóa chức vụ",
+                    NoiDung = $"Đã xóa chức vụ: {chucVu?.TenChucVu}",
+                    ThoiGian = DateTime.Now
+                };
+                await _lichSuService.AddLogAsync(log);
+
                 TempData["Success"] = "Chức vụ đã được xóa thành công.";
                 return RedirectToAction(nameof(Index));
+
             }
             catch (KeyNotFoundException ex)
             {
@@ -124,7 +163,10 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             {
                 ModelState.AddModelError("", $"Lỗi: {ex.Message}");
             }
-            var chucVu = await _chucVuService.GetByIdAsync(id);
+            if (chucVu == null)
+            {
+                chucVu = await _chucVuService.GetByIdAsync(id);
+            }
             return View(chucVu);
         }
 

@@ -1,0 +1,68 @@
+﻿@model FurryFriends.API.Models.KhachHang
+
+@{
+    ViewData["Title"] = "Chỉnh sửa khách hàng";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Chỉnh sửa khách hàng</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-area="Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-controller="KhachHang" asp-action="Index" asp-area="Admin">Quản lý khách hàng</a></li>
+        <li class="breadcrumb-item active">Chỉnh sửa khách hàng</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="KhachHangId" />
+
+                <div class="mb-3">
+                    <label asp-for="TenKhachHang" class="form-label">Tên khách hàng</label>
+                    <input asp-for="TenKhachHang" class="form-control" />
+                    <span asp-validation-for="TenKhachHang" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="SDT" class="form-label">Số điện thoại</label>
+                    <input asp-for="SDT" class="form-control" />
+                    <span asp-validation-for="SDT" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="EmailCuaKhachHang" class="form-label">Email</label>
+                    <input asp-for="EmailCuaKhachHang" class="form-control" />
+                    <span asp-validation-for="EmailCuaKhachHang" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="DiemKhachHang" class="form-label">Điểm khách hàng</label>
+                    <input asp-for="DiemKhachHang" class="form-control" />
+                    <span asp-validation-for="DiemKhachHang" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="TaiKhoanId" class="form-label">Tài khoản liên kết</label>
+                    <input asp-for="TaiKhoanId" class="form-control" />
+                    <span asp-validation-for="TaiKhoanId" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="TrangThai" class="form-label">Trạng thái</label>
+                    <select asp-for="TrangThai" class="form-select">
+                        <option value="0">Chưa kích hoạt</option>
+                        <option value="1">Đang hoạt động</option>
+                        <option value="2">Đã khóa</option>
+                    </select>
+                    <span asp-validation-for="TrangThai" class="text-danger"></span>
+                </div>
+                <input type="hidden" asp-for="NgayTaoTaiKhoan" />
+                <input type="hidden" asp-for="NgayCapNhatCuoiCung" value="@DateTime.Now" />
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

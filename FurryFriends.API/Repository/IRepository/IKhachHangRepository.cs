@@ -4,11 +4,10 @@ namespace FurryFriends.API.Repository.IRepository
 {
 	public interface IKhachHangRepository
 	{
-		Task<IEnumerable<KhachHang>> GetAllAsync();            // Lấy tất cả khách hàng
-		Task<KhachHang> GetByIdAsync(Guid id);                 // Lấy 1 khách hàng theo ID
-		Task AddAsync(KhachHang khachHang);                    // Thêm mới
-		Task UpdateAsync(KhachHang khachHang);                 // Cập nhật
-		Task DeleteAsync(Guid id);
-
-	}
+        Task<IEnumerable<KhachHang>> GetAllAsync();
+        Task<KhachHang?> GetByIdAsync(Guid id);
+        Task<KhachHang> AddAsync(KhachHang khachHang);
+        Task<KhachHang?> UpdateAsync(Guid id, KhachHang khachHang);
+        Task<bool> DeleteAsync(Guid id);
+    }
 }
