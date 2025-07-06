@@ -1,0 +1,70 @@
+﻿@model FurryFriends.API.Models.KhachHang
+
+@{
+    ViewData["Title"] = "Xóa khách hàng";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Xóa khách hàng</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-area="Admin">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-controller="KhachHang" asp-action="Index" asp-area="Admin">Quản lý khách hàng</a></li>
+        <li class="breadcrumb-item active">Xóa khách hàng</li>
+    </ol>
+
+    <div class="alert alert-warning">
+        <strong>Bạn có chắc chắn muốn xóa khách hàng này?</strong>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="DeleteConfirmed" method="post">
+                <input type="hidden" asp-for="KhachHangId" />
+
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Tên khách hàng</th>
+                        <td>@Model.TenKhachHang</td>
+                    </tr>
+                    <tr>
+                        <th>Số điện thoại</th>
+                        <td>@Model.SDT</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>@Model.EmailCuaKhachHang</td>
+                    </tr>
+                    <tr>
+                        <th>Trạng thái</th>
+                        <td>
+                            @switch (Model.TrangThai)
+                            {
+                                case 0:
+                                    <span class="badge bg-warning">Chưa kích hoạt</span>
+                                    break;
+                                case 1:
+                                    <span class="badge bg-success">Đang hoạt động</span>
+                                    break;
+                                case 2:
+                                    <span class="badge bg-danger">Đã khóa</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-secondary">Không xác định</span>
+                                    break;
+                            }
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Xác nhận xóa
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

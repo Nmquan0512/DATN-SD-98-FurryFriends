@@ -1,0 +1,75 @@
+@model FurryFriends.API.Models.DTO.KichCoDTO
+
+@{
+    ViewData["Title"] = "Chỉnh sửa kích cỡ";
+}
+
+<div class="top-bar" style="padding-left: 50px;">
+    <h1>@ViewData["Title"]</h1>
+    <div class="top-bar-actions">
+        <a asp-area="Admin" asp-action="Index" asp-controller="KichCo" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-action="Index" asp-controller="KichCo">Quản lý kích cỡ</a></li>
+        <li class="breadcrumb-item active">Chỉnh sửa</li>
+    </ol>
+</nav>
+
+<div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Thông tin kích cỡ</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-area="Admin" asp-action="Edit" asp-controller="KichCo" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="KichCoId" />
+                        
+                        <div class="mb-3">
+                            <label asp-for="TenKichCo" class="form-label">Tên kích cỡ <span class="text-danger">*</span></label>
+                            <input asp-for="TenKichCo" class="form-control" placeholder="Nhập tên kích cỡ..." />
+                            <span asp-validation-for="TenKichCo" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="MoTa" class="form-label">Mô tả</label>
+                            <textarea asp-for="MoTa" class="form-control" rows="3" placeholder="Nhập mô tả kích cỡ..."></textarea>
+                            <span asp-validation-for="MoTa" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="TrangThai" class="form-label">Trạng thái</label>
+                            <div class="form-check">
+                                <input asp-for="TrangThai" class="form-check-input" type="checkbox" />
+                                <label asp-for="TrangThai" class="form-check-label">
+                                    Hiển thị
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-area="Admin" asp-action="Index" asp-controller="KichCo" class="btn btn-secondary">Hủy</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Cập nhật
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

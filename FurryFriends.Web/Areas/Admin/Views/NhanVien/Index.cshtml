@@ -1,0 +1,94 @@
+﻿@model IEnumerable<FurryFriends.API.Models.NhanVien>
+
+@{
+    ViewData["Title"] = "Danh sách nhân viên";
+}
+
+<div class="top-bar" style="padding-left: 50px;">
+    <h1>@ViewData["Title"]</h1>
+    <div class="top-bar-actions">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            Thêm mới
+        </a>
+    </div>
+</div>
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Quản lý nhân viên</li>
+    </ol>
+</nav>
+
+<div class="table-container" style="margin-left: 10px; margin-right: 40px;">
+    <div class="table-responsive" id="nhanVienTableContainer">
+        <table id="nhanVienTable" class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Họ và tên</th>
+                    <th>Ngày sinh</th>
+                    <th>Địa chỉ</th>
+                    <th>SĐT</th>
+                    <th>Email</th>
+                    <th>Giới tính</th>
+                    <th>Chức vụ</th>
+                    <th>Tài khoản</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.HoVaTen</td>
+                        <td>@item.NgaySinh.ToString("dd/MM/yyyy")</td>
+                        <td>@item.DiaChi</td>
+                        <td>@item.SDT</td>
+                        <td>@item.Email</td>
+                        <td>@item.GioiTinh</td>
+                        <td>@(item.ChucVu != null ? item.ChucVu.TenChucVu : "N/A")</td>
+                        <td>@(item.TaiKhoan != null ? item.TaiKhoan.UserName : "N/A")</td>
+                        <td>
+                            @(item.TrangThai ? "Hoạt động" : "Không hoạt động")
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.NhanVienId" class="btn btn-sm btn-warning me-1 action-btn"><i class="fas fa-edit"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.NhanVienId" class="btn btn-sm btn-danger action-btn"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+    <script>
+        $(document).ready(function () {
+            if (window.adminLoading) {
+                window.adminLoading.showTableLoading('#nhanVienTableContainer');
+            }
+            $('#nhanVienTable').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json' },
+                responsive: true,
+                order: [[1, 'asc']],
+                initComplete: function () {
+                    if (window.adminLoading) {
+                        window.adminLoading.hideTableLoading('#nhanVienTableContainer');
+                    }
+                }
+            });
+            $('.action-btn').on('click', function (e) {
+                if (window.adminLoading) {
+                    window.adminLoading.showLoadingWithMessage('Đang xử lý...');
+                }
+            });
+        });
+    </script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.min.css" />
+}

@@ -1,0 +1,6 @@
+@FurryFriends.API_HostAddress = http://localhost:5059
+
+GET {{FurryFriends.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

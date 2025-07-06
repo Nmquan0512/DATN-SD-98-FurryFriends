@@ -1,0 +1,74 @@
+@model FurryFriends.API.Models.DTO.ChatLieuDTO
+
+@{
+    ViewData["Title"] = "Thêm chất liệu mới";
+}
+
+<div class="top-bar" style="padding-left: 50px;">
+    <h1>@ViewData["Title"]</h1>
+    <div class="top-bar-actions">
+        <a asp-area="Admin" asp-action="Index" asp-controller="ChatLieu" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-action="Index" asp-controller="ChatLieu">Quản lý chất liệu</a></li>
+        <li class="breadcrumb-item active">Thêm mới</li>
+    </ol>
+</nav>
+
+<div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Thông tin chất liệu</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-area="Admin" asp-action="Create" asp-controller="ChatLieu" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="TenChatLieu" class="form-label">Tên chất liệu <span class="text-danger">*</span></label>
+                            <input asp-for="TenChatLieu" class="form-control" placeholder="Nhập tên chất liệu..." />
+                            <span asp-validation-for="TenChatLieu" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="MoTa" class="form-label">Mô tả</label>
+                            <textarea asp-for="MoTa" class="form-control" rows="3" placeholder="Nhập mô tả chất liệu..."></textarea>
+                            <span asp-validation-for="MoTa" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="TrangThai" class="form-label">Trạng thái</label>
+                            <div class="form-check">
+                                <input asp-for="TrangThai" class="form-check-input" type="checkbox" checked />
+                                <label asp-for="TrangThai" class="form-check-label">
+                                    Hiển thị
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-area="Admin" asp-action="Index" asp-controller="ChatLieu" class="btn btn-secondary">Hủy</a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Lưu
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 
