@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FurryFriends.API.Repositories
+namespace FurryFriends.API.Repository.IRepository
 {
     public interface ISanPhamRepository
     {

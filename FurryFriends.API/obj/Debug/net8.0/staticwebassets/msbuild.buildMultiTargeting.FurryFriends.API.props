@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\FurryFriends.API.props" />
+</Project>

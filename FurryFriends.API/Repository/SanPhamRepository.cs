@@ -1,11 +1,12 @@
 ﻿using FurryFriends.API.Data;
 using FurryFriends.API.Models;
+using FurryFriends.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace FurryFriends.API.Repositories
+namespace FurryFriends.API.Repository
 {
     public class SanPhamRepository : ISanPhamRepository
     {
@@ -18,12 +19,20 @@ namespace FurryFriends.API.Repositories
 
         public async Task<IEnumerable<SanPham>> GetAllAsync()
         {
-            return await _context.SanPhams.ToListAsync();
+            return await _context.SanPhams
+                .Include(x => x.SanPhamThanhPhans)
+                .Include(x => x.SanPhamChatLieus)
+                .Include(x => x.ThuongHieu)
+                .ToListAsync();
         }
 
         public async Task<SanPham> GetByIdAsync(Guid id)
         {
-            return await _context.SanPhams.FindAsync(id);
+            return await _context.SanPhams
+                .Include(x => x.SanPhamThanhPhans)
+                .Include(x => x.SanPhamChatLieus)
+                .Include(x => x.ThuongHieu)
+                .FirstOrDefaultAsync(x => x.SanPhamId == id);
         }
 
         public async Task AddAsync(SanPham entity)
@@ -50,7 +59,7 @@ namespace FurryFriends.API.Repositories
 
         public async Task<bool> ExistsAsync(Guid id)
         {
-            return await _context.SanPhams.AnyAsync(e => e.SanPhamId == id);
+            return await _context.SanPhams.AnyAsync(x => x.SanPhamId == id);
         }
     }
 }

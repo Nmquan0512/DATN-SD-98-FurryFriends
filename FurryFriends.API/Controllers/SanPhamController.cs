@@ -1,9 +1,7 @@
-﻿using FurryFriends.API.Models;
-using FurryFriends.API.Models.DTO;
-using FurryFriends.API.Repositories;
+﻿using FurryFriends.API.Models.DTO;
+using FurryFriends.API.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FurryFriends.API.Controllers
@@ -12,118 +10,124 @@ namespace FurryFriends.API.Controllers
     [Route("api/[controller]")]
     public class SanPhamController : ControllerBase
     {
-        private readonly ISanPhamRepository _repository;
+        private readonly ISanPhamService _sanPhamService;
 
-        public SanPhamController(ISanPhamRepository repository)
+        public SanPhamController(ISanPhamService sanPhamService)
         {
-            _repository = repository;
+            _sanPhamService = sanPhamService;
         }
 
+        // GET: api/SanPham
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SanPhamDTO>>> GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var list = await _repository.GetAllAsync();
-            var result = new List<SanPhamDTO>();
-            foreach (var item in list)
+            try
             {
-                result.Add(new SanPhamDTO
-                {
-                    SanPhamId = item.SanPhamId,
-                    TenSanPham = item.TenSanPham,
-                    TaiKhoanId = item.TaiKhoanId,
-                    ThuongHieuId = item.ThuongHieuId,
-                    TrangThai = item.TrangThai
-                });
+                var sanPhams = await _sanPhamService.GetAllAsync();
+                return Ok(sanPhams);
             }
-            return Ok(result);
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi máy chủ: {ex.Message}");
+            }
         }
 
+        // GET: api/SanPham/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<SanPhamDTO>> GetById(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
-            var item = await _repository.GetByIdAsync(id);
-            if (item == null)
+            var sp = await _sanPhamService.GetByIdAsync(id);
+            if (sp == null)
                 return NotFound("Không tìm thấy sản phẩm!");
 
-            var dto = new SanPhamDTO
-            {
-                SanPhamId = item.SanPhamId,
-                TenSanPham = item.TenSanPham,
-                TaiKhoanId = item.TaiKhoanId,
-                ThuongHieuId = item.ThuongHieuId,
-                TrangThai = item.TrangThai
-            };
-            return Ok(dto);
+            return Ok(sp);
         }
 
+        // POST: api/SanPham
         [HttpPost]
-        public async Task<ActionResult> Create([FromBody] SanPhamDTO dto)
+        public async Task<IActionResult> Create([FromBody] SanPhamDTO dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             try
             {
-                var entity = new SanPham
-                {
-                    SanPhamId = Guid.NewGuid(),
-                    TenSanPham = dto.TenSanPham,
-                    TaiKhoanId = dto.TaiKhoanId,
-                    ThuongHieuId = dto.ThuongHieuId,
-                    TrangThai = dto.TrangThai
-                };
-                await _repository.AddAsync(entity);
-                dto.SanPhamId = entity.SanPhamId;
-                return CreatedAtAction(nameof(GetById), new { id = entity.SanPhamId }, dto);
+                var created = await _sanPhamService.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = created.SanPhamId }, created);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi máy chủ: {ex.Message}");
+                return StatusCode(500, $"Không thể tạo sản phẩm: {ex.Message}");
             }
         }
 
+        // PUT: api/SanPham/{id}
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(Guid id, [FromBody] SanPhamDTO dto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] SanPhamDTO dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (!await _repository.ExistsAsync(id))
-                return NotFound("Không tìm thấy sản phẩm!");
-
             try
             {
-                var entity = new SanPham
-                {
-                    SanPhamId = id,
-                    TenSanPham = dto.TenSanPham,
-                    TaiKhoanId = dto.TaiKhoanId,
-                    ThuongHieuId = dto.ThuongHieuId,
-                    TrangThai = dto.TrangThai
-                };
-                await _repository.UpdateAsync(entity);
+                var updated = await _sanPhamService.UpdateAsync(id, dto);
+                if (!updated)
+                    return NotFound("Không tìm thấy sản phẩm!");
+
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi máy chủ: {ex.Message}");
+                return StatusCode(500, $"Lỗi khi cập nhật sản phẩm: {ex.Message}");
             }
         }
 
+        // DELETE: api/SanPham/{id}
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            if (!await _repository.ExistsAsync(id))
-                return NotFound("Không tìm thấy sản phẩm!");
-
             try
             {
-                await _repository.DeleteAsync(id);
+                var deleted = await _sanPhamService.DeleteAsync(id);
+                if (!deleted)
+                    return NotFound("Không tìm thấy sản phẩm!");
+
                 return NoContent();
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi máy chủ: {ex.Message}");
+                return StatusCode(500, $"Lỗi khi xóa sản phẩm: {ex.Message}");
+            }
+        }
+
+        // GET: api/SanPham/filter?loai=DoAn&page=1&pageSize=10
+        [HttpGet("filter")]
+        public async Task<IActionResult> GetFiltered(
+            [FromQuery] string? loai,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            if (page <= 0 || pageSize <= 0)
+                return BadRequest("Page và pageSize phải lớn hơn 0");
+
+            try
+            {
+                var (data, total) = await _sanPhamService.GetFilteredAsync(loai, page, pageSize);
+
+                var response = new
+                {
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalItems = total,
+                    TotalPages = (int)Math.Ceiling((double)total / pageSize),
+                    Items = data
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi khi lọc/phân trang sản phẩm: {ex.Message}");
             }
         }
     }
