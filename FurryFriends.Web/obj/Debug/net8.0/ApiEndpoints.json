@@ -1,0 +1,1486 @@
+[
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ChatLieuController",
+    "Method": "GetAll",
+    "RelativePath": "api/ChatLieu",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ChatLieuController",
+    "Method": "Create",
+    "RelativePath": "api/ChatLieu",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.ChatLieuDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ChatLieuController",
+    "Method": "GetById",
+    "RelativePath": "api/ChatLieu/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ChatLieuController",
+    "Method": "Update",
+    "RelativePath": "api/ChatLieu/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.ChatLieuDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ChatLieuController",
+    "Method": "Delete",
+    "RelativePath": "api/ChatLieu/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ChucVuApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/ChucVuApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ChucVuApiController",
+    "Method": "Create",
+    "RelativePath": "api/ChucVuApi",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "chucVu",
+        "Type": "FurryFriends.API.Models.ChucVu",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ChucVuApiController",
+    "Method": "GetById",
+    "RelativePath": "api/ChucVuApi/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ChucVuApiController",
+    "Method": "Update",
+    "RelativePath": "api/ChucVuApi/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "chucVu",
+        "Type": "FurryFriends.API.Models.ChucVu",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ChucVuApiController",
+    "Method": "Delete",
+    "RelativePath": "api/ChucVuApi/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ChucVuApiController",
+    "Method": "SearchByTenChucVu",
+    "RelativePath": "api/ChucVuApi/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tenChucVu",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.DiaChiKhachHangController",
+    "Method": "GetAll",
+    "RelativePath": "api/DiaChiKhachHang",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.DiaChiKhachHangController",
+    "Method": "Create",
+    "RelativePath": "api/DiaChiKhachHang",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "diaChi",
+        "Type": "FurryFriends.API.Models.DiaChiKhachHang",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.DiaChiKhachHangController",
+    "Method": "GetById",
+    "RelativePath": "api/DiaChiKhachHang/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.DiaChiKhachHangController",
+    "Method": "Update",
+    "RelativePath": "api/DiaChiKhachHang/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "diaChi",
+        "Type": "FurryFriends.API.Models.DiaChiKhachHang",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.DiaChiKhachHangController",
+    "Method": "Delete",
+    "RelativePath": "api/DiaChiKhachHang/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.DiaChiKhachHangController",
+    "Method": "GetByKhachHangId",
+    "RelativePath": "api/DiaChiKhachHang/khachhang/{khachHangId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "khachHangId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.DotGiamGiaController",
+    "Method": "GetAll",
+    "RelativePath": "api/DotGiamGia",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.DotGiamGiaController",
+    "Method": "Create",
+    "RelativePath": "api/DotGiamGia",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dot",
+        "Type": "FurryFriends.API.Models.DotGiamGiaSanPham",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.DotGiamGiaController",
+    "Method": "GetById",
+    "RelativePath": "api/DotGiamGia/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.DotGiamGiaController",
+    "Method": "Update",
+    "RelativePath": "api/DotGiamGia/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "updated",
+        "Type": "FurryFriends.API.Models.DotGiamGiaSanPham",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.DotGiamGiaController",
+    "Method": "Delete",
+    "RelativePath": "api/DotGiamGia/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.GiamGiaController",
+    "Method": "GetAll",
+    "RelativePath": "api/GiamGia",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.GiamGiaController",
+    "Method": "Create",
+    "RelativePath": "api/GiamGia",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "giamGia",
+        "Type": "FurryFriends.API.Models.GiamGia",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.GiamGiaController",
+    "Method": "GetById",
+    "RelativePath": "api/GiamGia/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.GiamGiaController",
+    "Method": "Update",
+    "RelativePath": "api/GiamGia/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "updated",
+        "Type": "FurryFriends.API.Models.GiamGia",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.GiamGiaController",
+    "Method": "Delete",
+    "RelativePath": "api/GiamGia/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.HoaDonController",
+    "Method": "GetHoaDons",
+    "RelativePath": "api/HoaDon",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[FurryFriends.API.Models.HoaDon, FurryFriends.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.HoaDonController",
+    "Method": "GetHoaDon",
+    "RelativePath": "api/HoaDon/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "FurryFriends.API.Models.HoaDon",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.HoaDonController",
+    "Method": "ExportHoaDonToPdf",
+    "RelativePath": "api/HoaDon/{id}/pdf",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.HoaDonController",
+    "Method": "SearchHoaDons",
+    "RelativePath": "api/HoaDon/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "keyword",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[FurryFriends.API.Models.HoaDon, FurryFriends.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.KhachHangController",
+    "Method": "GetAll",
+    "RelativePath": "api/KhachHang",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[FurryFriends.API.Models.KhachHang, FurryFriends.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.KhachHangController",
+    "Method": "Create",
+    "RelativePath": "api/KhachHang",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "khachHang",
+        "Type": "FurryFriends.API.Models.KhachHang",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.KhachHangController",
+    "Method": "GetById",
+    "RelativePath": "api/KhachHang/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "FurryFriends.API.Models.KhachHang",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.KhachHangController",
+    "Method": "Update",
+    "RelativePath": "api/KhachHang/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "khachHang",
+        "Type": "FurryFriends.API.Models.KhachHang",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.KhachHangController",
+    "Method": "Delete",
+    "RelativePath": "api/KhachHang/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.KichCoController",
+    "Method": "GetAll",
+    "RelativePath": "api/KichCo",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.KichCoController",
+    "Method": "Create",
+    "RelativePath": "api/KichCo",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.KichCoDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.KichCoController",
+    "Method": "GetById",
+    "RelativePath": "api/KichCo/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.KichCoController",
+    "Method": "Update",
+    "RelativePath": "api/KichCo/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.KichCoDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.KichCoController",
+    "Method": "Delete",
+    "RelativePath": "api/KichCo/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.MauSacController",
+    "Method": "GetAll",
+    "RelativePath": "api/MauSac",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.MauSacController",
+    "Method": "Create",
+    "RelativePath": "api/MauSac",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.MauSacDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.MauSacController",
+    "Method": "GetById",
+    "RelativePath": "api/MauSac/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.MauSacController",
+    "Method": "Update",
+    "RelativePath": "api/MauSac/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.MauSacDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.MauSacController",
+    "Method": "Delete",
+    "RelativePath": "api/MauSac/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.NhanVienApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/NhanVienApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.NhanVienApiController",
+    "Method": "Create",
+    "RelativePath": "api/NhanVienApi",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nhanVien",
+        "Type": "FurryFriends.API.Models.NhanVien",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.NhanVienApiController",
+    "Method": "GetById",
+    "RelativePath": "api/NhanVienApi/{nhanVienId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nhanVienId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.NhanVienApiController",
+    "Method": "Update",
+    "RelativePath": "api/NhanVienApi/{nhanVienId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nhanVienId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "nhanVien",
+        "Type": "FurryFriends.API.Models.NhanVien",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.NhanVienApiController",
+    "Method": "Delete",
+    "RelativePath": "api/NhanVienApi/{nhanVienId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "nhanVienId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.NhanVienApiController",
+    "Method": "SearchByHoVaTen",
+    "RelativePath": "api/NhanVienApi/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "hoVaTen",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.SanPhamsController",
+    "Method": "GetAll",
+    "RelativePath": "api/SanPhams",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.SanPhamsController",
+    "Method": "Create",
+    "RelativePath": "api/SanPhams",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.SanPhamDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.SanPhamsController",
+    "Method": "GetById",
+    "RelativePath": "api/SanPhams/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.SanPhamsController",
+    "Method": "Update",
+    "RelativePath": "api/SanPhams/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.SanPhamDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.SanPhamsController",
+    "Method": "Delete",
+    "RelativePath": "api/SanPhams/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.TaiKhoanApiController",
+    "Method": "GetAll",
+    "RelativePath": "api/TaiKhoanApi",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.TaiKhoanApiController",
+    "Method": "Create",
+    "RelativePath": "api/TaiKhoanApi",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "taiKhoan",
+        "Type": "FurryFriends.API.Models.TaiKhoan",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.TaiKhoanApiController",
+    "Method": "GetById",
+    "RelativePath": "api/TaiKhoanApi/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.TaiKhoanApiController",
+    "Method": "Update",
+    "RelativePath": "api/TaiKhoanApi/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "taiKhoan",
+        "Type": "FurryFriends.API.Models.TaiKhoan",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.TaiKhoanApiController",
+    "Method": "Delete",
+    "RelativePath": "api/TaiKhoanApi/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.TaiKhoanApiController",
+    "Method": "DangNhapAdmin",
+    "RelativePath": "api/TaiKhoanApi/dang-nhap-admin",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "FurryFriends.API.Models.LoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.TaiKhoanApiController",
+    "Method": "DangNhapKhachHang",
+    "RelativePath": "api/TaiKhoanApi/dang-nhap-khachhang",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "FurryFriends.API.Models.LoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.TaiKhoanApiController",
+    "Method": "Search",
+    "RelativePath": "api/TaiKhoanApi/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "keyword",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThanhPhanController",
+    "Method": "GetAll",
+    "RelativePath": "api/ThanhPhan",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThanhPhanController",
+    "Method": "Create",
+    "RelativePath": "api/ThanhPhan",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.ThanhPhanDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThanhPhanController",
+    "Method": "GetById",
+    "RelativePath": "api/ThanhPhan/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThanhPhanController",
+    "Method": "Update",
+    "RelativePath": "api/ThanhPhan/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.ThanhPhanDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThanhPhanController",
+    "Method": "Delete",
+    "RelativePath": "api/ThanhPhan/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThongBaoController",
+    "Method": "GetAll",
+    "RelativePath": "api/ThongBao",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThongBaoController",
+    "Method": "Add",
+    "RelativePath": "api/ThongBao",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "thongBao",
+        "Type": "FurryFriends.API.Models.ThongBao",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThongBaoController",
+    "Method": "GetById",
+    "RelativePath": "api/ThongBao/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThongBaoController",
+    "Method": "Update",
+    "RelativePath": "api/ThongBao/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "thongBao",
+        "Type": "FurryFriends.API.Models.ThongBao",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThongBaoController",
+    "Method": "Delete",
+    "RelativePath": "api/ThongBao/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThongBaoController",
+    "Method": "MarkAsRead",
+    "RelativePath": "api/ThongBao/mark-as-read/{id}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThongTinCaNhanController",
+    "Method": "GetThongTinCaNhan",
+    "RelativePath": "api/ThongTinCaNhan/{taiKhoanId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "taiKhoanId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThongTinCaNhanController",
+    "Method": "UpdateThongTinCaNhan",
+    "RelativePath": "api/ThongTinCaNhan/{taiKhoanId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "taiKhoanId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.CapNhatThongTinCaNhanDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThongTinCaNhanController",
+    "Method": "DoiMatKhau",
+    "RelativePath": "api/ThongTinCaNhan/doimatkhau/{taiKhoanId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "taiKhoanId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "request",
+        "Type": "FurryFriends.API.Controllers.DoiMatKhauRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThuongHieuController",
+    "Method": "GetAll",
+    "RelativePath": "api/ThuongHieu",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThuongHieuController",
+    "Method": "Create",
+    "RelativePath": "api/ThuongHieu",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.ThuongHieuDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThuongHieuController",
+    "Method": "GetById",
+    "RelativePath": "api/ThuongHieu/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThuongHieuController",
+    "Method": "Update",
+    "RelativePath": "api/ThuongHieu/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "FurryFriends.API.Models.DTO.ThuongHieuDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.ThuongHieuController",
+    "Method": "Delete",
+    "RelativePath": "api/ThuongHieu/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.VoucherController",
+    "Method": "GetAll",
+    "RelativePath": "api/Voucher",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.VoucherController",
+    "Method": "Create",
+    "RelativePath": "api/Voucher",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "voucher",
+        "Type": "FurryFriends.API.Models.Voucher",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.VoucherController",
+    "Method": "GetById",
+    "RelativePath": "api/Voucher/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.VoucherController",
+    "Method": "Update",
+    "RelativePath": "api/Voucher/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "voucher",
+        "Type": "FurryFriends.API.Models.Voucher",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.VoucherController",
+    "Method": "Delete",
+    "RelativePath": "api/Voucher/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FurryFriends.API.Controllers.WeatherForecastController",
+    "Method": "Get",
+    "RelativePath": "WeatherForecast",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[FurryFriends.API.WeatherForecast, FurryFriends.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "GetWeatherForecast"
+  }
+]

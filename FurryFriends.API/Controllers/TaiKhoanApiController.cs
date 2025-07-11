@@ -1,4 +1,5 @@
 ﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -50,7 +51,8 @@ namespace FurryFriends.API.Controllers
             }
         }
 
-        [HttpPost]
+
+		[HttpPost]
         public async Task<IActionResult> Create([FromBody] TaiKhoan taiKhoan)
         {
             if (!ModelState.IsValid)
@@ -104,8 +106,10 @@ namespace FurryFriends.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+	
 
-        [HttpDelete("{id}")]
+
+		[HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try

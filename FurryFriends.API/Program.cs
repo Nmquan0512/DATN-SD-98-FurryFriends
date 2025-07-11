@@ -34,6 +34,7 @@ builder.Services.AddScoped<IDiaChiKhachHangRepository, DiaChiKhachHangRepository
 builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
 builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
+builder.Services.AddScoped<IThongTinCaNhanService, ThongTinCaNhanService>();
 builder.Services.AddScoped<INhanVienRepository, NhanVIenRepository>();
 builder.Services.AddScoped<IThongBaoRepository, ThongBaoRepository>();
 builder.Services.AddScoped<IChatLieuRepository, ChatLieuRepository>();

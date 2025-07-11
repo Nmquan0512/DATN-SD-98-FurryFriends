@@ -3,12 +3,12 @@ using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
-using FurryFriends.Web.Filter;
+//using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AuthorizeAdminOnly]
+    //[AuthorizeAdminOnly]
     public class ChucVuController : Controller
     {
         private readonly IChucVuService _chucVuService;

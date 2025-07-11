@@ -1,12 +1,12 @@
 ﻿using FurryFriends.API.Models;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
-using FurryFriends.Web.Filter;
+//using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AuthorizeAdminOnly]
+    //[AuthorizeAdminOnly]
     public class TaiKhoanController : Controller
     {
         public readonly ITaiKhoanService _taiKhoanService;

@@ -29,7 +29,7 @@ public class AuthController : Controller
         // Thử đăng nhập admin/nhân viên
         var result = await _taiKhoanService.DangNhapAdminAsync(model);
         _logger.LogInformation($"Kết quả đăng nhập admin: {(result != null ? "Thành công" : "Thất bại")}");
-        
+
         if (result != null)
         {
             HttpContext.Session.SetString("TaiKhoanId", result.TaiKhoanId.ToString());
@@ -46,7 +46,7 @@ public class AuthController : Controller
         // Nếu không phải admin/nhân viên, thử đăng nhập khách hàng
         var khResult = await _taiKhoanService.DangNhapKhachHangAsync(model);
         _logger.LogInformation($"Kết quả đăng nhập khách hàng: {(khResult != null ? "Thành công" : "Thất bại")}");
-        
+
         if (khResult != null)
         {
             // Lưu session cho khách hàng
@@ -68,4 +68,4 @@ public class AuthController : Controller
         HttpContext.Session.Clear();
         return RedirectToAction("DangNhap");
     }
-} 
+}
