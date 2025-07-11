@@ -303,3 +303,17 @@ C:\Users\x\source\repos\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.
 C:\Users\x\source\repos\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.pdb
 C:\Users\x\source\repos\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.genruntimeconfig.cache
 C:\Users\x\source\repos\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\ref\FurryFriends.Web.dll
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.csproj.AssemblyReference.cache
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\rpswa.dswa.cache.json
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.AssemblyInfoInputs.cache
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.AssemblyInfo.cs
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.csproj.CoreCompileInputs.cache
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.RazorAssemblyInfo.cache
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.RazorAssemblyInfo.cs
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.sourcelink.json
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.dll
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\refint\FurryFriends.Web.dll
+C:\Users\Lenovo\OneDrive\Desktop\merge\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.pdb

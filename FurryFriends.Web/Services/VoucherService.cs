@@ -1,5 +1,6 @@
 ﻿using FurryFriends.API.Models;
 using FurryFriends.Web.Services.IService;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Json;
 
 namespace FurryFriends.Web.Services
@@ -26,14 +27,43 @@ namespace FurryFriends.Web.Services
         public async Task<bool> CreateAsync(Voucher voucher)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Voucher", voucher);
-            return response.IsSuccessStatusCode;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                // Nếu là lỗi validation
+                if (response.StatusCode == System.Net.HttpStatusCode.BadRequest &&
+                    response.Content?.Headers.ContentType?.MediaType == "application/problem+json")
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    throw new ValidationException(content); // gửi JSON lỗi lên Controller
+                }
+
+                // Trường hợp lỗi khác
+                throw new HttpRequestException(await response.Content.ReadAsStringAsync());
+            }
+
+            return true;
         }
 
         public async Task<bool> UpdateAsync(Guid id, Voucher voucher)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Voucher/{id}", voucher);
-            return response.IsSuccessStatusCode;
+
+            if (!response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.BadRequest &&
+                    response.Content?.Headers.ContentType?.MediaType == "application/problem+json")
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    throw new ValidationException(content);
+                }
+
+                throw new HttpRequestException(await response.Content.ReadAsStringAsync());
+            }
+
+            return true;
         }
+
 
         public async Task<bool> DeleteAsync(Guid id)
         {

@@ -51,6 +51,8 @@ builder.Services.AddScoped<IMauSacService, MauSacService>();
 builder.Services.AddScoped<IKichCoService, KichCoService>();
 // Trong FurryFriends.API.Program.cs
 builder.Services.AddScoped<IKichCoRepository, KichCoRepository>();
+builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
+builder.Services.AddScoped<IDotGiamGiaSanPhamRepository, DotGiamGiaSanPhamRepository>();
 // Add CORS
 builder.Services.AddCors(options =>
 {

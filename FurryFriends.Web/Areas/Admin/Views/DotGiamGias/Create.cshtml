@@ -37,7 +37,7 @@
         <div class="card-body p-4">
             <form asp-area="Admin" asp-action="Create" asp-controller="DotGiamGias" method="post" id="createForm">
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: none;"></div>
-                
+
                 <div class="row g-4">
                     <!-- Loại giảm giá -->
                     <div class="col-md-6">
@@ -58,7 +58,7 @@
                             <label asp-for="SanPhamId" class="form-label fw-semibold">
                                 <i class="fas fa-box me-2 text-primary"></i>Sản phẩm
                             </label>
-                            <select asp-for="SanPhamId" class="form-control form-control-lg" asp-items="ViewBag.SanPhamList">
+                            <select asp-for="SanPhamId" class="form-control form-control-lg" asp-items="ViewBag.SanPhamList" id="SanPhamId">
                                 <option value="">-- Chọn sản phẩm --</option>
                             </select>
                             <span asp-validation-for="SanPhamId" class="text-danger small"></span>
@@ -119,7 +119,6 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
@@ -127,12 +126,11 @@
 
     <script>
         $(document).ready(function () {
-            // Auto-fill phần trăm giảm giá khi chọn loại giảm giá
             $('#GiamGiaId').change(function () {
                 var giamGiaId = $(this).val();
                 if (giamGiaId) {
                     $.ajax({
-                        url: `/api/giamgia/${giamGiaId}/phantram`,
+                        url: `https://localhost:7289/api/giamgia/${giamGiaId}/phantram`,
                         type: 'GET',
                         success: function (data) {
                             $('#PhanTramGiamGia').val(data);
@@ -146,15 +144,7 @@
                 }
             });
 
-            // Form validation
-            $('#createForm').on('submit', function(e) {
-                if ($(this).valid()) {
-                    // Form hợp lệ, cho phép submit
-                    return true;
-                }
-            });
-
-            // Trigger change event on load if value exists
+            // Trigger load lại nếu đã có sẵn GiamGiaId khi load form (ví dụ khi submit lỗi)
             $('#GiamGiaId').trigger('change');
         });
     </script>

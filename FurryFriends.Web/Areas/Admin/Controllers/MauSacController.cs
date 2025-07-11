@@ -32,26 +32,27 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Create(MauSacDTO dto)
         {
             if (!ModelState.IsValid)
-            {
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                    return BadRequest(ModelState);
                 return View(dto);
-            }
 
             var result = await _mauSacService.CreateAsync(dto);
-            if (result != null)
+            if (result.Success)
             {
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                    return Json(result);
+                TempData["success"] = "Thêm màu sắc thành công!";
                 return RedirectToAction("Index");
             }
 
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                return BadRequest("Thêm màu sắc thất bại");
+            if (result.Errors != null)
+            {
+                foreach (var error in result.Errors)
+                {
+                    foreach (var msg in error.Value)
+                        ModelState.AddModelError(error.Key, msg);
+                }
+            }
 
-            ModelState.AddModelError("", "Thêm màu sắc thất bại!");
             return View(dto);
         }
+
 
         // GET: /Admin/MauSac/Edit/{id}
         public async Task<IActionResult> Edit(Guid id)
@@ -68,16 +69,35 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, MauSacDTO dto)
         {
+            if (id != dto.MauSacId)
+                return BadRequest();
+
             if (!ModelState.IsValid)
                 return View(dto);
 
-            var success = await _mauSacService.UpdateAsync(id, dto);
-            if (success)
+            var result = await _mauSacService.UpdateAsync(id, dto);
+            if (result.Data)
+            {
+                TempData["success"] = "Cập nhật màu sắc thành công!";
                 return RedirectToAction("Index");
+            }
 
-            ModelState.AddModelError("", "Cập nhật thất bại!");
+            if (result.Errors != null)
+            {
+                foreach (var error in result.Errors)
+                {
+                    foreach (var msg in error.Value)
+                        ModelState.AddModelError(error.Key, msg);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Cập nhật thất bại!");
+            }
+
             return View(dto);
         }
+
 
         // GET: /Admin/MauSac/Delete/{id}
         public async Task<IActionResult> Delete(Guid id)

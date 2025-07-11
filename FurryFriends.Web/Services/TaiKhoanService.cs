@@ -1,6 +1,7 @@
 ﻿using FurryFriends.API.Models;
 using FurryFriends.API.Repository.IRepository;
 using FurryFriends.Web.Services.IService;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Http;
 using System.Net.Http.Json;
 using LoginRequest = FurryFriends.API.Models.LoginRequest;
@@ -43,21 +44,44 @@ namespace FurryFriends.Web.Services
             taiKhoan.HoaDons = null;
 
             var response = await _httpClient.PostAsJsonAsync("TaiKhoanApi", taiKhoan);
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode == System.Net.HttpStatusCode.BadRequest &&
+                    response.Content?.Headers.ContentType?.MediaType == "application/problem+json")
+                {
+                    throw new ValidationException(content);
+                }
+
+                throw new HttpRequestException(content);
+            }
         }
 
         public async Task UpdateAsync(TaiKhoan taiKhoan)
         {
-            if (taiKhoan == null || taiKhoan.TaiKhoanId == Guid.Empty)
-                throw new ArgumentException("Tài khoản không hợp lệ.");
+            var response = await _httpClient.PutAsJsonAsync($"TaiKhoanApi/{taiKhoan.TaiKhoanId}", taiKhoan);
+            if (taiKhoan == null)
+                throw new ArgumentNullException(nameof(taiKhoan));
 
             taiKhoan.NhanVien = null;
             taiKhoan.KhachHang = null;
             taiKhoan.SanPhams = null;
             taiKhoan.HoaDons = null;
 
-            var response = await _httpClient.PutAsJsonAsync($"TaiKhoanApi/{taiKhoan.TaiKhoanId}", taiKhoan);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode == System.Net.HttpStatusCode.BadRequest &&
+                    response.Content?.Headers.ContentType?.MediaType == "application/problem+json")
+                {
+                    throw new ValidationException(content);
+                }
+
+                throw new HttpRequestException(content);
+            }
         }
 
         public async Task DeleteAsync(Guid taiKhoanId)

@@ -1,9 +1,11 @@
-using FurryFriends.API.Models;
+﻿using FurryFriends.API.Models;
+using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -38,8 +40,39 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
-            await _chucVuService.AddAsync(model);
-            return RedirectToAction(nameof(Index));
+
+            try
+            {
+                await _chucVuService.AddAsync(model);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ValidationException ex)
+            {
+                // Parse JSON lỗi (ValidationProblemDetails) từ API
+                var problemDetails = JsonConvert.DeserializeObject<ValidationProblemDetails>(ex.Message);
+
+                if (problemDetails?.Errors != null)
+                {
+                    foreach (var error in problemDetails.Errors)
+                    {
+                        foreach (var msg in error.Value)
+                        {
+                            ModelState.AddModelError(error.Key, msg);
+                        }
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Lỗi xác thực.");
+                }
+
+                return View(model);
+            }
+            catch (HttpRequestException ex)
+            {
+                ModelState.AddModelError(string.Empty, "Lỗi gửi dữ liệu: " + ex.Message);
+                return View(model);
+            }
         }
 
         // GET: Admin/ChucVu/Edit/{id}
@@ -57,8 +90,38 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             if (id != model.ChucVuId) return BadRequest();
             if (!ModelState.IsValid) return View(model);
-            await _chucVuService.UpdateAsync(model);
-            return RedirectToAction(nameof(Index));
+
+            try
+            {
+                await _chucVuService.UpdateAsync(model);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ValidationException ex)
+            {
+                var problemDetails = JsonConvert.DeserializeObject<ValidationProblemDetails>(ex.Message);
+
+                if (problemDetails?.Errors != null)
+                {
+                    foreach (var error in problemDetails.Errors)
+                    {
+                        foreach (var msg in error.Value)
+                        {
+                            ModelState.AddModelError(error.Key, msg);
+                        }
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Lỗi xác thực.");
+                }
+
+                return View(model);
+            }
+            catch (HttpRequestException ex)
+            {
+                ModelState.AddModelError(string.Empty, "Lỗi gửi dữ liệu: " + ex.Message);
+                return View(model);
+            }
         }
 
         // GET: Admin/ChucVu/Delete/{id}
@@ -78,4 +141,4 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
     }
-} 
+}

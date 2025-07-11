@@ -31,8 +31,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                                         .Where(t => t.NhanVien == null && t.KhachHangId == null)
                                         .ToList();
 
-            ViewData["TaiKhoanId"] = new SelectList(taiKhoanChuaPhanLoai, "TaiKhoanId", "UserName");
-            ViewData["ChucVuId"] = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu");
+            ViewBag.TaiKhoanId = new SelectList(taiKhoanChuaPhanLoai, "TaiKhoanId", "UserName");
+            ViewBag.ChucVuId = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu");
             return View();
         }
 
@@ -62,8 +62,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                                         .Where(t => t.NhanVien == null && t.KhachHangId == null)
                                         .ToList();
 
-            ViewData["TaiKhoanId"] = new SelectList(taiKhoanChuaPhanLoai, "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
-            ViewData["ChucVuId"] = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu", nhanVien.ChucVuId);
+            ViewBag.TaiKhoanId = new SelectList(taiKhoanChuaPhanLoai, "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
+            ViewBag.ChucVuId = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu", nhanVien.ChucVuId);
             return View(nhanVien);
         }
 
@@ -73,8 +73,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             var nhanVien = await _nhanVienService.GetByIdAsync(id);
             if (nhanVien == null)
                 return NotFound();
-            ViewData["TaiKhoanId"] = new SelectList(await _taiKhoanService.GetAllAsync(), "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
-            ViewData["ChucVuId"] = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu", nhanVien.ChucVuId);
+            ViewBag.TaiKhoanId = new SelectList(await _taiKhoanService.GetAllAsync(), "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
+            ViewBag.ChucVuId = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu", nhanVien.ChucVuId);
             return View(nhanVien);
         }
 
@@ -107,8 +107,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     ModelState.AddModelError("", $"Lỗi: {ex.Message}");
                 }
             }
-            ViewData["TaiKhoanId"] = new SelectList(await _taiKhoanService.GetAllAsync(), "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
-            ViewData["ChucVuId"] = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu", nhanVien.ChucVuId);
+            ViewBag.TaiKhoanId = new SelectList(await _taiKhoanService.GetAllAsync(), "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
+            ViewBag.ChucVuId = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu", nhanVien.ChucVuId);
             return View(nhanVien);
         }
 

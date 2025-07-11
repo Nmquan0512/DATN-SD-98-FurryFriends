@@ -19,29 +19,29 @@
         <div class="shape"></div>
     </div>
     <div class="signup-container">
-        
+
         <div class="logo-section">
             <div class="logo">FurryFriends</div>
             <div class="subtitle">Cửa hàng thú cưng yêu thương</div>
         </div>
         <center><div class="welcome-text">Tạo tài khoản mới</div></center>
-        @if (TempData["Success"] != null)
+        @* @if (TempData["Success"] != null)
         {
             <div class="success-message" id="successMessage">
                 @Html.Raw(TempData["Success"])
             </div>
-        }
+        } *@
         @if (ViewBag.Success != null)
         {
-        <div class="success-message" id="successMessage">
+            <div class="success-message" id="successMessage">
                 @ViewBag.Success
-        </div>
+            </div>
         }
         @if (ViewBag.Error != null)
         {
-        <div class="error-message" id="errorMessage">
+            <div class="error-message" id="errorMessage">
                 @ViewBag.Error
-        </div>
+            </div>
         }
         @using (Html.BeginForm("Register", "DangKy", FormMethod.Post, new { id = "signupForm" }))
         {
@@ -89,7 +89,7 @@
             <div class="terms-checkbox">
                 @Html.CheckBoxFor(m => m.AgreeTerms, new Dictionary<string, object> { { "class", "form-check-input" } })
                 <label for="terms">
-                    Tôi đồng ý với <a href="#" onclick="showTerms()">Điều khoản dịch vụ</a> và 
+                    Tôi đồng ý với <a href="#" onclick="showTerms()">Điều khoản dịch vụ</a> và
                     <a href="#" onclick="showPrivacy()">Chính sách bảo mật</a> của FurryFriends
                 </label>
                 @Html.ValidationMessageFor(m => m.AgreeTerms, "", new Dictionary<string, object> { { "class", "text-danger" } })
@@ -112,7 +112,7 @@
 
         </div>
         <div class="login-link">
-            Đã có tài khoản? <a asp-action="DangNhap" asp-controller="Auth" onclick="showLogin()">Đăng nhập ngay</a>
+            Đã có tài khoản? <a asp-action="DangNhap" asp-controller="KhachHangLogin" onclick="showLogin()">Đăng nhập ngay</a>
         </div>
     </div>
     <script src="~/js/dangkyscript.js"></script>

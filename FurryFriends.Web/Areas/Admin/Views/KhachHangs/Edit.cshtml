@@ -72,11 +72,18 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
-        $(document).ready(function () {
+            $(document).ready(function () {
             var selectedId = '@Model.TaiKhoanId';
             var selectedText = '@(ViewBag.SelectedTaiKhoanText ?? "")';
+
+            // Nếu có tài khoản đã chọn thì thêm option đó vào trước khi khởi tạo select2
+            if (selectedId && selectedText) {
+                var option = new Option(selectedText, selectedId, true, true);
+                $('#TaiKhoanId').append(option);
+            }
+
             $('#TaiKhoanId').select2({
-                placeholder: 'Chọn tài khoản',
+                placeholder: "Chọn tài khoản", // chỉ dùng nếu chưa chọn
                 minimumInputLength: 2,
                 ajax: {
                     url: 'https://localhost:7289/api/TaiKhoanApi/search',
@@ -94,13 +101,55 @@
                     }
                 }
             });
-            // Set default value if editing
+
             if (selectedId && selectedText) {
-                var option = new Option(selectedText, selectedId, true, true);
-                $('#TaiKhoanId').append(option).trigger('change');
+                $('#TaiKhoanId').val(selectedId).trigger('change');
             }
         });
     </script>
 }
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+@* 
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+                $(document).ready(function () {
+            var selectedId = '@Model.TaiKhoanId';
+            var selectedText = '@(ViewBag.SelectedTaiKhoanText ?? "")';
+
+            $('#TaiKhoanId').select2({
+                placeholder: selectedText !== "" ? selectedText : "Chọn tài khoản", // 👈 xử lý điều kiện này
+                minimumInputLength: 2,
+                ajax: {
+                    url: 'https://localhost:7289/api/TaiKhoanApi/search',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return { keyword: params.term };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.map(function (item) {
+                                return { id: item.taiKhoanId, text: item.userName };
+                            })
+                        };
+                    }
+                }
+            });
+
+            // Set default value if editing
+            if (selectedId && selectedText) {
+                var option = new Option(selectedText, selectedId, true, true);
+                $('#TaiKhoanId').append(option).trigger('change');
+            }
+        });
+
+    </script>
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+ *@

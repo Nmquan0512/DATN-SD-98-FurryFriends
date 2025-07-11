@@ -28,7 +28,7 @@ public class KhachHangLoginController : Controller
 
         var result = await _taiKhoanService.DangNhapKhachHangAsync(model);
         _logger.LogInformation($"Kết quả đăng nhập khách hàng: {(result != null ? "Thành công" : "Thất bại")}");
-        
+
         if (result == null)
         {
             ViewBag.Error = "Sai tên đăng nhập hoặc mật khẩu.";
@@ -47,6 +47,7 @@ public class KhachHangLoginController : Controller
     public IActionResult Logout()
     {
         HttpContext.Session.Clear();
-        return RedirectToAction("DangNhap");
+        //return RedirectToAction("DangNhap");
+        return RedirectToAction("Index", "Home");
     }
-} 
+}

@@ -1,7 +1,9 @@
 ﻿using FurryFriends.API.Models;
+using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
-using FurryFriends.Web.Filter;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -50,8 +52,39 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
 
             voucher.NgayTao = DateTime.Now;
-            await _voucherService.CreateAsync(voucher);
-            return RedirectToAction(nameof(Index));
+
+            try
+            {
+                await _voucherService.CreateAsync(voucher);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ValidationException ex)
+            {
+                // Phân tích lỗi validation trả về
+                var problemDetails = JsonConvert.DeserializeObject<ValidationProblemDetails>(ex.Message);
+
+                if (problemDetails?.Errors != null)
+                {
+                    foreach (var error in problemDetails.Errors)
+                    {
+                        foreach (var msg in error.Value)
+                        {
+                            ModelState.AddModelError(error.Key, msg);
+                        }
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Lỗi xác thực.");
+                }
+
+                return View(voucher);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Lỗi: {ex.Message}");
+                return View(voucher);
+            }
         }
 
         // GET: Admin/Voucher/Edit/{id}
@@ -72,12 +105,42 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             {
                 return View(voucher);
             }
+
             voucher.NgayCapNhat = DateTime.Now;
-            var success = await _voucherService.UpdateAsync(id, voucher);
-            if (!success)
-                return NotFound();
-            return RedirectToAction(nameof(Index));
+
+            try
+            {
+                await _voucherService.UpdateAsync(id, voucher);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (ValidationException ex)
+            {
+                var problemDetails = JsonConvert.DeserializeObject<ValidationProblemDetails>(ex.Message);
+
+                if (problemDetails?.Errors != null)
+                {
+                    foreach (var error in problemDetails.Errors)
+                    {
+                        foreach (var msg in error.Value)
+                        {
+                            ModelState.AddModelError(error.Key, msg);
+                        }
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Lỗi xác thực.");
+                }
+
+                return View(voucher);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"Lỗi: {ex.Message}");
+                return View(voucher);
+            }
         }
+
 
         // GET: Admin/Voucher/Delete/{id}
         public async Task<IActionResult> Delete(Guid id)
