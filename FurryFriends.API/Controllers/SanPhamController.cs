@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace FurryFriends.API.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    public class SanPhamController : ControllerBase
+    [ApiController]
+    public class SanPhamsController : ControllerBase
     {
         private readonly ISanPhamService _sanPhamService;
 
@@ -65,8 +65,8 @@ namespace FurryFriends.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] SanPhamDTO dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var existing = await _repo.GetByIdAsync(id);
+            if (existing == null) return NotFound();
 
             try
             {

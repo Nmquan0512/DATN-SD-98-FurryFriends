@@ -1,5 +1,6 @@
 ﻿using FurryFriends.API.Data;
 using FurryFriends.API.Models;
+using FurryFriends.API.Repositories;
 using FurryFriends.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System;

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "hzVPhGIua1E=",
+  "dgSpecHash": "pQn9uDCQeJw=",
   "success": true,
-  "projectFilePath": "C:\\Users\\truon\\Source\\Repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
+  "projectFilePath": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\truon\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\truon\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
@@ -61,6 +61,9 @@
     "C:\\Users\\truon\\.nuget\\packages\\itext.commons\\9.2.0\\itext.commons.9.2.0.nupkg.sha512",
     "C:\\Users\\truon\\.nuget\\packages\\itext7\\9.2.0\\itext7.9.2.0.nupkg.sha512",
     "C:\\Users\\truon\\.nuget\\packages\\itextsharp\\5.5.13.4\\itextsharp.5.5.13.4.nupkg.sha512",
+    "C:\\Users\\truon\\.nuget\\packages\\microsoft.aspnetcore.authentication.facebook\\8.0.17\\microsoft.aspnetcore.authentication.facebook.8.0.17.nupkg.sha512",
+    "C:\\Users\\truon\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\8.0.17\\microsoft.aspnetcore.authentication.google.8.0.17.nupkg.sha512",
+    "C:\\Users\\truon\\.nuget\\packages\\microsoft.aspnetcore.authentication.microsoftaccount\\8.0.17\\microsoft.aspnetcore.authentication.microsoftaccount.8.0.17.nupkg.sha512",
     "C:\\Users\\truon\\.nuget\\packages\\microsoft.aspnetcore.razor.language\\6.0.24\\microsoft.aspnetcore.razor.language.6.0.24.nupkg.sha512",
     "C:\\Users\\truon\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\7.0.0\\microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",
     "C:\\Users\\truon\\.nuget\\packages\\microsoft.build\\17.8.3\\microsoft.build.17.8.3.nupkg.sha512",
@@ -237,6 +240,12 @@
     "C:\\Users\\truon\\.nuget\\packages\\system.xml.xmldocument\\4.3.0\\system.xml.xmldocument.4.3.0.nupkg.sha512"
   ],
   "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    },
     {
       "code": "NU1701",
       "level": "Warning",

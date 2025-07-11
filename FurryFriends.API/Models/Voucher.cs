@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace FurryFriends.API.Models
 {
@@ -16,7 +17,7 @@ namespace FurryFriends.API.Models
 
 		[Required]
 		public DateTime NgayKetThuc { get; set; }
-		[Range(0, 1)]
+		[Range(0, 100)]
 		public decimal PhanTramGiam { get; set; }
 
 		[Required]
@@ -26,16 +27,17 @@ namespace FurryFriends.API.Models
 		public int SoLuong { get; set; }
 
 		[Required]
-		public Guid TaiKhoanId { get; set; }
-
-		[Required]
 		public DateTime NgayTao { get; set; }
 
 		public DateTime? NgayCapNhat { get; set; }
 
-		[ForeignKey("TaiKhoanId")]
-		public virtual TaiKhoan TaiKhoan { get; set; }
+		[JsonIgnore]
+		public virtual ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
 
-		public virtual ICollection<HoaDon> HoaDons { get; set; }
+		public Voucher()
+		{
+			VoucherId = Guid.NewGuid();
+			HoaDons = new List<HoaDon>();
+		}
 	}
 }

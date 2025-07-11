@@ -1,10 +1,14 @@
 ﻿using FurryFriends.API.Models;
+using FurryFriends.Web.Services;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
+using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AuthorizeAdminOnly]
     public class HoaDonController : Controller
     {
         private readonly IHoaDonService _hoaDonService;
@@ -14,21 +18,32 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             _hoaDonService = hoaDonService;
         }
 
-        public async Task<IActionResult> Index()
-        {
-            try
-            {
-                var hoaDons = await _hoaDonService.GetHoaDonListAsync();
-                return View(hoaDons);
-            }
-            catch (Exception ex)
-            {
-                TempData["error"] = ex.Message;
-                return View(new List<HoaDon>());
-            }
-        }
 
-        public async Task<IActionResult> Details(Guid id)
+
+public async Task<IActionResult> Index()
+    {
+        var sw = Stopwatch.StartNew();
+
+        try
+        {
+            var hoaDons = await _hoaDonService.GetHoaDonListAsync();
+
+            sw.Stop();
+            Console.WriteLine($"Thời gian gọi API + nhận dữ liệu: {sw.ElapsedMilliseconds} ms");
+
+            return View(hoaDons);
+        }
+        catch (Exception ex)
+        {
+            sw.Stop();
+            Console.WriteLine($"Exception sau {sw.ElapsedMilliseconds} ms: {ex.Message}");
+            TempData["error"] = ex.Message;
+            return View(new List<HoaDon>());
+        }
+    }
+
+
+    public async Task<IActionResult> Details(Guid id)
         {
             try
             {

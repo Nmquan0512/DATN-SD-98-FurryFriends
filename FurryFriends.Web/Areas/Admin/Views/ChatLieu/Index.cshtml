@@ -1,71 +1,75 @@
 ﻿@model IEnumerable<FurryFriends.API.Models.DTO.ChatLieuDTO>
+
 @{
     ViewData["Title"] = "Quản lý chất liệu";
 }
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
-<div class="container-fluid mt-4">
-    <div class="card shadow-sm rounded-3">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h1>@ViewData["Title"]</h1>
-            <button class="btn btn-light btn-sm" onclick="openCreate()">
-                <i class="bi bi-plus-circle-fill text-success me-1"></i>Thêm mới
-            </button>
+<div class="top-bar" style="padding-left: 50px;">
+    <h1>@ViewData["Title"]</h1>
+    <div class="top-bar-actions">
+        <a asp-area="Admin" asp-action="Create" asp-controller="ChatLieu" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            Thêm mới
+        </a>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Quản lý chất liệu</li>
+    </ol>
+</nav>
+
+<div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
+    <div class="card shadow">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Danh sách chất liệu</h5>
         </div>
-
-        <div class="card-body p-4">
-            <!-- Bộ lọc -->
-            <div class="row gy-3 gx-2 mb-4">
-                <div class="col-md-4">
-                    <input type="text" id="searchInput" class="form-control" placeholder="🔍 Tìm tên chất liệu..." oninput="applyFilter()" />
-                </div>
-                <div class="col-md-3">
-                    <select id="statusFilter" class="form-select" onchange="applyFilter()">
-                        <option value="">-- Trạng thái --</option>
-                        <option value="true">Hiện</option>
-                        <option value="false">Ẩn</option>
-                    </select>
-                </div>
-                <div class="col-md-2 d-grid">
-                    <button class="btn btn-outline-primary" onclick="resetFilter()">
-                        <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
-                    </button>
-                </div>
-            </div>
-
-            <!-- Bảng danh sách -->
+        <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover align-middle text-center" id="tblChatLieu">
-                    <thead class="table-light">
+                <table id="chatLieuTable" class="table table-striped table-hover">
+                    <thead>
                         <tr>
-                            <th style="width:30%">Tên chất liệu</th>
+                            <th>STT</th>
+                            <th>Tên chất liệu</th>
                             <th>Mô tả</th>
-                            <th style="width:12%">Trạng thái</th>
-                            <th style="width:18%">Hành động</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
+                        @{
+                            int stt = 1;
+                        }
                         @foreach (var item in Model)
                         {
-                            <tr data-name="@item.TenChatLieu" data-status="@item.TrangThai.ToString().ToLower()">
-                                <td class="fw-semibold">@item.TenChatLieu</td>
-                                <td>@item.MoTa</td>
+                            <tr>
+                                <td>@stt</td>
+                                <td>@item.TenChatLieu</td>
+                                <td>@(string.IsNullOrEmpty(item.MoTa) ? "Không có mô tả" : item.MoTa)</td>
                                 <td>
-                                    <span class="badge @(item.TrangThai ? "bg-success" : "bg-secondary")">
-                                        @(item.TrangThai ? "Hiện" : "Ẩn")
-                                    </span>
+                                    @if (item.TrangThai)
+                                    {
+                                        <span class="badge bg-success">Hiện</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Ẩn</span>
+                                    }
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-warning me-1"
-                                            onclick="openEdit('@item.ChatLieuId','@item.TenChatLieu','@item.MoTa','@item.TrangThai')">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger"
-                                            onclick="openDelete('@item.ChatLieuId','@item.TenChatLieu')">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
+                                    <div class="btn-group" role="group">
+                                        <a asp-area="Admin" asp-action="Edit" asp-controller="ChatLieu" asp-route-id="@item.ChatLieuId" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-area="Admin" asp-action="Delete" asp-controller="ChatLieu" asp-route-id="@item.ChatLieuId" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
+                            stt++;
                         }
                     </tbody>
                 </table>
@@ -74,132 +78,20 @@
     </div>
 </div>
 
-<!-- AntiForgeryToken + Partial Modal -->
-@Html.AntiForgeryToken()
-@await Html.PartialAsync("~/Areas/Admin/Views/ChatLieu/_CreateChatLieuModal.cshtml")
-@await Html.PartialAsync("~/Areas/Admin/Views/ChatLieu/_DeleteChatLieuModal.cshtml")
-@await Html.PartialAsync("~/Areas/Admin/Views/ChatLieu/_EditChatLieuModal.cshtml")
-
 @section Scripts {
     <script>
-        let deleteId = '';
-
-        function openCreate() {
-            $('#createForm')[0].reset();
-            $('#createForm').removeClass('was-validated');
-            $('#createModal').modal('show');
-        }
-
-        function submitCreate() {
-            const form = $('#createForm')[0];
-            if (!form.checkValidity()) {
-                form.classList.add('was-validated');
-                return;
-            }
-
-            const dto = {
-                TenChatLieu: $('#CreateTenChatLieu').val(),
-                MoTa: $('#CreateMoTa').val(),
-                TrangThai: $('#CreateTrangThai').val() === 'true'
-            };
-
-            const token = $('input[name="__RequestVerificationToken"]').val();
-
-            $.ajax({
-                url: '/Admin/ChatLieu/Create',
-                method: 'POST',
-                data: {
-                    __RequestVerificationToken: token,
-                    ...dto
+        $(document).ready(function () {
+            $('#chatLieuTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json'
                 },
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                success: () => {
-                    $('#createModal').modal('hide');
-                    location.reload();
-                },
-                error: (xhr) => {
-                    alert('❌ Lỗi khi thêm chất liệu!');
-                    console.error(xhr.responseText);
-                }
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]],
+                order: [[1, 'asc']],
+                columnDefs: [
+                    { orderable: false, targets: [0, 4] }
+                ]
             });
-        }
-
-        function openEdit(id, name, moTa, trangThai) {
-            $('#EditChatLieuId').val(id);
-            $('#EditTenChatLieu').val(name);
-            $('#EditMoTa').val(moTa);
-            $('#EditTrangThai').val(trangThai.toString());
-            $('#editForm').removeClass('was-validated');
-            $('#editModal').modal('show');
-        }
-
-        function submitEdit() {
-            const form = $('#editForm')[0];
-            if (!form.checkValidity()) {
-                form.classList.add('was-validated');
-                return;
-            }
-
-            const dto = {
-                ChatLieuId: $('#EditChatLieuId').val(),
-                TenChatLieu: $('#EditTenChatLieu').val(),
-                MoTa: $('#EditMoTa').val(),
-                TrangThai: $('#EditTrangThai').val() === 'true'
-            };
-
-            const token = $('input[name="__RequestVerificationToken"]').val();
-
-            $.ajax({
-                url: `/Admin/ChatLieu/Edit/${dto.ChatLieuId}`,
-                method: 'POST',
-                data: {
-                    __RequestVerificationToken: token,
-                    ...dto
-                },
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                success: () => {
-                    $('#editModal').modal('hide');
-                    location.reload();
-                },
-                error: () => alert('❌ Lỗi khi cập nhật!')
-            });
-        }
-
-        function openDelete(id, name) {
-            deleteId = id;
-            $('#delName').text(name);
-            $('#deleteModal').modal('show');
-        }
-
-        function confirmDelete() {
-            const token = $('input[name="__RequestVerificationToken"]').val();
-            $.post(`/Admin/ChatLieu/Delete/${deleteId}`, { __RequestVerificationToken: token }, () => {
-                $('#deleteModal').modal('hide');
-                location.reload();
-            }).fail(() => {
-                alert('❌ Lỗi khi xóa!');
-            });
-        }
-
-        function applyFilter() {
-            const txt = $('#searchInput').val().toLowerCase();
-            const st = $('#statusFilter').val();
-            $('#tblChatLieu tbody tr').each(function () {
-                const name = $(this).data('name').toLowerCase();
-                const status = $(this).data('status');
-                const ok = name.includes(txt) && (!st || status === st);
-                $(this).toggle(ok);
-            });
-        }
-
-        function resetFilter() {
-            $('#searchInput').val('');
-            $('#statusFilter').val('');
-            applyFilter();
-        }
+        });
     </script>
 }

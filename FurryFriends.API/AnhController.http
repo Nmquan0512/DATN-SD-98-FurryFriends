@@ -1,0 +1,44 @@
+### Upload ảnh mới
+POST {{baseUrl}}/api/Anh/upload
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="tenAnh"
+
+Ảnh sản phẩm test
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Lấy tất cả ảnh
+GET {{baseUrl}}/api/Anh
+
+### Lấy ảnh theo ID
+GET {{baseUrl}}/api/Anh/{{anhId}}
+
+### Cập nhật file ảnh
+PUT {{baseUrl}}/api/Anh/{{anhId}}/update-file
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="updated.jpg"
+Content-Type: image/jpeg
+
+< ./updated.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="tenAnh"
+
+Ảnh đã cập nhật
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+### Xem ảnh (từ API)
+GET {{baseUrl}}/api/Anh/view/{{fileName}}
+
+### Xem ảnh (từ Web project - static files)
+GET {{baseUrl}}/uploads/images/{{fileName}}
+
+### Xóa ảnh
+DELETE {{baseUrl}}/api/Anh/{{anhId}} 

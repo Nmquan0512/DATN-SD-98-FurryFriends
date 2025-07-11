@@ -1,17 +1,13 @@
 ﻿using FurryFriends.API.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using FurryFriends.API.Repositories;
 
 namespace FurryFriends.API.Repository.IRepository
 {
-    public interface ISanPhamRepository
-    {
-        Task<IEnumerable<SanPham>> GetAllAsync();
-        Task<SanPham> GetByIdAsync(Guid id);
-        Task AddAsync(SanPham entity);
-        Task UpdateAsync(SanPham entity);
-        Task DeleteAsync(Guid id);
-        Task<bool> ExistsAsync(Guid id);
+	public interface ISanPhamRepository:IRepository<SanPham>
+	{
+		Task DeleteAsync(Guid id);
+        Task UpdateAsync(SanPham existing);
     }
+	
+	
 }

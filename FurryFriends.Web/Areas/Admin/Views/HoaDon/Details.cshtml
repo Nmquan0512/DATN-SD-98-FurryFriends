@@ -3,21 +3,18 @@
 @{
     ViewData["Title"] = "Chi tiết hóa đơn";
 }
-<div class="main-content" id="mainContent">
-    <div class="top-bar">
-        <h1>@ViewData["Title"]</h1>
-        <div class="user-info" role="region" aria-label="User information">
-            <span>Admin</span>
-            <div class="avatar" aria-hidden="true">AD</div>
-        </div>
-    </div>
 
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-area="Admin">Trang chủ</a></li>
-        <li class="breadcrumb-item"><a asp-controller="HoaDon" asp-action="Index" asp-area="Admin">Quản lý hóa đơn</a></li>
-        <li class="breadcrumb-item active">Chi tiết hóa đơn</li>
+<div class="top-bar" style="padding-left: 50px;">
+    <h1>@ViewData["Title"]</h1>
+</div>
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Quản lý hóa đơn</a></li>
+        <li class="breadcrumb-item active">Chi tiết</li>
     </ol>
-
+</nav>
+<div class="form-container" style="margin-left: 10px; margin-right: 40px;">
     <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <div>
@@ -187,7 +184,6 @@
         </div>
     </div>
 </div>
-</div>
 @section Scripts {
     <script>
         $(document).ready(function () {
@@ -197,9 +193,7 @@
                 var originalText = $btn.html();
                 var href = $btn.attr('href');
                 
-                // Thay đổi text và thêm spinner
-                $btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...');
-                $btn.prop('disabled', true);
+
 
                 // Nếu là link PDF, mở trong tab mới
                 if (href.includes('ExportPdf')) {

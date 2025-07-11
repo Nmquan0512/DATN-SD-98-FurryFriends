@@ -1,0 +1,183 @@
+﻿@model FurryFriends.API.Models.NhanVien
+
+@{
+    ViewData["Title"] = "Thêm nhân viên mới";
+}
+
+<div class="top-bar" style="padding-left: 50px;">
+    <h1>@ViewData["Title"]</h1>
+</div>
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index">Quản lý nhân viên</a></li>
+        <li class="breadcrumb-item active">Thêm mới</li>
+    </ol>
+</nav>
+
+<div class="form-container" style="margin-left: 10px; margin-right: 40px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-0 py-3">
+            <div class="d-flex align-items-center">
+                <div class="card-icon primary me-3">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <div>
+                    <h5 class="card-title mb-0">Thông tin nhân viên</h5>
+                    <small class="text-muted">Nhập thông tin để tạo nhân viên mới</small>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="Create" method="post" id="createForm">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: none;"></div>
+
+                <div class="row g-4">
+                    <!-- Họ và tên -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="HoVaTen" class="form-label fw-semibold">
+                                <i class="fas fa-user me-2 text-primary"></i>Họ và tên
+                            </label>
+                            <input asp-for="HoVaTen" class="form-control form-control-lg" placeholder="Nhập họ và tên" />
+                            <span asp-validation-for="HoVaTen" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Ngày sinh -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="NgaySinh" class="form-label fw-semibold">
+                                <i class="fas fa-calendar me-2 text-primary"></i>Ngày sinh
+                            </label>
+                            <input asp-for="NgaySinh" class="form-control form-control-lg" type="date" />
+                            <span asp-validation-for="NgaySinh" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Địa chỉ -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DiaChi" class="form-label fw-semibold">
+                                <i class="fas fa-map-marker-alt me-2 text-primary"></i>Địa chỉ
+                            </label>
+                            <input asp-for="DiaChi" class="form-control form-control-lg" placeholder="Nhập địa chỉ" />
+                            <span asp-validation-for="DiaChi" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Số điện thoại -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SDT" class="form-label fw-semibold">
+                                <i class="fas fa-phone me-2 text-primary"></i>Số điện thoại
+                            </label>
+                            <input asp-for="SDT" class="form-control form-control-lg" placeholder="Nhập số điện thoại" />
+                            <span asp-validation-for="SDT" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Email" class="form-label fw-semibold">
+                                <i class="fas fa-envelope me-2 text-primary"></i>Email
+                            </label>
+                            <input asp-for="Email" class="form-control form-control-lg" placeholder="Nhập email" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Giới tính -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="GioiTinh" class="form-label fw-semibold">
+                                <i class="fas fa-venus-mars me-2 text-primary"></i>Giới tính
+                            </label>
+                            <select asp-for="GioiTinh" class="form-control form-control-lg">
+                                <option value="">-- Chọn giới tính --</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </select>
+                            <span asp-validation-for="GioiTinh" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Chức vụ -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ChucVuId" class="form-label fw-semibold">
+                                <i class="fas fa-id-badge me-2 text-primary"></i>Chức vụ
+                            </label>
+                            <select asp-for="ChucVuId" class="form-control form-control-lg" asp-items="ViewBag.ChucVuId">
+                                <option value="">-- Chọn chức vụ --</option>
+                            </select>
+                            <span asp-validation-for="ChucVuId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Tài khoản -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="TaiKhoanId" class="form-label fw-semibold">
+                                <i class="fas fa-user-shield me-2 text-primary"></i>Tài khoản
+                            </label>
+                            <select asp-for="TaiKhoanId" class="form-control form-control-lg" asp-items="ViewBag.TaiKhoanId">
+                                <option value="">-- Chọn tài khoản --</option>
+                            </select>
+                            <span asp-validation-for="TaiKhoanId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Trạng thái -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-toggle-on me-2 text-primary"></i>Trạng thái
+                            </label>
+                            <div class="d-flex gap-4 mt-2">
+                                <div class="form-check form-check-lg">
+                                    <input class="form-check-input" type="checkbox" asp-for="TrangThai" id="TrangThai" />
+                                    <label class="form-check-label fw-medium" for="TrangThai">
+                                        <i class="fas fa-check-circle text-success me-2"></i>Hoạt động
+                                    </label>
+                                </div>
+                            </div>
+                            <span asp-validation-for="TrangThai" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top">
+                    <a asp-action="Index" class="btn btn-light btn-lg px-4">
+                        <i class="fas fa-arrow-left me-2"></i>Quay lại
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-save me-2"></i>Lưu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Form validation
+            $('#createForm').on('submit', function(e) {
+                if ($(this).valid()) {
+                    // Form hợp lệ, cho phép submit
+                    return true;
+                }
+            });
+        });
+    </script>
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />

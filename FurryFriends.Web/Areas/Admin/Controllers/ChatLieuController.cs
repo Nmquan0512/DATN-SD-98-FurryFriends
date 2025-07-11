@@ -33,25 +33,21 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                    return BadRequest(ModelState);
                 return View(dto);
             }
 
             var result = await _chatLieuService.CreateAsync(dto);
             if (result != null)
             {
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                    return Json(result);
+                TempData["success"] = "Thêm chất liệu thành công!";
                 return RedirectToAction("Index");
             }
-
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                return BadRequest("Thêm chất liệu thất bại");
 
             ModelState.AddModelError("", "Thêm chất liệu thất bại!");
             return View(dto);
         }
+
+  
 
 
         // GET: /ChatLieu/Edit/{id}
@@ -69,12 +65,18 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, ChatLieuDTO dto)
         {
+            if (id != dto.ChatLieuId)
+                return BadRequest();
+
             if (!ModelState.IsValid)
                 return View(dto);
 
             var success = await _chatLieuService.UpdateAsync(id, dto);
             if (success)
+            {
+                TempData["success"] = "Cập nhật chất liệu thành công!";
                 return RedirectToAction("Index");
+            }
 
             ModelState.AddModelError("", "Cập nhật thất bại!");
             return View(dto);
@@ -97,9 +99,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             var success = await _chatLieuService.DeleteAsync(id);
             if (success)
+            {
+                TempData["success"] = "Xóa chất liệu thành công!";
                 return RedirectToAction("Index");
+            }
 
-            ModelState.AddModelError("", "Xóa thất bại!");
+            TempData["error"] = "Xóa thất bại!";
             return RedirectToAction("Delete", new { id });
         }
     }

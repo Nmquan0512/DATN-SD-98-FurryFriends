@@ -1,0 +1,22 @@
+@model FurryFriends.Web.Models.ThongBaoViewModel
+@{
+    ViewData["Title"] = "Tạo thông báo mới";
+}
+<h2 class="mb-4">Tạo thông báo mới</h2>
+<form asp-action="Create" method="post" class="bg-white p-4 rounded shadow-sm" style="max-width:500px;">
+    <div class="mb-3">
+        <label asp-for="TieuDe" class="form-label"></label>
+        <input asp-for="TieuDe" class="form-control" />
+        <span asp-validation-for="TieuDe" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NoiDung" class="form-label"></label>
+        <textarea asp-for="NoiDung" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="NoiDung" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Tạo mới</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Quay lại</a>
+</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} 

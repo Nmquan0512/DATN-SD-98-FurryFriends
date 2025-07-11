@@ -1,0 +1,80 @@
+@model FurryFriends.API.Models.DTO.ChatLieuDTO
+
+@{
+    ViewData["Title"] = "Xóa chất liệu";
+}
+
+<div class="top-bar" style="padding-left: 50px;">
+    <h1>@ViewData["Title"]</h1>
+    <div class="top-bar-actions">
+        <a asp-area="Admin" asp-action="Index" asp-controller="ChatLieu" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-action="Index" asp-controller="ChatLieu">Quản lý chất liệu</a></li>
+        <li class="breadcrumb-item active">Xóa</li>
+    </ol>
+</nav>
+
+<div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Xác nhận xóa
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Lưu ý:</strong> Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa chất liệu này?
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Thông tin chất liệu:</h6>
+                            <dl class="row">
+                                <dt class="col-sm-4">Tên chất liệu:</dt>
+                                <dd class="col-sm-8">@Model.TenChatLieu</dd>
+                                
+                                <dt class="col-sm-4">Mô tả:</dt>
+                                <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.MoTa) ? "Không có mô tả" : Model.MoTa)</dd>
+                                
+                                <dt class="col-sm-4">Trạng thái:</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.TrangThai)
+                                    {
+                                        <span class="badge bg-success">Hiện</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Ẩn</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <form asp-area="Admin" asp-action="Delete" asp-controller="ChatLieu" method="post">
+                        <input type="hidden" asp-for="ChatLieuId" />
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-area="Admin" asp-action="Index" asp-controller="ChatLieu" class="btn btn-secondary">Hủy</a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash"></i>
+                                Xác nhận xóa
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

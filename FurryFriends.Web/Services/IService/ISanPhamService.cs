@@ -15,4 +15,4 @@ namespace FurryFriends.Web.Services.IService
 
         Task<(IEnumerable<SanPhamDTO> Data, int TotalItems)> GetFilteredAsync(string? loai, int page, int pageSize);
     }
-}
+} 

@@ -1,13 +1,17 @@
 {
   "Version": 1,
+<<<<<<< HEAD
   "Hash": "PHoWZPrHqFc0E/jIoQBs0V0Mw7BMKyFH5zao/o5xOUc=",
+=======
+  "Hash": "CnU4pAqHBHzFy6JC1+7auNEcPp7xyaIAOtTVWUUput8=",
+>>>>>>> 163233e8dc3f6b8517ac38283fcd7624e6464b5a
   "Source": "FurryFriends.Web",
   "BasePath": "_content/FurryFriends.Web",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
       "Version": 2,
       "Source": "FurryFriends.API",
       "GetPublishAssetsTargets": "ComputeReferencedStaticWebAssetsPublishManifest;GetCurrentProjectPublishStaticWebAssetItems",
@@ -20,22 +24,16 @@
   ],
   "DiscoveryPatterns": [
     {
-      "Name": "FurryFriends.API\\wwwroot",
-      "Source": "FurryFriends.API",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
-      "BasePath": "_content/FurryFriends.API",
-      "Pattern": "**"
-    },
-    {
       "Name": "FurryFriends.Web\\wwwroot",
       "Source": "FurryFriends.Web",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
+<<<<<<< HEAD
       "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\2f6b7afe-20d2-4bd7-a375-487a5e4590f3.png",
       "SourceId": "FurryFriends.API",
       "SourceType": "Project",
@@ -208,9 +206,12 @@
     },
     {
       "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\bundle\\FurryFriends.Web.styles.css",
+=======
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\bundle\\FurryFriends.Web.styles.css",
+>>>>>>> 163233e8dc3f6b8517ac38283fcd7624e6464b5a
       "SourceId": "FurryFriends.Web",
       "SourceType": "Computed",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "FurryFriends.Web.styles.css",
       "AssetKind": "All",
@@ -223,13 +224,13 @@
       "AssetTraitValue": "ApplicationBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\bundle\\FurryFriends.Web.styles.css"
+      "OriginalItemSpec": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\bundle\\FurryFriends.Web.styles.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\FurryFriends.Web.bundle.scp.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\FurryFriends.Web.bundle.scp.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Computed",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "FurryFriends.Web.bundle.scp.css",
       "AssetKind": "All",
@@ -242,13 +243,70 @@
       "AssetTraitValue": "ProjectBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\FurryFriends.Web.bundle.scp.css"
+      "OriginalItemSpec": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\FurryFriends.Web.bundle.scp.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\style.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\admin.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "css/admin.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\admin.css"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\admin-loading.css",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "css/admin-loading.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\admin-loading.css"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\dangkystyle.css",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "css/dangkystyle.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\dangkystyle.css"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\style.css",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "css/style.css",
       "AssetKind": "All",
@@ -264,48 +322,10 @@
       "OriginalItemSpec": "wwwroot\\css\\style.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\styleadmin.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\favicon.ico",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
-      "BasePath": "_content/FurryFriends.Web",
-      "RelativePath": "css/styleadmin.css",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\css\\styleadmin.css"
-    },
-    {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\styles.css",
-      "SourceId": "FurryFriends.Web",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
-      "BasePath": "_content/FurryFriends.Web",
-      "RelativePath": "css/styles.css",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\css\\styles.css"
-    },
-    {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\favicon.ico",
-      "SourceId": "FurryFriends.Web",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "favicon.ico",
       "AssetKind": "All",
@@ -321,10 +341,48 @@
       "OriginalItemSpec": "wwwroot\\favicon.ico"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\images\\hihihi.png",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\images\\default-avatar.png",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "images/default-avatar.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\default-avatar.png"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\images\\gifchat.gif",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "images/gifchat.gif",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\gifchat.gif"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\images\\hihihi.png",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "images/hihihi.png",
       "AssetKind": "All",
@@ -340,10 +398,29 @@
       "OriginalItemSpec": "wwwroot\\images\\hihihi.png"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\images\\Thumbs.db",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\images\\loading.gif",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "images/loading.gif",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\loading.gif"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\images\\Thumbs.db",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "images/Thumbs.db",
       "AssetKind": "All",
@@ -359,10 +436,86 @@
       "OriginalItemSpec": "wwwroot\\images\\Thumbs.db"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\js\\siteadmin.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\js\\admin-loading.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "js/admin-loading.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\admin-loading.js"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\js\\admin-modern.js",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "js/admin-modern.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\admin-modern.js"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\js\\dangkyscript.js",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "js/dangkyscript.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\dangkyscript.js"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\js\\notification.js",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "js/notification.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\notification.js"
+    },
+    {
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\js\\siteadmin.js",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "js/siteadmin.js",
       "AssetKind": "All",
@@ -378,10 +531,10 @@
       "OriginalItemSpec": "wwwroot\\js\\siteadmin.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap.css",
       "AssetKind": "All",
@@ -397,10 +550,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap.css.map",
       "AssetKind": "All",
@@ -416,10 +569,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap.min.css",
       "AssetKind": "All",
@@ -435,10 +588,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap.min.css.map",
       "AssetKind": "All",
@@ -454,10 +607,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap.rtl.css",
       "AssetKind": "All",
@@ -473,10 +626,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap.rtl.css.map",
       "AssetKind": "All",
@@ -492,10 +645,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap.rtl.min.css",
       "AssetKind": "All",
@@ -511,10 +664,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap.rtl.min.css.map",
       "AssetKind": "All",
@@ -530,10 +683,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-grid.css",
       "AssetKind": "All",
@@ -549,10 +702,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-grid.css.map",
       "AssetKind": "All",
@@ -568,10 +721,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-grid.min.css",
       "AssetKind": "All",
@@ -587,10 +740,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-grid.min.css.map",
       "AssetKind": "All",
@@ -606,10 +759,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-grid.rtl.css",
       "AssetKind": "All",
@@ -625,10 +778,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-grid.rtl.css.map",
       "AssetKind": "All",
@@ -644,10 +797,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css",
       "AssetKind": "All",
@@ -663,10 +816,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-grid.rtl.min.css.map",
       "AssetKind": "All",
@@ -682,10 +835,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-reboot.css",
       "AssetKind": "All",
@@ -701,10 +854,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-reboot.css.map",
       "AssetKind": "All",
@@ -720,10 +873,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-reboot.min.css",
       "AssetKind": "All",
@@ -739,10 +892,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-reboot.min.css.map",
       "AssetKind": "All",
@@ -758,10 +911,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-reboot.rtl.css",
       "AssetKind": "All",
@@ -777,10 +930,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-reboot.rtl.css.map",
       "AssetKind": "All",
@@ -796,10 +949,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css",
       "AssetKind": "All",
@@ -815,10 +968,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-reboot.rtl.min.css.map",
       "AssetKind": "All",
@@ -834,10 +987,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-utilities.css",
       "AssetKind": "All",
@@ -853,10 +1006,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-utilities.css.map",
       "AssetKind": "All",
@@ -872,10 +1025,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-utilities.min.css",
       "AssetKind": "All",
@@ -891,10 +1044,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-utilities.min.css.map",
       "AssetKind": "All",
@@ -910,10 +1063,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-utilities.rtl.css",
       "AssetKind": "All",
@@ -929,10 +1082,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-utilities.rtl.css.map",
       "AssetKind": "All",
@@ -948,10 +1101,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css",
       "AssetKind": "All",
@@ -967,10 +1120,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/css/bootstrap-utilities.rtl.min.css.map",
       "AssetKind": "All",
@@ -986,10 +1139,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/js/bootstrap.bundle.js",
       "AssetKind": "All",
@@ -1005,10 +1158,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/js/bootstrap.bundle.js.map",
       "AssetKind": "All",
@@ -1024,10 +1177,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/js/bootstrap.bundle.min.js",
       "AssetKind": "All",
@@ -1043,10 +1196,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/js/bootstrap.bundle.min.js.map",
       "AssetKind": "All",
@@ -1062,10 +1215,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/js/bootstrap.esm.js",
       "AssetKind": "All",
@@ -1081,10 +1234,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/js/bootstrap.esm.js.map",
       "AssetKind": "All",
@@ -1100,10 +1253,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/js/bootstrap.esm.min.js",
       "AssetKind": "All",
@@ -1119,10 +1272,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/js/bootstrap.esm.min.js.map",
       "AssetKind": "All",
@@ -1138,10 +1291,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/js/bootstrap.js",
       "AssetKind": "All",
@@ -1157,10 +1310,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/js/bootstrap.js.map",
       "AssetKind": "All",
@@ -1176,10 +1329,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/js/bootstrap.min.js",
       "AssetKind": "All",
@@ -1195,10 +1348,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/dist/js/bootstrap.min.js.map",
       "AssetKind": "All",
@@ -1214,10 +1367,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\LICENSE",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\bootstrap\\LICENSE",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/bootstrap/LICENSE",
       "AssetKind": "All",
@@ -1233,10 +1386,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\bootstrap\\LICENSE"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery\\dist\\jquery.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery\\dist\\jquery.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/jquery/dist/jquery.js",
       "AssetKind": "All",
@@ -1252,10 +1405,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery\\dist\\jquery.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/jquery/dist/jquery.min.js",
       "AssetKind": "All",
@@ -1271,10 +1424,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery\\dist\\jquery.min.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/jquery/dist/jquery.min.map",
       "AssetKind": "All",
@@ -1290,10 +1443,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery\\dist\\jquery.min.map"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery\\LICENSE.txt",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery\\LICENSE.txt",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/jquery/LICENSE.txt",
       "AssetKind": "All",
@@ -1309,10 +1462,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery\\LICENSE.txt"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/jquery-validation/dist/additional-methods.js",
       "AssetKind": "All",
@@ -1328,10 +1481,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/jquery-validation/dist/additional-methods.min.js",
       "AssetKind": "All",
@@ -1347,10 +1500,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/jquery-validation/dist/jquery.validate.js",
       "AssetKind": "All",
@@ -1366,10 +1519,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/jquery-validation/dist/jquery.validate.min.js",
       "AssetKind": "All",
@@ -1385,10 +1538,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/jquery-validation/LICENSE.md",
       "AssetKind": "All",
@@ -1404,10 +1557,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation\\LICENSE.md"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js",
       "AssetKind": "All",
@@ -1423,10 +1576,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js",
       "AssetKind": "All",
@@ -1442,10 +1595,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "lib/jquery-validation-unobtrusive/LICENSE.txt",
       "AssetKind": "All",
@@ -1461,10 +1614,10 @@
       "OriginalItemSpec": "wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
     },
     {
-      "Identity": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\Thumbs.db",
+      "Identity": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\Thumbs.db",
       "SourceId": "FurryFriends.Web",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\truon\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
       "BasePath": "_content/FurryFriends.Web",
       "RelativePath": "Thumbs.db",
       "AssetKind": "All",

@@ -4,144 +4,133 @@
     ViewData["Title"] = "Quản lý hóa đơn";
 }
 
-<div class="main-content" id="mainContent">
-    <div class="top-bar">
-        <h1>@ViewData["Title"]</h1>
-        <div class="user-info" role="region" aria-label="User information">
-            <span>Admin</span>
-            <div class="avatar" aria-hidden="true">AD</div>
-        </div>
-    </div>
-
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-area="Admin">Trang chủ</a></li>
-        <li class="breadcrumb-item"><a asp-controller="HoaDon" asp-action="Index" asp-area="Admin">Quản lý hóa đơn</a></li>
-    </ol>
-
-    <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <div>
-                <i class="fas fa-table me-2"></i>
-                <span>Danh sách hóa đơn</span>
-            </div>
-        </div>
-        <div class="card-body">
-            @if (TempData["error"] != null)
-            {
-                <div class="alert alert-danger">
-                    @TempData["error"]
-                </div>
-            }
-            <table id="hoaDonTable" class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                        <th>Mã hóa đơn</th>
-                        <th>Khách hàng</th>
-                        <th>Ngày tạo</th>
-                        <th>Tổng tiền</th>
-                        <th>Giảm giá</th>
-                        <th>Thành tiền</th>
-                        <th>Trạng thái</th>
-                        <th>Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>@item.HoaDonId.ToString().Substring(0, 8).ToUpper()</td>
-                            <td>
-                                <div>@item.TenCuaKhachHang</div>
-                                <small class="text-muted">@item.SdtCuaKhachHang</small>
-                            </td>
-                            <td>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>@item.TongTien.ToString("N0")đ</td>
-                            <td>
-                                @if (item.Voucher != null)
-                                {
-                                    <span class="badge bg-success">@item.Voucher.TenVoucher</span>
-                                }
-                                else
-                                {
-                                    <span class="text-muted">Không có</span>
-                                }
-                            </td>
-                            <td>@item.TongTienSauKhiGiam.ToString("N0")đ</td>
-                            <td>
-                                @switch (item.TrangThai)
-                                {
-                                    case 0:
-                                        <span class="badge bg-warning">Chờ xác nhận</span>
-                                        break;
-                                    case 1:
-                                        <span class="badge bg-info">Đã xác nhận</span>
-                                        break;
-                                    case 2:
-                                        <span class="badge bg-primary">Đang giao</span>
-                                        break;
-                                    case 3:
-                                        <span class="badge bg-success">Hoàn thành</span>
-                                        break;
-                                    case 4:
-                                        <span class="badge bg-danger">Đã hủy</span>
-                                        break;
-                                    default:
-                                        <span class="badge bg-secondary">Không xác định</span>
-                                        break;
-                                }
-                            </td>
-                            <td>
-                                <div class="d-flex gap-2">
-                                    <a href="@Url.Action("Details", "HoaDon", new { area = "Admin", id = item.HoaDonId })" class="btn btn-info btn-sm action-btn">
-                                        <i class="fas fa-eye"></i> Xem
-                                    </a>
-                                    <a href="@Url.Action("ExportPdf", "HoaDon", new { area = "Admin", id = item.HoaDonId })" class="btn btn-success btn-sm action-btn" target="_blank">
-                                        <i class="fas fa-file-pdf"></i> PDF
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+<div class="top-bar" style="padding-left: 50px;">
+    <h1>@ViewData["Title"]</h1>
+    <div class="top-bar-actions">
     </div>
 </div>
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Quản lý hóa đơn</li>
+    </ol>
+</nav>
+<div class="table-container table-responsive" id="hoaDonTableContainer" style="margin-left: 10px; margin-right: 40px;">
+    <table id="hoaDonTable" class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Mã hóa đơn</th>
+                <th>Khách hàng</th>
+                <th>Ngày tạo</th>
+                <th>Tổng tiền</th>
+                <th>Giảm giá</th>
+                <th>Thành tiền</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.HoaDonId.ToString().Substring(0, 8).ToUpper()</td>
+                    <td>
+                        <div>@item.TenCuaKhachHang</div>
+                        <small class="text-muted">@item.SdtCuaKhachHang</small>
+                    </td>
+                    <td>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.TongTien.ToString("N0")đ</td>
+                    <td>
+                        @if (item.Voucher != null)
+                        {
+                            <span class="badge bg-success">@item.Voucher.TenVoucher</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Không có</span>
+                        }
+                    </td>
+                    <td>@item.TongTienSauKhiGiam.ToString("N0")đ</td>
+                    <td>
+                        @switch (item.TrangThai)
+                        {
+                            case 0:
+                                <span class="status-badge status-pending">Chờ xác nhận</span>
+                                break;
+                            case 1:
+                                <span class="status-badge status-info">Đã xác nhận</span>
+                                break;
+                            case 2:
+                                <span class="status-badge status-paid">Đang giao</span>
+                                break;
+                            case 3:
+                                <span class="status-badge status-paid">Hoàn thành</span>
+                                break;
+                            case 4:
+                                <span class="status-badge status-overdue">Đã hủy</span>
+                                break;
+                            default:
+                                <span class="status-badge status-cancelled">Không xác định</span>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="@Url.Action("Details", "HoaDon", new { area = "Admin", id = item.HoaDonId })" class="btn btn-info btn-sm action-btn">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="@Url.Action("ExportPdf", "HoaDon", new { area = "Admin", id = item.HoaDonId })" class="btn btn-success btn-sm action-btn" target="_blank">
+                                <i class="fas fa-file-pdf"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
     <script>
         $(document).ready(function () {
-            var table = $('#hoaDonTable').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json',
-                },
+            if (window.adminLoading) {
+                window.adminLoading.showTableLoading('#hoaDonTableContainer');
+            }
+            $('#hoaDonTable').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json' },
+                responsive: true,
                 order: [[2, 'desc']],
-                responsive: true
+                initComplete: function () {
+                    if (window.adminLoading) {
+                        window.adminLoading.hideTableLoading('#hoaDonTableContainer');
+                    }
+                }
             });
-
-            // Xử lý click cho các button
             $('.action-btn').on('click', function (e) {
                 var $btn = $(this);
                 var originalText = $btn.html();
                 var href = $btn.attr('href');
-
-                // Thay đổi text và thêm spinner
-                $btn.html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...');
-                $btn.prop('disabled', true);
-
-                // Nếu là link PDF, mở trong tab mới
+                if (window.adminLoading) {
+                    window.adminLoading.showLoadingWithMessage('Đang xử lý...');
+                }
                 if (href.includes('ExportPdf')) {
                     window.open(href, '_blank');
                     setTimeout(function () {
+                        if (window.adminLoading) {
+                            window.adminLoading.hideLoading();
+                        }
                         $btn.html(originalText);
                         $btn.prop('disabled', false);
                     }, 1000);
                 } else {
-                    // Nếu là link Details, chuyển hướng ngay lập tức
                     window.location.href = href;
                 }
             });
         });
     </script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.min.css" />
 }

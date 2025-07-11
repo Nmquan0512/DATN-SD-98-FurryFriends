@@ -1,0 +1,119 @@
+﻿@model IEnumerable<FurryFriends.API.Models.KhachHang>
+
+@{
+    ViewData["Title"] = "Quản lý khách hàng";
+}
+
+<div class="top-bar" style="padding-left: 50px;">
+    <h1>@ViewData["Title"]</h1>
+    <div class="top-bar-actions">
+        <a asp-action="Create" asp-controller="KhachHangs" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            Thêm mới
+        </a>
+    </div>
+</div>
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Quản lý khách hàng</li>
+    </ol>
+</nav>
+<div class="table-container table-responsive" id="khachHangTableContainer" style="margin-left: 10px; margin-right: 40px;">
+    <table id="khachHangTable" class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Khách hàng</th>
+                <th>Thông tin liên hệ</th>
+                <th>Điểm tích lũy</th>
+                <th>Ngày tham gia</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar me-3">@item.TenKhachHang.Substring(0, 1).ToUpper()</div>
+                            <div>
+                                <div class="fw-bold">@item.TenKhachHang</div>
+                                <small class="text-muted">ID: @item.KhachHangId.ToString().Substring(0, 8)...</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div><i class="fas fa-phone me-2"></i>@item.SDT</div>
+                        <div><i class="fas fa-envelope me-2"></i>@item.EmailCuaKhachHang</div>
+                    </td>
+                    <td>
+                        <span class="badge bg-primary">@item.DiemKhachHang điểm</span>
+                    </td>
+                    <td>@item.NgayTaoTaiKhoan.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        @switch (item.TrangThai)
+                        {
+                            case 0:
+                                <span class="status-badge status-pending">Chưa kích hoạt</span>
+                                break;
+                            case 1:
+                                <span class="status-badge status-paid">Đang hoạt động</span>
+                                break;
+                            case 2:
+                                <span class="status-badge status-cancelled">Đã khóa</span>
+                                break;
+                            default:
+                                <span class="status-badge status-cancelled">Không xác định</span>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a asp-action="Details" asp-route-id="@item.KhachHangId" class="btn btn-info btn-sm action-btn" title="Xem chi tiết">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@item.KhachHangId" class="btn btn-warning btn-sm action-btn">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.KhachHangId" class="btn btn-danger btn-sm action-btn">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+    <script>
+        $(document).ready(function () {
+            if (window.adminLoading) {
+                window.adminLoading.showTableLoading('#khachHangTableContainer');
+            }
+            $('#khachHangTable').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json' },
+                responsive: true,
+                order: [[3, 'desc']],
+                initComplete: function () {
+                    if (window.adminLoading) {
+                        window.adminLoading.hideTableLoading('#khachHangTableContainer');
+                    }
+                }
+            });
+            $('.action-btn').on('click', function (e) {
+                if (window.adminLoading) {
+                    window.adminLoading.showLoadingWithMessage('Đang xử lý...');
+                }
+            });
+        });
+    </script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.min.css" />
+}

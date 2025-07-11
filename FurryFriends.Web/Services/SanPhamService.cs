@@ -20,9 +20,9 @@ namespace FurryFriends.Web.Services
             var result = await _httpClient.GetFromJsonAsync<IEnumerable<SanPhamDTO>>(BaseUrl);
             return result ?? new List<SanPhamDTO>();
         }
-
+            
         public async Task<SanPhamDTO> GetByIdAsync(Guid id)
-        {
+            {
             var response = await _httpClient.GetAsync($"{BaseUrl}/{id}");
             if (response.IsSuccessStatusCode)
                 return await response.Content.ReadFromJsonAsync<SanPhamDTO>();
@@ -61,13 +61,13 @@ namespace FurryFriends.Web.Services
 
             return (result.Items ?? new List<SanPhamDTO>(), result.TotalItems);
         }
-
+            
         private class SanPhamFilterResponse
-        {
+            {
             public int TotalItems { get; set; }
             public int Page { get; set; }
             public int PageSize { get; set; }
             public IEnumerable<SanPhamDTO> Items { get; set; }
         }
     }
-}
+} 
