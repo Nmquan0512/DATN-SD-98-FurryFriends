@@ -56,18 +56,14 @@ namespace FurryFriends.API.Models
         [ForeignKey("HinhThucThanhToanId")]
         public virtual HinhThucThanhToan HinhThucThanhToan { get; set; }
 
-<<<<<<< HEAD
-		[Required]
-		public Guid NhanVienId { get; set; } // Nhân viên tạo hóa đơn
+        [Required]
+        public Guid NhanVienId { get; set; } // Nhân viên tạo hóa đơn
 
-		[ForeignKey("NhanVienId")]
-		public virtual NhanVien NhanVien { get; set; }
+        [ForeignKey("NhanVienId")]
+        public virtual NhanVien NhanVien { get; set; }
 
-		public string LoaiHoaDon { get; set; } // Loại hóa đơn (ví dụ: "BanTaiQuay", ...)
+        public string LoaiHoaDon { get; set; } // Loại hóa đơn (ví dụ: "BanTaiQuay", ...)
 
-		public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }
-	}
-=======
         public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -87,5 +83,4 @@ namespace FurryFriends.API.Models
             }
         }
     }
->>>>>>> origin/TruongValidate
 }

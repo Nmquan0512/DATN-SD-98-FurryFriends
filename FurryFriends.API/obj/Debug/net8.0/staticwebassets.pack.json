@@ -21,14 +21,6 @@
       "PackagePath": "staticwebassets\\Uploads\\73a9db69-f861-4daf-8dff-95e55e57a19b.png"
     },
     {
-      "Id": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\770622d3-5789-4734-bf0c-3054e317e0e4.png",
-      "PackagePath": "staticwebassets\\Uploads\\770622d3-5789-4734-bf0c-3054e317e0e4.png"
-    },
-    {
-      "Id": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\8f05f2fe-c856-4402-aec3-46aaaa2cf4c6.png",
-      "PackagePath": "staticwebassets\\Uploads\\8f05f2fe-c856-4402-aec3-46aaaa2cf4c6.png"
-    },
-    {
       "Id": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\941c4a0c-01d9-49d5-b5d3-7c75d890b9a9.png",
       "PackagePath": "staticwebassets\\Uploads\\941c4a0c-01d9-49d5-b5d3-7c75d890b9a9.png"
     },
@@ -43,10 +35,6 @@
     {
       "Id": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\d3c4877f-37b8-415c-8672-a055014e50c9.png",
       "PackagePath": "staticwebassets\\Uploads\\d3c4877f-37b8-415c-8672-a055014e50c9.png"
-    },
-    {
-      "Id": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\fcd31530-d906-44fa-abeb-daaf155b6f1e.jpg",
-      "PackagePath": "staticwebassets\\Uploads\\fcd31530-d906-44fa-abeb-daaf155b6f1e.jpg"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.FurryFriends.API.Microsoft.AspNetCore.StaticWebAssets.props",
