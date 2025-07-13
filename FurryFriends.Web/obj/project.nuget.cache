@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "39VOT99xpEs=",
+  "dgSpecHash": "yWGU0Ef7LXQ=",
   "success": true,
-  "projectFilePath": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
+  "projectFilePath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\x\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

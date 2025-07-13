@@ -17,299 +17,299 @@ build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = FurryFriends.Web
 build_property.RootNamespace = FurryFriends.Web
-build_property.ProjectDir = C:\Users\x\source\repos\DATN-SD-98-FurryFriends\FurryFriends.Web\
+build_property.ProjectDir = \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\x\source\repos\DATN-SD-98-FurryFriends\FurryFriends.Web
+build_property.MSBuildProjectDirectory = \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChatLieu/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChatLieu/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ2hhdExpZXVcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChatLieu/Delete.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChatLieu/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ2hhdExpZXVcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChatLieu/Edit.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChatLieu/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ2hhdExpZXVcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChatLieu/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChatLieu/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ2hhdExpZXVcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChucVu/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChucVu/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ2h1Y1Z1XENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChucVu/Delete.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChucVu/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ2h1Y1Z1XERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChucVu/Edit.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChucVu/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ2h1Y1Z1XEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChucVu/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChucVu/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ2h1Y1Z1XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Dashboard/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Dashboard/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcRGFzaGJvYXJkXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/DotGiamGias/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/DotGiamGias/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcRG90R2lhbUdpYXNcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/DotGiamGias/Delete.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/DotGiamGias/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcRG90R2lhbUdpYXNcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/DotGiamGias/Edit.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/DotGiamGias/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcRG90R2lhbUdpYXNcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/DotGiamGias/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/DotGiamGias/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcRG90R2lhbUdpYXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGias/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGias/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYXNcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGias/Delete.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGias/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYXNcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGias/Edit.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGias/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYXNcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGias/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGias/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/HoaDon/Details.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/HoaDon/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcSG9hRG9uXERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/HoaDon/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/HoaDon/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcSG9hRG9uXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KhachHangs/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KhachHangs/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcS2hhY2hIYW5nc1xDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KhachHangs/Delete.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KhachHangs/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcS2hhY2hIYW5nc1xEZWxldGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KhachHangs/Details.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KhachHangs/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcS2hhY2hIYW5nc1xEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KhachHangs/Edit.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KhachHangs/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcS2hhY2hIYW5nc1xFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KhachHangs/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KhachHangs/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcS2hhY2hIYW5nc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KichCo/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KichCo/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcS2ljaENvXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KichCo/Delete.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KichCo/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcS2ljaENvXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KichCo/Edit.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KichCo/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcS2ljaENvXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KichCo/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/KichCo/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcS2ljaENvXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/MauSac/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/MauSac/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcTWF1U2FjXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/MauSac/Delete.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/MauSac/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcTWF1U2FjXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/MauSac/Edit.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/MauSac/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcTWF1U2FjXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/MauSac/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/MauSac/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcTWF1U2FjXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/NhanVien/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/NhanVien/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcTmhhblZpZW5cQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/NhanVien/Delete.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/NhanVien/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcTmhhblZpZW5cRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/NhanVien/Edit.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/NhanVien/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcTmhhblZpZW5cRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/NhanVien/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/NhanVien/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcTmhhblZpZW5cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Shared/_Layout.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Shared/_LoadingPartial.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Shared/_LoadingPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2hhcmVkXF9Mb2FkaW5nUGFydGlhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Shared/_ViewImports.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Shared/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2hhcmVkXF9WaWV3SW1wb3J0cy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/TaiKhoan/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/TaiKhoan/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGFpS2hvYW5cQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/TaiKhoan/Delete.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/TaiKhoan/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGFpS2hvYW5cRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/TaiKhoan/Edit.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/TaiKhoan/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGFpS2hvYW5cRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/TaiKhoan/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/TaiKhoan/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGFpS2hvYW5cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThanhPhan/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThanhPhan/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGhhbmhQaGFuXENyZWF0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThanhPhan/Delete.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThanhPhan/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGhhbmhQaGFuXERlbGV0ZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThanhPhan/Edit.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThanhPhan/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGhhbmhQaGFuXEVkaXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThanhPhan/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThanhPhan/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGhhbmhQaGFuXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThongBao/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThongBao/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGhvbmdCYW9cQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThongBao/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThongBao/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGhvbmdCYW9cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThuongHieu/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThuongHieu/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGh1b25nSGlldVxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThuongHieu/Delete.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThuongHieu/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGh1b25nSGlldVxEZWxldGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThuongHieu/Edit.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThuongHieu/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGh1b25nSGlldVxFZGl0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThuongHieu/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ThuongHieu/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVGh1b25nSGlldVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Vouchers/Create.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Vouchers/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVm91Y2hlcnNcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Vouchers/Delete.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Vouchers/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVm91Y2hlcnNcRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Vouchers/Details.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Vouchers/Details.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVm91Y2hlcnNcRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Vouchers/Edit.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Vouchers/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVm91Y2hlcnNcRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Vouchers/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Vouchers/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcVm91Y2hlcnNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/_ViewImports.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/_ViewStart.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Auth/DangNhap.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Auth/DangNhap.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXV0aFxEYW5nTmhhcC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/DangKy/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/DangKy/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFuZ0t5XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Home/Index.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Home/Privacy.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/KhachHangLogin/DangNhap.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/KhachHangLogin/DangNhap.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2hhY2hIYW5nTG9naW5cRGFuZ05oYXAuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Shared/Error.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Shared/_LoadingPartial.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Shared/_LoadingPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2FkaW5nUGFydGlhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Shared/_LoginLayout.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Shared/_LoginLayout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpbkxheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Shared/_ValidationScriptsPartial.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/_ViewImports.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/_ViewStart.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/x/source/repos/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Shared/_Layout.cshtml]
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-a6nlui6o1h

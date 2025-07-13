@@ -31,6 +31,42 @@
         <li class="breadcrumb-item active">Quản lý Voucher</li>
     </ol>
 </nav>
+<div class="container mb-4" id="filterContainer">
+    <div class="card shadow-sm p-3 mb-3" style="border-radius: 12px;">
+        <div class="row align-items-center mb-2">
+            <div class="col-auto">
+                <span class="fs-5 fw-semibold"><i class="fas fa-filter me-2"></i>Bộ lọc</span>
+            </div>
+        </div>
+        <div class="row align-items-end g-3">
+            <div class="col-md-3">
+                <label for="filterTrangThai" class="form-label mb-1">Trạng thái</label>
+                <select id="filterTrangThai" class="form-select">
+                    <option value="">Tất cả</option>
+                    <option value="Hoạt động">Hoạt động</option>
+                    <option value="Không hoạt động">Không hoạt động</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label mb-1">Phần trăm giảm (%)</label>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-range-slider">
+                        <input type="range" id="filterPhanTram" min="0" max="100" value="0" style="width: 120px;" />
+                    </div>
+                    <span id="phanTramValue" class="fw-bold text-primary" style="min-width:32px;">0</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="filterNgayBatDauTu" class="form-label mb-1">Ngày bắt đầu từ</label>
+                <input type="date" id="filterNgayBatDauTu" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label for="filterNgayKetThucDen" class="form-label mb-1">Ngày kết thúc đến</label>
+                <input type="date" id="filterNgayKetThucDen" class="form-control" />
+            </div>
+        </div>
+    </div>
+</div>
 <div class="form-container table-responsive" id="voucherTableContainer" style="margin-left: 10px; margin-right: 40px;">
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
@@ -86,12 +122,91 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+    <style>
+        .custom-range-slider input[type=range] {
+            -webkit-appearance: none;
+            width: 120px;
+            height: 6px;
+            background: linear-gradient(90deg, #E8F2FF 0%, #4A90E2 100%);
+            border-radius: 3px;
+            outline: none;
+            transition: background 0.3s;
+        }
+        .custom-range-slider input[type=range]:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #E8F2FF;
+        }
+        .custom-range-slider input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: url('/images/ragedog.png') no-repeat center center !important;
+            background-size: cover !important;
+            border: none;
+            box-shadow: 0 2px 6px rgba(44,62,80,0.12);
+            cursor: pointer;
+            z-index: 3;
+        }
+        .custom-range-slider input[type=range]::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: url('/images/ragedog.png') no-repeat center center !important;
+            background-size: cover !important;
+            border: none;
+            box-shadow: 0 2px 6px rgba(44,62,80,0.12);
+            cursor: pointer;
+            z-index: 3;
+        }
+        .custom-range-slider input[type=range]::-ms-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: url('/images/ragedog.png') no-repeat center center !important;
+            background-size: cover !important;
+            border: none;
+            box-shadow: 0 2px 6px rgba(44,62,80,0.12);
+            cursor: pointer;
+            z-index: 3;
+        }
+    </style>
     <script>
         $(document).ready(function () {
-            $('#voucherTable').DataTable({
+            var table = $('#voucherTable').DataTable({
                 language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json' },
                 responsive: true,
                 order: [[1, 'desc']]
+            });
+            // Slider phần trăm giảm
+            $('#filterPhanTram').on('input change', function () {
+                $('#phanTramValue').text($(this).val());
+                table.draw();
+            });
+            // Filter
+            $('#filterTrangThai, #filterNgayBatDauTu, #filterNgayKetThucDen').on('change', function () {
+                table.draw();
+            });
+            // Custom search logic
+            $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+                var trangThai = $('#filterTrangThai').val();
+                var phanTram = parseInt($('#filterPhanTram').val() || '0');
+                var ngayBatDauTu = $('#filterNgayBatDauTu').val();
+                var ngayKetThucDen = $('#filterNgayKetThucDen').val();
+                var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(5)').text().trim();
+                var rowPhanTram = parseInt(data[1]);
+                var rowNgayBatDau = data[2].split('/').reverse().join('-');
+                var rowNgayKetThuc = data[3].split('/').reverse().join('-');
+                // Trạng thái
+                if (trangThai && !rowTrangThai.includes(trangThai)) return false;
+                // Phần trăm giảm
+                if (rowPhanTram < phanTram) return false;
+                // Ngày bắt đầu
+                if (ngayBatDauTu && rowNgayBatDau < ngayBatDauTu) return false;
+                // Ngày kết thúc
+                if (ngayKetThucDen && rowNgayKetThuc > ngayKetThucDen) return false;
+                return true;
             });
         });
     </script>

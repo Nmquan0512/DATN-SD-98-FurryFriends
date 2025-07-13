@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {}
+    "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {
+    "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
+        "projectUniqueName": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
         "projectName": "FurryFriends.API",
-        "projectPath": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
+        "projectPath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
         "packagesPath": "C:\\Users\\x\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\x\\source\\repos\\DATN-SD-98-FurryFriends\\FurryFriends.API\\obj\\",
+        "outputPath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\x\\AppData\\Roaming\\NuGet\\NuGet.Config",

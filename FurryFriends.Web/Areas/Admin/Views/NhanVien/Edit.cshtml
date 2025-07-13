@@ -59,10 +59,19 @@
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="DiaChi" class="form-label"></label>
-                    <input asp-for="DiaChi" class="form-control" />
-                    <span asp-validation-for="DiaChi" class="text-danger"></span>
+                    <label class="form-label">Địa chỉ cụ thể</label>
+                    <input type="text" id="diaChiCuThe" class="form-control" />
                 </div>
+                <div class="mb-3">
+                    <label class="form-label">Tỉnh/Thành phố</label>
+                    <select id="tinhThanh" class="form-control"></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Phường/Xã/Thị trấn</label>
+                    <select id="phuongXa" class="form-control"></select>
+                </div>
+                <input type="hidden" asp-for="DiaChi" id="DiaChi" />
+                <span asp-validation-for="DiaChi" class="text-danger"></span>
 
                 <div class="mb-3">
                     <label asp-for="SDT" class="form-label"></label>
@@ -99,6 +108,88 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        let provinceData = {};
+        let wardData = {};
+        $(document).ready(function () {
+            // Load province.json
+            $.getJSON('/json/province.json', function (provinces) {
+                provinceData = provinces;
+                $('#tinhThanh').append($('<option>', { value: '', text: '-- Chọn tỉnh/thành phố --' }));
+                $.each(provinces, function (key, value) {
+                    $('#tinhThanh').append($('<option>', { value: value.code, text: value.name_with_type }));
+                });
+                // Nếu có sẵn tỉnh thì set lại dropdown
+                if (window._selectedTinhCode) {
+                    $('#tinhThanh').val(window._selectedTinhCode).trigger('change');
+                }
+            });
+            // Load ward.json trước để dùng sau
+            $.getJSON('/json/ward.json', function (wards) {
+                wardData = wards;
+                // Nếu có sẵn phường thì set lại dropdown
+                if (window._selectedTinhCode && window._selectedPhuongCode) {
+                    setTimeout(function() {
+                        $('#phuongXa').val(window._selectedPhuongCode);
+                    }, 300);
+                }
+            });
+            // Khi chọn tỉnh/thành phố, load phường/xã/thị trấn
+            $('#tinhThanh').on('change', function () {
+                var selectedCode = $(this).val();
+                $('#phuongXa').empty();
+                $('#phuongXa').append($('<option>', { value: '', text: '-- Chọn phường/xã/thị trấn --' }));
+                if (selectedCode && wardData) {
+                    $.each(wardData, function (key, value) {
+                        if (value.parent_code === selectedCode) {
+                            $('#phuongXa').append($('<option>', { value: value.code, text: value.name_with_type }));
+                        }
+                    });
+                }
+            });
+            // Tách địa chỉ hiện tại
+            var diaChiFull = $('#DiaChi').val() || '';
+            var diaChiParts = diaChiFull.split(',').map(function(x){return x.trim();});
+            $('#diaChiCuThe').val(diaChiParts[0] || '');
+            // Tìm code tỉnh và phường từ text
+            if (diaChiParts.length > 2) {
+                var tinhText = diaChiParts[2];
+                var phuongText = diaChiParts[1];
+                var tinhCode = '';
+                var phuongCode = '';
+                $.getJSON('/json/province.json', function (provinces) {
+                    $.each(provinces, function (key, value) {
+                        if (value.name_with_type === tinhText) {
+                            tinhCode = value.code;
+                            window._selectedTinhCode = tinhCode;
+                            $('#tinhThanh').val(tinhCode).trigger('change');
+                        }
+                    });
+                });
+                $.getJSON('/json/ward.json', function (wards) {
+                    $.each(wards, function (key, value) {
+                        if (value.name_with_type === phuongText) {
+                            phuongCode = value.code;
+                            window._selectedPhuongCode = phuongCode;
+                        }
+                    });
+                });
+            }
+            // Gộp địa chỉ khi submit
+            $('form').on('submit', function(e) {
+                var diaChiCuThe = $('#diaChiCuThe').val();
+                var tinhCode = $('#tinhThanh').val();
+                var phuongCode = $('#phuongXa').val();
+                var tinhText = tinhCode && provinceData[tinhCode] ? provinceData[tinhCode].name_with_type : '';
+                var phuongText = phuongCode && wardData[phuongCode] ? wardData[phuongCode].name_with_type : '';
+                var diaChiFull = diaChiCuThe;
+                if (phuongText) diaChiFull += ', ' + phuongText;
+                if (tinhText) diaChiFull += ', ' + tinhText;
+                $('#DiaChi').val(diaChiFull);
+            });
+        });
+    </script>
 }
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />

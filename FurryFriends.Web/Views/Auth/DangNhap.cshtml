@@ -424,11 +424,26 @@
 
     </div>
 
-        <script src="~/js/dangkyscript.js" ></script>
+
     <script src="~/lib/jquery/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
+    <script>
+    function togglePassword() {
+        var passwordInput = document.querySelector('input[name="Password"]');
+        var icon = document.getElementById('toggleIcon');
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            passwordInput.type = "password";
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+    </script>
 
     @section Scripts { }
 </body>

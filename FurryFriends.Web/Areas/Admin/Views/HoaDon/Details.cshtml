@@ -15,14 +15,14 @@
     </ol>
 </nav>
 <div class="form-container" style="margin-left: 10px; margin-right: 40px;">
-    <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <div>
+    <div class="card mb-4 shadow-sm" style="border-radius: 16px;">
+        <div class="card-header d-flex justify-content-between align-items-center bg-white" style="border-radius: 16px 16px 0 0; border-bottom: 1px solid #eee;">
+            <div class="fw-bold fs-5">
                 <i class="fas fa-file-invoice me-2"></i>
-                <span>Thông tin hóa đơn</span>
+                Thông tin hóa đơn
             </div>
             <div>
-                <a href="@Url.Action("ExportPdf", "HoaDon", new { area = "Admin", id = Model.HoaDonId })" class="btn btn-success action-btn" target="_blank">
+                <a href="@Url.Action("ExportPdf", "HoaDon", new { area = "Admin", id = Model.HoaDonId })" class="btn btn-success action-btn me-2" target="_blank">
                     <i class="fas fa-file-pdf"></i> Xuất PDF
                 </a>
                 <a href="@Url.Action("Index", "HoaDon", new { area = "Admin" })" class="btn btn-secondary action-btn">
@@ -30,110 +30,112 @@
                 </a>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body bg-light" style="border-radius: 0 0 16px 16px;">
             @if (TempData["error"] != null)
             {
                 <div class="alert alert-danger">
                     @TempData["error"]
                 </div>
             }
-
-            <div class="row mb-4">
+            <div class="row mb-4 g-4">
                 <div class="col-md-6">
-                    <h5>Thông tin khách hàng</h5>
-                    <table class="table table-bordered">
-                        <tr>
-                            <th style="width: 200px;">Tên khách hàng</th>
-                            <td>@Model.TenCuaKhachHang</td>
-                        </tr>
-                        <tr>
-                            <th>Số điện thoại</th>
-                            <td>@Model.SdtCuaKhachHang</td>
-                        </tr>
-                        <tr>
-                            <th>Email</th>
-                            <td>@Model.EmailCuaKhachHang</td>
-                        </tr>
-                        <tr>
-                            <th>Địa chỉ</th>
-                            <td>
-                                @{
-                                    var diaChi = Model.KhachHang?.DiaChiKhachHangs?.FirstOrDefault();
-                                    if (diaChi != null)
-                                    {
-                                        <text>@diaChi.TenDiaChi, @diaChi.PhuongXa, @diaChi.QuanHuyen, @diaChi.ThanhPho</text>
+                    <div class="border rounded-3 p-3 bg-white h-100">
+                        <div class="fw-semibold fs-6 mb-2"><i class="fas fa-user me-2 text-primary"></i>Thông tin khách hàng</div>
+                        <table class="table table-bordered mb-0 align-middle">
+                            <tr>
+                                <th class="bg-light" style="width: 140px;">Tên khách hàng</th>
+                                <td>@Model.TenCuaKhachHang</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Số điện thoại</th>
+                                <td>@Model.SdtCuaKhachHang</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Email</th>
+                                <td>@Model.EmailCuaKhachHang</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Địa chỉ</th>
+                                <td>
+                                    @{
+                                        var diaChi = Model.KhachHang?.DiaChiKhachHangs?.FirstOrDefault();
+                                        if (diaChi != null)
+                                        {
+                                            <text>@diaChi.TenDiaChi, @diaChi.PhuongXa, @diaChi.QuanHuyen, @diaChi.ThanhPho</text>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Chưa cập nhật</span>
+                                        }
                                     }
-                                    else
-                                    {
-                                        <text>Chưa cập nhật</text>
-                                    }
-                                }
-                            </td>
-                        </tr>
-                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
                 <div class="col-md-6">
-                    <h5>Thông tin hóa đơn</h5>
-                    <table class="table table-bordered">
-                        <tr>
-                            <th style="width: 200px;">Mã hóa đơn</th>
-                            <td>@Model.HoaDonId.ToString().Substring(0, 8).ToUpper()</td>
-                        </tr>
-                        <tr>
-                            <th>Ngày tạo</th>
-                            <td>@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
-                        </tr>
-                        <tr>
-                            <th>Ngày nhận hàng</th>
-                            <td>@(Model.NgayNhanHang?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</td>
-                        </tr>
-                        <tr>
-                            <th>Hình thức thanh toán</th>
-                            <td>@Model.HinhThucThanhToan?.TenHinhThuc</td>
-                        </tr>
-                        <tr>
-                            <th>Trạng thái</th>
-                            <td>
-                                @switch (Model.TrangThai)
-                                {
-                                    case 0:
-                                        <span class="badge bg-warning">Chờ xác nhận</span>
-                                        break;
-                                    case 1:
-                                        <span class="badge bg-info">Đã xác nhận</span>
-                                        break;
-                                    case 2:
-                                        <span class="badge bg-primary">Đang giao</span>
-                                        break;
-                                    case 3:
-                                        <span class="badge bg-success">Hoàn thành</span>
-                                        break;
-                                    case 4:
-                                        <span class="badge bg-danger">Đã hủy</span>
-                                        break;
-                                    default:
-                                        <span class="badge bg-secondary">Không xác định</span>
-                                        break;
-                                }
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Ghi chú</th>
-                            <td>@(string.IsNullOrEmpty(Model.GhiChu) ? "Không có" : Model.GhiChu)</td>
-                        </tr>
-                    </table>
+                    <div class="border rounded-3 p-3 bg-white h-100">
+                        <div class="fw-semibold fs-6 mb-2"><i class="fas fa-receipt me-2 text-success"></i>Thông tin hóa đơn</div>
+                        <table class="table table-bordered mb-0 align-middle">
+                            <tr>
+                                <th class="bg-light" style="width: 140px;">Mã hóa đơn</th>
+                                <td class="fw-bold">@Model.HoaDonId.ToString().Substring(0, 8).ToUpper()</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Ngày tạo</th>
+                                <td>@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Ngày nhận hàng</th>
+                                <td>@(Model.NgayNhanHang?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Hình thức thanh toán</th>
+                                <td>@Model.HinhThucThanhToan?.TenHinhThuc</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Trạng thái</th>
+                                <td>
+                                    @switch (Model.TrangThai)
+                                    {
+                                        case 0:
+                                            <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                                            break;
+                                        case 1:
+                                            <span class="badge bg-info text-white">Đã xác nhận</span>
+                                            break;
+                                        case 2:
+                                            <span class="badge bg-primary">Đang giao</span>
+                                            break;
+                                        case 3:
+                                            <span class="badge bg-success">Hoàn thành</span>
+                                            break;
+                                        case 4:
+                                            <span class="badge bg-danger">Đã hủy</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">Không xác định</span>
+                                            break;
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Ghi chú</th>
+                                <td>@(string.IsNullOrEmpty(Model.GhiChu) ? "Không có" : Model.GhiChu)</td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
-
-            <h5>Chi tiết sản phẩm</h5>
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
+            <div class="fw-semibold fs-5 mb-2 mt-4"><i class="fas fa-box-open me-2 text-warning"></i>Chi tiết sản phẩm</div>
+            <div class="table-responsive rounded-3">
+                <table class="table table-bordered align-middle bg-white" style="border-radius: 8px; overflow: hidden;">
+                    <thead class="table-light">
                         <tr>
-                            <th>Sản phẩm</th>
-                            <th>Đơn giá</th>
-                            <th>Số lượng</th>
-                            <th>Thành tiền</th>
+                            <th style="min-width:180px;">Sản phẩm</th>
+                            <th class="text-center">Đơn giá</th>
+                            <th class="text-center">Số lượng</th>
+                            <th class="text-center">Thành tiền</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -141,42 +143,42 @@
                         {
                             <tr>
                                 <td>
-                                    <div class="d-flex align-items-center">
+                                    <div class="d-flex align-items-center gap-2">
                                         @if (item.SanPham?.SanPhamChiTiets?.FirstOrDefault()?.Anh != null)
                                         {
-                                            <img src="@item.SanPham.SanPhamChiTiets.FirstOrDefault().Anh.DuongDan" alt="@item.SanPham.TenSanPham" class="me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                            <img src="@item.SanPham.SanPhamChiTiets.FirstOrDefault().Anh.DuongDan" alt="@item.SanPham.TenSanPham" class="me-2" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">
                                         }
                                         <div>
-                                            <div>@item.SanPham.TenSanPham</div>
+                                            <div class="fw-semibold">@item.SanPham.TenSanPham</div>
                                             <small class="text-muted">@item.SanPham.SanPhamId.ToString().Substring(0, 8).ToUpper()</small>
                                         </div>
                                     </div>
                                 </td>
-                                <td>@item.Gia.ToString("N0")đ</td>
-                                <td>@item.SoLuongSanPham</td>
-                                <td>@((item.Gia * item.SoLuongSanPham).ToString("N0"))đ</td>
+                                <td class="text-center">@item.Gia.ToString("N0")đ</td>
+                                <td class="text-center">@item.SoLuongSanPham</td>
+                                <td class="text-center fw-bold">@((item.Gia * item.SoLuongSanPham).ToString("N0"))đ</td>
                             </tr>
                         }
                     </tbody>
-                    <tfoot>
+                    <tfoot class="table-light">
                         <tr>
-                            <td colspan="3" class="text-end"><strong>Tổng tiền:</strong></td>
-                            <td><strong>@Model.TongTien.ToString("N0")đ</strong></td>
+                            <td colspan="3" class="text-end fw-semibold">Tổng tiền:</td>
+                            <td class="fw-bold">@Model.TongTien.ToString("N0")đ</td>
                         </tr>
                         @if (Model.Voucher != null)
                         {
                             <tr>
-                                <td colspan="3" class="text-end">
-                                    <strong>Giảm giá (@Model.Voucher.TenVoucher):</strong>
+                                <td colspan="3" class="text-end fw-semibold text-danger">
+                                    Giảm giá (@Model.Voucher.TenVoucher):
                                 </td>
-                                <td class="text-danger">
-                                    <strong>-@((Model.TongTien - Model.TongTienSauKhiGiam).ToString("N0"))đ</strong>
+                                <td class="fw-bold text-danger">
+                                    -@((Model.TongTien - Model.TongTienSauKhiGiam).ToString("N0"))đ
                                 </td>
                             </tr>
                         }
                         <tr>
-                            <td colspan="3" class="text-end"><strong>Thành tiền:</strong></td>
-                            <td><strong>@Model.TongTienSauKhiGiam.ToString("N0")đ</strong></td>
+                            <td colspan="3" class="text-end fs-5 fw-bold text-primary">Thành tiền:</td>
+                            <td class="fs-5 fw-bold text-primary">@Model.TongTienSauKhiGiam.ToString("N0")đ</td>
                         </tr>
                     </tfoot>
                 </table>

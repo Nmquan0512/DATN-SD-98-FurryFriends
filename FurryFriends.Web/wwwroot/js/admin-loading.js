@@ -11,26 +11,25 @@ class AdminLoadingHandler {
         this.setupFormLoading();
         this.setupTableLoading();
         this.setupAjaxLoading();
-        this.setupInitialLoading();
+        // this.setupInitialLoading(); // Tắt loading tự động khi load trang
     }
 
     // Xử lý loading ban đầu khi trang load
-    setupInitialLoading() {
-        // Chỉ hiển thị loading nếu trang chưa load xong
-        if (document.readyState !== 'complete') {
-            this.showLoadingWithMessage('Đang tải trang...');
-            
-            // Ẩn loading khi trang đã load xong
-            window.addEventListener('load', () => {
-                setTimeout(() => {
-                    this.hideLoading();
-                }, 500); // Giảm thời gian xuống 500ms
-            });
-        } else {
-            // Nếu trang đã load xong, không hiển thị loading
-            this.hideLoading();
-        }
-    }
+    // setupInitialLoading() {
+    //     // Chỉ hiển thị loading nếu trang chưa load xong
+    //     if (document.readyState !== 'complete') {
+    //         this.showLoadingWithMessage('Đang tải trang...');
+    //         // Ẩn loading khi trang đã load xong
+    //         window.addEventListener('load', () => {
+    //             setTimeout(() => {
+    //                 this.hideLoading();
+    //             }, 500);
+    //         });
+    //     } else {
+    //         // Nếu trang đã load xong, không hiển thị loading
+    //         this.hideLoading();
+    //     }
+    // }
 
     // Hiển thị loading khi chuyển trang
     setupNavigationLoading() {
@@ -86,39 +85,38 @@ class AdminLoadingHandler {
     // Xử lý loading cho AJAX requests
     setupAjaxLoading() {
         // Intercept fetch requests
-        const originalFetch = window.fetch;
-        window.fetch = (...args) => {
-            this.showLoading();
-            return originalFetch(...args)
-                .then(response => {
-                    setTimeout(() => {
-                        this.hideLoading();
-                    }, 300); // Delay nhỏ để tránh nháy
-                    return response;
-                })
-                .catch(error => {
-                    setTimeout(() => {
-                        this.hideLoading();
-                    }, 300);
-                    throw error;
-                });
-        };
+        // const originalFetch = window.fetch;
+        // window.fetch = (...args) => {
+        //     this.showLoading();
+        //     return originalFetch(...args)
+        //         .then(response => {
+        //             setTimeout(() => {
+        //                 this.hideLoading();
+        //             }, 300); // Delay nhỏ để tránh nháy
+        //             return response;
+        //         })
+        //         .catch(error => {
+        //             setTimeout(() => {
+        //                 this.hideLoading();
+        //             }, 300);
+        //             throw error;
+        //         });
+        // };
 
         // Intercept XMLHttpRequest
-        const originalXHROpen = XMLHttpRequest.prototype.open;
-        const originalXHRSend = XMLHttpRequest.prototype.send;
-        
-        XMLHttpRequest.prototype.open = function() {
-            this.addEventListener('loadstart', () => {
-                window.adminLoading.showLoading();
-            });
-            this.addEventListener('loadend', () => {
-                setTimeout(() => {
-                    window.adminLoading.hideLoading();
-                }, 300);
-            });
-            return originalXHROpen.apply(this, arguments);
-        };
+        // const originalXHROpen = XMLHttpRequest.prototype.open;
+        // const originalXHRSend = XMLHttpRequest.prototype.send;
+        // XMLHttpRequest.prototype.open = function() {
+        //     this.addEventListener('loadstart', () => {
+        //         window.adminLoading.showLoading();
+        //     });
+        //     this.addEventListener('loadend', () => {
+        //         setTimeout(() => {
+        //             window.adminLoading.hideLoading();
+        //         }, 300);
+        //     });
+        //     return originalXHROpen.apply(this, arguments);
+        // };
     }
 
     // Hiển thị loading

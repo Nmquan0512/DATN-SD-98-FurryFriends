@@ -20,6 +20,56 @@
     </ol>
 </nav>
 
+<div class="container mb-4" id="filterContainer">
+    <div class="card shadow-sm p-3 mb-3" style="border-radius: 12px;">
+        <div class="row align-items-center mb-2">
+            <div class="col-auto">
+                <span class="fs-5 fw-semibold"><i class="fas fa-filter me-2"></i>Bộ lọc</span>
+            </div>
+        </div>
+        <div class="row align-items-end g-3">
+            <div class="col-md-2">
+                <label for="filterTrangThai" class="form-label mb-1">Trạng thái</label>
+                <select id="filterTrangThai" class="form-select">
+                    <option value="">Tất cả</option>
+                    <option value="Hoạt động">Hoạt động</option>
+                    <option value="Không hoạt động">Không hoạt động</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="filterChucVu" class="form-label mb-1">Chức vụ</label>
+                <select id="filterChucVu" class="form-select">
+                    <option value="">Tất cả</option>
+                    @foreach (var cv in Model.Select(x => x.ChucVu?.TenChucVu).Distinct())
+                    {
+                        if (!string.IsNullOrEmpty(cv))
+                        {
+                            <option value="@cv">@cv</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="filterGioiTinh" class="form-label mb-1">Giới tính</label>
+                <select id="filterGioiTinh" class="form-select">
+                    <option value="">Tất cả</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="filterNgaySinhTu" class="form-label mb-1">Ngày sinh từ</label>
+                <input type="date" id="filterNgaySinhTu" class="form-control" />
+            </div>
+            <div class="col-md-2">
+                <label for="filterNgaySinhDen" class="form-label mb-1">Ngày sinh đến</label>
+                <input type="date" id="filterNgaySinhDen" class="form-control" />
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="table-container" style="margin-left: 10px; margin-right: 40px;">
     <div class="table-responsive" id="nhanVienTableContainer">
         <table id="nhanVienTable" class="table table-bordered table-hover">
@@ -73,7 +123,8 @@
             if (window.adminLoading) {
                 window.adminLoading.showTableLoading('#nhanVienTableContainer');
             }
-            $('#nhanVienTable').DataTable({
+            // DataTable
+            var table = $('#nhanVienTable').DataTable({
                 language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json' },
                 responsive: true,
                 order: [[1, 'asc']],
@@ -82,6 +133,32 @@
                         window.adminLoading.hideTableLoading('#nhanVienTableContainer');
                     }
                 }
+            });
+            // Custom filter
+            $('#filterTrangThai, #filterChucVu, #filterGioiTinh, #filterNgaySinhTu, #filterNgaySinhDen').on('change', function () {
+                table.draw();
+            });
+            $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+                var trangThai = $('#filterTrangThai').val();
+                var chucVu = $('#filterChucVu').val();
+                var gioiTinh = $('#filterGioiTinh').val();
+                var ngayTu = $('#filterNgaySinhTu').val();
+                var ngayDen = $('#filterNgaySinhDen').val();
+                var rowTrangThai = data[8];
+                var rowChucVu = data[6];
+                var rowGioiTinh = data[5];
+                var rowNgaySinh = data[1];
+                var rowDiaChi = data[2];
+                // Trạng thái
+                if (trangThai && !rowTrangThai.includes(trangThai)) return false;
+                // Chức vụ
+                if (chucVu && rowChucVu !== chucVu) return false;
+                // Giới tính
+                if (gioiTinh && rowGioiTinh !== gioiTinh) return false;
+                // Ngày sinh
+                if (ngayTu && moment(rowNgaySinh, 'DD/MM/YYYY').format('YYYY-MM-DD') < ngayTu) return false;
+                if (ngayDen && moment(rowNgaySinh, 'DD/MM/YYYY').format('YYYY-MM-DD') > ngayDen) return false;
+                return true;
             });
             $('.action-btn').on('click', function (e) {
                 if (window.adminLoading) {

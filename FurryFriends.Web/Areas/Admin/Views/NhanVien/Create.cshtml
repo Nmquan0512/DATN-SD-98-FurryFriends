@@ -58,12 +58,21 @@
                     <!-- Địa chỉ -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="DiaChi" class="form-label fw-semibold">
-                                <i class="fas fa-map-marker-alt me-2 text-primary"></i>Địa chỉ
+                            <label class="form-label fw-semibold">
+                                <i class="fas fa-map-marker-alt me-2 text-primary"></i>Địa chỉ cụ thể
                             </label>
-                            <input asp-for="DiaChi" class="form-control form-control-lg" placeholder="Nhập địa chỉ" />
-                            <span asp-validation-for="DiaChi" class="text-danger small"></span>
+                            <input type="text" id="diaChiCuThe" class="form-control form-control-lg" placeholder="Nhập địa chỉ cụ thể" />
                         </div>
+                        <div class="form-group mt-2">
+                            <label class="form-label fw-semibold">Tỉnh/Thành phố</label>
+                            <select id="tinhThanh" class="form-control form-control-lg"></select>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label class="form-label fw-semibold">Phường/Xã/Thị trấn</label>
+                            <select id="phuongXa" class="form-control form-control-lg"></select>
+                        </div>
+                        <input type="hidden" asp-for="DiaChi" id="DiaChi" />
+                        <span asp-validation-for="DiaChi" class="text-danger small"></span>
                     </div>
 
                     <!-- Số điện thoại -->
@@ -122,7 +131,7 @@
                             <label asp-for="TaiKhoanId" class="form-label fw-semibold">
                                 <i class="fas fa-user-shield me-2 text-primary"></i>Tài khoản
                             </label>
-                            <select asp-for="TaiKhoanId" class="form-control form-control-lg" asp-items="ViewBag.TaiKhoanId">
+                            <select asp-for="TaiKhoanId" class="form-control form-control-lg" asp-items="ViewBag.TaiKhoanId" id="TaiKhoanIdSelect">
                                 <option value="">-- Chọn tài khoản --</option>
                             </select>
                             <span asp-validation-for="TaiKhoanId" class="text-danger small"></span>
@@ -166,15 +175,54 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+        let provinceData = {};
+        let wardData = {};
         $(document).ready(function () {
-            // Form validation
-            $('#createForm').on('submit', function(e) {
-                if ($(this).valid()) {
-                    // Form hợp lệ, cho phép submit
-                    return true;
+            // Load province.json
+            $.getJSON('/json/province.json', function (provinces) {
+                provinceData = provinces;
+                $('#tinhThanh').append($('<option>', { value: '', text: '-- Chọn tỉnh/thành phố --' }));
+                $.each(provinces, function (key, value) {
+                    $('#tinhThanh').append($('<option>', { value: value.code, text: value.name_with_type }));
+                });
+            });
+            // Load ward.json trước để dùng sau
+            $.getJSON('/json/ward.json', function (wards) {
+                wardData = wards;
+            });
+            // Khi chọn tỉnh/thành phố, load phường/xã/thị trấn
+            $('#tinhThanh').on('change', function () {
+                var selectedCode = $(this).val();
+                $('#phuongXa').empty();
+                $('#phuongXa').append($('<option>', { value: '', text: '-- Chọn phường/xã/thị trấn --' }));
+                if (selectedCode && wardData) {
+                    $.each(wardData, function (key, value) {
+                        if (value.parent_code === selectedCode) {
+                            $('#phuongXa').append($('<option>', { value: value.code, text: value.name_with_type }));
+                        }
+                    });
                 }
+            });
+            // Gộp địa chỉ khi submit
+            $('#createForm').on('submit', function(e) {
+                var diaChiCuThe = $('#diaChiCuThe').val();
+                var tinhCode = $('#tinhThanh').val();
+                var phuongCode = $('#phuongXa').val();
+                var tinhText = tinhCode && provinceData[tinhCode] ? provinceData[tinhCode].name_with_type : '';
+                var phuongText = phuongCode && wardData[phuongCode] ? wardData[phuongCode].name_with_type : '';
+                var diaChiFull = diaChiCuThe;
+                if (phuongText) diaChiFull += ', ' + phuongText;
+                if (tinhText) diaChiFull += ', ' + tinhText;
+                $('#DiaChi').val(diaChiFull);
+            });
+            // Select2 cho tài khoản
+            $('#TaiKhoanIdSelect').select2({
+                placeholder: 'Tìm tài khoản...',
+                allowClear: true,
+                width: '100%'
             });
         });
     </script>

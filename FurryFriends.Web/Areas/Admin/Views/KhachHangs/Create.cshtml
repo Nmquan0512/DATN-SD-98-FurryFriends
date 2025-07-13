@@ -130,15 +130,9 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <script>
+        let provinceData = {};
+        let wardData = {};
         $(document).ready(function () {
-            // Form validation
-            $('#createForm').on('submit', function(e) {
-                if ($(this).valid()) {
-                    // Form hợp lệ, cho phép submit
-                    return true;
-                }
-            });
-
             $('#TaiKhoanId').select2({
                 placeholder: 'Chọn tài khoản',
                 minimumInputLength: 2,

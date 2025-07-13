@@ -54,6 +54,7 @@
                     </select>
                     <span asp-validation-for="TrangThai" class="text-danger"></span>
                 </div>
+
                 <input type="hidden" asp-for="NgayTaoTaiKhoan" />
                 <input type="hidden" asp-for="NgayCapNhatCuoiCung" value="@DateTime.Now" />
 
@@ -72,6 +73,8 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
+        let provinceData = {};
+        let wardData = {};
         $(document).ready(function () {
             var selectedId = '@Model.TaiKhoanId';
             var selectedText = '@(ViewBag.SelectedTaiKhoanText ?? "")';
@@ -99,6 +102,74 @@
                 var option = new Option(selectedText, selectedId, true, true);
                 $('#TaiKhoanId').append(option).trigger('change');
             }
+            $.getJSON('/json/province.json', function (provinces) {
+                provinceData = provinces;
+                $('#tinhThanh').append($('<option>', { value: '', text: '-- Chọn tỉnh/thành phố --' }));
+                $.each(provinces, function (key, value) {
+                    $('#tinhThanh').append($('<option>', { value: value.code, text: value.name_with_type }));
+                });
+                if (window._selectedTinhCode) {
+                    $('#tinhThanh').val(window._selectedTinhCode).trigger('change');
+                }
+            });
+            $.getJSON('/json/ward.json', function (wards) {
+                wardData = wards;
+                if (window._selectedTinhCode && window._selectedPhuongCode) {
+                    setTimeout(function() {
+                        $('#phuongXa').val(window._selectedPhuongCode);
+                    }, 300);
+                }
+            });
+            $('#tinhThanh').on('change', function () {
+                var selectedCode = $(this).val();
+                $('#phuongXa').empty();
+                $('#phuongXa').append($('<option>', { value: '', text: '-- Chọn phường/xã/thị trấn --' }));
+                if (selectedCode && wardData) {
+                    $.each(wardData, function (key, value) {
+                        if (value.parent_code === selectedCode) {
+                            $('#phuongXa').append($('<option>', { value: value.code, text: value.name_with_type }));
+                        }
+                    });
+                }
+            });
+            // Tách địa chỉ hiện tại
+            var diaChiFull = $('#DiaChi').val() || '';
+            var diaChiParts = diaChiFull.split(',').map(function(x){return x.trim();});
+            $('#diaChiCuThe').val(diaChiParts[0] || '');
+            if (diaChiParts.length > 2) {
+                var tinhText = diaChiParts[2];
+                var phuongText = diaChiParts[1];
+                var tinhCode = '';
+                var phuongCode = '';
+                $.getJSON('/json/province.json', function (provinces) {
+                    $.each(provinces, function (key, value) {
+                        if (value.name_with_type === tinhText) {
+                            tinhCode = value.code;
+                            window._selectedTinhCode = tinhCode;
+                            $('#tinhThanh').val(tinhCode).trigger('change');
+                        }
+                    });
+                });
+                $.getJSON('/json/ward.json', function (wards) {
+                    $.each(wards, function (key, value) {
+                        if (value.name_with_type === phuongText) {
+                            phuongCode = value.code;
+                            window._selectedPhuongCode = phuongCode;
+                        }
+                    });
+                });
+            }
+            $('form').on('submit', function(e) {
+                var diaChiCuThe = $('#diaChiCuThe').val();
+                var tinhCode = $('#tinhThanh').val();
+                var phuongCode = $('#phuongXa').val();
+                var tinhText = tinhCode && provinceData[tinhCode] ? provinceData[tinhCode].name_with_type : '';
+                var phuongText = phuongCode && wardData[phuongCode] ? wardData[phuongCode].name_with_type : '';
+                var diaChiFull = diaChiCuThe;
+                if (phuongText) diaChiFull += ', ' + phuongText;
+                if (tinhText) diaChiFull += ', ' + tinhText;
+                $('#DiaChi').val(diaChiFull);
+            });
         });
     </script>
 }

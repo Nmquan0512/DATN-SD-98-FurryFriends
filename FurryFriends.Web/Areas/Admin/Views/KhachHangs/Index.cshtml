@@ -19,12 +19,45 @@
         <li class="breadcrumb-item active">Quản lý khách hàng</li>
     </ol>
 </nav>
+<div class="container mb-4" id="filterContainer">
+    <div class="card shadow-sm p-3 mb-3" style="border-radius: 12px;">
+        <div class="row align-items-end g-3">
+            <div class="col-md-3">
+                <label for="filterTrangThai" class="form-label mb-1">Trạng thái</label>
+                <select id="filterTrangThai" class="form-select">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="Chưa kích hoạt">Chưa kích hoạt</option>
+                    <option value="Đang hoạt động">Đang hoạt động</option>
+                    <option value="Đã khóa">Đã khóa</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="filterNgayTu" class="form-label mb-1">Từ ngày</label>
+                <input type="date" id="filterNgayTu" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label for="filterNgayDen" class="form-label mb-1">Đến ngày</label>
+                <input type="date" id="filterNgayDen" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label mb-1">Điểm tích lũy</label>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-range-slider">
+                        <input type="range" id="filterDiem" min="0" max="100" value="0" style="width: 120px;" />
+                    </div>
+                    <span id="diemValue" class="fw-bold text-primary" style="min-width:32px;">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="table-container table-responsive" id="khachHangTableContainer" style="margin-left: 10px; margin-right: 40px;">
     <table id="khachHangTable" class="table table-bordered table-hover">
         <thead class="table-light">
             <tr>
                 <th>Khách hàng</th>
-                <th>Thông tin liên hệ</th>
+                <th>Số điện thoại</th>
+                <th>Email</th>
                 <th>Điểm tích lũy</th>
                 <th>Ngày tham gia</th>
                 <th>Trạng thái</th>
@@ -44,14 +77,10 @@
                             </div>
                         </div>
                     </td>
-                    <td>
-                        <div><i class="fas fa-phone me-2"></i>@item.SDT</div>
-                        <div><i class="fas fa-envelope me-2"></i>@item.EmailCuaKhachHang</div>
-                    </td>
-                    <td>
-                        <span class="badge bg-primary">@item.DiemKhachHang điểm</span>
-                    </td>
-                    <td>@item.NgayTaoTaiKhoan.ToString("dd/MM/yyyy")</td>
+                    <td>@item.SDT</td>
+                    <td>@item.EmailCuaKhachHang</td>
+                    <td><span class="badge bg-primary diem-value">@item.DiemKhachHang</span></td>
+                    <td>@item.NgayTaoTaiKhoan.ToString("yyyy-MM-dd")</td>
                     <td>
                         @switch (item.TrangThai)
                         {
@@ -93,20 +122,100 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+    <style>
+        /* Khôi phục lại thanh slider bình thường */
+        .custom-range-slider input[type=range] {
+            -webkit-appearance: none;
+            width: 120px;
+            height: 6px;
+            background: linear-gradient(90deg, #E8F2FF 0%, #4A90E2 100%);
+            border-radius: 3px;
+            outline: none;
+            transition: background 0.3s;
+        }
+        .custom-range-slider input[type=range]:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px #E8F2FF;
+        }
+        /* Chỉ thay thumb bằng ảnh ragedog.png */
+        .custom-range-slider input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: url('/images/ragedog.png') no-repeat center center !important;
+            background-size: cover !important;
+            border: none;
+            box-shadow: 0 2px 6px rgba(44,62,80,0.12);
+            cursor: pointer;
+            z-index: 3;
+        }
+        .custom-range-slider input[type=range]::-moz-range-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: url('/images/ragedog.png') no-repeat center center !important;
+            background-size: cover !important;
+            border: none;
+            box-shadow: 0 2px 6px rgba(44,62,80,0.12);
+            cursor: pointer;
+            z-index: 3;
+        }
+        .custom-range-slider input[type=range]::-ms-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: url('/images/ragedog.png') no-repeat center center !important;
+            background-size: cover !important;
+            border: none;
+            box-shadow: 0 2px 6px rgba(44,62,80,0.12);
+            cursor: pointer;
+            z-index: 3;
+        }
+    </style>
     <script>
         $(document).ready(function () {
             if (window.adminLoading) {
                 window.adminLoading.showTableLoading('#khachHangTableContainer');
             }
-            $('#khachHangTable').DataTable({
+            var table = $('#khachHangTable').DataTable({
                 language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json' },
                 responsive: true,
-                order: [[3, 'desc']],
+                order: [[4, 'desc']],
                 initComplete: function () {
                     if (window.adminLoading) {
                         window.adminLoading.hideTableLoading('#khachHangTableContainer');
                     }
                 }
+            });
+            // Hiển thị giá trị slider
+            $('#filterDiem').on('input', function () {
+                var val = parseInt($(this).val());
+                $('#diemValue').text(val);
+                table.draw();
+            });
+            // Filter
+            $('#filterTrangThai, #filterNgayTu, #filterNgayDen').on('change', function () {
+                table.draw();
+            });
+            // Custom search logic
+            $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+                var trangThai = $('#filterTrangThai').val();
+                var ngayTu = $('#filterNgayTu').val();
+                var ngayDen = $('#filterNgayDen').val();
+                var diem = parseInt($('#filterDiem').val() || '0');
+                var rowDiem = parseInt($(table.row(dataIndex).node()).find('.diem-value').text() || '0');
+                var rowNgay = data[4];
+                var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(5)').text().trim();
+                // Trạng thái
+                if (trangThai && !rowTrangThai.includes(trangThai)) return false;
+                // Ngày tham gia
+                if (ngayTu && rowNgay < ngayTu) return false;
+                if (ngayDen && rowNgay > ngayDen) return false;
+                // Điểm
+                if (rowDiem !== diem) return false;
+                return true;
             });
             $('.action-btn').on('click', function (e) {
                 if (window.adminLoading) {
