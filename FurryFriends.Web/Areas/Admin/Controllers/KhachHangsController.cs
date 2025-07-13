@@ -63,10 +63,21 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             var khachHang = await _khachHangService.GetByIdAsync(id);
             if (khachHang == null) return NotFound();
+
+            // Lấy danh sách tất cả tài khoản (nếu cần dùng cho các mục khác)
             var taiKhoans = await _taiKhoanService.GetAllTaiKhoanAsync();
             ViewBag.TaiKhoanList = new SelectList(taiKhoans, "TaiKhoanId", "TenDangNhap", khachHang.TaiKhoanId);
+
+            // ✅ Lấy tài khoản đã chọn để hiển thị tên trong select2
+            if (khachHang.TaiKhoanId != null)
+            {
+                var taiKhoan = await _taiKhoanService.GetByIdAsync(khachHang.TaiKhoanId.Value);
+                ViewBag.SelectedTaiKhoanText = taiKhoan?.UserName; // phải có dòng này!
+            }
+
             return View(khachHang);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -88,13 +99,13 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             return View(khachHang);
         }
 
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeleteConfirmed(Guid KhachHangId)
         {
-            await _khachHangService.DeleteAsync(id);
+            await _khachHangService.DeleteAsync(KhachHangId);
             TempData["success"] = "Xóa khách hàng thành công!";
             return RedirectToAction(nameof(Index));
         }
     }
-} 
+}

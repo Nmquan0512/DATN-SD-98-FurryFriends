@@ -1,7 +1,8 @@
 ﻿using FurryFriends.API.Models;
+using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
-using FurryFriends.Web.Filter;
+using System.ComponentModel.DataAnnotations;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -35,29 +36,42 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 {
                     taiKhoan.TaiKhoanId = Guid.NewGuid();
                     taiKhoan.NgayTaoTaiKhoan = DateTime.Now;
-                    taiKhoan.TrangThai = taiKhoan.TrangThai; // giữ nguyên từ form
-
-                    // Khởi tạo các collection để tránh null
+                    taiKhoan.TrangThai = taiKhoan.TrangThai;
                     taiKhoan.SanPhams = null;
                     taiKhoan.HoaDons = null;
-
-                    // Nếu bạn không dùng tài khoản cho khách hàng, để KhachHangId null
                     taiKhoan.KhachHang = null;
                     taiKhoan.KhachHangId = null;
 
                     await _taiKhoanService.AddAsync(taiKhoan);
+
                     TempData["Success"] = "Tài khoản đã được tạo thành công.";
                     return RedirectToAction(nameof(Index));
                 }
-                catch (ArgumentException ex)
+                catch (ValidationException ex)
                 {
-                    ModelState.AddModelError("", ex.Message);
+                    // Parse lỗi JSON
+                    var problemDetails = Newtonsoft.Json.JsonConvert.DeserializeObject<ValidationProblemDetails>(ex.Message);
+                    if (problemDetails?.Errors != null)
+                    {
+                        foreach (var error in problemDetails.Errors)
+                        {
+                            foreach (var msg in error.Value)
+                            {
+                                ModelState.AddModelError(error.Key, msg);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Lỗi xác thực.");
+                    }
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", $"Lỗi: {ex.Message}");
                 }
             }
+
             return View(taiKhoan);
         }
         public async Task<IActionResult> Edit(Guid id)
@@ -79,7 +93,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             {
                 try
                 {
-                    // Lấy bản ghi cũ để giữ lại Password nếu bị null
                     var taiKhoanCu = await _taiKhoanService.GetByIdAsync(id);
                     if (string.IsNullOrWhiteSpace(taiKhoan.Password) && taiKhoanCu != null)
                     {
@@ -87,22 +100,35 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     }
 
                     await _taiKhoanService.UpdateAsync(taiKhoan);
+
                     TempData["Success"] = "Tài khoản đã được cập nhật thành công.";
                     return RedirectToAction(nameof(Index));
                 }
-                catch (ArgumentException ex)
+                catch (ValidationException ex)
                 {
-                    ModelState.AddModelError("", ex.Message);
-                }
-                catch (KeyNotFoundException ex)
-                {
-                    ModelState.AddModelError("", ex.Message);
+                    // Parse ValidationProblemDetails
+                    var problemDetails = Newtonsoft.Json.JsonConvert.DeserializeObject<ValidationProblemDetails>(ex.Message);
+                    if (problemDetails?.Errors != null)
+                    {
+                        foreach (var error in problemDetails.Errors)
+                        {
+                            foreach (var msg in error.Value)
+                            {
+                                ModelState.AddModelError(error.Key, msg);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Lỗi xác thực.");
+                    }
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError("", $"Lỗi: {ex.Message}");
                 }
             }
+
             return View(taiKhoan);
         }
         public async Task<IActionResult> Delete(Guid id)

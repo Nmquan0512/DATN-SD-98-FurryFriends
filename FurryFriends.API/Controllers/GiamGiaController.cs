@@ -73,5 +73,13 @@ namespace FurryFriends.API.Controllers
             await _giamGiaRepo.SaveAsync();
             return NoContent();
         }
+
+        [HttpGet("{id}/phantram")]
+        public async Task<IActionResult> GetPhanTramKhuyenMai(Guid id)
+        {
+            var giamGia = await _giamGiaRepo.GetByIdAsync(id);
+            if (giamGia == null) return NotFound();
+            return Ok(giamGia.PhanTramKhuyenMai);
+        }
     }
 }

@@ -1,5 +1,8 @@
-﻿using FurryFriends.API.Models.DTO;
+﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.Services.IService;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 
@@ -29,18 +32,53 @@ namespace FurryFriends.Web.Services
             return null;
         }
 
-        public async Task<ThanhPhanDTO> CreateAsync(ThanhPhanDTO dto)
+        public async Task<ApiResult<ThanhPhanDTO>> CreateAsync(ThanhPhanDTO dto)
         {
             var response = await _httpClient.PostAsJsonAsync(BaseUrl, dto);
+
             if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<ThanhPhanDTO>();
-            return null;
+            {
+                var data = await response.Content.ReadFromJsonAsync<ThanhPhanDTO>();
+                return new ApiResult<ThanhPhanDTO> { Data = data };
+            }
+
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+                return new ApiResult<ThanhPhanDTO>
+                {
+                    Errors = errors?.Errors?.ToDictionary(e => e.Key, e => e.Value)
+                };
+            }
+
+            return new ApiResult<ThanhPhanDTO>
+            {
+                Errors = new Dictionary<string, string[]> { { "", new[] { "Lỗi không xác định!" } } }
+            };
         }
 
-        public async Task<bool> UpdateAsync(Guid id, ThanhPhanDTO dto)
+        public async Task<ApiResult<bool>> UpdateAsync(Guid id, ThanhPhanDTO dto)
         {
             var response = await _httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", dto);
-            return response.IsSuccessStatusCode;
+
+            if (response.IsSuccessStatusCode)
+                return new ApiResult<bool> { Data = true };
+
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+                return new ApiResult<bool>
+                {
+                    Data = false,
+                    Errors = errors?.Errors?.ToDictionary(e => e.Key, e => e.Value)
+                };
+            }
+
+            return new ApiResult<bool>
+            {
+                Data = false,
+                Errors = new Dictionary<string, string[]> { { "", new[] { "Lỗi không xác định khi cập nhật!" } } }
+            };
         }
 
         public async Task<bool> DeleteAsync(Guid id)

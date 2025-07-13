@@ -29,30 +29,32 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Create(ThuongHieuDTO dto)
         {
             if (!ModelState.IsValid)
-            {
                 return View(dto);
-            }
 
             var result = await _thuongHieuService.CreateAsync(dto);
-            if (result != null)
+            if (result.Success)
             {
                 TempData["success"] = "Thêm thương hiệu thành công!";
                 return RedirectToAction("Index");
             }
 
-            ModelState.AddModelError("", "Thêm thương hiệu thất bại!");
+            if (result.Errors != null)
+            {
+                foreach (var error in result.Errors)
+                {
+                    foreach (var msg in error.Value)
+                        ModelState.AddModelError(error.Key, msg);
+                }
+            }
+
             return View(dto);
         }
 
-
-
-        // GET: /ThuongHieu/Edit/{id}
         public async Task<IActionResult> Edit(Guid id)
         {
             var item = await _thuongHieuService.GetByIdAsync(id);
             if (item == null)
                 return NotFound();
-
             return View(item);
         }
 
@@ -66,14 +68,26 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return View(dto);
 
-            var success = await _thuongHieuService.UpdateAsync(id, dto);
-            if (success)
+            var result = await _thuongHieuService.UpdateAsync(id, dto);
+            if (result.Data)
             {
                 TempData["success"] = "Cập nhật thương hiệu thành công!";
                 return RedirectToAction("Index");
             }
 
-            ModelState.AddModelError("", "Cập nhật thất bại!");
+            if (result.Errors != null)
+            {
+                foreach (var error in result.Errors)
+                {
+                    foreach (var msg in error.Value)
+                        ModelState.AddModelError(error.Key, msg);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Cập nhật thất bại!");
+            }
+
             return View(dto);
         }
 

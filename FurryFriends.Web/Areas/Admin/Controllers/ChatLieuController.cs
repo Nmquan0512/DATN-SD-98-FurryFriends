@@ -37,17 +37,27 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
 
             var result = await _chatLieuService.CreateAsync(dto);
-            if (result != null)
+
+            if (result.Success)
             {
                 TempData["success"] = "Thêm chất liệu thành công!";
                 return RedirectToAction("Index");
             }
 
-            ModelState.AddModelError("", "Thêm chất liệu thất bại!");
+            // Đẩy lỗi từ API vào ModelState
+            if (result.Errors != null)
+            {
+                foreach (var field in result.Errors)
+                {
+                    foreach (var error in field.Value)
+                    {
+                        ModelState.AddModelError(field.Key, error);
+                    }
+                }
+            }
+
             return View(dto);
         }
-
-  
 
 
         // GET: /ChatLieu/Edit/{id}
@@ -71,16 +81,29 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return View(dto);
 
-            var success = await _chatLieuService.UpdateAsync(id, dto);
-            if (success)
+            var result = await _chatLieuService.UpdateAsync(id, dto);
+            if (result.Data)
             {
                 TempData["success"] = "Cập nhật chất liệu thành công!";
                 return RedirectToAction("Index");
             }
 
-            ModelState.AddModelError("", "Cập nhật thất bại!");
+            if (result.Errors != null)
+            {
+                foreach (var error in result.Errors)
+                {
+                    foreach (var msg in error.Value)
+                        ModelState.AddModelError(error.Key, msg);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Cập nhật thất bại!");
+            }
+
             return View(dto);
         }
+
 
         // GET: /ChatLieu/Delete/{id}
         public async Task<IActionResult> Delete(Guid id)

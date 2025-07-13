@@ -1,7 +1,10 @@
-﻿using System.Net.Http;
-using System.Net.Http.Json;
-using FurryFriends.Web.Services.IService;
+﻿using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO;
+using FurryFriends.Web.Services.IService;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace FurryFriends.Web.Services
 {
@@ -29,19 +32,61 @@ namespace FurryFriends.Web.Services
             return null;
         }
 
-        public async Task<KichCoDTO> CreateAsync(KichCoDTO dto)
+        public async Task<ApiResult<KichCoDTO>> CreateAsync(KichCoDTO dto)
         {
             var response = await _httpClient.PostAsJsonAsync(BaseUrl, dto);
+
             if (response.IsSuccessStatusCode)
-                return await response.Content.ReadFromJsonAsync<KichCoDTO>();
-            return null;
+            {
+                var data = await response.Content.ReadFromJsonAsync<KichCoDTO>();
+                return new ApiResult<KichCoDTO> { Data = data };
+            }
+
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+                return new ApiResult<KichCoDTO>
+                {
+                    Errors = errors?.Errors.ToDictionary(e => e.Key, e => e.Value)
+                };
+            }
+
+            return new ApiResult<KichCoDTO>
+            {
+                Errors = new Dictionary<string, string[]>
+                {
+                    { "", new[] { "Lỗi không xác định!" } }
+                }
+            };
         }
 
-        public async Task<bool> UpdateAsync(Guid id, KichCoDTO dto)
+        public async Task<ApiResult<bool>> UpdateAsync(Guid id, KichCoDTO dto)
         {
             var response = await _httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", dto);
-            return response.IsSuccessStatusCode;
+
+            if (response.IsSuccessStatusCode)
+                return new ApiResult<bool> { Data = true };
+
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+                return new ApiResult<bool>
+                {
+                    Data = false,
+                    Errors = errors?.Errors.ToDictionary(e => e.Key, e => e.Value)
+                };
+            }
+
+            return new ApiResult<bool>
+            {
+                Data = false,
+                Errors = new Dictionary<string, string[]>
+                {
+                    { "", new[] { "Lỗi không xác định khi cập nhật!" } }
+                }
+            };
         }
+
 
         public async Task<bool> DeleteAsync(Guid id)
         {

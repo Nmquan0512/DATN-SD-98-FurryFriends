@@ -1,6 +1,7 @@
 ﻿using FurryFriends.API.Models;
 using FurryFriends.API.Repository.IRepository;
 using FurryFriends.Web.Services.IService;
+using System.ComponentModel.DataAnnotations;
 
 namespace FurryFriends.Web.Services
 {
@@ -30,54 +31,40 @@ namespace FurryFriends.Web.Services
 
         public async Task AddAsync(ChucVu chucVu)
         {
-            if (chucVu == null)
-                throw new ArgumentNullException(nameof(chucVu));
-
-            // Validation
-            if (string.IsNullOrWhiteSpace(chucVu.TenChucVu))
-                throw new ArgumentException("Tên chức vụ không được để trống.");
-            if (chucVu.TenChucVu.Length > 50)
-                throw new ArgumentException("Tên chức vụ không được vượt quá 50 ký tự.");
-            if (string.IsNullOrWhiteSpace(chucVu.MoTaChucVu))
-                throw new ArgumentException("Mô tả chức vụ không được để trống.");
-            if (chucVu.MoTaChucVu.Length > 250)
-                throw new ArgumentException("Mô tả chức vụ không được vượt quá 250 ký tự.");
-            if (chucVu.NgayTao == default)
-                chucVu.NgayTao = DateTime.Now;
-            if (chucVu.NgayCapNhat == default)
-                chucVu.NgayCapNhat = DateTime.Now;
-
-            chucVu.NhanViens = null; // Bỏ qua navigation property
-
             var response = await _httpClient.PostAsJsonAsync("ChucVuApi", chucVu);
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+
+                // Nếu là lỗi 400 và trả về ValidationProblemDetails
+                if (response.StatusCode == System.Net.HttpStatusCode.BadRequest &&
+                    response.Content.Headers.ContentType?.MediaType == "application/problem+json")
+                {
+                    throw new ValidationException(content);
+                }
+
+                throw new HttpRequestException(content);
+            }
         }
 
         public async Task UpdateAsync(ChucVu chucVu)
         {
-            if (chucVu == null)
-                throw new ArgumentNullException(nameof(chucVu));
-            if (chucVu.ChucVuId == Guid.Empty)
-                throw new ArgumentException("ChucVuId không hợp lệ.");
-
-            // Validation
-            if (string.IsNullOrWhiteSpace(chucVu.TenChucVu))
-                throw new ArgumentException("Tên chức vụ không được để trống.");
-            if (chucVu.TenChucVu.Length > 50)
-                throw new ArgumentException("Tên chức vụ không được vượt quá 50 ký tự.");
-            if (string.IsNullOrWhiteSpace(chucVu.MoTaChucVu))
-                throw new ArgumentException("Mô tả chức vụ không được để trống.");
-            if (chucVu.MoTaChucVu.Length > 250)
-                throw new ArgumentException("Mô tả chức vụ không được vượt quá 250 ký tự.");
-            if (chucVu.NgayTao == default)
-                throw new ArgumentException("Ngày tạo không được để trống.");
-            if (chucVu.NgayCapNhat == default)
-                chucVu.NgayCapNhat = DateTime.Now;
-
-            chucVu.NhanViens = null; // Bỏ qua navigation property
-
             var response = await _httpClient.PutAsJsonAsync($"ChucVuApi/{chucVu.ChucVuId}", chucVu);
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode == System.Net.HttpStatusCode.BadRequest &&
+                    response.Content.Headers.ContentType?.MediaType == "application/problem+json")
+                {
+                    throw new ValidationException(content);
+                }
+
+                throw new HttpRequestException(content);
+            }
+
         }
 
         public async Task DeleteAsync(Guid chucVuId)

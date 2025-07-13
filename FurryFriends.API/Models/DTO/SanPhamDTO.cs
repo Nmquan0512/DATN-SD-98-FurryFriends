@@ -1,10 +1,15 @@
+<<<<<<< HEAD
 ﻿using System;
 using System.Collections.Generic;
+=======
+﻿using FurryFriends.API.Data;
+using System;
+>>>>>>> origin/TruongValidate
 using System.ComponentModel.DataAnnotations;
 
 namespace FurryFriends.API.Models.DTO
 {
-    public class SanPhamDTO
+    public class SanPhamDTO : IValidatableObject
     {
         public Guid SanPhamId { get; set; } = Guid.NewGuid();
 
@@ -25,6 +30,7 @@ namespace FurryFriends.API.Models.DTO
         [Required(ErrorMessage = "Thương hiệu là bắt buộc.")]
         public Guid ThuongHieuId { get; set; }
 
+<<<<<<< HEAD
         public string? TenThuongHieu { get; set; }
 
         // Hiển thị tên chất liệu nếu có
@@ -38,5 +44,26 @@ namespace FurryFriends.API.Models.DTO
         public DateTime? NgaySua { get; set; }
 
         public bool TrangThai { get; set; } = true;
+=======
+        [Required(ErrorMessage = "Trạng thái là bắt buộc.")]
+        public bool TrangThai { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var _context = (AppDbContext)validationContext.GetService(typeof(AppDbContext));
+
+            if (_context != null)
+            {
+                var isDuplicate = _context.SanPhams
+                    .Any(x => x.TenSanPham.ToLower().Trim() == TenSanPham.ToLower().Trim()
+                           && x.SanPhamId != SanPhamId);
+
+                if (isDuplicate)
+                {
+                    yield return new ValidationResult("Tên sản phẩm đã tồn tại.", new[] { nameof(TenSanPham) });
+                }
+            }
+        }
+>>>>>>> origin/TruongValidate
     }
 }

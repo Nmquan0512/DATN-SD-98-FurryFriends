@@ -30,26 +30,28 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Create(KichCoDTO dto)
         {
             if (!ModelState.IsValid)
-            {
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                    return BadRequest(ModelState);
                 return View(dto);
-            }
 
             var result = await _kichCoService.CreateAsync(dto);
-            if (result != null)
+
+            if (result.Success)
             {
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                    return Json(result);
+                TempData["success"] = "Thêm kích cỡ thành công!";
                 return RedirectToAction("Index");
             }
 
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                return BadRequest("Thêm kích cỡ thất bại");
+            if (result.Errors != null)
+            {
+                foreach (var error in result.Errors)
+                {
+                    foreach (var msg in error.Value)
+                        ModelState.AddModelError(error.Key, msg);
+                }
+            }
 
-            ModelState.AddModelError("", "Thêm kích cỡ thất bại!");
             return View(dto);
         }
+
 
         public async Task<IActionResult> Edit(Guid id)
         {
@@ -64,16 +66,35 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, KichCoDTO dto)
         {
+            if (id != dto.KichCoId)
+                return BadRequest();
+
             if (!ModelState.IsValid)
                 return View(dto);
 
-            var success = await _kichCoService.UpdateAsync(id, dto);
-            if (success)
+            var result = await _kichCoService.UpdateAsync(id, dto);
+            if (result.Data)
+            {
+                TempData["success"] = "Cập nhật kích cỡ thành công!";
                 return RedirectToAction("Index");
+            }
 
-            ModelState.AddModelError("", "Cập nhật thất bại!");
+            if (result.Errors != null)
+            {
+                foreach (var error in result.Errors)
+                {
+                    foreach (var msg in error.Value)
+                        ModelState.AddModelError(error.Key, msg);
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Cập nhật thất bại!");
+            }
+
             return View(dto);
         }
+
 
         public async Task<IActionResult> Delete(Guid id)
         {
