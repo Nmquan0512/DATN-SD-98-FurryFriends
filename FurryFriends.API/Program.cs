@@ -60,6 +60,17 @@ builder.Services.AddScoped<IAnhRepository, AnhRepository>();
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 // Trong FurryFriends.API.Program.cs
 builder.Services.AddScoped<ISanPhamService, SanPhamService>();
+// Add CORS policy cho phép web admin truy cập API
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowWebAdmin",
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:7102")
+                  .AllowAnyHeader()
+                  .WithMethods("GET", "POST", "DELETE", "OPTIONS");
+        });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -73,7 +84,7 @@ app.UseHttpsRedirection();
 
 
 // Use CORS
-app.UseCors("AllowAll");
+app.UseCors("AllowWebAdmin");
 app.UseStaticFiles();
 // Add static files middleware
 app.UseStaticFiles(new StaticFileOptions

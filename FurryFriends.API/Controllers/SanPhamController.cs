@@ -12,7 +12,7 @@ namespace FurryFriends.API.Controllers
     {
         private readonly ISanPhamService _sanPhamService;
 
-        public SanPhamController(ISanPhamService sanPhamService)
+        public SanPhamsController(ISanPhamService sanPhamService)
         {
             _sanPhamService = sanPhamService;
         }
@@ -65,9 +65,6 @@ namespace FurryFriends.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] SanPhamDTO dto)
         {
-            var existing = await _repo.GetByIdAsync(id);
-            if (existing == null) return NotFound();
-
             try
             {
                 var updated = await _sanPhamService.UpdateAsync(id, dto);
@@ -129,6 +126,22 @@ namespace FurryFriends.API.Controllers
             {
                 return StatusCode(500, $"Lỗi khi lọc/phân trang sản phẩm: {ex.Message}");
             }
+        }
+
+        // GET: api/SanPham/total
+        [HttpGet("total")]
+        public async Task<IActionResult> GetTotalProducts()
+        {
+            var total = await _sanPhamService.GetTotalProductsAsync();
+            return Ok(total);
+        }
+
+        // GET: api/SanPham/top-selling?top=5
+        [HttpGet("top-selling")]
+        public async Task<IActionResult> GetTopSellingProducts([FromQuery] int top = 5)
+        {
+            var result = await _sanPhamService.GetTopSellingProductsAsync(top);
+            return Ok(result);
         }
     }
 }

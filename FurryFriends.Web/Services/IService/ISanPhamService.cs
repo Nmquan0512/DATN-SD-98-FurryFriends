@@ -14,5 +14,7 @@ namespace FurryFriends.Web.Services.IService
         Task<bool> DeleteAsync(Guid id);
 
         Task<(IEnumerable<SanPhamDTO> Data, int TotalItems)> GetFilteredAsync(string? loai, int page, int pageSize);
+        Task<int> GetTotalProductsAsync();
+        Task<IEnumerable<SanPhamDTO>> GetTopSellingProductsAsync(int top);
     }
 } 

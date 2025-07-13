@@ -29,7 +29,7 @@ namespace FurryFriends.API.Services
             {
                 SanPhamId = x.SanPhamId,
                 TenSanPham = x.TenSanPham,
-                ThuongHieuId = x.ThuongHieuId,
+                ThuongHieuId = x.ThuongHieuId ?? Guid.Empty,
                 TenThuongHieu = x.ThuongHieu?.TenThuongHieu,
                 LoaiSanPham = x.SanPhamThanhPhans.Any() ? "DoAn" : "DoDung",
                 TenThanhPhans = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhan?.TenThanhPhan).ToList(),
@@ -49,7 +49,7 @@ namespace FurryFriends.API.Services
             {
                 SanPhamId = sp.SanPhamId,
                 TenSanPham = sp.TenSanPham,
-                ThuongHieuId = sp.ThuongHieuId,
+                ThuongHieuId = sp.ThuongHieuId ?? Guid.Empty,
                 TenThuongHieu = sp.ThuongHieu?.TenThuongHieu,
                 LoaiSanPham = sp.SanPhamThanhPhans.Any() ? "DoAn" : "DoDung",
                 ThanhPhanIds = sp.SanPhamThanhPhans?.Select(tp => tp.ThanhPhanId).ToList(),
@@ -99,6 +99,7 @@ namespace FurryFriends.API.Services
             }
 
             await _repository.AddAsync(sanPham);
+            await _repository.SaveAsync(); // Bổ sung dòng này để lưu vào DB
             dto.SanPhamId = sanPham.SanPhamId;
             return dto;
         }
@@ -163,7 +164,7 @@ namespace FurryFriends.API.Services
                 {
                     SanPhamId = sp.SanPhamId,
                     TenSanPham = sp.TenSanPham,
-                    ThuongHieuId = sp.ThuongHieuId,
+                    ThuongHieuId = sp.ThuongHieuId ?? Guid.Empty,
                     TenThuongHieu = sp.ThuongHieu?.TenThuongHieu,
                     LoaiSanPham = sp.SanPhamThanhPhans.Any() ? "DoAn" : "DoDung",
                     TenThanhPhans = sp.SanPhamThanhPhans?.Select(tp => tp.ThanhPhan?.TenThanhPhan).ToList(),
@@ -174,6 +175,42 @@ namespace FurryFriends.API.Services
                 }).ToList();
 
             return (paged, totalCount);
+        }
+
+        public async Task<int> GetTotalProductsAsync()
+        {
+            return await _repository.GetAllAsync().ContinueWith(t => t.Result.Count());
+        }
+
+        public async Task<IEnumerable<SanPhamDTO>> GetTopSellingProductsAsync(int top)
+        {
+            // Lấy dữ liệu bán chạy dựa vào tổng số lượng bán trong HoaDonChiTiet
+            var hoaDonChiTiets = await _context.HoaDonChiTiets
+                .GroupBy(ct => ct.SanPhamId)
+                .Select(g => new { SanPhamId = g.Key, TotalSold = g.Sum(x => x.SoLuongSanPham) })
+                .OrderByDescending(x => x.TotalSold)
+                .Take(top)
+                .ToListAsync();
+
+            var sanPhamIds = hoaDonChiTiets.Select(x => x.SanPhamId).ToList();
+            var sanPhams = await _repository.GetAllAsync();
+            var topSanPhams = sanPhams.Where(sp => sanPhamIds.Contains(sp.SanPhamId)).ToList();
+
+            // Map sang DTO
+            var result = topSanPhams.Select(x => new SanPhamDTO
+            {
+                SanPhamId = x.SanPhamId,
+                TenSanPham = x.TenSanPham,
+                ThuongHieuId = x.ThuongHieuId ?? Guid.Empty,
+                TenThuongHieu = x.ThuongHieu?.TenThuongHieu,
+                LoaiSanPham = x.SanPhamThanhPhans.Any() ? "DoAn" : "DoDung",
+                TenThanhPhans = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhan?.TenThanhPhan).ToList(),
+                TenChatLieus = x.SanPhamChatLieus?.Select(cl => cl.ChatLieu?.TenChatLieu).ToList(),
+                NgayTao = x.TaiKhoan?.NgayTaoTaiKhoan ?? DateTime.UtcNow,
+                NgaySua = x.TaiKhoan?.NgayCapNhatCuoiCung,
+                TrangThai = x.TrangThai
+            });
+            return result;
         }
     }
 }

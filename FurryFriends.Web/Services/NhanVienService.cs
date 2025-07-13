@@ -133,9 +133,10 @@ namespace FurryFriends.Web.Services
         // Dashboard method
         public async Task<int> GetTotalEmployeesAsync()
         {
-            // Simulate database call
-            await Task.Delay(100);
-            return 25; // Mock data
+            var all = await GetAllAsync();
+            // Nếu có thuộc tính TrangThai, chỉ đếm nhân viên đang hoạt động:
+            // return all.Count(nv => nv.TrangThai == true);
+            return all.Count();
         }
 
         private bool IsValidEmail(string email)

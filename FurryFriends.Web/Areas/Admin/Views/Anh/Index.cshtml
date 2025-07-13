@@ -32,18 +32,31 @@
                                  class="img-fluid rounded"
                                  style="width: 100%; height: 150px; object-fit: cover"
                                  onerror="this.style.display='none'" />
-
-
-                            <form method="post" asp-action="Delete" asp-route-id="@item.AnhId" class="position-absolute top-0 end-0 m-1">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-danger">
+                            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1" onclick="openDeleteModal('@item.AnhId')">
                                     <i class="bi bi-trash-fill"></i>
                                 </button>
-                            </form>
                         </div>
                     </div>
                 }
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Modal xác nhận xoá ảnh -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Xác nhận xoá ảnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có chắc muốn xoá ảnh này không?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Xoá</button>
             </div>
         </div>
     </div>
@@ -82,6 +95,26 @@
 
 @section Scripts {
     <script>
+        let deleteAnhId = null;
+        function openDeleteModal(anhId) {
+            deleteAnhId = anhId;
+            $('#deleteModal').modal('show');
+        }
+        document.getElementById('confirmDeleteBtn').onclick = function () {
+            if (!deleteAnhId) return;
+            $.ajax({
+                url: 'https://localhost:7289/api/Anh/' + deleteAnhId,
+                type: 'DELETE',
+                success: function (res) {
+                    $('#deleteModal').modal('hide');
+                    location.reload();
+                },
+                error: function (xhr) {
+                    alert('❌ Xoá ảnh thất bại!');
+                }
+            });
+        };
+
         function openUpload() {
             $('#uploadForm')[0].reset();
             $('#uploadForm').removeClass('was-validated');

@@ -98,11 +98,17 @@
                             </a>
                         </li>
                         <li>
+                            <a href="@Url.Action("Index", "Anh", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Anh" ? "active" : "")">
+                                <i class="nav-icon fas fa-image"></i>
+                                <span>Quản lý ảnh</span>
+                            </a>
+                        </li>
+@*                         <li>
                             <a href="@Url.Action("Index", "DanhMuc", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DanhMuc" ? "active" : "")">
                                 <i class="nav-icon fas fa-tags"></i>
                                 <span>Danh mục</span>
                             </a>
-                        </li>
+                        </li> *@
                         <li>
                             <a href="@Url.Action("Index", "ChatLieu", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ChatLieu" ? "active" : "")">
                                 <i class="nav-icon fas fa-cube"></i>

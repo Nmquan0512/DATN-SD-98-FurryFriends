@@ -8,7 +8,7 @@ namespace FurryFriends.Web.Services
     public class SanPhamService : ISanPhamService
     {
         private readonly HttpClient _httpClient;
-        private const string BaseUrl = "api/SanPham";
+        private const string BaseUrl = "api/SanPhams";
 
         public SanPhamService(HttpClient httpClient)
         {
@@ -60,6 +60,22 @@ namespace FurryFriends.Web.Services
             var result = await response.Content.ReadFromJsonAsync<SanPhamFilterResponse>();
 
             return (result.Items ?? new List<SanPhamDTO>(), result.TotalItems);
+        }
+            
+        public async Task<int> GetTotalProductsAsync()
+        {
+            var response = await _httpClient.GetAsync($"{BaseUrl}/total");
+            if (!response.IsSuccessStatusCode)
+                return 0;
+            return await response.Content.ReadFromJsonAsync<int>();
+        }
+
+        public async Task<IEnumerable<SanPhamDTO>> GetTopSellingProductsAsync(int top)
+        {
+            var response = await _httpClient.GetAsync($"{BaseUrl}/top-selling?top={top}");
+            if (!response.IsSuccessStatusCode)
+                return new List<SanPhamDTO>();
+            return await response.Content.ReadFromJsonAsync<IEnumerable<SanPhamDTO>>() ?? new List<SanPhamDTO>();
         }
             
         private class SanPhamFilterResponse

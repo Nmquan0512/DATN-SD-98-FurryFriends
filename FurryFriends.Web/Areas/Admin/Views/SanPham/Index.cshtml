@@ -1,51 +1,112 @@
-﻿@model IEnumerable<FurryFriends.API.Models.DTO.SanPhamDTO>
+@model IEnumerable<FurryFriends.API.Models.DTO.SanPhamDTO>
+
 @{
     ViewData["Title"] = "Quản lý sản phẩm";
-    var currentLoai = Context.Request.Query["loai"].ToString();
-    var currentSearch = Context.Request.Query["search"].ToString();
-    int currentPage = ViewBag.Page ?? 1;
-    int totalPages = ViewBag.TotalPages ?? 1;
 }
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 
-<div class="container-fluid mt-4">
-    <div class="card shadow-sm rounded-3">
-        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h1>@ViewData["Title"]</h1>
-            <a asp-area="Admin" asp-controller="SanPham" asp-action="Create" class="btn btn-light btn-sm">
-                <i class="bi bi-plus-circle-fill text-success me-1"></i>Thêm mới
-            </a>
+<div class="top-bar" style="padding-left: 50px;">
+    <h1>@ViewData["Title"]</h1>
+    <div class="top-bar-actions">
+        <a asp-area="Admin" asp-action="Create" asp-controller="SanPham" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            Thêm mới
+        </a>
+    </div>
+</div>
 
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
+        <li class="breadcrumb-item active">Quản lý sản phẩm</li>
+    </ol>
+</nav>
+
+<div class="container mb-4" id="filterContainer">
+    <div class="card shadow-sm p-3 mb-3" style="border-radius: 12px;">
+        <div class="row mb-2">
+            <div class="col-auto">
+                <span class="fs-5 fw-semibold"><i class="fas fa-filter me-2"></i>Bộ lọc</span>
+            </div>
         </div>
+        <div class="row align-items-end g-3">
+            <div class="col-md-2">
+                <label for="filterTrangThai" class="form-label mb-1">Trạng thái</label>
+                <select id="filterTrangThai" class="form-select">
+                    <option value="">Tất cả</option>
+                    <option value="1">Đang hoạt động</option>
+                    <option value="0">Không hoạt động</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="filterLoai" class="form-label mb-1">Loại sản phẩm</label>
+                <select id="filterLoai" class="form-select">
+                    <option value="">Tất cả</option>
+                    <option value="DoAn">Đồ ăn</option>
+                    <option value="DoDung">Đồ dùng</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="filterThuongHieu" class="form-label mb-1">Thương hiệu</label>
+                <select id="filterThuongHieu" class="form-select">
+                    <option value="">Tất cả</option>
+                    @if (ViewBag.ThuongHieus != null)
+                    {
+                        foreach (var th in ViewBag.ThuongHieus)
+                        {
+                            <option value="@th.Value">@th.Text</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="filterChatLieu" class="form-label mb-1">Chất liệu</label>
+                <select id="filterChatLieu" class="form-select">
+                    <option value="">Tất cả</option>
+                    @if (ViewBag.ChatLieus != null)
+                    {
+                        foreach (var cl in ViewBag.ChatLieus)
+                        {
+                            <option value="@cl.Value">@cl.Text</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="filterThanhPhan" class="form-label mb-1">Thành phần</label>
+                <select id="filterThanhPhan" class="form-select">
+                    <option value="">Tất cả</option>
+                    @if (ViewBag.ThanhPhans != null)
+                    {
+                        foreach (var tp in ViewBag.ThanhPhans)
+                        {
+                            <option value="@tp.Value">@tp.Text</option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row g-3 mt-1">
+            <div class="col-md-6">
+                <label for="filterNgayTu" class="form-label mb-1">Ngày tạo từ</label>
+                <input type="date" id="filterNgayTu" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label for="filterNgayDen" class="form-label mb-1">Ngày tạo đến</label>
+                <input type="date" id="filterNgayDen" class="form-control" />
+            </div>
+        </div>
+    </div>
+</div>
 
-        <div class="card-body p-4">
-            <form method="get" class="row gy-3 gx-2 mb-4">
-                <div class="col-md-4">
-                    <input type="text" name="search" class="form-control" placeholder="🔍 Tìm tên sản phẩm..." value="@currentSearch" />
-                </div>
-                <div class="col-md-3">
-                    <select name="loai" class="form-select">
-                        <option value="">-- Loại sản phẩm --</option>
-                        <option value="DoAn" selected="@(currentLoai == "DoAn")">Đồ ăn</option>
-                        <option value="DoDung" selected="@(currentLoai == "DoDung")">Đồ dùng</option>
-                    </select>
-                </div>
-                <div class="col-md-2 d-grid">
-                    <button class="btn btn-outline-primary" type="submit">
-                        <i class="bi bi-funnel-fill me-1"></i>Lọc
-                    </button>
-                </div>
-                <div class="col-md-2 d-grid">
-                    <a href="/Admin/SanPham" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-counterclockwise me-1"></i>Reset
-                    </a>
-                </div>
-            </form>
+<div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
 
-            <div class="table-responsive">
-                <table class="table table-hover align-middle text-center">
-                    <thead class="table-light">
+
+        <div class="card-body">
+            <div class="table-container table-responsive" id="sanPhamTableContainer" style="margin-left: 10px; margin-right: 40px;">
+                <table id="sanPhamTable" class="table table-striped table-hover">
+                    <thead>
                         <tr>
+                            <th>STT</th>
                             <th>Mã SP</th>
                             <th>Tên sản phẩm</th>
                             <th>Loại</th>
@@ -59,91 +120,159 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (Model != null && Model.Any())
-                        {
-                            foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@item.SanPhamId</td>
-                                    <td class="fw-semibold">@item.TenSanPham</td>
-                                    <td>@item.LoaiSanPham</td>
-                                    <td>@string.Join(", ", item.TenChatLieus ?? new())</td>
-                                    <td>@string.Join(", ", item.TenThanhPhans ?? new())</td>
-                                    <td>@item.TenThuongHieu</td>
-                                    <td>@item.NgayTao.ToString("dd/MM/yyyy")</td>
-                                    <td>@item.NgaySua?.ToString("dd/MM/yyyy")</td>
-                                    <td>
-                                        <span class="badge @(item.TrangThai ? "bg-success" : "bg-secondary")">
-                                            @(item.TrangThai ? "Hiện" : "Ẩn")
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <a href="/Admin/SanPham/Edit/@item.SanPhamId" class="btn btn-sm btn-warning me-1">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </a>
-                                        <button class="btn btn-sm btn-danger" onclick="openDeleteModal('@item.SanPhamId', '@item.TenSanPham')">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            }
+                        @{
+                            int stt = 1;
                         }
-                        else
+                        @foreach (var item in Model)
                         {
-                            <tr><td colspan="10" class="text-muted">Không có sản phẩm nào.</td></tr>
+                            <tr>
+                                <td>@stt</td>
+                                <td>@item.SanPhamId.ToString().Substring(0, 8).ToUpper()</td>
+                                <td>@item.TenSanPham</td>
+                                <td>
+                                    <span class="d-none loai-goc">@item.LoaiSanPham</span>
+                                    @(item.LoaiSanPham == "DoAn" ? "Đồ ăn" : "Đồ dùng")
+                                </td>
+                                <td>
+                                    @if (item.TenChatLieus != null && item.TenChatLieus.Any(x => !string.IsNullOrWhiteSpace(x)))
+                                    {
+                                        <span>@string.Join(", ", item.TenChatLieus.Where(x => !string.IsNullOrWhiteSpace(x)))</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không có</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.TenThanhPhans != null && item.TenThanhPhans.Any(x => !string.IsNullOrWhiteSpace(x)))
+                                    {
+                                        <span>@string.Join(", ", item.TenThanhPhans.Where(x => !string.IsNullOrWhiteSpace(x)))</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không có</span>
+                                    }
+                                </td>
+                                <td>@item.TenThuongHieu</td>
+                                <td>@item.NgayTao.ToString("dd/MM/yyyy")</td>
+                                <td>@(item.NgaySua.HasValue ? item.NgaySua.Value.ToString("dd/MM/yyyy") : "-")</td>
+                                <td>
+                                    @if (item.TrangThai)
+                                    {
+                                        <span class="badge bg-success">Đang hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Không hoạt động</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a asp-area="Admin" asp-action="Edit" asp-controller="SanPham" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-area="Admin" asp-action="Delete" asp-controller="SanPham" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            stt++;
                         }
                     </tbody>
                 </table>
             </div>
-
-            <div class="mt-3 d-flex justify-content-end">
-                @if (totalPages > 1)
-                {
-                    <nav>
-                        <ul class="pagination">
-                            @for (int i = 1; i <= totalPages; i++)
-                            {
-                                <li class="page-item @(i == currentPage ? "active" : "")">
-                                    <a class="page-link" href="?page=@i&loai=@currentLoai&search=@currentSearch">@i</a>
-                                </li>
-                            }
-                        </ul>
-                    </nav>
-                }
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal xóa -->
-<div class="modal fade" id="deleteSanPhamModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-3 shadow">
-            <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title">Xác nhận xóa</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                Bạn có chắc chắn muốn xóa sản phẩm <strong id="sanPhamTen"></strong>?
-            </div>
-            <div class="modal-footer">
-                <form method="post" id="deleteForm">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" name="id" id="deleteSanPhamId" />
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-danger">Xóa</button>
-                </form>
-            </div>
-        </div>
-    </div>
+  
 </div>
 
 @section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script>
-        function openDeleteModal(id, tenSanPham) {
-            document.getElementById("deleteSanPhamId").value = id;
-            document.getElementById("sanPhamTen").textContent = tenSanPham;
-            new bootstrap.Modal(document.getElementById("deleteSanPhamModal")).show();
-        }
+        $(document).ready(function () {
+            if (window.adminLoading) {
+                window.adminLoading.showTableLoading('#sanPhamTableContainer');
+            }
+            var table = $('#sanPhamTable').DataTable({
+                language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json' },
+                responsive: true,
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]],
+                order: [[1, 'asc']],
+                columnDefs: [ { orderable: false, targets: [0, 10] } ],
+                initComplete: function () {
+                    if (window.adminLoading) {
+                        window.adminLoading.hideTableLoading('#sanPhamTableContainer');
+                    }
+                }
+            });
+            // Lọc theo dropdown và ngày
+            $('#filterTrangThai, #filterLoai, #filterThuongHieu, #filterChatLieu, #filterThanhPhan, #filterNgayTu, #filterNgayDen').on('change input', function () {
+                table.draw();
+            });
+            $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+                if (settings.nTable.id !== 'sanPhamTable') return true;
+                var trangThai = $('#filterTrangThai').val();
+                var loai = $('#filterLoai').val();
+                var thuongHieu = $('#filterThuongHieu option:selected').text();
+                var chatLieu = $('#filterChatLieu option:selected').text();
+                var thanhPhan = $('#filterThanhPhan option:selected').text();
+                var ngayTu = $('#filterNgayTu').val();
+                var ngayDen = $('#filterNgayDen').val();
+                var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(9) .badge').text().trim();
+                var rowLoaiGoc = $(table.row(dataIndex).node()).find('.loai-goc').text().trim();
+                var rowThuongHieu = data[6];
+                var rowChatLieu = data[4];
+                var rowThanhPhan = data[5];
+                var rowNgayTao = data[7];
+                // Trạng thái
+                if (trangThai && ((trangThai === '1' && rowTrangThai !== 'Đang hoạt động') || (trangThai === '0' && rowTrangThai !== 'Không hoạt động'))) return false;
+                // Loại
+                if (loai && loai !== '' && rowLoaiGoc !== loai) return false;
+                // Thương hiệu
+                if (thuongHieu && thuongHieu !== 'Tất cả' && thuongHieu !== '' && !rowThuongHieu.includes(thuongHieu)) return false;
+                // Chất liệu
+                if (chatLieu && chatLieu !== 'Tất cả' && chatLieu !== '' && !rowChatLieu.includes(chatLieu)) return false;
+                // Thành phần
+                if (thanhPhan && thanhPhan !== 'Tất cả' && thanhPhan !== '' && !rowThanhPhan.includes(thanhPhan)) return false;
+                // Ngày tạo
+                if (ngayTu) {
+                    var dateTu = moment(ngayTu, 'YYYY-MM-DD');
+                    var dateRow = moment(rowNgayTao, 'DD/MM/YYYY');
+                    if (!dateRow.isValid() || dateRow.isBefore(dateTu, 'day')) return false;
+                }
+                if (ngayDen) {
+                    var dateDen = moment(ngayDen, 'YYYY-MM-DD');
+                    var dateRow = moment(rowNgayTao, 'DD/MM/YYYY');
+                    if (!dateRow.isValid() || dateRow.isAfter(dateDen, 'day')) return false;
+                }
+                return true;
+            });
+            $('.action-btn').on('click', function (e) {
+                if (window.adminLoading) {
+                    window.adminLoading.showLoadingWithMessage('Đang xử lý...');
+                }
+            });
+        });
     </script>
-}
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.min.css" />
+    <style>
+        /* Sát footer phân trang với bảng */
+        .dataTables_wrapper .dataTables_paginate {
+            margin-top: 0 !important;
+        }
+        .dataTables_wrapper .dataTables_info {
+            margin-bottom: 0 !important;
+        }
+        .dataTables_wrapper .row:last-child {
+            margin-bottom: 0 !important;
+        }
+        /* Thêm khoảng cách phía dưới bảng để không bị sát cuối trang */
+        #sanPhamTableContainer {
+            padding-bottom: 24px;
+        }
+    </style>
+} 

@@ -61,6 +61,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                TempData["Error"] = "❌ ID ảnh không hợp lệ!";
+                return RedirectToAction("Index");
+            }
+
             var success = await _anhService.DeleteAsync(id);
             if (success)
             {
@@ -68,7 +74,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
             else
             {
-                TempData["Error"] = "❌ Không tìm thấy ảnh để xóa!";
+                TempData["Error"] = "❌ Không tìm thấy ảnh để xóa hoặc xóa thất bại!";
             }
 
             return RedirectToAction("Index");

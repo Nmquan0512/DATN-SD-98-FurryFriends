@@ -100,7 +100,14 @@
                         <td>@(item.ChucVu != null ? item.ChucVu.TenChucVu : "N/A")</td>
                         <td>@(item.TaiKhoan != null ? item.TaiKhoan.UserName : "N/A")</td>
                         <td>
-                            @(item.TrangThai ? "Hoạt động" : "Không hoạt động")
+                            @if (item.TrangThai)
+                            {
+                                <span class="badge bg-success">Hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Không hoạt động</span>
+                            }
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.NhanVienId" class="btn btn-sm btn-warning me-1 action-btn"><i class="fas fa-edit"></i></a>
@@ -144,11 +151,10 @@
                 var gioiTinh = $('#filterGioiTinh').val();
                 var ngayTu = $('#filterNgaySinhTu').val();
                 var ngayDen = $('#filterNgaySinhDen').val();
-                var rowTrangThai = data[8];
+                var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(8)').text().trim();
                 var rowChucVu = data[6];
                 var rowGioiTinh = data[5];
                 var rowNgaySinh = data[1];
-                var rowDiaChi = data[2];
                 // Trạng thái
                 if (trangThai && !rowTrangThai.includes(trangThai)) return false;
                 // Chức vụ

@@ -15,5 +15,7 @@ namespace FurryFriends.API.Services.IServices
 
         // Phân trang + lọc
         Task<(IEnumerable<SanPhamDTO> Data, int TotalCount)> GetFilteredAsync(string? loaiSanPham, int page, int pageSize);
+        Task<int> GetTotalProductsAsync();
+        Task<IEnumerable<SanPhamDTO>> GetTopSellingProductsAsync(int top);
     }
 }

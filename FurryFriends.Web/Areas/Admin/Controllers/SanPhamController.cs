@@ -31,6 +31,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index(string? loai = null, int page = 1, int pageSize = 10)
         {
+            await PopulateDropdownsAsync(); // Đảm bảo filter luôn có dữ liệu
             var (items, totalItems) = await _sanPhamService.GetFilteredAsync(loai, page, pageSize);
 
             ViewBag.Loai = loai;
@@ -45,7 +46,9 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Create()
         {
             await PopulateDropdownsAsync();
-            return View();
+            // Đảm bảo dropdown mặc định là rỗng
+            var model = new SanPhamDTO { LoaiSanPham = "" };
+            return View(model);
         }
 
         [HttpPost]

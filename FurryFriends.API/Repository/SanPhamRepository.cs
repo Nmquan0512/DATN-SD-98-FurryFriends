@@ -68,7 +68,13 @@ namespace FurryFriends.API.Repository
             }
         }
 
-        public Task UpdateAsync(SanPham existing)
+        public async Task UpdateAsync(SanPham existing)
+        {
+            _context.SanPhams.Update(existing);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExistsAsync(Guid id)
         {
             return await _context.SanPhams.AnyAsync(x => x.SanPhamId == id);
         }

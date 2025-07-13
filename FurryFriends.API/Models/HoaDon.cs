@@ -49,6 +49,14 @@ namespace FurryFriends.API.Models
 		[ForeignKey("HinhThucThanhToanId")]
 		public virtual HinhThucThanhToan HinhThucThanhToan { get; set; }
 
+		[Required]
+		public Guid NhanVienId { get; set; } // Nhân viên tạo hóa đơn
+
+		[ForeignKey("NhanVienId")]
+		public virtual NhanVien NhanVien { get; set; }
+
+		public string LoaiHoaDon { get; set; } // Loại hóa đơn (ví dụ: "BanTaiQuay", ...)
+
 		public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }
 	}
 }

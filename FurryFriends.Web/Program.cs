@@ -96,15 +96,10 @@ builder.Services.AddHttpClient<IAnhService, AnhService>(client =>
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
 
-builder.Services.AddHttpClient<ISanPhamService, SanPhamService>(client =>
+builder.Services.AddHttpClient<FurryFriends.Web.Services.IService.ISanPhamService, FurryFriends.Web.Services.SanPhamService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
-
-
-
-// Register SanPhamService for Dashboard
-builder.Services.AddScoped<ISanPhamService, SanPhamService>();
 
 // Thêm cấu hình xác thực Google và Facebook
 builder.Services.AddAuthentication(options =>

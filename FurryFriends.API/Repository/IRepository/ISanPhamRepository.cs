@@ -7,6 +7,7 @@ namespace FurryFriends.API.Repository.IRepository
 	{
 		Task DeleteAsync(Guid id);
         Task UpdateAsync(SanPham existing);
+        Task<bool> ExistsAsync(Guid id);
     }
 	
 	

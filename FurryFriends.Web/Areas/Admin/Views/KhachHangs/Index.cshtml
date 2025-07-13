@@ -21,6 +21,11 @@
 </nav>
 <div class="container mb-4" id="filterContainer">
     <div class="card shadow-sm p-3 mb-3" style="border-radius: 12px;">
+        <div class="row mb-2">
+            <div class="col-auto">
+                <span class="fs-5 fw-semibold"><i class="fas fa-filter me-2"></i>Bộ lọc</span>
+            </div>
+        </div>
         <div class="row align-items-end g-3">
             <div class="col-md-3">
                 <label for="filterTrangThai" class="form-label mb-1">Trạng thái</label>
@@ -173,6 +178,50 @@
             cursor: pointer;
             z-index: 3;
         }
+        /* --- CUSTOM: Căn đều tiêu đề bộ lọc trên cùng một hàng, đồng bộ với hóa đơn --- */
+        #filterContainer .row.align-items-end.g-3 {
+            display: flex;
+            align-items: flex-start !important;
+            gap: 0 !important;
+        }
+        #filterContainer .col-md-3 {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            min-width: 180px;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        #filterContainer .form-label {
+            min-height: 24px;
+            display: flex;
+            align-items: flex-end;
+        }
+        #filterContainer .form-control, 
+        #filterContainer .form-select, 
+        #filterContainer .custom-range-slider {
+            margin-top: 4px;
+        }
+        /* --- END CUSTOM --- */
+        /* --- CUSTOM: Sát footer bảng với bảng, không bị cách ra --- */
+        #khachHangTableContainer {
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
+        .dataTables_wrapper .dataTables_paginate {
+            margin-bottom: 0 !important;
+            padding-bottom: 0 !important;
+        }
+        /* --- END CUSTOM --- */
+        /* --- CUSTOM: Tăng khoảng cách giữa bảng và footer phân trang, đồng bộ với nhân viên --- */
+        #khachHangTableContainer {
+            margin-bottom: 32px !important;
+        }
+        #khachHangTableContainer .dataTables_wrapper .dataTables_paginate {
+            margin-top: 24px !important;
+        }
+        /* --- END CUSTOM --- */
     </style>
     <script>
         $(document).ready(function () {
