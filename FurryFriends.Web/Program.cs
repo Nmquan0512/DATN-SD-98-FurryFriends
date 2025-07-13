@@ -91,6 +91,17 @@ builder.Services.AddHttpClient<IKichCoService, KichCoService>(client =>
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
 
+builder.Services.AddHttpClient<IAnhService, AnhService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
+
+builder.Services.AddHttpClient<ISanPhamService, SanPhamService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
+
+
 
 // Register SanPhamService for Dashboard
 builder.Services.AddScoped<ISanPhamService, SanPhamService>();

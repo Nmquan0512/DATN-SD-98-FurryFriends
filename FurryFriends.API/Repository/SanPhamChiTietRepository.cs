@@ -24,7 +24,7 @@ namespace FurryFriends.API.Repositories
 		{
 			return await _dbSet
 				.Include(s => s.SanPham)
-				.Include(s => s.BangKichCo)
+				.Include(s => s.KichCo)
 				.Include(s => s.MauSac)
 				.Include(s => s.Anh)
 				.ToListAsync();
@@ -34,7 +34,7 @@ namespace FurryFriends.API.Repositories
 		{
 			return await _dbSet
 				.Include(s => s.SanPham)
-				.Include(s => s.BangKichCo)
+				.Include(s => s.KichCo)
 				.Include(s => s.MauSac)
 				.Include(s => s.Anh)
 				.FirstOrDefaultAsync(x => x.SanPhamChiTietId == id);
@@ -44,7 +44,7 @@ namespace FurryFriends.API.Repositories
 		{
 			return await _dbSet
 				.Include(s => s.SanPham)
-				.Include(s => s.BangKichCo)
+				.Include(s => s.KichCo)
 				.Include(s => s.MauSac)
 				.Include(s => s.Anh)
 				.Where(predicate)

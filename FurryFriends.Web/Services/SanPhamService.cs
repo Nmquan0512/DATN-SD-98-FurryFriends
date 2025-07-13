@@ -1,54 +1,73 @@
+﻿using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.Services.IService;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace FurryFriends.Web.Services
 {
     public class SanPhamService : ISanPhamService
     {
-        public async Task<int> GetTotalProductsAsync()
+        private readonly HttpClient _httpClient;
+        private const string BaseUrl = "api/SanPham";
+
+        public SanPhamService(HttpClient httpClient)
         {
-            // Simulate database call
-            await Task.Delay(100);
-            return 150; // Mock data
+            _httpClient = httpClient;
         }
 
-        public async Task<List<object>> GetTopSellingProductsAsync(int count)
+        public async Task<IEnumerable<SanPhamDTO>> GetAllAsync()
         {
-            // Simulate database call
-            await Task.Delay(100);
+            var result = await _httpClient.GetFromJsonAsync<IEnumerable<SanPhamDTO>>(BaseUrl);
+            return result ?? new List<SanPhamDTO>();
+        }
             
-            var products = new List<object>
+        public async Task<SanPhamDTO> GetByIdAsync(Guid id)
             {
-                new { Name = "Thức ăn mèo Royal Canin", Sales = 150, Revenue = 15000000 },
-                new { Name = "Thức ăn chó Pedigree", Sales = 120, Revenue = 12000000 },
-                new { Name = "Đồ chơi cho mèo", Sales = 80, Revenue = 8000000 },
-                new { Name = "Vòng cổ thú cưng", Sales = 60, Revenue = 6000000 },
-                new { Name = "Chuồng thú cưng", Sales = 40, Revenue = 4000000 }
-            };
-
-            return products.GetRange(0, count);
+            var response = await _httpClient.GetAsync($"{BaseUrl}/{id}");
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<SanPhamDTO>();
+            return null;
         }
 
-        public async Task<decimal> GetTotalRevenueAsync()
+        public async Task<SanPhamDTO> CreateAsync(SanPhamDTO dto)
         {
-            // Simulate database call
-            await Task.Delay(100);
-            return 45000000; // Mock data
+            var response = await _httpClient.PostAsJsonAsync(BaseUrl, dto);
+            if (response.IsSuccessStatusCode)
+                return await response.Content.ReadFromJsonAsync<SanPhamDTO>();
+            return null;
         }
 
-        public async Task<List<object>> GetProductsByCategoryAsync()
+        public async Task<bool> UpdateAsync(Guid id, SanPhamDTO dto)
         {
-            // Simulate database call
-            await Task.Delay(100);
+            var response = await _httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", dto);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            var response = await _httpClient.DeleteAsync($"{BaseUrl}/{id}");
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<(IEnumerable<SanPhamDTO> Data, int TotalItems)> GetFilteredAsync(string? loai, int page, int pageSize)
+        {
+            var url = $"{BaseUrl}/filter?loai={loai}&page={page}&pageSize={pageSize}";
+
+            var response = await _httpClient.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+                return (new List<SanPhamDTO>(), 0);
+
+            var result = await response.Content.ReadFromJsonAsync<SanPhamFilterResponse>();
+
+            return (result.Items ?? new List<SanPhamDTO>(), result.TotalItems);
+        }
             
-            return new List<object>
+        private class SanPhamFilterResponse
             {
-                new { Category = "Thức ăn", Count = 50, Revenue = 25000000 },
-                new { Category = "Đồ chơi", Count = 30, Revenue = 10000000 },
-                new { Category = "Phụ kiện", Count = 40, Revenue = 8000000 },
-                new { Category = "Chuồng", Count = 20, Revenue = 2000000 }
-            };
+            public int TotalItems { get; set; }
+            public int Page { get; set; }
+            public int PageSize { get; set; }
+            public IEnumerable<SanPhamDTO> Items { get; set; }
         }
     }
 } 

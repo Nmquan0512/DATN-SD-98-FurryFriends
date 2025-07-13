@@ -1,0 +1,96 @@
+﻿@model FurryFriends.API.Models.DTO.SanPhamDTO
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Thêm sản phẩm";
+    var loaiList = ViewBag.LoaiSanPhamList as List<SelectListItem> ?? new();
+    var chatLieus = ViewBag.ChatLieus as List<SelectListItem> ?? new();
+    var thanhPhans = ViewBag.ThanhPhans as List<SelectListItem> ?? new();
+    var thuongHieus = ViewBag.ThuongHieus as List<SelectListItem> ?? new();
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+<div class="container mt-4">
+    <div class="card shadow-sm rounded-3">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h2>@ViewData["Title"]</h2>
+            <a href="/Admin/SanPham" class="btn btn-light btn-sm">
+                <i class="bi bi-arrow-left-circle me-1"></i>Trở lại
+            </a>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="Create" method="post">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="TenSanPham" class="form-label"></label>
+                        <input asp-for="TenSanPham" class="form-control" />
+                        <span asp-validation-for="TenSanPham" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="LoaiSanPham" class="form-label"></label>
+                        <select asp-for="LoaiSanPham" asp-items="loaiList" class="form-select" id="LoaiSanPham" onchange="toggleFields()">
+                            <option value="">-- Chọn loại sản phẩm --</option>
+                        </select>
+                        <span asp-validation-for="LoaiSanPham" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6" id="thanhPhanDiv" style="display:none;">
+                        <label class="form-label">Thành phần</label>
+                        <select asp-for="ThanhPhanIds" class="form-select" multiple>
+                            @foreach (var tp in thanhPhans)
+                            {
+                                <option value="@tp.Value">@tp.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-6" id="chatLieuDiv" style="display:none;">
+                        <label class="form-label">Chất liệu</label>
+                        <select asp-for="ChatLieuIds" class="form-select" multiple>
+                            @foreach (var cl in chatLieus)
+                            {
+                                <option value="@cl.Value">@cl.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="ThuongHieuId" class="form-label"></label>
+                    <select asp-for="ThuongHieuId" class="form-select">
+                        <option value="">-- Chọn thương hiệu --</option>
+                        @foreach (var th in thuongHieus)
+                        {
+                            <option value="@th.Value">@th.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ThuongHieuId" class="text-danger"></span>
+                </div>
+
+                <div class="form-check form-switch mb-4">
+                    <input asp-for="TrangThai" class="form-check-input" />
+                    <label asp-for="TrangThai" class="form-check-label">Hiển thị sản phẩm</label>
+                </div>
+
+                <button type="submit" class="btn btn-success px-4">
+                    <i class="bi bi-save me-1"></i>Lưu sản phẩm
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function toggleFields() {
+            const loai = document.getElementById("LoaiSanPham").value;
+            document.getElementById("thanhPhanDiv").style.display = loai === "DoAn" ? 'block' : 'none';
+            document.getElementById("chatLieuDiv").style.display = loai === "DoDung" ? 'block' : 'none';
+        }
+
+        document.addEventListener("DOMContentLoaded", toggleFields);
+    </script>
+}

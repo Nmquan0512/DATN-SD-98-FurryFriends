@@ -7,6 +7,8 @@ using FurryFriends.API.Services.IServices;
 using FurryFriends.API.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using FurryFriends.API.Repositories.IRepositories;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,7 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor();
 
 // Add DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -51,18 +54,12 @@ builder.Services.AddScoped<IMauSacService, MauSacService>();
 builder.Services.AddScoped<IKichCoService, KichCoService>();
 // Trong FurryFriends.API.Program.cs
 builder.Services.AddScoped<IKichCoRepository, KichCoRepository>();
-// Add CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
-});
-
+builder.Services.AddScoped<IAnhService, AnhService>();
+// Trong FurryFriends.API.Program.cs
+builder.Services.AddScoped<IAnhRepository, AnhRepository>();
+builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
+// Trong FurryFriends.API.Program.cs
+builder.Services.AddScoped<ISanPhamService, SanPhamService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -74,11 +71,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+
 // Use CORS
 app.UseCors("AllowAll");
-
-// Add static files middleware
 app.UseStaticFiles();
+// Add static files middleware
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+    RequestPath = ""
+});
 
 app.UseAuthorization();
 

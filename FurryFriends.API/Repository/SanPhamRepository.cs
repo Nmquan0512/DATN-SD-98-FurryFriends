@@ -17,12 +17,20 @@ namespace FurryFriends.API.Repository
 
         public async Task<IEnumerable<SanPham>> GetAllAsync()
         {
-            return await _context.SanPhams.ToListAsync();
+            return await _context.SanPhams
+                .Include(x => x.SanPhamThanhPhans)
+                .Include(x => x.SanPhamChatLieus)
+                .Include(x => x.ThuongHieu)
+                .ToListAsync();
         }
 
         public async Task<SanPham?> GetByIdAsync(Guid id)
         {
-            return await _context.SanPhams.FindAsync(id);
+            return await _context.SanPhams
+                .Include(x => x.SanPhamThanhPhans)
+                .Include(x => x.SanPhamChatLieus)
+                .Include(x => x.ThuongHieu)
+                .FirstOrDefaultAsync(x => x.SanPhamId == id);
         }
 
         public async Task<IEnumerable<SanPham>> FindAsync(Expression<Func<SanPham, bool>> predicate)
@@ -62,7 +70,7 @@ namespace FurryFriends.API.Repository
 
         public Task UpdateAsync(SanPham existing)
         {
-            throw new NotImplementedException();
+            return await _context.SanPhams.AnyAsync(x => x.SanPhamId == id);
         }
     }
 }

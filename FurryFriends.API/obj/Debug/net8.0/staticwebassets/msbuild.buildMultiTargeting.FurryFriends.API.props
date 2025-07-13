@@ -1,3 +1,8 @@
+<<<<<<< HEAD
 ﻿<Project>
   <Import Project="..\build\FurryFriends.API.props" />
+=======
+﻿<Project>
+  <Import Project="..\build\FurryFriends.API.props" />
+>>>>>>> 163233e8dc3f6b8517ac38283fcd7624e6464b5a
 </Project>
