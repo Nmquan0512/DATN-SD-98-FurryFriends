@@ -1,4 +1,8 @@
-﻿<!-- Hero Section -->
+﻿@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+<!-- Hero Section -->
 <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
     <!-- Animated background -->
     <div class="absolute inset-0 gradient-animated"></div>

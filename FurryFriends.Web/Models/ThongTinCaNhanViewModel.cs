@@ -1,4 +1,6 @@
-﻿namespace FurryFriends.Web.Models
+﻿using System.Collections.Generic;
+
+namespace FurryFriends.Web.Models
 {
 	public class ThongTinCaNhanViewModel
 	{
@@ -16,7 +18,10 @@
 
 		public string? GioiTinh { get; set; }    // Chỉ dành cho Nhân viên
 
-		public string? DiaChi { get; set; }
+		// public string? DiaChi { get; set; }
+		public List<DiaChiKhachHangViewModel> DiaChis { get; set; } = new();
+
+		public DiaChiKhachHangViewModel? DiaChiChinh { get; set; }
 
 		public string? Role { get; set; }
 

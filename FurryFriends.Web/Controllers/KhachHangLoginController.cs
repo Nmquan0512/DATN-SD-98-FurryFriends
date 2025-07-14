@@ -17,7 +17,14 @@ public class KhachHangLoginController : Controller
     }
 
     [HttpGet]
-    public IActionResult DangNhap() => View();
+    public IActionResult DangNhap()
+    {
+        if (!string.IsNullOrEmpty(HttpContext.Session.GetString("TaiKhoanId")))
+        {
+            return RedirectToAction("Index", "Home");
+        }
+        return View();
+    }
 
     [HttpPost]
     public async Task<IActionResult> DangNhap(LoginRequest model)

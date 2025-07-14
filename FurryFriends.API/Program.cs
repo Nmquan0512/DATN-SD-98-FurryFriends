@@ -60,6 +60,7 @@ builder.Services.AddScoped<IAnhRepository, AnhRepository>();
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 // Trong FurryFriends.API.Program.cs
 builder.Services.AddScoped<ISanPhamService, SanPhamService>();
+builder.Services.AddScoped<IThongTinCaNhanService, ThongTinCaNhanService>();
 // Add CORS policy cho phép web admin truy cập API
 builder.Services.AddCors(options =>
 {

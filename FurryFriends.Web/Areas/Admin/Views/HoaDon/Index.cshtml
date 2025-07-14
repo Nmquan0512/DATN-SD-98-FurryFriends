@@ -35,6 +35,14 @@
                 </select>
             </div>
             <div class="col-md-3">
+                <label for="filterLoaiHoaDon" class="form-label mb-1">Loại hóa đơn</label>
+                <select id="filterLoaiHoaDon" class="form-select">
+                    <option value="">Tất cả</option>
+                    <option value="BanTaiQuay">Bán tại quầy</option>
+                    <option value="BanTrucTiep">Bán trực tiếp</option>
+                </select>
+            </div>
+            <div class="col-md-3">
                 <label for="filterNgayTu" class="form-label mb-1">Ngày tạo từ</label>
                 <input type="date" id="filterNgayTu" class="form-control" />
             </div>
@@ -585,17 +593,21 @@
                 }
                 
                 // Kiểm tra dữ liệu có tồn tại không
-                if (!data || data.length < 7) {
+                if (!data || data.length < 10) {
                     return true;
                 }
                 
                 var trangThai = $('#filterTrangThai').val();
+                var loaiHoaDon = $('#filterLoaiHoaDon').val();
                 var ngayTu = $('#filterNgayTu').val();
                 var ngayDen = $('#filterNgayDen').val();
                 
                 // Sử dụng Price Range Slider
                 var tongTienMin = parseInt($('#priceMin').val()) || 0;
                 var tongTienMax = parseInt($('#priceMax').val()) || 10000000;
+                
+                // Lấy loại hóa đơn từ cột Loại hóa đơn (cột 8)
+                var rowLoaiHoaDon = data[8] ? data[8].trim() : '';
                 
                 try {
                     // Lấy trạng thái từ DOM thay vì data array
@@ -618,6 +630,11 @@
                     // Lọc theo trạng thái
                     if (filterTrangThai && rowTrangThai !== filterTrangThai) return false;
                     
+                    // Lọc theo loại hóa đơn
+                    if (loaiHoaDon && ((loaiHoaDon === 'BanTaiQuay' && rowLoaiHoaDon !== 'Bán tại quầy') || (loaiHoaDon === 'BanTrucTiep' && rowLoaiHoaDon !== 'BanTrucTiep'))) {
+                        return false;
+                    }
+                    
                     // Lọc theo ngày tạo
                     if (ngayTu && rowNgay && rowNgay < ngayTu) return false;
                     if (ngayDen && rowNgay && rowNgay > ngayDen) return false;
@@ -633,7 +650,7 @@
             });
             
             // Event listener cho tất cả filter
-            $('#filterTrangThai, #filterNgayTu, #filterNgayDen').on('change input', function () {
+            $('#filterTrangThai, #filterLoaiHoaDon, #filterNgayTu, #filterNgayDen').on('change input', function () {
                 setTimeout(function() {
                     table.draw();
                 }, 100);

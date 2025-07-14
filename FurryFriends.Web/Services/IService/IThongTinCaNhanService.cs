@@ -8,5 +8,6 @@ namespace FurryFriends.Web.Services.IService
 		Task<ThongTinCaNhanViewModel?> GetThongTinCaNhanAsync(Guid taiKhoanId);
 		Task<bool> UpdateThongTinCaNhanAsync(Guid taiKhoanId, ThongTinCaNhanViewModel dto);
 		Task<bool> DoiMatKhauAsync(Guid taiKhoanId, string matKhauCu, string matKhauMoi);
+		Task<List<DiaChiKhachHangViewModel>> GetDanhSachDiaChiAsync(Guid taiKhoanId);
 	}
 }

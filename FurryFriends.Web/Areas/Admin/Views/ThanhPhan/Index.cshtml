@@ -4,6 +4,15 @@
     ViewData["Title"] = "Quản lý thành phần";
 }
 
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success">@TempData["success"]</div>
+}
+@if (TempData["error"] != null)
+{
+    <div class="alert alert-danger">@TempData["error"]</div>
+}
+
 <div class="top-bar" style="padding-left: 50px;">
     <h1>@ViewData["Title"]</h1>
     <div class="top-bar-actions">
@@ -51,11 +60,11 @@
                                 <td>
                                     @if (item.TrangThai)
                                     {
-                                        <span class="badge bg-success">Hiện</span>
+                                        <span class="badge bg-success">Đang hoạt động</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">Ẩn</span>
+                                        <span class="badge bg-secondary">Không hoạt động</span>
                                     }
                                 </td>
                                 <td>

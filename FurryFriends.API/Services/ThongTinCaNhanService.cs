@@ -51,20 +51,18 @@ namespace FurryFriends.API.Services
 				dto.Email = kh.EmailCuaKhachHang;
 				dto.SoDienThoai = kh.SDT;
 
-				// Tìm địa chỉ đầu tiên nếu có
-				dto.DiaChi = await _context.DiaChiKhachHangs
-				.Where(d => d.KhachHangId == kh.KhachHangId)
-				.OrderByDescending(d => d.NgayCapNhat) // Lấy địa chỉ mới nhất
-				.Select(d =>
-					string.Join(", ", new[]
-					{
-						d.MoTa,
-						d.PhuongXa,
-						d.QuanHuyen,
-						d.ThanhPho
-					}.Where(x => !string.IsNullOrWhiteSpace(x)))
-				)
-				.FirstOrDefaultAsync();
+				// Lấy danh sách địa chỉ cho khách hàng (không projection collection)
+				var diaChis = await _context.DiaChiKhachHangs
+					.Where(d => d.KhachHangId == kh.KhachHangId)
+					.OrderByDescending(d => d.NgayCapNhat)
+					.ToListAsync();
+				// Nếu DTO có property DiaChis, gán vào đây
+				// dto.DiaChis = diaChis;
+
+				// Nếu chỉ lấy địa chỉ mới nhất để hiển thị
+				dto.DiaChi = diaChis.FirstOrDefault() != null
+					? string.Join(", ", new[] { diaChis.First().MoTa, diaChis.First().PhuongXa, diaChis.First().ThanhPho }.Where(x => !string.IsNullOrWhiteSpace(x)))
+					: null;
 			}
 
 			return dto;

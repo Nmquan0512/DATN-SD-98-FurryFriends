@@ -259,8 +259,8 @@
   <header class="fixed top-0 left-0 w-full glass z-50 transition-all duration-300">
     <div class="container mx-auto px-4">
       <nav class="flex items-center justify-between h-16">
-        <a href="index.html" class="text-2xl font-bold flex items-center animate-slideInLeft hover:scale-105 transition-transform duration-300">
-          <img src="./images/hihihi.png" alt="FurryFriends Logo" class="h-12 mr-2 animate-float">
+                <a asp-action="Index" asp-controller="Home" class="text-2xl font-bold flex items-center animate-slideInLeft hover:scale-105 transition-transform duration-300">
+          <img src="/images/hihihi.png" alt="FurryFriends Logo" class="h-12 mr-2 animate-float">
           <span class="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">FurryFriends</span>
         </a>
 
@@ -283,14 +283,19 @@
                         <i class="fas fa-crown mr-1"></i> Quản trị
                     </a>
                 }
-                <div class="relative group">
-                    <button class="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:from-purple-600 hover:to-blue-600 transition-all duration-300 hover:scale-105 hover:shadow-lg hover-glow flex items-center">
+                <div class="relative">
+                    <button id="account-btn" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:from-purple-600 hover:to-blue-600 transition-all duration-300 hover:scale-105 hover:shadow-lg hover-glow flex items-center">
                         <i class="fas fa-user-circle mr-2"></i> @hoTen
                         <i class="fas fa-caret-down ml-2"></i>
                     </button>
-                    <div class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg py-2 z-50 hidden group-hover:block">
+                    <div id="account-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 hidden account-dropdown">
+                        <a href="/ThongTinCaNhan" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                            <i class="fas fa-id-card"></i> Thông tin tài khoản
+                        </a>
                         <form asp-action="Logout" asp-controller="KhachHangLogin" method="get" style="margin:0;">
-                            <button type="submit" class="w-full text-left px-4 py-2 hover:bg-gray-100">Đăng xuất</button>
+                            <button type="submit" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+                                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -547,6 +552,29 @@ document.addEventListener('DOMContentLoaded', () => {
 });
         @RenderSection("Scripts", required: false)
 
+  </script>
+  <script>
+    // Dropdown account menu click
+    document.addEventListener('DOMContentLoaded', function () {
+        const accountBtn = document.getElementById('account-btn');
+        const accountDropdown = document.getElementById('account-dropdown');
+
+        if (accountBtn && accountDropdown) {
+            accountBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                accountDropdown.classList.toggle('hidden');
+            });
+
+            // Ẩn dropdown khi click ra ngoài
+            document.addEventListener('click', function (e) {
+                if (!accountDropdown.classList.contains('hidden')) {
+                    if (!accountDropdown.contains(e.target) && !accountBtn.contains(e.target)) {
+                        accountDropdown.classList.add('hidden');
+                    }
+                }
+            });
+        }
+    });
   </script>
 </body>
 </html>

@@ -182,7 +182,7 @@
         let wardData = {};
         $(document).ready(function () {
             // Load province.json
-            $.getJSON('/json/province.json', function (provinces) {
+            $.getJSON('https://localhost:7102/json/province.json', function (provinces) {
                 provinceData = provinces;
                 $('#tinhThanh').append($('<option>', { value: '', text: '-- Chọn tỉnh/thành phố --' }));
                 $.each(provinces, function (key, value) {
@@ -190,7 +190,7 @@
                 });
             });
             // Load ward.json trước để dùng sau
-            $.getJSON('/json/ward.json', function (wards) {
+            $.getJSON('https://localhost:7102/json/ward.json', function (wards) {
                 wardData = wards;
             });
             // Khi chọn tỉnh/thành phố, load phường/xã/thị trấn

@@ -150,6 +150,13 @@ app.UseAuthorization();
 
 app.UseSession();
 
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax,
+    HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
+    Secure = CookieSecurePolicy.SameAsRequest
+});
+
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(

@@ -63,18 +63,18 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             if (id == Guid.Empty)
             {
-                TempData["Error"] = "❌ ID ảnh không hợp lệ!";
+                TempData["error"] = "❌ ID ảnh không hợp lệ!";
                 return RedirectToAction("Index");
             }
 
             var success = await _anhService.DeleteAsync(id);
             if (success)
             {
-                TempData["Success"] = "🗑️ Ảnh đã được xóa!";
+                TempData["success"] = "🗑️ Ảnh đã được xóa!";
             }
             else
             {
-                TempData["Error"] = "❌ Không tìm thấy ảnh để xóa hoặc xóa thất bại!";
+                TempData["error"] = "❌ Không tìm thấy ảnh để xóa hoặc xóa thất bại!";
             }
 
             return RedirectToAction("Index");

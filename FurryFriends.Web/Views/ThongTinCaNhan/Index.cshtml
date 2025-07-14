@@ -2,86 +2,138 @@
 @{
     ViewData["Title"] = "Thông Tin Cá Nhân";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var activeTab = Context.Request.Query["tab"] == "password" ? "password" : "info";
 }
 
-<div class="container mx-auto px-4 py-8">
-    <h2 class="text-3xl font-semibold text-center text-gradient mb-6">Thông Tin Cá Nhân</h2>
-
-    @if (TempData["Message"] != null)
-    {
-        <div class="bg-green-100 text-green-800 px-4 py-3 rounded mb-4">
-            @TempData["Message"]
-        </div>
-    }
-
-    @if (TempData["Error"] != null)
-    {
-        <div class="bg-red-100 text-red-800 px-4 py-3 rounded mb-4">
-            @TempData["Error"]
-        </div>
-    }
-
-    <form asp-action="Index" method="post" class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md space-y-4">
-        <input type="hidden" asp-for="TaiKhoanId" />
-
-        <div>
-            <label asp-for="UserName" class="font-medium text-gray-700">Tên đăng nhập</label>
-            <input asp-for="UserName" class="w-full px-4 py-2 border rounded bg-gray-100" disabled />
+<div class="container mx-auto px-4 py-10 fade-in-up">
+    <div class="max-w-2xl mx-auto bg-white/80 glass shadow-xl rounded-3xl p-8 relative">
+        <div class="flex flex-col items-center mb-6">
+            <div class="relative flex flex-col items-center justify-center mb-2">
+                <img src="/images/default-avatar.png" alt="Avatar" class="w-32 h-32 rounded-full border-4 border-gradient-to-r from-purple-400 to-blue-400 shadow-lg object-cover bg-white" />
+                <span class="absolute left-1/2 -translate-x-1/2 bottom-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full px-3 py-1 text-xs font-semibold shadow pulse-glow flex items-center justify-center">
+                    <i class="fas fa-paw mr-1"></i> Pet User
+                </span>
+            </div>
+            <h2 class="text-3xl font-bold text-gradient mb-1">@Model.HoTen</h2>
+            <div class="text-gray-500 mb-2 flex items-center gap-2">
+                <i class="fas fa-user-circle"></i> <span>@Model.UserName</span>
+            </div>
+            <div class="flex gap-3 mt-2">
+                <a href="?tab=info" class="px-5 py-2 rounded-full font-semibold magnetic-btn transition shadow @((activeTab=="info") ? "bg-gradient-to-r from-purple-600 to-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200")">
+                    <i class="fas fa-user-edit mr-1"></i> Thông tin cá nhân
+                </a>
+                <a href="?tab=password" class="px-5 py-2 rounded-full font-semibold magnetic-btn transition shadow @((activeTab=="password") ? "bg-gradient-to-r from-pink-500 to-yellow-500 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200")">
+                    <i class="fas fa-key mr-1"></i> Đổi mật khẩu
+                </a>
+            </div>
         </div>
 
-        <div>
-            <label asp-for="HoTen" class="font-medium text-gray-700">Họ và tên</label>
-            <input asp-for="HoTen" class="w-full px-4 py-2 border rounded" />
-            <span asp-validation-for="HoTen" class="text-red-500 text-sm"></span>
-        </div>
-
-        <div>
-            <label asp-for="Email" class="font-medium text-gray-700">Email</label>
-            <input asp-for="Email" type="email" class="w-full px-4 py-2 border rounded" />
-            <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
-        </div>
-
-        <div>
-            <label asp-for="SoDienThoai" class="font-medium text-gray-700">Số điện thoại</label>
-            <input asp-for="SoDienThoai" class="w-full px-4 py-2 border rounded" />
-            <span asp-validation-for="SoDienThoai" class="text-red-500 text-sm"></span>
-        </div>
-
-        @if (Model.NgaySinh != null)
+        @if (TempData["Message"] != null)
         {
-            <div>
-                <label asp-for="NgaySinh" class="font-medium text-gray-700">Ngày sinh</label>
-                <input asp-for="NgaySinh" type="date" class="w-full px-4 py-2 border rounded" />
-                <span asp-validation-for="NgaySinh" class="text-red-500 text-sm"></span>
+            <div class="bg-green-100 text-green-800 px-4 py-3 rounded mb-4 flex items-center gap-2 shadow">
+                <i class="fas fa-check-circle"></i> @TempData["Message"]
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="bg-red-100 text-red-800 px-4 py-3 rounded mb-4 flex items-center gap-2 shadow">
+                <i class="fas fa-exclamation-triangle"></i> @TempData["Error"]
             </div>
         }
 
-        @if (Model.GioiTinh != null)
+        @if (activeTab == "info")
         {
-            <div>
-                <label asp-for="GioiTinh" class="font-medium text-gray-700">Giới tính</label>
-                <select asp-for="GioiTinh" class="w-full px-4 py-2 border rounded">
-                    <option value="">-- Chọn giới tính --</option>
-                    <option value="Nam">Nam</option>
-                    <option value="Nữ">Nữ</option>
-                    <option value="Khác">Khác</option>
-                </select>
-                <span asp-validation-for="GioiTinh" class="text-red-500 text-sm"></span>
-            </div>
+            var diaChiChinh = Model.DiaChis?.FirstOrDefault(x => x.LaMacDinh);
+            if (diaChiChinh != null)
+            {
+                <div class="mb-6">
+                    <label class="font-medium text-gray-700 flex items-center gap-2">
+                        <i class="fas fa-map-marker-alt"></i> Địa chỉ chính
+                    </label>
+                    <div class="bg-white rounded shadow p-3 mt-1">
+                        <div class="font-semibold">@diaChiChinh.TenDiaChi</div>
+                        <div class="text-sm text-gray-500">@diaChiChinh.MoTa</div>
+                        <div class="text-xs text-gray-400">@diaChiChinh.PhuongXa, @diaChiChinh.ThanhPho</div>
+                        <div class="text-xs text-gray-400">SĐT: @diaChiChinh.SoDienThoai</div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="text-gray-500 italic mb-6">Chưa chọn địa chỉ chính.</div>
+            }
+            <form asp-action="Index" method="post" class="space-y-5">
+                <input type="hidden" asp-for="TaiKhoanId" />
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label asp-for="UserName" class="font-medium text-gray-700 flex items-center gap-2"><i class="fas fa-user"></i> Tên đăng nhập</label>
+                        <input asp-for="UserName" class="w-full px-4 py-2 border rounded bg-gray-100" disabled />
+                    </div>
+                    <div>
+                        <label asp-for="HoTen" class="font-medium text-gray-700 flex items-center gap-2"><i class="fas fa-signature"></i> Họ và tên</label>
+                        <input asp-for="HoTen" class="w-full px-4 py-2 border rounded" />
+                        <span asp-validation-for="HoTen" class="text-red-500 text-sm"></span>
+                    </div>
+                    <div>
+                        <label asp-for="Email" class="font-medium text-gray-700 flex items-center gap-2"><i class="fas fa-envelope"></i> Email</label>
+                        <input asp-for="Email" type="email" class="w-full px-4 py-2 border rounded" />
+                        <span asp-validation-for="Email" class="text-red-500 text-sm"></span>
+                    </div>
+                    <div>
+                        <label asp-for="SoDienThoai" class="font-medium text-gray-700 flex items-center gap-2"><i class="fas fa-phone"></i> Số điện thoại</label>
+                        <input asp-for="SoDienThoai" class="w-full px-4 py-2 border rounded" />
+                        <span asp-validation-for="SoDienThoai" class="text-red-500 text-sm"></span>
+                    </div>
+                    @if (Model.NgaySinh != null)
+                    {
+                        <div>
+                            <label asp-for="NgaySinh" class="font-medium text-gray-700 flex items-center gap-2"><i class="fas fa-birthday-cake"></i> Ngày sinh</label>
+                            <input asp-for="NgaySinh" type="date" class="w-full px-4 py-2 border rounded" />
+                            <span asp-validation-for="NgaySinh" class="text-red-500 text-sm"></span>
+                        </div>
+                    }
+                    @if (Model.GioiTinh != null)
+                    {
+                        <div>
+                            <label asp-for="GioiTinh" class="font-medium text-gray-700 flex items-center gap-2"><i class="fas fa-venus-mars"></i> Giới tính</label>
+                            <select asp-for="GioiTinh" class="w-full px-4 py-2 border rounded">
+                                <option value="">-- Chọn giới tính --</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                            <span asp-validation-for="GioiTinh" class="text-red-500 text-sm"></span>
+                        </div>
+                    }
+                </div>
+                <div class="mt-8">
+                    <h3 class="font-bold mb-2 flex items-center gap-2 text-lg text-gradient"><i class="fas fa-map-marker-alt"></i> Địa chỉ nhận hàng</h3>
+                    @if (Model.DiaChiChinh != null)
+                    {
+                        <div class="bg-white rounded shadow p-3 mt-1">
+                            <div class="font-semibold">@Model.DiaChiChinh.TenDiaChi</div>
+                            <div class="text-sm text-gray-500">@Model.DiaChiChinh.MoTa</div>
+                            <div class="text-xs text-gray-400">@Model.DiaChiChinh.PhuongXa, @Model.DiaChiChinh.ThanhPho</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-gray-500 italic mb-6">Chưa có địa chỉ nào.</div>
+                    }
+                    <a href="/ThongTinCaNhan/DanhSachDiaChi" class="btn btn-success mt-2 bg-gradient-to-r from-green-400 to-blue-400 text-white px-5 py-2 rounded-full shadow hover:from-blue-400 hover:to-green-400 transition font-semibold magnetic-btn"><i class="fas fa-plus mr-1"></i> Thêm địa chỉ</a>
+                </div>
+                <div class="text-center mt-6">
+                    <button type="submit" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:from-blue-600 hover:to-purple-600 transition duration-300 magnetic-btn">
+                        <i class="fas fa-save mr-2"></i> Lưu Thay Đổi
+                    </button>
+                </div>
+            </form>
         }
-
-        <div>
-            <label asp-for="DiaChi" class="font-medium text-gray-700">Địa chỉ</label>
-            <textarea asp-for="DiaChi" rows="3" class="w-full px-4 py-2 border rounded"></textarea>
-            <span asp-validation-for="DiaChi" class="text-red-500 text-sm"></span>
-        </div>
-
-        <div class="text-center">
-            <button type="submit" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-2 rounded hover:from-blue-600 hover:to-purple-600 transition duration-300">
-                Lưu Thay Đổi
-            </button>
-        </div>
-    </form>
+        else if (activeTab == "password")
+        {
+            @await Html.PartialAsync("DoiMatKhau", new FurryFriends.Web.Models.DoiMatKhauViewModel { TaiKhoanId = Model.TaiKhoanId })
+        }
+    </div>
 </div>
 
 @section Scripts {

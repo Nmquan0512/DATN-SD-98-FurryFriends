@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FurryFriends.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250705214218_nmquan")]
-    partial class nmquan
+    [Migration("20250714130906_nm")]
+    partial class nm
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,6 +106,9 @@ namespace FurryFriends.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("GhiChu")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("KhachHangId")
                         .HasColumnType("uniqueidentifier");
 
@@ -124,10 +127,9 @@ namespace FurryFriends.API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("QuanHuyen")
+                    b.Property<string>("SoDienThoai")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TenDiaChi")
                         .IsRequired()
@@ -303,7 +305,8 @@ namespace FurryFriends.API.Migrations
 
                     b.Property<string>("TenHinhThuc")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("HinhThucThanhToanId");
 
@@ -330,11 +333,18 @@ namespace FurryFriends.API.Migrations
                     b.Property<Guid>("KhachHangId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("LoaiHoaDon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("NgayNhanHang")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("NgayTao")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("NhanVienId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SdtCuaKhachHang")
                         .IsRequired()
@@ -365,6 +375,8 @@ namespace FurryFriends.API.Migrations
                     b.HasIndex("HinhThucThanhToanId");
 
                     b.HasIndex("KhachHangId");
+
+                    b.HasIndex("NhanVienId");
 
                     b.HasIndex("TaiKhoanId");
 
@@ -532,8 +544,7 @@ namespace FurryFriends.API.Migrations
 
                     b.Property<string>("SDT")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("TaiKhoanId")
                         .HasColumnType("uniqueidentifier");
@@ -775,7 +786,8 @@ namespace FurryFriends.API.Migrations
 
                     b.Property<string>("TenVoucher")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("TrangThai")
                         .HasColumnType("int");
@@ -914,6 +926,12 @@ namespace FurryFriends.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("FurryFriends.API.Models.NhanVien", "NhanVien")
+                        .WithMany()
+                        .HasForeignKey("NhanVienId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FurryFriends.API.Models.TaiKhoan", "TaiKhoan")
                         .WithMany("HoaDons")
                         .HasForeignKey("TaiKhoanId")
@@ -928,6 +946,8 @@ namespace FurryFriends.API.Migrations
                     b.Navigation("HinhThucThanhToan");
 
                     b.Navigation("KhachHang");
+
+                    b.Navigation("NhanVien");
 
                     b.Navigation("TaiKhoan");
 
@@ -1041,7 +1061,7 @@ namespace FurryFriends.API.Migrations
                         .WithMany("SanPhamChiTiets")
                         .HasForeignKey("AnhId");
 
-                    b.HasOne("FurryFriends.API.Models.KichCo", "BangKichCo")
+                    b.HasOne("FurryFriends.API.Models.KichCo", "KichCo")
                         .WithMany("SanPhamChiTiets")
                         .HasForeignKey("KichCoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1061,7 +1081,7 @@ namespace FurryFriends.API.Migrations
 
                     b.Navigation("Anh");
 
-                    b.Navigation("BangKichCo");
+                    b.Navigation("KichCo");
 
                     b.Navigation("MauSac");
 

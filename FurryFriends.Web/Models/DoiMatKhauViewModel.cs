@@ -13,5 +13,8 @@ namespace FurryFriends.Web.Models
 
 		[Compare("MatKhauMoi", ErrorMessage = "Mật khẩu xác nhận không khớp.")]
 		public string XacNhanMatKhauMoi { get; set; }
+
+		[Required]
+		public Guid TaiKhoanId { get; set; }
 	}
 }

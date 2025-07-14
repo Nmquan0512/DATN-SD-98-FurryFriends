@@ -1,5 +1,5 @@
 using FurryFriends.API.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -37,6 +37,6 @@ namespace FurryFriends.API.Models.DTO
         {
             // Nếu cần validate nâng cao, thêm ở đây
             yield break;
-        }
+                }
     }
 }

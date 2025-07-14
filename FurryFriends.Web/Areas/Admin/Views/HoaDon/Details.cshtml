@@ -61,7 +61,7 @@
                                         var diaChi = Model.KhachHang?.DiaChiKhachHangs?.FirstOrDefault();
                                         if (diaChi != null)
                                         {
-                                            <text>@diaChi.TenDiaChi, @diaChi.PhuongXa, @diaChi.QuanHuyen, @diaChi.ThanhPho</text>
+                                            <text>@diaChi.TenDiaChi, @diaChi.PhuongXa, @diaChi.ThanhPho</text>
                                         }
                                         else
                                         {
@@ -122,6 +122,23 @@
                             <tr>
                                 <th class="bg-light">Ghi chú</th>
                                 <td>@(string.IsNullOrEmpty(Model.GhiChu) ? "Không có" : Model.GhiChu)</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Người tạo hóa đơn</th>
+                                <td>
+                                    @if (Model.LoaiHoaDon == "BanTaiQuay")
+                                    {
+                                        @Model.NhanVien?.HoVaTen
+                                    }
+                                    else if (Model.LoaiHoaDon == "BanTrucTiep")
+                                    {
+                                        <span>Được tạo bởi hệ thống</span>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
                             </tr>
                         </table>
                     </div>

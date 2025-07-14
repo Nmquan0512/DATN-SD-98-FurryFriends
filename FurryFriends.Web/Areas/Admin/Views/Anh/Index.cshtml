@@ -14,13 +14,13 @@
         </div>
 
         <div class="card-body">
-            @if (TempData["Success"] != null)
+            @if (TempData["success"] != null)
             {
-                <div class="alert alert-success">@TempData["Success"]</div>
+                <div class="alert alert-success">@TempData["success"]</div>
             }
-            @if (TempData["Error"] != null)
+            @if (TempData["error"] != null)
             {
-                <div class="alert alert-danger">@TempData["Error"]</div>
+                <div class="alert alert-danger">@TempData["error"]</div>
             }
 
             <div class="row gy-3" id="imageList">

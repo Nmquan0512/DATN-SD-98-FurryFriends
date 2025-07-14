@@ -17,7 +17,20 @@ public class AuthController : Controller
     }
 
     [HttpGet]
-    public IActionResult DangNhap() => View();
+    public IActionResult DangNhap()
+    {
+        var taiKhoanId = HttpContext.Session.GetString("TaiKhoanId");
+        if (!string.IsNullOrEmpty(taiKhoanId))
+        {
+            var role = HttpContext.Session.GetString("Role") ?? "";
+            if (role.ToLower().Contains("admin"))
+                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            if (role.ToLower().Contains("nhanvien"))
+                return RedirectToAction("Index", "HoaDon", new { area = "Admin" });
+            return RedirectToAction("Index", "Home");
+        }
+        return View();
+    }
 
     [HttpPost]
     public async Task<IActionResult> DangNhap(LoginRequest model)

@@ -4,6 +4,15 @@
     ViewData["Title"] = "Quản lý sản phẩm";
 }
 
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success">@TempData["success"]</div>
+}
+@if (TempData["error"] != null)
+{
+    <div class="alert alert-danger">@TempData["error"]</div>
+}
+
 <div class="top-bar" style="padding-left: 50px;">
     <h1>@ViewData["Title"]</h1>
     <div class="top-bar-actions">

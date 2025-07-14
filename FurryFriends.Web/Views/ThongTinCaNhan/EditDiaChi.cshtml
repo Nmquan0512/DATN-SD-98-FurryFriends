@@ -1,0 +1,128 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@model FurryFriends.Web.Models.DiaChiKhachHangViewModel
+@{
+    ViewData["Title"] = "Chỉnh sửa địa chỉ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="max-w-lg mx-auto bg-white/80 glass shadow-lg rounded-2xl p-8 mt-10 fade-in-up">
+    <h3 class="text-2xl font-bold text-gradient text-center mb-6 flex items-center justify-center gap-2">
+        <i class="fas fa-map-marker-alt"></i> Chỉnh sửa địa chỉ
+    </h3>
+    <form asp-action="EditDiaChi" method="post" class="space-y-5">
+        <input type="hidden" asp-for="DiaChiId" />
+        <div>
+            <label asp-for="TenDiaChi" class="font-medium text-gray-700 flex items-center gap-2"><i class="fas fa-home"></i> Tên địa chỉ</label>
+            <input asp-for="TenDiaChi" class="w-full px-4 py-2 border rounded" placeholder="Nhà riêng, Công ty..." />
+            <span asp-validation-for="TenDiaChi" class="text-red-500 text-sm"></span>
+        </div>
+        <div>
+            <label asp-for="MoTa" class="font-medium text-gray-700 flex items-center gap-2"><i class="fas fa-info-circle"></i> Mô tả</label>
+            <input asp-for="MoTa" class="w-full px-4 py-2 border rounded" placeholder="Số nhà, tên đường..." />
+            <span asp-validation-for="MoTa" class="text-red-500 text-sm"></span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="ThanhPho" class="font-medium text-gray-700">Tỉnh/Thành phố</label>
+                <select class="w-full px-4 py-2 border rounded" id="provinceSelect" name="ThanhPhoCode"></select>
+                <input type="hidden" id="ThanhPho" name="ThanhPho" value="@Model.ThanhPho" />
+                <span asp-validation-for="ThanhPho" class="text-red-500 text-sm"></span>
+            </div>
+            <div>
+                <label asp-for="PhuongXa" class="font-medium text-gray-700">Phường/Xã/Thị trấn</label>
+                <select class="w-full px-4 py-2 border rounded" id="wardSelect" name="PhuongXaCode"></select>
+                <input type="hidden" id="PhuongXa" name="PhuongXa" value="@Model.PhuongXa" />
+                <span asp-validation-for="PhuongXa" class="text-red-500 text-sm"></span>
+            </div>
+        </div>
+        <div>
+            <label asp-for="SoDienThoai" class="font-medium text-gray-700">Số điện thoại</label>
+            <input asp-for="SoDienThoai" class="w-full px-4 py-2 border rounded" />
+            <span asp-validation-for="SoDienThoai" class="text-red-500 text-sm"></span>
+        </div>
+        <div>
+            <label asp-for="GhiChu" class="font-medium text-gray-700">Ghi chú</label>
+            <input asp-for="GhiChu" class="w-full px-4 py-2 border rounded" />
+            <span asp-validation-for="GhiChu" class="text-red-500 text-sm"></span>
+        </div>
+        <div class="flex items-center gap-2">
+            <input asp-for="LaMacDinh" type="checkbox" class="form-checkbox h-5 w-5 text-blue-600" />
+            <label asp-for="LaMacDinh" class="font-medium text-gray-700">Đặt làm địa chỉ mặc định</label>
+        </div>
+        <div class="text-center mt-6">
+            <button type="submit" class="bg-gradient-to-r from-green-400 to-blue-400 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:from-blue-400 hover:to-green-400 transition duration-300 magnetic-btn">
+                <i class="fas fa-save mr-2"></i> Lưu địa chỉ
+            </button>
+            <a href="/ThongTinCaNhan/DanhSachDiaChi" class="ml-4 text-gray-600 hover:text-blue-600 underline">Quay lại</a>
+        </div>
+    </form>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let provinceData = [];
+        let wardData = [];
+        let selectedProvinceCode = "@Model.ThanhPhoCode";
+        let selectedWardCode = "@Model.PhuongXaCode";
+        let selectedProvinceName = "@Model.ThanhPho";
+        let selectedWardName = "@Model.PhuongXa";
+        $(document).ready(function () {
+            console.log('Loading province.json from: https://localhost:7102/json/province.json');
+            $.getJSON('https://localhost:7102/json/province.json', function (provinces) {
+                console.log('Loaded provinces:', provinces);
+                provinceData = provinces;
+                $('#provinceSelect').append('<option value="">-- Chọn tỉnh/thành phố --</option>');
+                $.each(provinces, function (i, value) {
+                    let selected = (value.name_with_type === selectedProvinceName) ? 'selected' : '';
+                    $('#provinceSelect').append(`<option value="${value.code}" data-name="${value.name_with_type}" ${selected}>${value.name_with_type}</option>`);
+                });
+                if (selectedProvinceName) {
+                    let code = provinces.find(p => p.name_with_type === selectedProvinceName)?.code;
+                    if (code) {
+                        $('#provinceSelect').val(code).trigger('change');
+                    }
+                }
+            });
+            console.log('Loading ward.json from: https://localhost:7102/json/ward.json');
+            $.getJSON('https://localhost:7102/json/ward.json', function (wards) {
+                console.log('Loaded wards:', wards);
+                wardData = Array.isArray(wards) ? wards : Object.values(wards);
+                if (selectedProvinceName) {
+                    loadWardsByProvinceName(selectedProvinceName);
+                }
+            });
+            $('#provinceSelect').on('change', function () {
+                let code = $(this).val();
+                let name = $(this).find('option:selected').data('name') || '';
+                $('#ThanhPho').val(name);
+                loadWardsByProvinceCode(code);
+            });
+            $('#wardSelect').on('change', function () {
+                let name = $(this).find('option:selected').data('name') || '';
+                $('#PhuongXa').val(name);
+            });
+            function loadWardsByProvinceCode(provinceCode) {
+                $('#wardSelect').empty();
+                $('#wardSelect').append('<option value="">-- Chọn phường/xã/thị trấn --</option>');
+                if (provinceCode && wardData) {
+                    let filtered = wardData.filter(w => w.parent_code == provinceCode);
+                    $.each(filtered, function (i, value) {
+                        let selected = (value.name_with_type === selectedWardName) ? 'selected' : '';
+                        $('#wardSelect').append(`<option value="${value.code}" data-name="${value.name_with_type}" ${selected}>${value.name_with_type}</option>`);
+                    });
+                    if (selectedWardName) {
+                        let code = filtered.find(w => w.name_with_type === selectedWardName)?.code;
+                        if (code) {
+                            $('#wardSelect').val(code);
+                        }
+                    }
+                }
+            }
+            function loadWardsByProvinceName(provinceName) {
+                let province = provinceData.find(p => p.name_with_type === provinceName);
+                if (province) {
+                    loadWardsByProvinceCode(province.code);
+                }
+            }
+        });
+    </script>
+} 
