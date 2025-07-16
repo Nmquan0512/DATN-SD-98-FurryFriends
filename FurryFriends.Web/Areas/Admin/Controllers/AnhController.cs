@@ -2,8 +2,6 @@
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -26,19 +24,18 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
         // POST: /Admin/Anh/Upload (AJAX)
         [HttpPost]
-        // Không dùng [ValidateAntiForgeryToken] nếu upload qua FormData & JS
-        public async Task<IActionResult> Upload(IFormFile file)
+        public async Task<IActionResult> Upload(IFormFile file, Guid sanPhamChiTietId)
         {
-            if (file == null || file.Length == 0)
+            if (file == null || file.Length == 0 || sanPhamChiTietId == Guid.Empty)
             {
                 return BadRequest(new
                 {
                     success = false,
-                    message = "❌ File ảnh không hợp lệ!"
+                    message = "❌ File hoặc sản phẩm chi tiết không hợp lệ!"
                 });
             }
 
-            var result = await _anhService.UploadAsync(file);
+            var result = await _anhService.UploadAsync(file, sanPhamChiTietId);
             if (result == null)
             {
                 return BadRequest(new

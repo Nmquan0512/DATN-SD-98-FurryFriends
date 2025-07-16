@@ -1,12 +1,11 @@
 ﻿using FurryFriends.API.Data;
 using FurryFriends.API.Models;
-using FurryFriends.API.Repositories.IRepositories;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using FurryFriends.API.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace FurryFriends.API.Repositories
@@ -14,79 +13,57 @@ namespace FurryFriends.API.Repositories
     public class AnhRepository : IAnhRepository
     {
         private readonly AppDbContext _context;
-        private readonly IWebHostEnvironment _env;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly string _folder = "Uploads";
+        private readonly DbSet<Anh> _dbSet;
 
-        private readonly string[] _allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
-
-        public AnhRepository(AppDbContext context, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor)
+        public AnhRepository(AppDbContext context)
         {
             _context = context;
-            _env = env;
-            _httpContextAccessor = httpContextAccessor;
+            _dbSet = _context.Set<Anh>();
         }
 
         public async Task<IEnumerable<Anh>> GetAllAsync()
         {
-            return _context.Anhs.ToList();
+            return await _dbSet.ToListAsync();
         }
 
-        public async Task<Anh> GetByIdAsync(Guid id)
+        public async Task<Anh?> GetByIdAsync(Guid id)
         {
-            return await _context.Anhs.FindAsync(id);
+            return await _dbSet.FirstOrDefaultAsync(x => x.AnhId == id);
         }
 
-        public async Task<Anh> UploadAsync(IFormFile file)
+        public async Task<IEnumerable<Anh>> FindAsync(Expression<Func<Anh, bool>> predicate)
         {
-            if (file == null || file.Length == 0)
-                return null;
+            return await _dbSet.Where(predicate).ToListAsync();
+        }
 
-            var extension = Path.GetExtension(file.FileName).ToLower();
-            if (!_allowedExtensions.Contains(extension))
-                return null;
+        public async Task<Anh?> FindOneAsync(Expression<Func<Anh, bool>> predicate)
+        {
+            return await _dbSet.FirstOrDefaultAsync(predicate);
+        }
 
-            string uploadsRoot = Path.Combine(_env.WebRootPath, _folder);
-            if (!Directory.Exists(uploadsRoot))
-                Directory.CreateDirectory(uploadsRoot);
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await _dbSet.AnyAsync(x => x.AnhId == id);
+        }
 
-            string fileName = Guid.NewGuid() + extension;
-            string fullPath = Path.Combine(uploadsRoot, fileName);
+        public async Task AddAsync(Anh entity)
+        {
+            await _dbSet.AddAsync(entity);
+        }
 
-            using (var stream = new FileStream(fullPath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
+        public void Update(Anh entity)
+        {
+            _dbSet.Update(entity);
+        }
 
-            // Tạo URL tuyệt đối (full URL)
-            string baseUrl = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}";
-            string fullUrl = $"{baseUrl}/{_folder}/{fileName}";
+        public void Delete(Anh entity)
+        {
+            _dbSet.Remove(entity);
+        }
 
-            var anh = new Anh
-            {
-                TenAnh = fileName,
-                DuongDan = fullUrl, // <-- URL đầy đủ
-                TrangThai = true
-            };
-
-            _context.Anhs.Add(anh);
+        public async Task SaveAsync()
+        {
             await _context.SaveChangesAsync();
-            return anh;
-        }
-
-        public async Task<bool> DeleteAsync(Guid id)
-        {
-            var anh = await _context.Anhs.FindAsync(id);
-            if (anh == null) return false;
-
-            // Trích tên file từ TenAnh để xóa file vật lý
-            var fullPath = Path.Combine(_env.WebRootPath, _folder, anh.TenAnh);
-            if (File.Exists(fullPath))
-                File.Delete(fullPath);
-
-            _context.Anhs.Remove(anh);
-            await _context.SaveChangesAsync();
-            return true;
         }
     }
 }

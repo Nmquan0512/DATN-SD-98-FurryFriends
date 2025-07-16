@@ -1,0 +1,112 @@
+﻿@model IEnumerable<FurryFriends.API.Models.DTO.SanPhamChiTietDTO>
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    var sanPhamId = ViewBag.SanPhamId;
+}
+
+<h2 class="mb-3">📦 Chi tiết sản phẩm</h2>
+
+<div class="row mb-3">
+    <div class="col-md-3">
+        <select id="filterTrangThai" class="form-select">
+            <option value="">-- Lọc theo trạng thái --</option>
+            <option value="1">Đang bán</option>
+            <option value="0">Ngừng bán</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <input id="searchInput" class="form-control" placeholder="🔍 Tìm theo mô tả, kích cỡ..." />
+    </div>
+</div>
+
+<table class="table table-bordered table-hover text-center align-middle" id="chiTietTable">
+    <thead class="table-light">
+        <tr>
+            <th>Ảnh</th>
+            <th>Tên SP</th>
+            <th>Màu sắc</th>
+            <th>Kích cỡ</th>
+            <th>Giá</th>
+            <th>SL</th>
+            <th>Trạng thái</th>
+            <th>Mô tả</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr data-trangthai="@item.TrangThai" data-search="@($"{item.TenKichCo} {item.MoTa}")">
+                <td>
+                    @if (!string.IsNullOrEmpty(item.DuongDan))
+                    {
+                        <img src="@item.DuongDan" style="height:60px;" class="rounded shadow-sm" />
+                    }
+                </td>
+                <td>@item.TenSanPham</td>
+                <td><span class="badge bg-light text-dark border" style="border-left: 5px solid @item.TenMau">@item.TenMau</span></td>
+                <td>@item.TenKichCo</td>
+                <td>@item.Gia.ToString("N0") ₫</td>
+                <td>@item.SoLuong</td>
+                <td>
+                    @if (item.TrangThai == 1)
+                    {
+                        <span class="badge bg-success">Đang bán</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Ngừng bán</span>
+                    }
+                </td>
+                <td>@item.MoTa</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.SanPhamChiTietId" class="btn btn-sm btn-warning">✏</a>
+                    <a asp-action="Delete" asp-route-id="@item.SanPhamChiTietId" class="btn btn-sm btn-danger">🗑</a>
+                    <button class="btn btn-sm btn-secondary" onclick="toggleTrangThai('@item.SanPhamChiTietId')">🔄</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        // Lọc trạng thái bằng JS
+        document.getElementById("filterTrangThai").addEventListener("change", function () {
+            filterRows();
+        });
+
+        // Tìm kiếm theo mô tả hoặc kích cỡ
+        document.getElementById("searchInput").addEventListener("input", function () {
+            filterRows();
+        });
+
+        function filterRows() {
+            const selectedTrangThai = document.getElementById("filterTrangThai").value;
+            const keyword = document.getElementById("searchInput").value.toLowerCase();
+            const rows = document.querySelectorAll("#chiTietTable tbody tr");
+
+            rows.forEach(row => {
+                const trangThai = row.getAttribute("data-trangthai");
+                const searchContent = row.getAttribute("data-search").toLowerCase();
+
+                const matchTrangThai = !selectedTrangThai || trangThai === selectedTrangThai;
+                const matchSearch = !keyword || searchContent.includes(keyword);
+
+                row.style.display = (matchTrangThai && matchSearch) ? "" : "none";
+            });
+        }
+
+        function toggleTrangThai(id) {
+            if (confirm("Bạn có chắc muốn đổi trạng thái?")) {
+                fetch(`/Admin/SanPhamChiTiet/ToggleTrangThai?id=${id}`, {
+                    method: "POST"
+                })
+                .then(res => {
+                    if (res.ok) location.reload();
+                    else alert("❌ Thất bại khi đổi trạng thái");
+                });
+            }
+        }
+    </script>
+}
