@@ -8,7 +8,7 @@ namespace FurryFriends.Web.Filter
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var role = context.HttpContext.Session.GetString("Role");
-            if (string.IsNullOrEmpty(role) || role != "Admin")
+            if (string.IsNullOrEmpty(role) || !role.Equals("admin", StringComparison.OrdinalIgnoreCase))
             {
                 context.Result = new RedirectToActionResult("DangNhap", "Auth", new { area = "" });
                 return;

@@ -34,37 +34,58 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @if (!Model.Any())
         {
-            <tr data-trangthai="@item.TrangThai" data-search="@($"{item.TenKichCo} {item.MoTa}")">
-                <td>
-                    @if (!string.IsNullOrEmpty(item.DuongDan))
-                    {
-                        <img src="@item.DuongDan" style="height:60px;" class="rounded shadow-sm" />
-                    }
-                </td>
-                <td>@item.TenSanPham</td>
-                <td><span class="badge bg-light text-dark border" style="border-left: 5px solid @item.TenMau">@item.TenMau</span></td>
-                <td>@item.TenKichCo</td>
-                <td>@item.Gia.ToString("N0") ₫</td>
-                <td>@item.SoLuong</td>
-                <td>
-                    @if (item.TrangThai == 1)
-                    {
-                        <span class="badge bg-success">Đang bán</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary">Ngừng bán</span>
-                    }
-                </td>
-                <td>@item.MoTa</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.SanPhamChiTietId" class="btn btn-sm btn-warning">✏</a>
-                    <a asp-action="Delete" asp-route-id="@item.SanPhamChiTietId" class="btn btn-sm btn-danger">🗑</a>
-                    <button class="btn btn-sm btn-secondary" onclick="toggleTrangThai('@item.SanPhamChiTietId')">🔄</button>
-                </td>
+            <tr>
+                <td colspan="9" class="text-center text-muted">Chưa có biến thể nào cho sản phẩm này.</td>
             </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr data-trangthai="@item.TrangThai" data-search="@($"{item.TenKichCo} {item.MoTa}")">
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.DuongDan))
+                        {
+                            <img src="@item.DuongDan" style="height:60px;" class="rounded shadow-sm border" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">Chưa cập nhật</span>
+                        }
+                    </td>
+                    <td class="font-semibold">@(string.IsNullOrEmpty(item.TenSanPham) ? "Chưa cập nhật" : item.TenSanPham)</td>
+                    <td>
+                        <span class="badge bg-light text-dark border" style="border-left: 8px solid @(item.TenMau ?? "#ccc"); min-width: 60px; display:inline-block;">
+                            @(string.IsNullOrEmpty(item.TenMau) ? "Chưa cập nhật" : item.TenMau)
+                        </span>
+                    </td>
+                    <td>@(string.IsNullOrEmpty(item.TenKichCo) ? "Chưa cập nhật" : item.TenKichCo)</td>
+                    <td class="text-primary">@(item.Gia > 0 ? item.Gia.ToString("N0") + " ₫" : "Chưa cập nhật")</td>
+                    <td>@(item.SoLuong > 0 ? item.SoLuong.ToString() : "Chưa cập nhật")</td>
+                    <td>
+                        @if (item.TrangThai == 1)
+                        {
+                            <span class="badge bg-success">Đang bán</span>
+                        }
+                        else if (item.TrangThai == 0)
+                        {
+                            <span class="badge bg-secondary">Ngừng bán</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Chưa cập nhật</span>
+                        }
+                    </td>
+                    <td>@(string.IsNullOrEmpty(item.MoTa) ? "Chưa cập nhật" : item.MoTa)</td>
+                    <td>
+                        <a asp-action="Create" asp-route-sanPhamId="@item.Id" class="btn btn-sm btn-success mb-1">➕ Thêm thuộc tính</a>
+                        <a asp-action="Edit" asp-route-id="@item.SanPhamChiTietId" class="btn btn-sm btn-warning mb-1">✏ Sửa thuộc tính</a>
+                        <a asp-action="Delete" asp-route-id="@item.SanPhamChiTietId" class="btn btn-sm btn-danger mb-1">🗑 Xoá</a>
+                    </td>
+                </tr>
+            }
         }
     </tbody>
 </table>

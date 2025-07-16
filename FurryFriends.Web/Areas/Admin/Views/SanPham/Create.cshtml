@@ -9,79 +9,82 @@
     var kichCoOptions = Newtonsoft.Json.JsonConvert.SerializeObject(kichCos.Select(k => new { k.KichCoId, k.TenKichCo }));
 }
 
-<h2 class="mb-4">🆕 Tạo sản phẩm mới</h2>
-
-<form id="createSanPhamForm" asp-action="Create" method="post" enctype="multipart/form-data">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label asp-for="TenSanPham" class="form-label fw-semibold">Tên sản phẩm</label>
-                <input asp-for="TenSanPham" class="form-control" />
-                <span asp-validation-for="TenSanPham" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="LoaiSanPham" class="form-label">Loại sản phẩm</label>
-                <select asp-for="LoaiSanPham" class="form-select" id="LoaiSanPham">
-                    <option value="">-- Chọn --</option>
-                    <option value="DoAn">Đồ ăn</option>
-                    <option value="DoDung">Đồ dùng</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Thương hiệu</label>
-                <select asp-for="ThuongHieuId" class="form-select">
-                    @foreach (var item in ViewBag.ThuongHieus as List<SelectListItem>)
-                    {
-                        <option value="@item.Value">@item.Text</option>
-                    }
-                </select>
-            </div>
-
-            <div class="mb-3" id="ChatLieuDiv" style="display:none;">
-                <label class="form-label">Chất liệu</label>
-                <select asp-for="ChatLieuIds" class="form-select" multiple name="ChatLieuIds">
-                    @foreach (var item in ViewBag.ChatLieus as List<SelectListItem>)
-                    {
-                        <option value="@item.Value">@item.Text</option>
-                    }
-                </select>
-            </div>
-
-            <div class="mb-3" id="ThanhPhanDiv" style="display:none;">
-                <label class="form-label">Thành phần</label>
-                <select asp-for="ThanhPhanIds" class="form-select" multiple name="ThanhPhanIds">
-                    @foreach (var item in ViewBag.ThanhPhans as List<SelectListItem>)
-                    {
-                        <option value="@item.Value">@item.Text</option>
-                    }
-                </select>
-            </div>
+<div class="container mx-auto max-w-4xl p-8 bg-white rounded-3xl shadow-lg">
+  <h2 class="text-3xl font-bold text-gradient mb-6 flex items-center gap-2">
+    <i class="fas fa-plus-circle"></i> Tạo sản phẩm mới
+  </h2>
+  <div class="mb-4 p-3 bg-blue-50 rounded-lg text-blue-700 text-sm">
+    <b>Biến thể theo màu sắc</b> là các phiên bản khác nhau của sản phẩm dựa trên màu sắc và kích cỡ. Mỗi biến thể có thể có giá, số lượng, ảnh riêng. Hãy thêm các biến thể để khách hàng dễ dàng lựa chọn khi mua hàng.
+  </div>
+  <form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Thông tin chung -->
+      <div>
+        <div class="mb-4">
+          <label asp-for="TenSanPham" class="block font-semibold mb-1">Tên sản phẩm</label>
+          <input asp-for="TenSanPham" class="form-control rounded-lg" />
+          <span asp-validation-for="TenSanPham" class="text-danger"></span>
         </div>
-
-        <div class="col-md-6">
-            <h5 class="fw-bold">🎨 Biến thể theo màu sắc</h5>
-            @foreach (var mau in mauSacs)
+        <div class="mb-4">
+          <label asp-for="LoaiSanPham" class="block font-semibold mb-1">Loại sản phẩm</label>
+          <select asp-for="LoaiSanPham" class="form-select rounded-lg" id="LoaiSanPham">
+            <option value="">-- Chọn --</option>
+            <option value="DoAn">Đồ ăn</option>
+            <option value="DoDung">Đồ dùng</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label class="block font-semibold mb-1">Thương hiệu</label>
+          <select asp-for="ThuongHieuId" class="form-select rounded-lg">
+            @foreach (var item in ViewBag.ThuongHieus as List<SelectListItem>)
             {
-                <div class="border rounded p-2 mb-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div class="d-flex align-items-center gap-2">
-                            <span style="width:25px; height:25px; background:@mau.MaMau; border-radius:50%; border:1px solid #ccc;"></span>
-                            <strong>@mau.TenMau</strong>
-                        </div>
-                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="addVariant('@mau.MauSacId')">+ Thêm kích cỡ</button>
-                    </div>
-                    <div id="variants_@mau.MauSacId"></div>
-                </div>
+              <option value="@item.Value">@item.Text</option>
             }
+          </select>
         </div>
+        <div class="mb-4" id="ChatLieuDiv" style="display:none;">
+          <label class="block font-semibold mb-1">Chất liệu</label>
+          <select asp-for="ChatLieuIds" class="form-select rounded-lg" multiple name="ChatLieuIds">
+            @foreach (var item in ViewBag.ChatLieus as List<SelectListItem>)
+            {
+              <option value="@item.Value">@item.Text</option>
+            }
+          </select>
+        </div>
+        <div class="mb-4" id="ThanhPhanDiv" style="display:none;">
+          <label class="block font-semibold mb-1">Thành phần</label>
+          <select asp-for="ThanhPhanIds" class="form-select rounded-lg" multiple name="ThanhPhanIds">
+            @foreach (var item in ViewBag.ThanhPhans as List<SelectListItem>)
+            {
+              <option value="@item.Value">@item.Text</option>
+            }
+          </select>
+        </div>
+      </div>
+      <!-- Biến thể theo màu sắc -->
+      <div>
+        <h4 class="font-semibold mb-2">Biến thể theo màu sắc</h4>
+        @foreach (var mau in mauSacs)
+        {
+          <div class="border rounded-xl p-3 mb-4 bg-gray-50">
+            <div class="flex items-center gap-3 mb-2">
+              <span style="width:28px; height:28px; background:@mau.MaMau; border-radius:50%; border:2px solid #ccc; display:inline-block;"></span>
+              <span class="font-semibold">@mau.TenMau</span>
+              <button type="button" class="btn btn-sm btn-outline-primary ml-auto" onclick="addVariant('@mau.MauSacId')">+ Thêm kích cỡ</button>
+            </div>
+            <div id="variants_@mau.MauSacId"></div>
+          </div>
+        }
+      </div>
     </div>
-
-    <div class="text-end">
-        <button type="button" class="btn btn-success px-4" onclick="submitSanPham()">Lưu</button>
+    <div class="text-end mt-6">
+      <button type="submit" class="btn btn-gradient px-8 py-3 rounded-full font-bold shadow-lg hover:scale-105 transition">Lưu sản phẩm</button>
     </div>
-</form>
+    <div class="text-danger mt-2">
+      @Html.ValidationSummary(true)
+    </div>
+  </form>
+</div>
 
 @section Scripts {
 <script>
@@ -109,17 +112,17 @@
         <div class='row mb-2 align-items-end'>
             <input type='hidden' name='ChiTietSanPham[${mauId}][${index}].MauSacId' value='${mauId}' />
             <div class='col-md-2'>
-                <select name='ChiTietSanPham[${mauId}][${index}].KichCoId' class='form-select'>
+                <select name='ChiTietSanPham[${mauId}][${index}].KichCoId' class='form-select rounded'>
                     ${kichCos.map(k => `<option value="${k.KichCoId}">${k.TenKichCo}</option>`).join('')}
                 </select>
             </div>
-            <div class='col-md-2'><input type='number' name='ChiTietSanPham[${mauId}][${index}].Gia' class='form-control' placeholder='Giá' /></div>
-            <div class='col-md-2'><input type='number' name='ChiTietSanPham[${mauId}][${index}].SoLuong' class='form-control' placeholder='SL' /></div>
+            <div class='col-md-2'><input type='number' name='ChiTietSanPham[${mauId}][${index}].Gia' class='form-control rounded' placeholder='Giá' /></div>
+            <div class='col-md-2'><input type='number' name='ChiTietSanPham[${mauId}][${index}].SoLuong' class='form-control rounded' placeholder='SL' /></div>
             <div class='col-md-3'>
-                <input type='file' name='ChiTietSanPham[${mauId}][${index}].AnhSanPham' class='form-control' accept='image/*' onchange='previewImage(this)' />
+                <input type='file' name='ChiTietSanPham[${mauId}][${index}].AnhSanPham' class='form-control rounded' accept='image/*' onchange='previewImage(this)' />
                 <img class='mt-1 img-thumbnail' style='max-height: 100px; display:none;' />
             </div>
-            <div class='col-md-3'><input type='text' name='ChiTietSanPham[${mauId}][${index}].MoTa' class='form-control' placeholder='Mô tả' /></div>
+            <div class='col-md-3'><input type='text' name='ChiTietSanPham[${mauId}][${index}].MoTa' class='form-control rounded' placeholder='Mô tả' /></div>
         </div>`;
 
         container.insertAdjacentHTML("beforeend", html);
@@ -136,28 +139,6 @@
             }
             reader.readAsDataURL(file);
         }
-    }
-
-    function submitSanPham() {
-        const form = document.getElementById("createSanPhamForm");
-        const formData = new FormData(form);
-
-        fetch("/SanPham/Create", {
-            method: "POST",
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success && data.sanPhamId) {
-                window.location.href = `/SanPhamChiTiet/Index?sanPhamId=${data.sanPhamId}`;
-            } else {
-                alert("❌ Không thể lưu sản phẩm. Vui lòng kiểm tra dữ liệu.");
-            }
-        })
-        .catch(error => {
-            console.error("Lỗi khi gửi dữ liệu:", error);
-            alert("❌ Đã xảy ra lỗi khi lưu sản phẩm.");
-        });
     }
 </script>
 }

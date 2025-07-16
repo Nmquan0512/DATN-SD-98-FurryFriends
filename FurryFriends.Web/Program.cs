@@ -7,7 +7,7 @@ using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Facebook;
-using FurryFriends.API.Repositories;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -105,6 +105,12 @@ builder.Services.AddHttpClient<IAnhService, AnhService>(client =>
 builder.Services.AddHttpClient<FurryFriends.Web.Services.IService.ISanPhamService, FurryFriends.Web.Services.SanPhamService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
+});
+
+builder.Services.AddHttpClient<ISanPhamChiTietService, SanPhamChiTietService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/api/");
+    client.Timeout = TimeSpan.FromSeconds(30);
 });
 
 // Thêm cấu hình xác thực Google và Facebook

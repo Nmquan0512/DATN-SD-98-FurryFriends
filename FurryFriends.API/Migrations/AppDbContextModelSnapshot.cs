@@ -32,6 +32,9 @@ namespace FurryFriends.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("SanPhamChiTietId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("TenAnh")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -95,6 +98,17 @@ namespace FurryFriends.API.Migrations
                     b.HasKey("ChucVuId");
 
                     b.ToTable("ChucVus");
+
+                    b.HasData(
+                        new
+                        {
+                            ChucVuId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            MoTaChucVu = "Quản trị viên hệ thống",
+                            NgayCapNhat = new DateTime(2025, 7, 16, 10, 49, 9, 792, DateTimeKind.Local).AddTicks(5039),
+                            NgayTao = new DateTime(2025, 7, 16, 10, 49, 9, 792, DateTimeKind.Local).AddTicks(4859),
+                            TenChucVu = "admin",
+                            TrangThai = true
+                        });
                 });
 
             modelBuilder.Entity("FurryFriends.API.Models.DiaChiKhachHang", b =>
@@ -558,6 +572,23 @@ namespace FurryFriends.API.Migrations
                         .HasFilter("[TaiKhoanId] IS NOT NULL");
 
                     b.ToTable("NhanViens");
+
+                    b.HasData(
+                        new
+                        {
+                            NhanVienId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            ChucVuId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            DiaChi = "Hà Nội",
+                            Email = "admin@furryfriends.com",
+                            GioiTinh = "Nam",
+                            HoVaTen = "Admin hệ thống",
+                            NgayCapNhat = new DateTime(2025, 7, 16, 10, 49, 9, 792, DateTimeKind.Local).AddTicks(6089),
+                            NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayTao = new DateTime(2025, 7, 16, 10, 49, 9, 792, DateTimeKind.Local).AddTicks(5949),
+                            SDT = "0123456789",
+                            TaiKhoanId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            TrangThai = true
+                        });
                 });
 
             modelBuilder.Entity("FurryFriends.API.Models.SanPham", b =>
@@ -668,6 +699,16 @@ namespace FurryFriends.API.Migrations
                         .IsUnique();
 
                     b.ToTable("TaiKhoans");
+
+                    b.HasData(
+                        new
+                        {
+                            TaiKhoanId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            NgayTaoTaiKhoan = new DateTime(2025, 7, 16, 10, 49, 9, 792, DateTimeKind.Local).AddTicks(5659),
+                            Password = "123456",
+                            TrangThai = true,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("FurryFriends.API.Models.ThanhPhan", b =>

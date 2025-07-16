@@ -54,6 +54,43 @@ namespace FurryFriends.API.Data
             ConfigureHoaDon(modelBuilder);
             ConfigureDotGiamGia(modelBuilder);
             ConfigureSanPhamThanhPhanChatLieu(modelBuilder);
+
+            // SEED ADMIN
+            var adminRoleId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+            var adminUserId = Guid.Parse("22222222-2222-2222-2222-222222222222");
+            var adminNhanVienId = Guid.Parse("33333333-3333-3333-3333-333333333333");
+            modelBuilder.Entity<ChucVu>().HasData(new Models.ChucVu
+            {
+                ChucVuId = adminRoleId,
+                TenChucVu = "admin",
+                MoTaChucVu = "Quản trị viên hệ thống",
+                TrangThai = true,
+                NgayTao = DateTime.Now,
+                NgayCapNhat = DateTime.Now
+            });
+            modelBuilder.Entity<TaiKhoan>().HasData(new Models.TaiKhoan
+            {
+                TaiKhoanId = adminUserId,
+                UserName = "admin",
+                Password = "123456",
+                NgayTaoTaiKhoan = DateTime.Now,
+                TrangThai = true
+            });
+            modelBuilder.Entity<NhanVien>().HasData(new Models.NhanVien
+            {
+                NhanVienId = adminNhanVienId,
+                TaiKhoanId = adminUserId,
+                HoVaTen = "Admin hệ thống",
+                NgaySinh = new DateTime(1990, 1, 1),
+                DiaChi = "Hà Nội",
+                SDT = "0123456789",
+                Email = "admin@furryfriends.com",
+                GioiTinh = "Nam",
+                ChucVuId = adminRoleId,
+                TrangThai = true,
+                NgayTao = DateTime.Now,
+                NgayCapNhat = DateTime.Now
+            });
         }
 
         private void ConfigureTaiKhoan(ModelBuilder modelBuilder)
