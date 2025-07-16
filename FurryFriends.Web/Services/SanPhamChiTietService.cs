@@ -85,5 +85,11 @@ namespace FurryFriends.Web.Services
             var response = await _httpClient.DeleteAsync($"{BaseUrl}/{id}");
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<IEnumerable<SanPhamChiTietDTO>> GetBySanPhamIdAsync(Guid sanPhamId)
+        {
+            var result = await _httpClient.GetFromJsonAsync<IEnumerable<SanPhamChiTietDTO>>("SanPhamChiTiet/by-sanpham/" + sanPhamId);
+            return result ?? new List<SanPhamChiTietDTO>();
+        }
     }
 }

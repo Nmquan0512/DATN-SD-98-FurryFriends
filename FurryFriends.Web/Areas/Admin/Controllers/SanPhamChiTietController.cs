@@ -28,10 +28,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Index(Guid sanPhamId)
         {
             ViewBag.SanPhamId = sanPhamId;
-            var allChiTiet = await _service.GetAllAsync();
-            var filtered = allChiTiet.Where(x => x.Id == sanPhamId); // Id ở đây là SanPhamId
-
-            return View(filtered);
+            var allChiTiet = await _service.GetBySanPhamIdAsync(sanPhamId);
+            return View(allChiTiet);
         }
 
         public async Task<IActionResult> Create(Guid sanPhamId)

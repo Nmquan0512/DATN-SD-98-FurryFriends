@@ -7,6 +7,7 @@ namespace FurryFriends.Web.Services.IService
     {
         Task<IEnumerable<SanPhamChiTietDTO>> GetAllAsync();
         Task<SanPhamChiTietDTO?> GetByIdAsync(Guid id);
+        Task<IEnumerable<SanPhamChiTietDTO>> GetBySanPhamIdAsync(Guid sanPhamId);
         Task<ApiResult<SanPhamChiTietDTO>> CreateAsync(SanPhamChiTietDTO dto);
         Task<ApiResult<bool>> UpdateAsync(Guid id, SanPhamChiTietDTO dto);
         Task<bool> DeleteAsync(Guid id);

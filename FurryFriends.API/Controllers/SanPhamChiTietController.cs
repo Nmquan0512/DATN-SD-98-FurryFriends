@@ -3,6 +3,7 @@ using FurryFriends.API.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace FurryFriends.API.Controllers
 {
@@ -34,6 +35,15 @@ namespace FurryFriends.API.Controllers
                 return NotFound();
 
             return Ok(result);
+        }
+
+        // GET: api/SanPhamChiTiet/by-sanpham/{sanPhamId}
+        [HttpGet("by-sanpham/{sanPhamId}")]
+        public async Task<IActionResult> GetBySanPhamId(Guid sanPhamId)
+        {
+            var result = await _service.GetAllAsync();
+            var filtered = result.Where(x => x.Id == sanPhamId);
+            return Ok(filtered);
         }
 
         // POST: api/SanPhamChiTiet
