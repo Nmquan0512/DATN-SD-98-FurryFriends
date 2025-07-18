@@ -2,12 +2,13 @@
 using FurryFriends.API.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using FurryFriends.API.Repository.IRepository;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace FurryFriends.API.Repositories
+namespace FurryFriends.API.Repository
 {
 	public class SanPhamThanhPhanRepository : ISanPhamThanhPhanRepository
 	{

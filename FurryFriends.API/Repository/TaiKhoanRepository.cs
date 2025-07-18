@@ -103,10 +103,6 @@ namespace FurryFriends.API.Repository
             {
                 throw new InvalidOperationException("Không thể xóa tài khoản vì nó đang liên kết với nhân viên.");
             }
-            if (await _context.SanPhams.AnyAsync(sp => sp.TaiKhoanId == id))
-            {
-                throw new InvalidOperationException("Không thể xóa tài khoản vì nó đang liên kết với sản phẩm.");
-            }
             if (await _context.HoaDons.AnyAsync(hd => hd.TaiKhoanId == id))
             {
                 throw new InvalidOperationException("Không thể xóa tài khoản vì nó đang liên kết với hóa đơn.");

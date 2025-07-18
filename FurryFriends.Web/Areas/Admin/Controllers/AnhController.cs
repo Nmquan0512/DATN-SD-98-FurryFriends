@@ -2,6 +2,8 @@
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -18,6 +20,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         // GET: /Admin/Anh
         public async Task<IActionResult> Index()
         {
+            Console.WriteLine("📄 [Anh/Index] Load danh sách ảnh...");
             var list = await _anhService.GetAllAsync();
             return View(list);
         }
@@ -26,18 +29,34 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Upload(IFormFile file, Guid sanPhamChiTietId)
         {
-            if (file == null || file.Length == 0 || sanPhamChiTietId == Guid.Empty)
+            Console.WriteLine("📤 [Anh/Upload] Bắt đầu upload ảnh...");
+            if (file == null || file.Length == 0)
             {
+                Console.WriteLine("❌ File null hoặc rỗng!");
                 return BadRequest(new
                 {
                     success = false,
-                    message = "❌ File hoặc sản phẩm chi tiết không hợp lệ!"
+                    message = "❌ File không hợp lệ!"
                 });
             }
 
+            if (sanPhamChiTietId == Guid.Empty)
+            {
+                Console.WriteLine("❌ sanPhamChiTietId không hợp lệ!");
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "❌ ID sản phẩm chi tiết không hợp lệ!"
+                });
+            }
+
+            Console.WriteLine($"📝 Tên file: {file.FileName}, Kích thước: {file.Length} bytes, SanPhamChiTietId: {sanPhamChiTietId}");
+
             var result = await _anhService.UploadAsync(file, sanPhamChiTietId);
+
             if (result == null)
             {
+                Console.WriteLine("❌ Upload thất bại hoặc định dạng không hỗ trợ.");
                 return BadRequest(new
                 {
                     success = false,
@@ -45,6 +64,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 });
             }
 
+            Console.WriteLine("✅ Upload ảnh thành công!");
             return Ok(new
             {
                 success = true,
@@ -58,8 +78,11 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(Guid id)
         {
+            Console.WriteLine($"🗑️ [Anh/Delete] Yêu cầu xóa ảnh ID: {id}");
+
             if (id == Guid.Empty)
             {
+                Console.WriteLine("❌ ID ảnh không hợp lệ!");
                 TempData["error"] = "❌ ID ảnh không hợp lệ!";
                 return RedirectToAction("Index");
             }
@@ -67,10 +90,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             var success = await _anhService.DeleteAsync(id);
             if (success)
             {
+                Console.WriteLine("✅ Ảnh đã được xóa!");
                 TempData["success"] = "🗑️ Ảnh đã được xóa!";
             }
             else
             {
+                Console.WriteLine("❌ Không tìm thấy ảnh để xóa hoặc xóa thất bại!");
                 TempData["error"] = "❌ Không tìm thấy ảnh để xóa hoặc xóa thất bại!";
             }
 

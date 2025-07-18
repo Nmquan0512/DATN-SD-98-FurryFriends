@@ -37,7 +37,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     taiKhoan.TaiKhoanId = Guid.NewGuid();
                     taiKhoan.NgayTaoTaiKhoan = DateTime.Now;
                     taiKhoan.TrangThai = taiKhoan.TrangThai;
-                    taiKhoan.SanPhams = null;
                     taiKhoan.HoaDons = null;
                     taiKhoan.KhachHang = null;
                     taiKhoan.KhachHangId = null;

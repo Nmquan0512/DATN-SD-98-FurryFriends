@@ -14,9 +14,9 @@ namespace FurryFriends.API.Models
 
         [Required]
         public string Password { get; set; }
-
         [Required]
-        public DateTime NgayTaoTaiKhoan { get; set; }
+        public DateTime NgayTaoTaiKhoan { get; set
+; }
 
         public DateTime? NgayCapNhatCuoiCung { get; set; }
 
@@ -28,15 +28,12 @@ namespace FurryFriends.API.Models
         public virtual KhachHang? KhachHang { get; set; }
 
         public virtual NhanVien? NhanVien { get; set; }
-
-        public virtual ICollection<SanPham>? SanPhams { get; set; }
         public virtual ICollection<HoaDon>? HoaDons { get; set; }
 
         public TaiKhoan()
         {
             TaiKhoanId = Guid.NewGuid();
             TrangThai = true;
-            SanPhams = new List<SanPham>();
             HoaDons = new List<HoaDon>();
         }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

@@ -23,8 +23,9 @@ namespace FurryFriends.API.Services
             var list = await _repository.GetAllAsync();
             return list.Select(x => new SanPhamChiTietDTO
             {
-                Id = x.SanPhamChiTietId,
                 SanPhamChiTietId = x.SanPhamChiTietId,
+                SanPhamId = x.SanPhamId,
+                
                 KichCoId = x.KichCoId,
                 TenKichCo = x.KichCo?.TenKichCo,
                 MauSacId = x.MauSacId,
@@ -47,8 +48,9 @@ namespace FurryFriends.API.Services
 
             return new SanPhamChiTietDTO
             {
-                Id = item.SanPhamChiTietId,
                 SanPhamChiTietId = item.SanPhamChiTietId,
+                SanPhamId = item.SanPhamId,
+               
                 KichCoId = item.KichCoId,
                 TenKichCo = item.KichCo?.TenKichCo,
                 MauSacId = item.MauSacId,
@@ -69,7 +71,7 @@ namespace FurryFriends.API.Services
             var entity = new SanPhamChiTiet
             {
                 SanPhamChiTietId = Guid.NewGuid(),
-                SanPhamId = dto.Id,
+                SanPhamId = dto.SanPhamId,
                 KichCoId = dto.KichCoId,
                 MauSacId = dto.MauSacId,
                 Gia = dto.Gia,

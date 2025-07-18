@@ -10,5 +10,6 @@ namespace FurryFriends.Web.Services.IService
         Task<AnhDTO?> UploadAsync(IFormFile file, Guid sanPhamChiTietId);
         Task<bool> UpdateAsync(Guid id, AnhDTO dto);
         Task<bool> DeleteAsync(Guid id);
+
     }
 }

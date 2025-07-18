@@ -29,7 +29,7 @@ namespace FurryFriends.API.Services
             return list.Select(x => new AnhDTO
             {
                 AnhId = x.AnhId,
-                GiayChiTietId = x.SanPhamChiTietId,
+                SanPhamChiTietId = x.SanPhamChiTietId,
                 DuongDan = x.DuongDan,
                 TenAnh = x.TenAnh,
                 TrangThai = x.TrangThai
@@ -44,7 +44,7 @@ namespace FurryFriends.API.Services
             return new AnhDTO
             {
                 AnhId = anh.AnhId,
-                GiayChiTietId = anh.SanPhamChiTietId,
+                SanPhamChiTietId = anh.SanPhamChiTietId,
                 DuongDan = anh.DuongDan,
                 TenAnh = anh.TenAnh,
                 TrangThai = anh.TrangThai
@@ -90,7 +90,7 @@ namespace FurryFriends.API.Services
             entity.TenAnh = dto.TenAnh;
             entity.TrangThai = dto.TrangThai;
             entity.DuongDan = dto.DuongDan;
-            entity.SanPhamChiTietId = dto.GiayChiTietId;
+            entity.SanPhamChiTietId = dto.SanPhamChiTietId;
 
             _repository.Update(entity);
             await _repository.SaveAsync();

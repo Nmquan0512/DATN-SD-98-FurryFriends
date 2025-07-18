@@ -1,13 +1,10 @@
-﻿using FurryFriends.API.Repository;
-using FurryFriends.API.Repository.IRepository;
-using FurryFriends.Web.Service.IService;
+﻿using FurryFriends.Web.Service.IService;
 using FurryFriends.Web.Service;
 using FurryFriends.Web.Services;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Facebook;
-using FurryFriends.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,11 +24,6 @@ builder.Services.AddHttpClient<IGiamGiaService, GiamGiaService>(client =>
 });
 
 builder.Services.AddHttpClient<IDotGiamGiaService, DotGiamGiaService>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7289/api/");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
-builder.Services.AddHttpClient<ISanPhamRepository, SanPhamRepository>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/api/");
     client.Timeout = TimeSpan.FromSeconds(30);
@@ -102,10 +94,19 @@ builder.Services.AddHttpClient<IAnhService, AnhService>(client =>
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
 
-builder.Services.AddHttpClient<FurryFriends.Web.Services.IService.ISanPhamService, FurryFriends.Web.Services.SanPhamService>(client =>
+builder.Services.AddHttpClient<ISanPhamChiTietService, SanPhamChiTietService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
+// Cách đúng đã kiểm tra
+
+builder.Services.AddHttpClient<ISanPhamService, SanPhamService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
+
+// Cách đúng đã kiểm tra
+
 
 // Thêm cấu hình xác thực Google và Facebook
 builder.Services.AddAuthentication(options =>

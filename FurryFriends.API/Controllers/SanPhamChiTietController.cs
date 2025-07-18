@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace FurryFriends.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class SanPhamChiTietController : ControllerBase
     {
         private readonly ISanPhamChiTietService _service;
@@ -47,7 +47,7 @@ namespace FurryFriends.API.Controllers
             if (!success)
                 return StatusCode(500, "Tạo sản phẩm chi tiết thất bại.");
 
-            return Ok(new { message = "Tạo thành công" });
+            return Ok(new { message = "Tạo thành công",SanPhamChiTietId = success });
         }
 
         // PUT: api/SanPhamChiTiet/{id}
@@ -61,7 +61,7 @@ namespace FurryFriends.API.Controllers
             if (!success)
                 return NotFound(new { message = "Không tìm thấy sản phẩm chi tiết." });
 
-            return Ok(new { message = "Cập nhật thành công" });
+            return Ok(new { message = "Cập nhật thành công" , SanPhamChiTietId = success });
         }
 
         // DELETE: api/SanPhamChiTiet/{id}
@@ -72,7 +72,7 @@ namespace FurryFriends.API.Controllers
             if (!success)
                 return NotFound(new { message = "Không tìm thấy sản phẩm chi tiết để xóa." });
 
-            return Ok(new { message = "Xóa thành công" });
+            return Ok(new { message = "Xóa thành công" , SanPhamChiTietId =success });
         }
     }
 }

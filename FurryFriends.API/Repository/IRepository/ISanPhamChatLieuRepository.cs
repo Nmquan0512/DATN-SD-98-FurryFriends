@@ -1,5 +1,4 @@
 ﻿using FurryFriends.API.Models;
-using FurryFriends.API.Repositories;
 using System.Linq.Expressions;
 
 namespace FurryFriends.API.Repository.IRepository

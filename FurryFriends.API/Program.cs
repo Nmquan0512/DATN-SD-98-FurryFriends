@@ -1,13 +1,12 @@
 using FurryFriends.API.Data;
 using FurryFriends.API.Models;
-using FurryFriends.API.Repositories;
+
 using FurryFriends.API.Repository;
 using FurryFriends.API.Repository.IRepository;
 using FurryFriends.API.Services.IServices;
 using FurryFriends.API.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
-using FurryFriends.API.Repositories.IRepositories;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,14 +51,19 @@ builder.Services.AddScoped<IMauSacRepository, MauSacRepository>();
 // Trong FurryFriends.API.Program.cs
 builder.Services.AddScoped<IMauSacService, MauSacService>();
 builder.Services.AddScoped<IKichCoService, KichCoService>();
+builder.Services.AddScoped<
+    ISanPhamService,
+    SanPhamService>();
+
 // Trong FurryFriends.API.Program.cs
 builder.Services.AddScoped<IKichCoRepository, KichCoRepository>();
 builder.Services.AddScoped<IAnhService, AnhService>();
 // Trong FurryFriends.API.Program.cs
 builder.Services.AddScoped<IAnhRepository, AnhRepository>();
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
-// Trong FurryFriends.API.Program.cs
-builder.Services.AddScoped<ISanPhamService, SanPhamService>();
+
+builder.Services.AddScoped<ISanPhamChiTietRepository, SanPhamChiTietRepository>();
+builder.Services.AddScoped<ISanPhamChiTietService, SanPhamChiTietService>();
 builder.Services.AddScoped<IThongTinCaNhanService, ThongTinCaNhanService>();
 // Add CORS policy cho phép web admin truy cập API
 builder.Services.AddCors(options =>

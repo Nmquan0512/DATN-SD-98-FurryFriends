@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace FurryFriends.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class SanPhamsController : ControllerBase
     {
         private readonly ISanPhamService _sanPhamService;
@@ -17,7 +17,6 @@ namespace FurryFriends.API.Controllers
             _sanPhamService = sanPhamService;
         }
 
-        // GET: api/SanPham
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -32,18 +31,24 @@ namespace FurryFriends.API.Controllers
             }
         }
 
-        // GET: api/SanPham/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var sp = await _sanPhamService.GetByIdAsync(id);
-            if (sp == null)
-                return NotFound("Không tìm thấy sản phẩm!");
-
-            return Ok(sp);
+            try
+            {
+                var sp = await _sanPhamService.GetByIdAsync(id);
+                return Ok(sp);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi máy chủ: {ex.Message}");
+            }
         }
 
-        // POST: api/SanPham
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SanPhamDTO dto)
         {
@@ -61,17 +66,20 @@ namespace FurryFriends.API.Controllers
             }
         }
 
-        // PUT: api/SanPham/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] SanPhamDTO dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             try
             {
-                var updated = await _sanPhamService.UpdateAsync(id, dto);
-                if (!updated)
-                    return NotFound("Không tìm thấy sản phẩm!");
-
+                await _sanPhamService.UpdateAsync(id, dto);
                 return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -79,17 +87,17 @@ namespace FurryFriends.API.Controllers
             }
         }
 
-        // DELETE: api/SanPham/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                var deleted = await _sanPhamService.DeleteAsync(id);
-                if (!deleted)
-                    return NotFound("Không tìm thấy sản phẩm!");
-
+                await _sanPhamService.DeleteAsync(id);
                 return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -97,7 +105,6 @@ namespace FurryFriends.API.Controllers
             }
         }
 
-        // GET: api/SanPham/filter?loai=DoAn&page=1&pageSize=10
         [HttpGet("filter")]
         public async Task<IActionResult> GetFiltered(
             [FromQuery] string? loai,
@@ -111,37 +118,47 @@ namespace FurryFriends.API.Controllers
             {
                 var (data, total) = await _sanPhamService.GetFilteredAsync(loai, page, pageSize);
 
-                var response = new
+                return Ok(new
                 {
                     CurrentPage = page,
                     PageSize = pageSize,
                     TotalItems = total,
                     TotalPages = (int)Math.Ceiling((double)total / pageSize),
                     Items = data
-                };
-
-                return Ok(response);
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Lỗi khi lọc/phân trang sản phẩm: {ex.Message}");
+                return StatusCode(500, $"Lỗi khi lọc sản phẩm: {ex.Message}");
             }
         }
 
-        // GET: api/SanPham/total
         [HttpGet("total")]
         public async Task<IActionResult> GetTotalProducts()
         {
-            var total = await _sanPhamService.GetTotalProductsAsync();
-            return Ok(total);
+            try
+            {
+                var total = await _sanPhamService.GetTotalProductsAsync();
+                return Ok(total);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi khi lấy tổng số sản phẩm: {ex.Message}");
+            }
         }
 
-        // GET: api/SanPham/top-selling?top=5
         [HttpGet("top-selling")]
         public async Task<IActionResult> GetTopSellingProducts([FromQuery] int top = 5)
         {
-            var result = await _sanPhamService.GetTopSellingProductsAsync(top);
-            return Ok(result);
+            try
+            {
+                var result = await _sanPhamService.GetTopSellingProductsAsync(top);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi khi lấy sản phẩm bán chạy: {ex.Message}");
+            }
         }
     }
 }

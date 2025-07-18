@@ -1,0 +1,68 @@
+﻿@model List<IFormFile>
+
+@{
+    ViewData["Title"] = "Upload ảnh sản phẩm";
+}
+
+<h4 class="mt-4">📸 Upload ảnh sản phẩm</h4>
+<hr />
+
+<form asp-controller="Anh" asp-action="Upload" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <label for="SanPhamChiTietId" class="form-label">Chọn Sản phẩm Chi tiết:</label>
+        <select class="form-select" name="SanPhamChiTietId" required>
+            <option value="">-- Chọn --</option>
+            @* Render danh sách sản phẩm chi tiết nếu có *@
+            @if (ViewBag.SanPhamChiTietList != null)
+            {
+                foreach (var item in ViewBag.SanPhamChiTietList)
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="TenAnh" class="form-label">Tên ảnh:</label>
+        <input type="text" name="TenAnh" class="form-control" placeholder="Nhập tên ảnh (nếu có)" />
+    </div>
+
+    <div class="mb-3">
+        <label for="files" class="form-label">Chọn ảnh:</label>
+        <input type="file" name="files" multiple class="form-control" accept="image/*" required />
+    </div>
+
+    <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" name="TrangThai" value="true" id="trangThaiCheck" checked>
+        <label class="form-check-label" for="trangThaiCheck">
+            Ảnh hiển thị (Trạng thái: Bật)
+        </label>
+    </div>
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-success">Tải lên</button>
+    </div>
+</form>
+
+<!-- Hiển thị preview ảnh đã chọn -->
+<script>
+    document.querySelector('input[type="file"]').addEventListener('change', function (e) {
+        const files = e.target.files;
+        const previewDiv = document.getElementById('preview');
+        previewDiv.innerHTML = '';
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.style.maxWidth = '150px';
+                img.style.margin = '5px';
+                previewDiv.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+</script>
+
+<div id="preview" class="mt-3"></div>

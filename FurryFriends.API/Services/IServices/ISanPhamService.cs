@@ -10,10 +10,8 @@ namespace FurryFriends.API.Services.IServices
         Task<IEnumerable<SanPhamDTO>> GetAllAsync();
         Task<SanPhamDTO> GetByIdAsync(Guid id);
         Task<SanPhamDTO> CreateAsync(SanPhamDTO dto);
-        Task<bool> UpdateAsync(Guid id, SanPhamDTO dto);
-        Task<bool> DeleteAsync(Guid id);
-
-        // Phân trang + lọc
+        Task UpdateAsync(Guid id, SanPhamDTO dto);
+        Task DeleteAsync(Guid id);
         Task<(IEnumerable<SanPhamDTO> Data, int TotalCount)> GetFilteredAsync(string? loaiSanPham, int page, int pageSize);
         Task<int> GetTotalProductsAsync();
         Task<IEnumerable<SanPhamDTO>> GetTopSellingProductsAsync(int top);

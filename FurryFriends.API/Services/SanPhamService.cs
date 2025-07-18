@@ -25,41 +25,15 @@ namespace FurryFriends.API.Services
         public async Task<IEnumerable<SanPhamDTO>> GetAllAsync()
         {
             var list = await _repository.GetAllAsync();
-            return list.Select(x => new SanPhamDTO
-            {
-                SanPhamId = x.SanPhamId,
-                TenSanPham = x.TenSanPham,
-                ThuongHieuId = x.ThuongHieuId ?? Guid.Empty,
-                TenThuongHieu = x.ThuongHieu?.TenThuongHieu,
-                LoaiSanPham = x.SanPhamThanhPhans.Any() ? "DoAn" : "DoDung",
-                TenThanhPhans = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhan?.TenThanhPhan).ToList(),
-                TenChatLieus = x.SanPhamChatLieus?.Select(cl => cl.ChatLieu?.TenChatLieu).ToList(),
-                NgayTao = x.TaiKhoan?.NgayTaoTaiKhoan ?? DateTime.UtcNow,
-                NgaySua = x.TaiKhoan?.NgayCapNhatCuoiCung,
-                TrangThai = x.TrangThai
-            });
+            return list.Select(MapToDTO);
         }
 
         public async Task<SanPhamDTO> GetByIdAsync(Guid id)
         {
-            var sp = await _repository.GetByIdAsync(id);
-            if (sp == null) return null;
+            var sp = await _repository.GetByIdAsync(id)
+                ?? throw new KeyNotFoundException($"Không tìm thấy sản phẩm với ID {id}");
 
-            return new SanPhamDTO
-            {
-                SanPhamId = sp.SanPhamId,
-                TenSanPham = sp.TenSanPham,
-                ThuongHieuId = sp.ThuongHieuId ?? Guid.Empty,
-                TenThuongHieu = sp.ThuongHieu?.TenThuongHieu,
-                LoaiSanPham = sp.SanPhamThanhPhans.Any() ? "DoAn" : "DoDung",
-                ThanhPhanIds = sp.SanPhamThanhPhans?.Select(tp => tp.ThanhPhanId).ToList(),
-                ChatLieuIds = sp.SanPhamChatLieus?.Select(cl => cl.ChatLieuId).ToList(),
-                TenThanhPhans = sp.SanPhamThanhPhans?.Select(tp => tp.ThanhPhan?.TenThanhPhan).ToList(),
-                TenChatLieus = sp.SanPhamChatLieus?.Select(cl => cl.ChatLieu?.TenChatLieu).ToList(),
-                NgayTao = sp.TaiKhoan?.NgayTaoTaiKhoan ?? DateTime.UtcNow,
-                NgaySua = sp.TaiKhoan?.NgayCapNhatCuoiCung,
-                TrangThai = sp.TrangThai
-            };
+            return MapToDTO(sp);
         }
 
         public async Task<SanPhamDTO> CreateAsync(SanPhamDTO dto)
@@ -70,78 +44,86 @@ namespace FurryFriends.API.Services
                 TenSanPham = dto.TenSanPham,
                 ThuongHieuId = dto.ThuongHieuId,
                 TrangThai = dto.TrangThai,
-                TaiKhoanId = _context.TaiKhoans.First().TaiKhoanId, // TODO: truyền từ tài khoản đăng nhập
                 SanPhamThanhPhans = new List<SanPhamThanhPhan>(),
                 SanPhamChatLieus = new List<SanPhamChatLieu>()
             };
 
+            // Xử lý thành phần nếu là đồ ăn
             if (dto.LoaiSanPham == "DoAn" && dto.ThanhPhanIds != null)
             {
-                foreach (var id in dto.ThanhPhanIds)
+                foreach (var tpId in dto.ThanhPhanIds)
                 {
                     sanPham.SanPhamThanhPhans.Add(new SanPhamThanhPhan
                     {
                         SanPhamId = sanPham.SanPhamId,
-                        ThanhPhanId = id
+                        ThanhPhanId = tpId
                     });
                 }
             }
+            // Xử lý chất liệu nếu là đồ dùng
             else if (dto.LoaiSanPham == "DoDung" && dto.ChatLieuIds != null)
             {
-                foreach (var id in dto.ChatLieuIds)
+                foreach (var clId in dto.ChatLieuIds)
                 {
                     sanPham.SanPhamChatLieus.Add(new SanPhamChatLieu
                     {
                         SanPhamId = sanPham.SanPhamId,
-                        ChatLieuId = id
+                        ChatLieuId = clId
                     });
                 }
             }
 
             await _repository.AddAsync(sanPham);
-            await _repository.SaveAsync(); // Bổ sung dòng này để lưu vào DB
+            await _context.SaveChangesAsync();
+
             dto.SanPhamId = sanPham.SanPhamId;
             return dto;
         }
 
-        public async Task<bool> UpdateAsync(Guid id, SanPhamDTO dto)
+        public async Task UpdateAsync(Guid id, SanPhamDTO dto)
         {
-            var existing = await _repository.GetByIdAsync(id);
-            if (existing == null) return false;
+            var existing = await _repository.GetByIdAsync(id)
+                ?? throw new KeyNotFoundException($"Không tìm thấy sản phẩm với ID {id}");
 
             existing.TenSanPham = dto.TenSanPham;
             existing.ThuongHieuId = dto.ThuongHieuId;
             existing.TrangThai = dto.TrangThai;
 
-            existing.SanPhamThanhPhans?.Clear();
-            existing.SanPhamChatLieus?.Clear();
+            // Xóa quan hệ cũ
+            _context.SanPhamThanhPhans.RemoveRange(existing.SanPhamThanhPhans);
+            _context.SanPhamChatLieus.RemoveRange(existing.SanPhamChatLieus);
 
+            // Thêm quan hệ mới
             if (dto.LoaiSanPham == "DoAn" && dto.ThanhPhanIds != null)
             {
-                existing.SanPhamThanhPhans = dto.ThanhPhanIds.Select(tpId => new SanPhamThanhPhan
-                {
-                    SanPhamId = existing.SanPhamId,
-                    ThanhPhanId = tpId
-                }).ToList();
+                existing.SanPhamThanhPhans = dto.ThanhPhanIds
+                    .Select(tpId => new SanPhamThanhPhan
+                    {
+                        SanPhamId = id,
+                        ThanhPhanId = tpId
+                    }).ToList();
             }
             else if (dto.LoaiSanPham == "DoDung" && dto.ChatLieuIds != null)
             {
-                existing.SanPhamChatLieus = dto.ChatLieuIds.Select(clId => new SanPhamChatLieu
-                {
-                    SanPhamId = existing.SanPhamId,
-                    ChatLieuId = clId
-                }).ToList();
+                existing.SanPhamChatLieus = dto.ChatLieuIds
+                    .Select(clId => new SanPhamChatLieu
+                    {
+                        SanPhamId = id,
+                        ChatLieuId = clId
+                    }).ToList();
             }
 
             await _repository.UpdateAsync(existing);
-            return true;
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            if (!await _repository.ExistsAsync(id)) return false;
+            if (!await _repository.ExistsAsync(id))
+                throw new KeyNotFoundException($"Không tìm thấy sản phẩm với ID {id}");
+
             await _repository.DeleteAsync(id);
-            return true;
+            await _context.SaveChangesAsync();
         }
 
         public async Task<(IEnumerable<SanPhamDTO> Data, int TotalCount)> GetFilteredAsync(string? loaiSanPham, int page, int pageSize)
@@ -149,68 +131,63 @@ namespace FurryFriends.API.Services
             var all = await _repository.GetAllAsync();
 
             var filtered = all.Where(sp =>
-                string.IsNullOrEmpty(loaiSanPham)
-                || (loaiSanPham == "DoAn" && sp.SanPhamThanhPhans.Any())
-                || (loaiSanPham == "DoDung" && sp.SanPhamChatLieus.Any())
+                string.IsNullOrEmpty(loaiSanPham) ||
+                (loaiSanPham == "DoAn" && sp.SanPhamThanhPhans.Any()) ||
+                (loaiSanPham == "DoDung" && sp.SanPhamChatLieus.Any())
             );
 
             var totalCount = filtered.Count();
-
             var paged = filtered
-                .OrderByDescending(sp => sp.TaiKhoan?.NgayTaoTaiKhoan ?? DateTime.UtcNow)
+                .OrderByDescending(sp => sp.SanPhamId)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .Select(sp => new SanPhamDTO
-                {
-                    SanPhamId = sp.SanPhamId,
-                    TenSanPham = sp.TenSanPham,
-                    ThuongHieuId = sp.ThuongHieuId ?? Guid.Empty,
-                    TenThuongHieu = sp.ThuongHieu?.TenThuongHieu,
-                    LoaiSanPham = sp.SanPhamThanhPhans.Any() ? "DoAn" : "DoDung",
-                    TenThanhPhans = sp.SanPhamThanhPhans?.Select(tp => tp.ThanhPhan?.TenThanhPhan).ToList(),
-                    TenChatLieus = sp.SanPhamChatLieus?.Select(cl => cl.ChatLieu?.TenChatLieu).ToList(),
-                    NgayTao = sp.TaiKhoan?.NgayTaoTaiKhoan ?? DateTime.UtcNow,
-                    NgaySua = sp.TaiKhoan?.NgayCapNhatCuoiCung,
-                    TrangThai = sp.TrangThai
-                }).ToList();
+                .Select(MapToDTO);
 
             return (paged, totalCount);
         }
 
         public async Task<int> GetTotalProductsAsync()
         {
-            return await _repository.GetAllAsync().ContinueWith(t => t.Result.Count());
+            var all = await _repository.GetAllAsync();
+            return all.Count();
         }
 
         public async Task<IEnumerable<SanPhamDTO>> GetTopSellingProductsAsync(int top)
         {
-            // Lấy dữ liệu bán chạy dựa vào tổng số lượng bán trong HoaDonChiTiet
             var hoaDonChiTiets = await _context.HoaDonChiTiets
                 .GroupBy(ct => ct.SanPhamId)
-                .Select(g => new { SanPhamId = g.Key, TotalSold = g.Sum(x => x.SoLuongSanPham) })
+                .Select(g => new
+                {
+                    SanPhamId = g.Key,
+                    TotalSold = g.Sum(x => x.SoLuongSanPham)
+                })
                 .OrderByDescending(x => x.TotalSold)
                 .Take(top)
                 .ToListAsync();
 
-            var sanPhamIds = hoaDonChiTiets.Select(x => x.SanPhamId).ToList();
+            var ids = hoaDonChiTiets.Select(x => x.SanPhamId).ToList();
             var sanPhams = await _repository.GetAllAsync();
-            var topSanPhams = sanPhams.Where(sp => sanPhamIds.Contains(sp.SanPhamId)).ToList();
 
-            // Map sang DTO
-            var result = topSanPhams.Select(x => new SanPhamDTO
+            return sanPhams
+                .Where(sp => ids.Contains(sp.SanPhamId))
+                .Select(MapToDTO);
+        }
+
+        private static SanPhamDTO MapToDTO(SanPham x)
+        {
+            return new SanPhamDTO
             {
                 SanPhamId = x.SanPhamId,
                 TenSanPham = x.TenSanPham,
                 ThuongHieuId = x.ThuongHieuId ?? Guid.Empty,
                 TenThuongHieu = x.ThuongHieu?.TenThuongHieu,
                 LoaiSanPham = x.SanPhamThanhPhans.Any() ? "DoAn" : "DoDung",
+                ThanhPhanIds = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhanId).ToList(),
+                ChatLieuIds = x.SanPhamChatLieus?.Select(cl => cl.ChatLieuId).ToList(),
                 TenThanhPhans = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhan?.TenThanhPhan).ToList(),
                 TenChatLieus = x.SanPhamChatLieus?.Select(cl => cl.ChatLieu?.TenChatLieu).ToList(),
-                NgayTao = x.TaiKhoan?.NgayTaoTaiKhoan ?? DateTime.UtcNow,
-                NgaySua = x.TaiKhoan?.NgayCapNhatCuoiCung,
                 TrangThai = x.TrangThai
-            });
-            return result;
+            };
         }
     }
 }

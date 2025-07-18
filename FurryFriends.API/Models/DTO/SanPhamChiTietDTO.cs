@@ -6,8 +6,9 @@ namespace FurryFriends.API.Models.DTO
 {
     public class SanPhamChiTietDTO
     {
-        public Guid Id { get; set; } 
-        public Guid? SanPhamChiTietId { get; set; } 
+        
+        public Guid SanPhamChiTietId { get; set; }
+        public Guid SanPhamId { get; set; }
         public Guid MauSacId { get; set; }
         public string? TenSanPham { get; set; } 
         public string? TenMau { get; set; }

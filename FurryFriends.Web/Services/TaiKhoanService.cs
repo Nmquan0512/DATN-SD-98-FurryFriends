@@ -40,7 +40,6 @@ namespace FurryFriends.Web.Services
 
             taiKhoan.NhanVien = null;
             taiKhoan.KhachHang = null;
-            taiKhoan.SanPhams = null;
             taiKhoan.HoaDons = null;
 
             var response = await _httpClient.PostAsJsonAsync("TaiKhoanApi", taiKhoan);
@@ -67,7 +66,6 @@ namespace FurryFriends.Web.Services
 
             taiKhoan.NhanVien = null;
             taiKhoan.KhachHang = null;
-            taiKhoan.SanPhams = null;
             taiKhoan.HoaDons = null;
 
             if (!response.IsSuccessStatusCode)

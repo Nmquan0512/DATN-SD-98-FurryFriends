@@ -12,8 +12,6 @@ namespace FurryFriends.API.Models
         [Required]
         public string TenSanPham { get; set; }
 
-        //[Required]
-        public Guid? TaiKhoanId { get; set; }
 
         //[Required]
         public Guid? ThuongHieuId { get; set; }
@@ -21,8 +19,6 @@ namespace FurryFriends.API.Models
         [Required]
         public bool TrangThai { get; set; }
 
-        [ForeignKey("TaiKhoanId")]
-        public virtual TaiKhoan? TaiKhoan { get; set; }
 
         [ForeignKey("ThuongHieuId")]
         public virtual ThuongHieu? ThuongHieu { get; set; }

@@ -80,11 +80,6 @@ namespace FurryFriends.API.Data
 
         private void ConfigureSanPham(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<SanPham>()
-                .HasOne(sp => sp.TaiKhoan)
-                .WithMany(tk => tk.SanPhams)
-                .HasForeignKey(sp => sp.TaiKhoanId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<SanPham>()
                 .HasOne(sp => sp.ThuongHieu)

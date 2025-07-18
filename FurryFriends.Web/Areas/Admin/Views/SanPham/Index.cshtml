@@ -1,5 +1,7 @@
 @model IEnumerable<FurryFriends.API.Models.DTO.SanPhamDTO>
 
+@using Microsoft.AspNetCore.Mvc.Rendering
+
 @{
     ViewData["Title"] = "Quản lý sản phẩm";
     var totalCount = Model.Count();
@@ -40,7 +42,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="fw-bold">@ViewData["Title"]</h4>
-        <a asp-area="Admin" asp-action="Create" asp-controller="SanPham" class="btn btn-lg btn-primary shadow">
+        <a asp-area="Admin" asp-controller="SanPham" asp-action="Create" class="btn btn-lg btn-primary shadow">
             <i class="fas fa-plus me-2"></i>Thêm mới
         </a>
     </div>
@@ -52,8 +54,8 @@
                 <label class="form-label">Trạng thái</label>
                 <select id="filterTrangThai" class="form-select">
                     <option value="">Tất cả</option>
-                    <option value="1">Đang hoạt động</option>
-                    <option value="0">Không hoạt động</option>
+                    <option value="true">Đang hoạt động</option>
+                    <option value="false">Không hoạt động</option>
                 </select>
             </div>
             <div class="col-md-2">
@@ -68,7 +70,7 @@
                 <label class="form-label">Thương hiệu</label>
                 <select id="filterThuongHieu" class="form-select">
                     <option value="">Tất cả</option>
-                    @foreach (var th in ViewBag.ThuongHieus ?? new List<SelectListItem>())
+                    @foreach (SelectListItem th in ViewBag.ThuongHieus ?? new List<SelectListItem>())
                     {
                         <option value="@th.Value">@th.Text</option>
                     }
@@ -78,7 +80,7 @@
                 <label class="form-label">Chất liệu</label>
                 <select id="filterChatLieu" class="form-select">
                     <option value="">Tất cả</option>
-                    @foreach (var cl in ViewBag.ChatLieus ?? new List<SelectListItem>())
+                    @foreach (SelectListItem cl in ViewBag.ChatLieus ?? new List<SelectListItem>())
                     {
                         <option value="@cl.Value">@cl.Text</option>
                     }
@@ -88,7 +90,7 @@
                 <label class="form-label">Thành phần</label>
                 <select id="filterThanhPhan" class="form-select">
                     <option value="">Tất cả</option>
-                    @foreach (var tp in ViewBag.ThanhPhans ?? new List<SelectListItem>())
+                    @foreach (SelectListItem tp in ViewBag.ThanhPhans ?? new List<SelectListItem>())
                     {
                         <option value="@tp.Value">@tp.Text</option>
                     }
@@ -105,7 +107,7 @@
         </div>
     </div>
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm" id="sanPhamTableContainer">
         <div class="card-body">
             <div class="table-responsive">
                 <table id="sanPhamTable" class="table table-hover align-middle">
@@ -173,10 +175,10 @@
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <a asp-area="Admin" asp-action="Edit" asp-controller="SanPham" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                        <a asp-area="Admin" asp-controller="SanPham" asp-action="Edit" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-primary action-btn" title="Chỉnh sửa">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a asp-area="Admin" asp-action="Delete" asp-controller="SanPham" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-danger" title="Xoá">
+                                        <a asp-area="Admin" asp-controller="SanPham" asp-action="Delete" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-danger action-btn" title="Xoá" onclick="return confirm('Bạn có chắc muốn xoá sản phẩm này?');">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                         <a asp-area="Admin" asp-controller="SanPhamChiTiet" asp-action="Index" asp-route-sanPhamId="@item.SanPhamId" class="btn btn-sm btn-outline-secondary" title="Chi tiết sản phẩm">
@@ -194,9 +196,8 @@
     </div>
 </div>
 
-
-
 @section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.min.css" />
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
@@ -213,42 +214,54 @@
                 pageLength: 10,
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]],
                 order: [[1, 'asc']],
-                columnDefs: [ { orderable: false, targets: [0, 10] } ],
+                columnDefs: [{ orderable: false, targets: [0, 10] }],
                 initComplete: function () {
                     if (window.adminLoading) {
                         window.adminLoading.hideTableLoading('#sanPhamTableContainer');
                     }
                 }
             });
+
             // Lọc theo dropdown và ngày
             $('#filterTrangThai, #filterLoai, #filterThuongHieu, #filterChatLieu, #filterThanhPhan, #filterNgayTu, #filterNgayDen').on('change input', function () {
                 table.draw();
             });
+
             $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
                 if (settings.nTable.id !== 'sanPhamTable') return true;
+
                 var trangThai = $('#filterTrangThai').val();
                 var loai = $('#filterLoai').val();
-                var thuongHieu = $('#filterThuongHieu option:selected').text();
-                var chatLieu = $('#filterChatLieu option:selected').text();
-                var thanhPhan = $('#filterThanhPhan option:selected').text();
+                var thuongHieu = $('#filterThuongHieu').val();
+                var chatLieu = $('#filterChatLieu').val();
+                var thanhPhan = $('#filterThanhPhan').val();
                 var ngayTu = $('#filterNgayTu').val();
                 var ngayDen = $('#filterNgayDen').val();
+
                 var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(9) .badge').text().trim();
                 var rowLoaiGoc = $(table.row(dataIndex).node()).find('.loai-goc').text().trim();
                 var rowThuongHieu = data[6];
                 var rowChatLieu = data[4];
                 var rowThanhPhan = data[5];
                 var rowNgayTao = data[7];
+
                 // Trạng thái
-                if (trangThai && ((trangThai === '1' && rowTrangThai !== 'Đang hoạt động') || (trangThai === '0' && rowTrangThai !== 'Không hoạt động'))) return false;
+                if (trangThai && trangThai !== '' &&
+                    ((trangThai === 'true' && rowTrangThai !== 'Đang hoạt động') ||
+                        (trangThai === 'false' && rowTrangThai !== 'Không hoạt động'))) return false;
+
                 // Loại
                 if (loai && loai !== '' && rowLoaiGoc !== loai) return false;
+
                 // Thương hiệu
-                if (thuongHieu && thuongHieu !== 'Tất cả' && thuongHieu !== '' && !rowThuongHieu.includes(thuongHieu)) return false;
+                if (thuongHieu && thuongHieu !== '' && thuongHieu !== 'Tất cả' && !rowThuongHieu.includes(thuongHieu)) return false;
+
                 // Chất liệu
-                if (chatLieu && chatLieu !== 'Tất cả' && chatLieu !== '' && !rowChatLieu.includes(chatLieu)) return false;
+                if (chatLieu && chatLieu !== '' && chatLieu !== 'Tất cả' && !rowChatLieu.includes(chatLieu)) return false;
+
                 // Thành phần
-                if (thanhPhan && thanhPhan !== 'Tất cả' && thanhPhan !== '' && !rowThanhPhan.includes(thanhPhan)) return false;
+                if (thanhPhan && thanhPhan !== '' && thanhPhan !== 'Tất cả' && !rowThanhPhan.includes(thanhPhan)) return false;
+
                 // Ngày tạo
                 if (ngayTu) {
                     var dateTu = moment(ngayTu, 'YYYY-MM-DD');
@@ -262,22 +275,25 @@
                 }
                 return true;
             });
-            $('.action-btn').on('click', function (e) {
+
+            $('.action-btn').on('click', function () {
                 if (window.adminLoading) {
                     window.adminLoading.showLoadingWithMessage('Đang xử lý...');
                 }
             });
         });
     </script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.min.css" />
+
     <style>
         /* Sát footer phân trang với bảng */
         .dataTables_wrapper .dataTables_paginate {
             margin-top: 0 !important;
         }
+
         .dataTables_wrapper .dataTables_info {
             margin-bottom: 0 !important;
         }
+
         .dataTables_wrapper .row:last-child {
             margin-bottom: 0 !important;
         }
@@ -286,4 +302,4 @@
             padding-bottom: 24px;
         }
     </style>
-} 
+}
