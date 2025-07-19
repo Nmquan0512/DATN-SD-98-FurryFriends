@@ -39,16 +39,16 @@ namespace FurryFriends.API.Controllers
 
         // POST: api/Anh/upload
         [HttpPost("upload")]
-        public async Task<IActionResult> Upload([FromForm] IFormFile file, [FromForm] Guid sanPhamChiTietId)
+        public async Task<IActionResult> Upload([FromForm] IFormFile file, [FromForm] Guid? sanPhamChiTietId = null)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("Vui lòng chọn file ảnh.");
 
-            var success = await _service.UploadAsync(file, sanPhamChiTietId);
-            if (!success)
+            var result = await _service.UploadAsync(file, sanPhamChiTietId);
+            if (result == null)
                 return BadRequest("Không thể upload ảnh.");
 
-            return Ok(new { Message = "Upload thành công" });
+            return Ok(result);
         }
 
         // PUT: api/Anh/{id}

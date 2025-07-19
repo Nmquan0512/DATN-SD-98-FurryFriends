@@ -87,6 +87,41 @@ namespace FurryFriends.API.Services
             return true;
         }
 
+        public async Task<SanPhamChiTietDTO?> CreateAndReturnAsync(SanPhamChiTietDTO dto)
+        {
+            var entity = new SanPhamChiTiet
+            {
+                SanPhamChiTietId = Guid.NewGuid(),
+                SanPhamId = dto.SanPhamId,
+                KichCoId = dto.KichCoId,
+                MauSacId = dto.MauSacId,
+                Gia = dto.Gia,
+                SoLuong = dto.SoLuong,
+                MoTa = dto.MoTa,
+                AnhId = dto.AnhId,
+                NgayTao = DateTime.Now,
+                TrangThai = dto.TrangThai ?? 1
+            };
+
+            await _repository.AddAsync(entity);
+            await _repository.SaveAsync();
+
+            // Map lại sang DTO
+            return new SanPhamChiTietDTO
+            {
+                SanPhamChiTietId = entity.SanPhamChiTietId,
+                SanPhamId = entity.SanPhamId,
+                KichCoId = entity.KichCoId,
+                MauSacId = entity.MauSacId,
+                Gia = entity.Gia,
+                SoLuong = entity.SoLuong,
+                MoTa = entity.MoTa,
+                AnhId = entity.AnhId,
+                NgayTao = entity.NgayTao,
+                TrangThai = entity.TrangThai
+            };
+        }
+
         public async Task<bool> UpdateAsync(Guid id, SanPhamChiTietDTO dto)
         {
             var entity = await _repository.GetByIdAsync(id);

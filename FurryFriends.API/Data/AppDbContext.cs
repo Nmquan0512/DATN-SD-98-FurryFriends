@@ -14,7 +14,7 @@ namespace FurryFriends.API.Data
             if (!optionsBuilder.IsConfigured)
             {
                 //optionsBuilder.UseSqlServer("Data Source=ANH2005\\SQLEXPRESS;Initial Catalog=duantn;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
-                optionsBuilder.UseSqlServer("Data Source=DELL\\SQLEXPRESS;Initial Catalog=DATN;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Data Source=XCBA2\\SQLEXPRESS;Initial Catalog=DATN;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
             }
         }
 
@@ -54,6 +54,44 @@ namespace FurryFriends.API.Data
             ConfigureHoaDon(modelBuilder);
             ConfigureDotGiamGia(modelBuilder);
             ConfigureSanPhamThanhPhanChatLieu(modelBuilder);
+
+            // Seed admin account
+            modelBuilder.Entity<TaiKhoan>().HasData(new TaiKhoan
+            {
+                TaiKhoanId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                UserName = "admin",
+                Password = "123456",
+                NgayTaoTaiKhoan = DateTime.UtcNow,
+                TrangThai = true
+            });
+
+            // Seed admin role
+            modelBuilder.Entity<ChucVu>().HasData(new ChucVu
+            {
+                ChucVuId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                TenChucVu = "admin",
+                MoTaChucVu = "Quản trị viên hệ thống",
+                TrangThai = true,
+                NgayTao = DateTime.UtcNow,
+                NgayCapNhat = DateTime.UtcNow
+            });
+
+            // Seed admin employee
+            modelBuilder.Entity<NhanVien>().HasData(new NhanVien
+            {
+                NhanVienId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                TaiKhoanId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                HoVaTen = "Admin hệ thống",
+                NgaySinh = new DateTime(1990, 1, 1),
+                DiaChi = "Hà Nội",
+                SDT = "0123456789",
+                Email = "admin@furryfriends.local",
+                GioiTinh = "Nam",
+                ChucVuId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                TrangThai = true,
+                NgayTao = DateTime.UtcNow,
+                NgayCapNhat = DateTime.UtcNow
+            });
         }
 
         private void ConfigureTaiKhoan(ModelBuilder modelBuilder)
@@ -80,12 +118,17 @@ namespace FurryFriends.API.Data
 
         private void ConfigureSanPham(ModelBuilder modelBuilder)
         {
-
             modelBuilder.Entity<SanPham>()
                 .HasOne(sp => sp.ThuongHieu)
                 .WithMany(th => th.SanPhams)
                 .HasForeignKey(sp => sp.ThuongHieuId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<SanPham>()
+                .HasMany(sp => sp.SanPhamChiTiets)
+                .WithOne(spct => spct.SanPham)
+                .HasForeignKey(spct => spct.SanPhamId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<SanPhamChiTiet>()
                 .Property(spct => spct.Gia)

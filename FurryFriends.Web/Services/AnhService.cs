@@ -31,7 +31,7 @@ namespace FurryFriends.Web.Services
             return null;
         }
 
-        public async Task<AnhDTO?> UploadAsync(IFormFile file, Guid sanPhamChiTietId)
+        public async Task<AnhDTO?> UploadAsync(IFormFile file, Guid? sanPhamChiTietId = null)
         {
             if (file == null || file.Length == 0)
                 return null;
@@ -41,7 +41,8 @@ namespace FurryFriends.Web.Services
             streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
 
             content.Add(streamContent, "file", file.FileName);
-            content.Add(new StringContent(sanPhamChiTietId.ToString()), "sanPhamChiTietId");
+            if (sanPhamChiTietId != null)
+                content.Add(new StringContent(sanPhamChiTietId.ToString()), "sanPhamChiTietId");
 
             var response = await _httpClient.PostAsync($"{BaseUrl}/upload", content);
             if (!response.IsSuccessStatusCode) return null;

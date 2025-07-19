@@ -9,21 +9,6 @@
 
 <form asp-controller="Anh" asp-action="Upload" method="post" enctype="multipart/form-data">
     <div class="mb-3">
-        <label for="SanPhamChiTietId" class="form-label">Chọn Sản phẩm Chi tiết:</label>
-        <select class="form-select" name="SanPhamChiTietId" required>
-            <option value="">-- Chọn --</option>
-            @* Render danh sách sản phẩm chi tiết nếu có *@
-            @if (ViewBag.SanPhamChiTietList != null)
-            {
-                foreach (var item in ViewBag.SanPhamChiTietList)
-                {
-                    <option value="@item.Value">@item.Text</option>
-                }
-            }
-        </select>
-    </div>
-
-    <div class="mb-3">
         <label for="TenAnh" class="form-label">Tên ảnh:</label>
         <input type="text" name="TenAnh" class="form-control" placeholder="Nhập tên ảnh (nếu có)" />
     </div>

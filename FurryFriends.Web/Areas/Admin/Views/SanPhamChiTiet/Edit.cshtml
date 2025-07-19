@@ -1,0 +1,122 @@
+@model FurryFriends.Web.ViewModels.SanPhamChiTietCreateViewModel
+@{
+    ViewData["Title"] = "Sửa biến thể sản phẩm";
+    var anhList = ViewBag.AnhList as IEnumerable<SelectListItem>;
+}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+<div class="card shadow-sm mt-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Sửa biến thể sản phẩm</h4>
+    </div>
+    <div class="card-body">
+        <form asp-area="Admin" asp-controller="SanPhamChiTiet" asp-action="Edit" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="SanPhamChiTietId" />
+            <input type="hidden" asp-for="SanPhamId" value="@ViewBag.SanPhamId" />
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Kích cỡ <span class="text-danger">*</span></label>
+                    <select asp-for="KichCoId" class="form-control" required asp-items="ViewBag.KichCoList">
+                        <option value="">-- Chọn kích cỡ --</option>
+                    </select>
+                    <span asp-validation-for="KichCoId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Màu sắc <span class="text-danger">*</span></label>
+                    <select asp-for="MauSacId" class="form-control" required asp-items="ViewBag.MauSacList">
+                        <option value="">-- Chọn màu sắc --</option>
+                    </select>
+                    <span asp-validation-for="MauSacId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Giá bán <span class="text-danger">*</span></label>
+                    <input asp-for="GiaBan" type="number" class="form-control" min="0" required />
+                    <span asp-validation-for="GiaBan" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Số lượng tồn <span class="text-danger">*</span></label>
+                    <input asp-for="SoLuongTon" type="number" class="form-control" min="0" required />
+                    <span asp-validation-for="SoLuongTon" class="text-danger"></span>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Mô tả</label>
+                    <input asp-for="MoTa" class="form-control" placeholder="Mô tả biến thể" />
+                    <span asp-validation-for="MoTa" class="text-danger"></span>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label">Ảnh</label>
+                    <div class="d-flex align-items-center gap-3">
+                        <button type="button" class="btn btn-outline-primary" onclick="openAnhModal()">
+                            <i class="fas fa-image"></i> Chọn ảnh
+                        </button>
+                        <input type="hidden" asp-for="AnhId" id="AnhId" />
+                        <div id="anhPreview" class="ms-2">
+                            @if (!string.IsNullOrEmpty(Model.DuongDan))
+                            {
+                                <img src="https://localhost:7289@(Model.DuongDan)" style="max-width:80px;max-height:80px;object-fit:cover;border-radius:8px;box-shadow:0 2px 6px #0001;" />
+                            }
+                        </div>
+                    </div>
+                    <span asp-validation-for="AnhId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Trạng thái</label>
+                    <select asp-for="TrangThai" class="form-control">
+                        <option value="1">Đang bán</option>
+                        <option value="0">Ngưng hoạt động</option>
+                    </select>
+                    <span asp-validation-for="TrangThai" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary btn-lg px-4">
+                    <i class="fas fa-save"></i> Lưu
+                </button>
+                <a asp-action="Index" asp-route-sanPhamId="@ViewBag.SanPhamId" class="btn btn-secondary btn-lg ms-2">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Modal chọn ảnh -->
+<div class="modal fade" id="anhModal" tabindex="-1" aria-labelledby="anhModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="anhModalLabel">Chọn ảnh cho biến thể</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    @if (anhList != null)
+                    {
+                        foreach (var anh in anhList)
+                        {
+                            <div class="col-3 mb-3">
+                                <img src="https://localhost:7289@(anh.Text)" class="img-thumbnail anh-modal-img" style="cursor:pointer;max-height:120px;object-fit:cover;" data-anh-id="@anh.Value" data-duongdan="@anh.Text" onclick="selectAnh(this)" />
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        function openAnhModal() {
+            var modal = new bootstrap.Modal(document.getElementById('anhModal'));
+            modal.show();
+        }
+        function selectAnh(img) {
+            var anhId = img.getAttribute('data-anh-id');
+            var duongDan = img.getAttribute('data-duongdan');
+            document.getElementById('AnhId').value = anhId;
+            var preview = document.getElementById('anhPreview');
+            preview.innerHTML = `<img src='https://localhost:7289${duongDan}' style='max-width:80px;max-height:80px;object-fit:cover;border-radius:8px;box-shadow:0 2px 6px #0001;' />`;
+            var modal = bootstrap.Modal.getInstance(document.getElementById('anhModal'));
+            modal.hide();
+        }
+    </script>
+} 

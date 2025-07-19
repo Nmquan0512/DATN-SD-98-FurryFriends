@@ -7,7 +7,7 @@ namespace FurryFriends.Web.Services.IService
     {
         Task<IEnumerable<AnhDTO>> GetAllAsync();
         Task<AnhDTO?> GetByIdAsync(Guid id);
-        Task<AnhDTO?> UploadAsync(IFormFile file, Guid sanPhamChiTietId);
+        Task<AnhDTO?> UploadAsync(IFormFile file, Guid? sanPhamChiTietId = null);
         Task<bool> UpdateAsync(Guid id, AnhDTO dto);
         Task<bool> DeleteAsync(Guid id);
 

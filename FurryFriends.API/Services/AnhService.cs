@@ -51,10 +51,10 @@ namespace FurryFriends.API.Services
             };
         }
 
-        public async Task<bool> UploadAsync(IFormFile file, Guid sanPhamChiTietId)
+        public async Task<AnhDTO?> UploadAsync(IFormFile file, Guid? sanPhamChiTietId = null)
         {
             if (file == null || file.Length == 0)
-                return false;
+                return null;
 
             var uploadsFolder = Path.Combine(_env.WebRootPath ?? "wwwroot", "images");
             if (!Directory.Exists(uploadsFolder))
@@ -71,7 +71,7 @@ namespace FurryFriends.API.Services
             var anh = new Anh
             {
                 AnhId = Guid.NewGuid(),
-                SanPhamChiTietId = sanPhamChiTietId,
+                SanPhamChiTietId = sanPhamChiTietId ?? Guid.Empty,
                 DuongDan = $"/images/{fileName}",
                 TenAnh = Path.GetFileNameWithoutExtension(file.FileName),
                 TrangThai = true
@@ -79,7 +79,15 @@ namespace FurryFriends.API.Services
 
             await _repository.AddAsync(anh);
             await _repository.SaveAsync();
-            return true;
+
+            return new AnhDTO
+            {
+                AnhId = anh.AnhId,
+                SanPhamChiTietId = anh.SanPhamChiTietId,
+                DuongDan = anh.DuongDan,
+                TenAnh = anh.TenAnh,
+                TrangThai = anh.TrangThai
+            };
         }
 
         public async Task<bool> UpdateAsync(Guid id, AnhDTO dto)

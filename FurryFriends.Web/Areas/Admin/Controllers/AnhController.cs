@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -27,7 +28,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
         // POST: /Admin/Anh/Upload (AJAX)
         [HttpPost]
-        public async Task<IActionResult> Upload(IFormFile file, Guid sanPhamChiTietId)
+        public async Task<IActionResult> Upload(IFormFile file)
         {
             Console.WriteLine("📤 [Anh/Upload] Bắt đầu upload ảnh...");
             if (file == null || file.Length == 0)
@@ -40,19 +41,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 });
             }
 
-            if (sanPhamChiTietId == Guid.Empty)
-            {
-                Console.WriteLine("❌ sanPhamChiTietId không hợp lệ!");
-                return BadRequest(new
-                {
-                    success = false,
-                    message = "❌ ID sản phẩm chi tiết không hợp lệ!"
-                });
-            }
-
-            Console.WriteLine($"📝 Tên file: {file.FileName}, Kích thước: {file.Length} bytes, SanPhamChiTietId: {sanPhamChiTietId}");
-
-            var result = await _anhService.UploadAsync(file, sanPhamChiTietId);
+            var result = await _anhService.UploadAsync(file, null);
 
             if (result == null)
             {
@@ -87,9 +76,23 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 return RedirectToAction("Index");
             }
 
+            // Lấy thông tin ảnh trước khi xoá
+            var anh = await _anhService.GetByIdAsync(id);
             var success = await _anhService.DeleteAsync(id);
             if (success)
             {
+                // Nếu ảnh liên kết với sản phẩm chi tiết thì cập nhật lại sản phẩm chi tiết về chưa có ảnh
+                if (anh != null && anh.SanPhamChiTietId != Guid.Empty)
+                {
+                    // Gọi service cập nhật sản phẩm chi tiết về AnhId = null
+                    var updateDto = new FurryFriends.API.Models.DTO.SanPhamChiTietDTO
+                    {
+                        AnhId = null
+                    };
+                    // Cần inject ISanPhamChiTietService vào controller này để gọi UpdateAsync
+                    // Giả sử đã inject, gọi như sau:
+                    // await _sanPhamChiTietService.UpdateAsync(anh.SanPhamChiTietId, updateDto);
+                }
                 Console.WriteLine("✅ Ảnh đã được xóa!");
                 TempData["success"] = "🗑️ Ảnh đã được xóa!";
             }

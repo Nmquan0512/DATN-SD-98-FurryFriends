@@ -51,7 +51,8 @@ namespace FurryFriends.Web.Services
                 throw new KeyNotFoundException($"Không tìm thấy sản phẩm với ID {id}");
 
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<SanPhamDTO>() ?? throw new Exception("Cập nhật sản phẩm thất bại");
+            // Không đọc JSON khi API trả về rỗng
+            return dto;
         }
         public async Task<bool> DeleteAsync(Guid id)
         {

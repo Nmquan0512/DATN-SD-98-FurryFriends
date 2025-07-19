@@ -3,6 +3,7 @@ using FurryFriends.API.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using System.Linq; // Added for LastOrDefault
 
 namespace FurryFriends.API.Controllers
 {
@@ -43,11 +44,11 @@ namespace FurryFriends.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var success = await _service.CreateAsync(dto);
-            if (!success)
+            var created = await _service.CreateAndReturnAsync(dto);
+            if (created == null)
                 return StatusCode(500, "Tạo sản phẩm chi tiết thất bại.");
 
-            return Ok(new { message = "Tạo thành công",SanPhamChiTietId = success });
+            return Ok(created);
         }
 
         // PUT: api/SanPhamChiTiet/{id}

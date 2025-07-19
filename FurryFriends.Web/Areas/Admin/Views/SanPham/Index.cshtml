@@ -13,9 +13,9 @@
 {
     <div class="alert alert-success">@TempData["success"]</div>
 }
-@if (TempData["error"] != null)
+@if (TempData["Error"] != null)
 {
-    <div class="alert alert-danger">@TempData["error"]</div>
+    <div class="alert alert-danger">@TempData["Error"]</div>
 }
 
 <div class="container-fluid px-4 py-4">
@@ -96,14 +96,6 @@
                     }
                 </select>
             </div>
-            <div class="col-md-2">
-                <label class="form-label">Từ ngày</label>
-                <input type="date" id="filterNgayTu" class="form-control" />
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Đến ngày</label>
-                <input type="date" id="filterNgayDen" class="form-control" />
-            </div>
         </div>
     </div>
 
@@ -121,7 +113,6 @@
                             <th>Thành phần</th>
                             <th>Thương hiệu</th>
                             <th>Ngày tạo</th>
-                            <th>Ngày sửa</th>
                             <th>Trạng thái</th>
                             <th>Hành động</th>
                         </tr>
@@ -162,7 +153,6 @@
                                 </td>
                                 <td>@item.TenThuongHieu</td>
                                 <td>@item.NgayTao.ToString("dd/MM/yyyy")</td>
-                                <td>@(item.NgaySua.HasValue ? item.NgaySua.Value.ToString("dd/MM/yyyy") : "-")</td>
                                 <td>
                                     @if (item.TrangThai)
                                     {
@@ -204,84 +194,145 @@
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
     <script>
-        $(document).ready(function () {
+$(document).ready(function () {
+    if (window.adminLoading) {
+        window.adminLoading.showTableLoading('#sanPhamTableContainer');
+    }
+    var table = $('#sanPhamTable').DataTable({
+        language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json' },
+        responsive: true,
+        pageLength: 10,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]],
+        order: [[1, 'asc']],
+        // Sửa lại targets: bảng có 10 cột (index 0-9), cột "Hành động" là index 9
+        columnDefs: [{ orderable: false, targets: [0, 9] }],
+        initComplete: function () {
             if (window.adminLoading) {
-                window.adminLoading.showTableLoading('#sanPhamTableContainer');
+                window.adminLoading.hideTableLoading('#sanPhamTableContainer');
             }
-            var table = $('#sanPhamTable').DataTable({
-                language: { url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/vi.json' },
-                responsive: true,
-                pageLength: 10,
-                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]],
-                order: [[1, 'asc']],
-                columnDefs: [{ orderable: false, targets: [0, 10] }],
-                initComplete: function () {
-                    if (window.adminLoading) {
-                        window.adminLoading.hideTableLoading('#sanPhamTableContainer');
-                    }
-                }
-            });
+        }
+    });
 
-            // Lọc theo dropdown và ngày
-            $('#filterTrangThai, #filterLoai, #filterThuongHieu, #filterChatLieu, #filterThanhPhan, #filterNgayTu, #filterNgayDen').on('change input', function () {
-                table.draw();
-            });
+    // Lọc theo dropdown và ngày
+    $('#filterTrangThai, #filterLoai, #filterThuongHieu, #filterChatLieu, #filterThanhPhan').on('change', function () {
+        table.draw();
+    });
 
-            $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-                if (settings.nTable.id !== 'sanPhamTable') return true;
+    $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+        if (settings.nTable.id !== 'sanPhamTable') return true;
 
-                var trangThai = $('#filterTrangThai').val();
-                var loai = $('#filterLoai').val();
-                var thuongHieu = $('#filterThuongHieu').val();
-                var chatLieu = $('#filterChatLieu').val();
-                var thanhPhan = $('#filterThanhPhan').val();
-                var ngayTu = $('#filterNgayTu').val();
-                var ngayDen = $('#filterNgayDen').val();
+        var trangThai = $('#filterTrangThai').val();
+        var loai = $('#filterLoai').val();
+        var thuongHieu = $('#filterThuongHieu').val();
+        var chatLieu = $('#filterChatLieu').val();
+        var thanhPhan = $('#filterThanhPhan').val();
 
-                var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(9) .badge').text().trim();
-                var rowLoaiGoc = $(table.row(dataIndex).node()).find('.loai-goc').text().trim();
-                var rowThuongHieu = data[6];
-                var rowChatLieu = data[4];
-                var rowThanhPhan = data[5];
-                var rowNgayTao = data[7];
+        var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(8) .badge').text().trim();
+        var rowLoaiGoc = $(table.row(dataIndex).node()).find('.loai-goc').text().trim();
+        var rowThuongHieu = data[6];
+        var rowChatLieu = data[4];
+        var rowThanhPhan = data[5];
 
-                // Trạng thái
-                if (trangThai && trangThai !== '' &&
-                    ((trangThai === 'true' && rowTrangThai !== 'Đang hoạt động') ||
-                        (trangThai === 'false' && rowTrangThai !== 'Không hoạt động'))) return false;
-
-                // Loại
-                if (loai && loai !== '' && rowLoaiGoc !== loai) return false;
-
-                // Thương hiệu
-                if (thuongHieu && thuongHieu !== '' && thuongHieu !== 'Tất cả' && !rowThuongHieu.includes(thuongHieu)) return false;
-
-                // Chất liệu
-                if (chatLieu && chatLieu !== '' && chatLieu !== 'Tất cả' && !rowChatLieu.includes(chatLieu)) return false;
-
-                // Thành phần
-                if (thanhPhan && thanhPhan !== '' && thanhPhan !== 'Tất cả' && !rowThanhPhan.includes(thanhPhan)) return false;
-
-                // Ngày tạo
-                if (ngayTu) {
-                    var dateTu = moment(ngayTu, 'YYYY-MM-DD');
-                    var dateRow = moment(rowNgayTao, 'DD/MM/YYYY');
-                    if (!dateRow.isValid() || dateRow.isBefore(dateTu, 'day')) return false;
-                }
-                if (ngayDen) {
-                    var dateDen = moment(ngayDen, 'YYYY-MM-DD');
-                    var dateRow = moment(rowNgayTao, 'DD/MM/YYYY');
-                    if (!dateRow.isValid() || dateRow.isAfter(dateDen, 'day')) return false;
-                }
-                return true;
-            });
-
-            $('.action-btn').on('click', function () {
-                if (window.adminLoading) {
-                    window.adminLoading.showLoadingWithMessage('Đang xử lý...');
-                }
-            });
+        // Debug logging
+        console.log('=== FILTER DEBUG ===');
+        console.log('Filter values:', {
+            trangThai: trangThai,
+            loai: loai,
+            thuongHieu: thuongHieu,
+            chatLieu: chatLieu,
+            thanhPhan: thanhPhan
         });
+        console.log('Row data:', {
+            rowTrangThai: rowTrangThai,
+            rowLoaiGoc: rowLoaiGoc,
+            rowThuongHieu: rowThuongHieu,
+            rowChatLieu: rowChatLieu,
+            rowThanhPhan: rowThanhPhan
+        });
+
+        // Trạng thái
+        if (trangThai && trangThai !== '' &&
+            ((trangThai === 'true' && rowTrangThai !== 'Đang hoạt động') ||
+                (trangThai === 'false' && rowTrangThai !== 'Không hoạt động'))) {
+            console.log('Filtered out by status');
+            return false;
+        }
+
+        // Loại
+        if (loai && loai !== '' && rowLoaiGoc !== loai) {
+            console.log('Filtered out by type');
+            return false;
+        }
+
+        // Thương hiệu - so sánh với tên thương hiệu
+        if (thuongHieu && thuongHieu !== '' && thuongHieu !== 'Tất cả') {
+            var thuongHieuText = $('#filterThuongHieu option:selected').text();
+            console.log('Thương hiệu filter:', thuongHieuText, 'Row data:', rowThuongHieu);
+            if (rowThuongHieu !== thuongHieuText) {
+                console.log('Filtered out by brand');
+                return false;
+            }
+        }
+
+        // Chất liệu - kiểm tra xem có chứa chất liệu được chọn không
+        if (chatLieu && chatLieu !== '' && chatLieu !== 'Tất cả') {
+            if (rowChatLieu === 'Không có') {
+                console.log('Filtered out by material - row has no material');
+                return false;
+            }
+            var chatLieuText = $('#filterChatLieu option:selected').text();
+            console.log('Chất liệu filter:', chatLieuText, 'Row data:', rowChatLieu);
+            // Tách các chất liệu bằng dấu phẩy và kiểm tra
+            var chatLieus = rowChatLieu.split(',').map(function(item) {
+                return item.trim();
+            });
+            console.log('Chất liệu array:', chatLieus);
+            // So sánh không phân biệt dấu và chữ hoa/thường
+            var found = chatLieus.some(function(item) {
+                return item.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') === 
+                       chatLieuText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            });
+            if (!found) {
+                console.log('Filtered out by material - not found in array');
+                return false;
+            }
+        }
+
+        // Thành phần - kiểm tra xem có chứa thành phần được chọn không
+        if (thanhPhan && thanhPhan !== '' && thanhPhan !== 'Tất cả') {
+            if (rowThanhPhan === 'Không có') {
+                console.log('Filtered out by component - row has no component');
+                return false;
+            }
+            var thanhPhanText = $('#filterThanhPhan option:selected').text();
+            console.log('Thành phần filter:', thanhPhanText, 'Row data:', rowThanhPhan);
+            // Tách các thành phần bằng dấu phẩy và kiểm tra
+            var thanhPhans = rowThanhPhan.split(',').map(function(item) {
+                return item.trim();
+            });
+            console.log('Thành phần array:', thanhPhans);
+            // So sánh không phân biệt dấu và chữ hoa/thường
+            var found = thanhPhans.some(function(item) {
+                return item.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') === 
+                       thanhPhanText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            });
+            if (!found) {
+                console.log('Filtered out by component - not found in array');
+                return false;
+            }
+        }
+
+        console.log('Row passed all filters');
+        return true;
+    });
+
+    $('.action-btn').on('click', function () {
+        if (window.adminLoading) {
+            window.adminLoading.showLoadingWithMessage('Đang xử lý...');
+        }
+    });
+});
+
     </script>
 
     <style>

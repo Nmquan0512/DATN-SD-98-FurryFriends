@@ -1,11 +1,7 @@
-﻿@model FurryFriends.API.Models.DTO.SanPhamDTO
-@using Microsoft.AspNetCore.Mvc.Rendering
+﻿@model FurryFriends.Web.ViewModels.SanPhamFullCreateViewModel;
+
 @{
     ViewData["Title"] = "Chỉnh sửa sản phẩm";
-    var loaiList = ViewBag.LoaiSanPhamList as List<SelectListItem> ?? new();
-    var chatLieus = ViewBag.ChatLieus as List<SelectListItem> ?? new();
-    var thanhPhans = ViewBag.ThanhPhans as List<SelectListItem> ?? new();
-    var thuongHieus = ViewBag.ThuongHieus as List<SelectListItem> ?? new();
 }
 
 <div class="top-bar" style="padding-left: 50px;">
@@ -27,74 +23,171 @@
 </nav>
 
 <div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
-    <div class="row justify-content-center">
-        <div class="col-md-10 col-lg-8">
-            <div class="card shadow">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">Thông tin sản phẩm</h5>
-                </div>
-                <div class="card-body">
-                    <form asp-area="Admin" asp-action="Edit" asp-controller="SanPham" method="post">
-                        <input type="hidden" asp-for="SanPhamId" />
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <form asp-controller="SanPham" asp-action="Edit" method="post" enctype="multipart/form-data" novalidate>
+        <input type="hidden" asp-for="SanPham.SanPhamId" />
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+        
+        <!-- Thông tin sản phẩm cơ bản -->
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-box me-2"></i>Thông tin sản phẩm
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-lg-6">
                         <div class="mb-3">
-                            <label asp-for="TenSanPham" class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
-                            <input asp-for="TenSanPham" class="form-control" placeholder="Nhập tên sản phẩm..." />
-                            <span asp-validation-for="TenSanPham" class="text-danger"></span>
+                            <label asp-for="SanPham.TenSanPham" class="form-label">
+                                <i class="fas fa-tag me-2"></i>Tên sản phẩm <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="SanPham.TenSanPham" class="form-control" placeholder="Nhập tên sản phẩm..." required />
+                            <span asp-validation-for="SanPham.TenSanPham" class="text-danger small"></span>
                         </div>
+                    </div>
+                    <div class="col-lg-6">
                         <div class="mb-3">
-                            <label asp-for="LoaiSanPham" class="form-label">Loại sản phẩm <span class="text-danger">*</span></label>
-                            <select asp-for="LoaiSanPham" asp-items="loaiList" class="form-select" id="LoaiSanPham" onchange="toggleFields()">
-                                <option value="">-- Chọn loại sản phẩm --</option>
+                            <label asp-for="SanPham.LoaiSanPham" class="form-label">
+                                <i class="fas fa-list me-2"></i>Loại sản phẩm <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="SanPham.LoaiSanPham" class="form-select" required onchange="toggleProperties()">
+                                <option value="">-- Chọn loại --</option>
+                                <option value="DoAn">Đồ Ăn</option>
+                                <option value="DoDung">Đồ Dùng</option>
                             </select>
-                            <span asp-validation-for="LoaiSanPham" class="text-danger"></span>
+                            <span asp-validation-for="SanPham.LoaiSanPham" class="text-danger small"></span>
                         </div>
-                        <div class="mb-3" id="thanhPhanDiv" style="display:@(Model.LoaiSanPham == "DoAn" ? "block" : "none")">
-                            <label class="form-label">Thành phần</label>
-                            <select asp-for="ThanhPhanIds" class="form-select" multiple>
-                                @foreach (var tp in thanhPhans)
-                                {
-                                    <option value="@tp.Value" selected="@(Model.ThanhPhanIds?.Contains(Guid.Parse(tp.Value)) == true ? "selected" : null)">@tp.Text</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="mb-3" id="chatLieuDiv" style="display:@(Model.LoaiSanPham == "DoDung" ? "block" : "none")">
-                            <label class="form-label">Chất liệu</label>
-                            <select asp-for="ChatLieuIds" class="form-select" multiple>
-                                @foreach (var cl in chatLieus)
-                                {
-                                    <option value="@cl.Value" selected="@(Model.ChatLieuIds?.Contains(Guid.Parse(cl.Value)) == true ? "selected" : null)">@cl.Text</option>
-                                }
-                            </select>
-                        </div>
+                    </div>
+                    <div class="col-lg-6">
                         <div class="mb-3">
-                            <label asp-for="ThuongHieuId" class="form-label">Thương hiệu <span class="text-danger">*</span></label>
-                            <select asp-for="ThuongHieuId" class="form-select">
+                            <label asp-for="SanPham.ThuongHieuId" class="form-label">
+                                <i class="fas fa-crown me-2"></i>Thương hiệu <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="SanPham.ThuongHieuId" class="form-select" required asp-items="ViewBag.ThuongHieuList">
                                 <option value="">-- Chọn thương hiệu --</option>
-                                @foreach (var th in thuongHieus)
-                                {
-                                    <option value="@th.Value" selected="@(th.Value == Model.ThuongHieuId.ToString() ? "selected" : null)">@th.Text</option>
-                                }
                             </select>
-                            <span asp-validation-for="ThuongHieuId" class="text-danger"></span>
+                            <span asp-validation-for="SanPham.ThuongHieuId" class="text-danger small"></span>
                         </div>
+                    </div>
+                    <div class="col-lg-6">
                         <div class="mb-3">
-                            <label asp-for="TrangThai" class="form-label">Trạng thái</label>
-                            <div class="form-check">
-                                <input asp-for="TrangThai" class="form-check-input" type="checkbox" />
-                                <label asp-for="TrangThai" class="form-check-label">
-                                    Hiển thị
+                            <div class="form-check form-switch">
+                                <input asp-for="SanPham.TrangThai" class="form-check-input" type="checkbox" id="trangThai" />
+                                <label class="form-check-label fw-semibold" for="trangThai">
+                                    <i class="fas fa-toggle-on me-2"></i>Đang hoạt động
                                 </label>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-end gap-2">
-                            <a asp-area="Admin" asp-action="Index" asp-controller="SanPham" class="btn btn-secondary">Hủy</a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i>
-                                Lưu
-                            </button>
+                    </div>
+                </div>
+                
+                <!-- Thành phần (cho đồ ăn) -->
+                <div id="thanhPhanSection" style="display: none;" class="mt-4">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-success bg-opacity-10 p-2 rounded me-3">
+                                    <i class="fas fa-leaf text-success"></i>
+                                </div>
+                                <h6 class="mb-0 fw-semibold">Thành phần</h6>
+                            </div>
+                            <div class="row g-3" style="max-height: 200px; overflow-y: auto;">
+                                @foreach (var thanhPhan in ViewBag.ThanhPhanList)
+                                {
+                                    var thanhPhanGuid = Guid.Parse(thanhPhan.Value);
+                                    var isSelected = Model.SanPham.ThanhPhanIds != null && Model.SanPham.ThanhPhanIds.Contains(thanhPhanGuid);
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="SanPham.ThanhPhanIds" 
+                                                   value="@thanhPhan.Value" id="thanhPhan_@thanhPhan.Value" 
+                                                   @(isSelected ? "checked" : "") />
+                                            <label class="form-check-label @(isSelected ? "fw-bold text-success" : "text-muted")" for="thanhPhan_@thanhPhan.Value">
+                                                <i class="fas fa-check-circle me-2"></i>@thanhPhan.Text
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>Tích chọn các thành phần có trong sản phẩm
+                            </small>
                         </div>
-                    </form>
+                    </div>
+                </div>
+                
+                <!-- Chất liệu (cho đồ dùng) -->
+                <div id="chatLieuSection" style="display: none;" class="mt-4">
+                    <div class="card border-0 bg-light">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-warning bg-opacity-10 p-2 rounded me-3">
+                                    <i class="fas fa-cube text-warning"></i>
+                                </div>
+                                <h6 class="mb-0 fw-semibold">Chất liệu</h6>
+                            </div>
+                            <div class="row g-3" style="max-height: 200px; overflow-y: auto;">
+                                @foreach (var chatLieu in ViewBag.ChatLieuList)
+                                {
+                                    var chatLieuGuid = Guid.Parse(chatLieu.Value);
+                                    var isSelected = Model.SanPham.ChatLieuIds != null && Model.SanPham.ChatLieuIds.Contains(chatLieuGuid);
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="SanPham.ChatLieuIds" 
+                                                   value="@chatLieu.Value" id="chatLieu_@chatLieu.Value" 
+                                                   @(isSelected ? "checked" : "") />
+                                            <label class="form-check-label @(isSelected ? "fw-bold text-warning" : "text-muted")" for="chatLieu_@chatLieu.Value">
+                                                <i class="fas fa-check-circle me-2"></i>@chatLieu.Text
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>Tích chọn các chất liệu có trong sản phẩm
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-end gap-2">
+            <a asp-area="Admin" asp-action="Index" asp-controller="SanPham" class="btn btn-secondary">
+                <i class="fas fa-times me-2"></i>Hủy
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>Lưu thay đổi
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Modal chọn ảnh -->
+<div class="modal fade" id="anhModal" tabindex="-1" aria-labelledby="anhModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="anhModalLabel">
+                    <i class="fas fa-images me-2"></i>Chọn ảnh cho biến thể
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    @foreach (var anh in (IEnumerable<FurryFriends.API.Models.DTO.AnhDTO>)ViewBag.AnhList)
+                    {
+                        <div class="col-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <img src="https://localhost:7289@(anh.DuongDan)" 
+                                     class="card-img-top anh-modal-img" 
+                                     style="cursor:pointer;height:120px;object-fit:cover;" 
+                                     data-anh-id="@anh.AnhId" 
+                                     data-duongdan="@anh.DuongDan" 
+                                     onclick="selectAnh(this)" />
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -104,11 +197,63 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        function toggleFields() {
-            const loai = document.getElementById("LoaiSanPham").value;
-            document.getElementById("thanhPhanDiv").style.display = loai === "DoAn" ? 'block' : 'none';
-            document.getElementById("chatLieuDiv").style.display = loai === "DoDung" ? 'block' : 'none';
+        function toggleProperties() {
+            const loaiSanPham = document.querySelector('select[name="SanPham.LoaiSanPham"]').value;
+            const thanhPhanSection = document.getElementById('thanhPhanSection');
+            const chatLieuSection = document.getElementById('chatLieuSection');
+            
+            if (loaiSanPham === 'DoAn') {
+                thanhPhanSection.style.display = 'block';
+                chatLieuSection.style.display = 'none';
+            } else if (loaiSanPham === 'DoDung') {
+                thanhPhanSection.style.display = 'none';
+                chatLieuSection.style.display = 'block';
+            } else {
+                thanhPhanSection.style.display = 'none';
+                chatLieuSection.style.display = 'none';
+            }
         }
-        document.addEventListener("DOMContentLoaded", toggleFields);
+        
+        document.addEventListener("DOMContentLoaded", toggleProperties);
+
+        // Highlight checkbox labels when clicked
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"][name*="ThanhPhanIds"], input[type="checkbox"][name*="ChatLieuIds"]');
+            checkboxes.forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    const label = this.nextElementSibling;
+                    if (this.checked) {
+                        label.classList.add('fw-bold');
+                        if (this.name.includes('ThanhPhanIds')) {
+                            label.classList.add('text-success');
+                            label.classList.remove('text-warning');
+                        } else {
+                            label.classList.add('text-warning');
+                            label.classList.remove('text-success');
+                        }
+                    } else {
+                        label.classList.remove('fw-bold', 'text-success', 'text-warning');
+                        label.classList.add('text-muted');
+                    }
+                });
+            });
+        });
+
+        function openAnhModal(btn) {
+            window.currentAnhBtn = btn;
+            var modal = new bootstrap.Modal(document.getElementById('anhModal'));
+            modal.show();
+        }
+        
+        function selectAnh(img) {
+            var anhId = img.getAttribute('data-anh-id');
+            var duongDan = img.getAttribute('data-duongdan');
+            var row = window.currentAnhBtn.closest('tr');
+            row.querySelector('input[type="hidden"][name*="AnhId"]').value = anhId;
+            var preview = row.querySelector('.anh-preview');
+            preview.innerHTML = `<img src="https://localhost:7289${duongDan}" style="max-width:80px;max-height:80px;object-fit:cover;" class="rounded shadow-sm" />`;
+            var modal = bootstrap.Modal.getInstance(document.getElementById('anhModal'));
+            modal.hide();
+        }
     </script>
 }

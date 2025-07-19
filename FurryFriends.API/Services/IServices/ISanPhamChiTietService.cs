@@ -9,7 +9,7 @@ namespace FurryFriends.API.Services.IServices
     {
         Task<IEnumerable<SanPhamChiTietDTO>> GetAllAsync();
         Task<SanPhamChiTietDTO?> GetByIdAsync(Guid id);
-        Task<bool> CreateAsync(SanPhamChiTietDTO dto);
+        Task<SanPhamChiTietDTO?> CreateAndReturnAsync(SanPhamChiTietDTO dto);
         Task<bool> UpdateAsync(Guid id, SanPhamChiTietDTO dto);
         Task<bool> DeleteAsync(Guid id);
     }
