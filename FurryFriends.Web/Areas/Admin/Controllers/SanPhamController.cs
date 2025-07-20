@@ -42,8 +42,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             try
-            {
-                var result = await _sanPhamService.GetAllAsync();
+        {
+            var result = await _sanPhamService.GetAllAsync();
                 
                 // Load dữ liệu cho bộ lọc nâng cao
                 var thuongHieuList = await _thuongHieuService.GetAllAsync();
@@ -54,7 +54,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 ViewBag.ChatLieus = new SelectList(chatLieuList, "ChatLieuId", "TenChatLieu");
                 ViewBag.ThanhPhans = new SelectList(thanhPhanList, "ThanhPhanId", "TenThanhPhan");
                 
-                return View(result);
+            return View(result);
             }
             catch (Exception ex)
             {
@@ -67,9 +67,21 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+            // Xóa TempData cũ để tránh hiển thị lỗi từ lần trước
+            TempData.Remove("Error");
+            TempData.Remove("error");
+            TempData.Remove("Success");
+            
             await LoadDropdownData();
             var anhList = await _anhService.GetAllAsync();
             ViewBag.AnhList = anhList;
+            
+            // Load dữ liệu cho dropdown biến thể
+            var kichCoList = await _kichCoService.GetAllAsync();
+            var mauSacList = await _mauSacService.GetAllAsync();
+            ViewBag.KichCoList = new SelectList(kichCoList, "KichCoId", "TenKichCo");
+            ViewBag.MauSacList = new SelectList(mauSacList, "MauSacId", "TenMau");
+            
             var viewModel = new SanPhamFullCreateViewModel
             {
                 SanPham = new SanPhamDTO(),
@@ -83,12 +95,64 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SanPhamFullCreateViewModel model)
         {
+            // Debug: Log dữ liệu nhận được
+            Console.WriteLine($"DEBUG: Model null? {model == null}");
+            Console.WriteLine($"DEBUG: ChiTietList null? {model?.ChiTietList == null}");
+            Console.WriteLine($"DEBUG: ChiTietList count: {model?.ChiTietList?.Count ?? 0}");
+            
+            if (model?.ChiTietList != null)
+            {
+                for (int i = 0; i < model.ChiTietList.Count; i++)
+                {
+                    var chiTiet = model.ChiTietList[i];
+                    Console.WriteLine($"DEBUG: ChiTiet[{i}] - MauSacId: {chiTiet.MauSacId}, KichCoId: {chiTiet.KichCoId}, GiaBan: {chiTiet.GiaBan}, SoLuongTon: {chiTiet.SoLuongTon}");
+                }
+            }
+            
+            // Validate biến thể
+            if (model?.ChiTietList == null || !model.ChiTietList.Any())
+            {
+                ModelState.AddModelError("", "Vui lòng thêm ít nhất một biến thể sản phẩm!");
+            }
+            else
+            {
+                // Validate từng biến thể
+                for (int i = 0; i < model.ChiTietList.Count; i++)
+                {
+                    var chiTiet = model.ChiTietList[i];
+                    if (chiTiet.MauSacId == Guid.Empty)
+                    {
+                        ModelState.AddModelError($"ChiTietList[{i}].MauSacId", "Vui lòng chọn màu sắc cho biến thể!");
+                    }
+                    if (chiTiet.KichCoId == Guid.Empty)
+                    {
+                        ModelState.AddModelError($"ChiTietList[{i}].KichCoId", "Vui lòng chọn kích cỡ cho biến thể!");
+                    }
+                    if (chiTiet.GiaBan <= 0)
+                    {
+                        ModelState.AddModelError($"ChiTietList[{i}].GiaBan", "Giá bán phải lớn hơn 0!");
+                    }
+                    if (chiTiet.SoLuongTon < 0)
+                    {
+                        ModelState.AddModelError($"ChiTietList[{i}].SoLuongTon", "Số lượng không được âm!");
+                    }
+                }
+            }
+            
             if (!ModelState.IsValid)
             {
                 await LoadDropdownData();
+                var anhList = await _anhService.GetAllAsync();
+                ViewBag.AnhList = anhList;
+                var kichCoList = await _kichCoService.GetAllAsync();
+                var mauSacList = await _mauSacService.GetAllAsync();
+                ViewBag.KichCoList = new SelectList(kichCoList, "KichCoId", "TenKichCo");
+                ViewBag.MauSacList = new SelectList(mauSacList, "MauSacId", "TenMau");
                 return View(model);
             }
 
+            try
+            {
             // 1. Tạo sản phẩm chính
             var sanPhamToCreate = new SanPhamDTO
             {
@@ -104,12 +168,23 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             if (createdSanPham == null || createdSanPham.SanPhamId == Guid.Empty)
             {
                 ModelState.AddModelError("", "Không thể tạo sản phẩm.");
-                await LoadDropdownData();
+                    await LoadDropdownData();
+                    var anhList = await _anhService.GetAllAsync();
+                    ViewBag.AnhList = anhList;
+                    var kichCoList = await _kichCoService.GetAllAsync();
+                    var mauSacList = await _mauSacService.GetAllAsync();
+                    ViewBag.KichCoList = new SelectList(kichCoList, "KichCoId", "TenKichCo");
+                    ViewBag.MauSacList = new SelectList(mauSacList, "MauSacId", "TenMau");
                 return View(model);
             }
 
-            // 2. Tạo chi tiết sản phẩm
+                                // 2. Tạo chi tiết sản phẩm nếu có
+                if (model.ChiTietList != null && model.ChiTietList.Any())
+                {
+                    int successCount = 0;
             foreach (var chiTiet in model.ChiTietList)
+                    {
+                        if (chiTiet.MauSacId != Guid.Empty && chiTiet.KichCoId != Guid.Empty)
             {
                 var chiTietToCreate = new SanPhamChiTietDTO
                 {
@@ -117,18 +192,49 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     MauSacId = chiTiet.MauSacId,
                     KichCoId = chiTiet.KichCoId,
                     SoLuong = chiTiet.SoLuongTon,
-                    Gia = chiTiet.GiaBan,
-                    NgayTao = DateTime.Now,
-                    TrangThai = 1,
-                    MoTa = chiTiet.MoTa,
-                    AnhId = chiTiet.AnhId
-                };
+                                Gia = chiTiet.GiaBan,
+                                NgayTao = DateTime.Now,
+                                TrangThai = 1,
+                                MoTa = chiTiet.MoTa ?? "",
+                                AnhId = chiTiet.AnhId
+                            };
 
-                await _chiTietService.CreateAsync(chiTietToCreate);
+                            var result = await _chiTietService.CreateAsync(chiTietToCreate);
+                            
+                            if (result.Data != null)
+                            {
+                                successCount++;
+                            }
+                            else
+                            {
+                                // Log lỗi nếu có
+                                if (result.Errors != null)
+                                {
+                                    foreach (var error in result.Errors)
+                                    {
+                                        ModelState.AddModelError("", $"Lỗi tạo biến thể: {string.Join(", ", error.Value)}");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                TempData["Success"] = "Tạo sản phẩm thành công!";
+                return RedirectToAction("Index");
             }
-
-            TempData["Success"] = "Tạo sản phẩm thành công!";
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Lỗi khi tạo sản phẩm: {ex.Message}");
+                await LoadDropdownData();
+                var anhList = await _anhService.GetAllAsync();
+                ViewBag.AnhList = anhList;
+                var kichCoList = await _kichCoService.GetAllAsync();
+                var mauSacList = await _mauSacService.GetAllAsync();
+                ViewBag.KichCoList = new SelectList(kichCoList, "KichCoId", "TenKichCo");
+                ViewBag.MauSacList = new SelectList(mauSacList, "MauSacId", "TenMau");
+                return View(model);
+            }
         }
 
         [HttpGet]
@@ -172,20 +278,28 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             ViewBag.AnhList = anhList;
             // Lấy danh sách biến thể từ API
             var allChiTiet = await _chiTietService.GetAllAsync();
-            var chiTietList = allChiTiet
-                .Where(x => x.SanPhamId == id)
-                .Select(x => new SanPhamChiTietCreateViewModel
+            var chiTietList = new List<SanPhamChiTietCreateViewModel>();
+            
+            if (allChiTiet != null)
+            {
+                foreach (var x in allChiTiet)
                 {
-                    SanPhamChiTietId = x.SanPhamChiTietId,
-                    MauSacId = x.MauSacId,
-                    KichCoId = x.KichCoId,
-                    SoLuongTon = x.SoLuong,
-                    GiaBan = x.Gia,
-                    MoTa = x.MoTa,
-                    AnhId = x.AnhId,
-                    DuongDan = x.DuongDan
-                })
-                .ToList();
+                    if (x.SanPhamId == id)
+                    {
+                        chiTietList.Add(new SanPhamChiTietCreateViewModel
+                        {
+                            SanPhamChiTietId = x.SanPhamChiTietId,
+                            MauSacId = x.MauSacId,
+                            KichCoId = x.KichCoId,
+                            SoLuongTon = x.SoLuong,
+                            GiaBan = x.Gia,
+                            MoTa = x.MoTa,
+                            AnhId = x.AnhId,
+                            DuongDan = x.DuongDan
+                        });
+                    }
+                }
+            }
             // Map lại ChatLieuIds/ThanhPhanIds nếu có
             var sanPhamDto = sanPham;
             if (sanPhamDto.LoaiSanPham == "DoDung" && sanPhamDto.ChatLieuIds == null)
@@ -206,12 +320,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SanPhamFullCreateViewModel model)
         {
-            // Log dữ liệu biến thể gửi lên
-            Console.WriteLine("[SanPham/Edit] ChiTietList gửi lên:");
-            foreach (var chiTiet in model.ChiTietList)
-            {
-                Console.WriteLine($"  - SanPhamChiTietId: {chiTiet.SanPhamChiTietId}, SanPhamId: {chiTiet.SanPhamId}, KichCoId: {chiTiet.KichCoId}, MauSacId: {chiTiet.MauSacId}, GiaBan: {chiTiet.GiaBan}, SoLuongTon: {chiTiet.SoLuongTon}, AnhId: {chiTiet.AnhId}");
-            }
             if (!ModelState.IsValid)
             {
                 await LoadDropdownData();
@@ -235,8 +343,30 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             await _sanPhamService.UpdateAsync(model.SanPham.SanPhamId, model.SanPham);
             // Xử lý biến thể: thêm mới, cập nhật, xoá
             var allChiTiet = await _chiTietService.GetAllAsync();
-            var oldChiTiet = allChiTiet.Where(x => x.SanPhamId == model.SanPham.SanPhamId).ToList();
-            var formIds = model.ChiTietList.Where(x => x.SanPhamChiTietId != null).Select(x => x.SanPhamChiTietId.Value).ToList();
+            var oldChiTiet = new List<SanPhamChiTietDTO>();
+            var formIds = new List<Guid>();
+            
+            if (allChiTiet != null)
+            {
+                foreach (var x in allChiTiet)
+                {
+                    if (x.SanPhamId == model.SanPham.SanPhamId)
+                    {
+                        oldChiTiet.Add(x);
+                    }
+                }
+            }
+            
+            if (model.ChiTietList != null)
+            {
+                foreach (var x in model.ChiTietList)
+                {
+                    if (x.SanPhamChiTietId != null)
+                    {
+                        formIds.Add(x.SanPhamChiTietId.Value);
+                    }
+                }
+            }
             // Xoá biến thể không còn trong form
             foreach (var old in oldChiTiet)
             {
@@ -264,7 +394,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 if (chiTiet.SanPhamChiTietId == null || chiTiet.SanPhamChiTietId == Guid.Empty)
                 {
                     var result = await _chiTietService.CreateAsync(dto);
-                    Console.WriteLine($"[SanPham/Edit] Kết quả CreateAsync: {(result.Data != null ? "OK" : "FAIL")} - Lỗi: {string.Join("; ", result.Errors?.SelectMany(e => e.Value) ?? new string[0])}");
                     if (result.Errors != null && result.Errors.Count > 0)
                     {
                         hasError = true;
@@ -278,7 +407,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 else
                 {
                     var result = await _chiTietService.UpdateAsync(chiTiet.SanPhamChiTietId.Value, dto);
-                    Console.WriteLine($"[SanPham/Edit] Kết quả UpdateAsync: {(result.Data ? "OK" : "FAIL")} - Lỗi: {string.Join("; ", result.Errors?.SelectMany(e => e.Value) ?? new string[0])}");
                 }
             }
             if (hasError)
@@ -335,3 +463,4 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         }
     }
 }
+

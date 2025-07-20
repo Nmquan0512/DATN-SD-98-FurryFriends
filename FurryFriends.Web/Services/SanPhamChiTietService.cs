@@ -33,7 +33,6 @@ namespace FurryFriends.Web.Services
 
         public async Task<ApiResult<SanPhamChiTietDTO>> CreateAsync(SanPhamChiTietDTO dto)
         {
-            Console.WriteLine($"[SanPhamChiTietService] Gửi CreateAsync: {System.Text.Json.JsonSerializer.Serialize(dto)}");
             var response = await _httpClient.PostAsJsonAsync(BaseUrl, dto);
 
             if (response.IsSuccessStatusCode)
@@ -44,8 +43,6 @@ namespace FurryFriends.Web.Services
 
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                var content = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"[SanPhamChiTietService] Lỗi 400: {content}");
                 var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
                 return new ApiResult<SanPhamChiTietDTO>
                 {
@@ -53,8 +50,6 @@ namespace FurryFriends.Web.Services
                 };
             }
 
-            var unknown = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"[SanPhamChiTietService] Lỗi không xác định: {unknown}");
             return new ApiResult<SanPhamChiTietDTO>
             {
                 Errors = new() { { "", new[] { "Lỗi không xác định khi tạo!" } } }
