@@ -17,6 +17,9 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             var list = await _kichCoService.GetAllAsync();
+            ViewBag.TotalCount = list.Count();
+            ViewBag.ActiveCount = list.Count(x => x.TrangThai);
+            ViewBag.InactiveCount = list.Count(x => !x.TrangThai);
             return View(list);
         }
 

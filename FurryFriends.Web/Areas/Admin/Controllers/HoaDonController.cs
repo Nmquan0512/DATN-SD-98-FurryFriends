@@ -31,6 +31,10 @@ public async Task<IActionResult> Index()
             sw.Stop();
             Console.WriteLine($"Thời gian gọi API + nhận dữ liệu: {sw.ElapsedMilliseconds} ms");
 
+            ViewBag.TotalCount = hoaDons.Count();
+            ViewBag.BanTaiQuayCount = hoaDons.Count(x => x.LoaiHoaDon == "BanTaiQuay");
+            ViewBag.OnlineCount = hoaDons.Count(x => x.LoaiHoaDon == "Online");
+
             return View(hoaDons);
         }
         catch (Exception ex)

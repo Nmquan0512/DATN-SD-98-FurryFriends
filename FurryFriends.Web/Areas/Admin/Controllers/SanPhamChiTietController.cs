@@ -35,10 +35,26 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(Guid sanPhamId)
         {
-            var kichCoList = await _kichCoService.GetAllAsync();
-            var mauSacList = await _mauSacService.GetAllAsync();
-            ViewBag.KichCoList = new SelectList(kichCoList, "KichCoId", "TenKichCo");
-            ViewBag.MauSacList = new SelectList(mauSacList, "MauSacId", "TenMau");
+            var allKichCo = await _kichCoService.GetAllAsync();
+            var kichCoList = new List<SelectListItem>();
+            foreach (var kc in allKichCo)
+            {
+                if (kc.TrangThai)
+                {
+                    kichCoList.Add(new SelectListItem { Value = kc.KichCoId.ToString(), Text = kc.TenKichCo });
+                }
+            }
+            ViewBag.KichCoList = kichCoList;
+            var allMauSac = await _mauSacService.GetAllAsync();
+            var mauSacList = new List<SelectListItem>();
+            foreach (var ms in allMauSac)
+            {
+                if (ms.TrangThai)
+                {
+                    mauSacList.Add(new SelectListItem { Value = ms.MauSacId.ToString(), Text = ms.TenMau });
+                }
+            }
+            ViewBag.MauSacList = mauSacList;
             var anhList = await _anhService.GetAllAsync();
             ViewBag.AnhList = new SelectList(anhList, "AnhId", "DuongDan");
             var viewModel = new SanPhamChiTietCreateViewModel
@@ -180,6 +196,9 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             // Lấy tên sản phẩm cha
             var sanPham = await _sanPhamService.GetByIdAsync(sanPhamId);
             ViewBag.TenSanPham = sanPham?.TenSanPham ?? "";
+            // Truyền danh sách kích cỡ, màu sắc cho view
+            ViewBag.DanhSachKichCo = await _kichCoService.GetAllAsync();
+            ViewBag.DanhSachMauSac = await _mauSacService.GetAllAsync();
             return View(filtered);
         }
 
@@ -199,16 +218,45 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 GiaBan = chiTiet.Gia,
                 MoTa = chiTiet.MoTa,
                 AnhId = chiTiet.AnhId,
-                DuongDan = chiTiet.DuongDan,
-                TrangThai = chiTiet.TrangThai ?? 1
+                TrangThai = chiTiet.TrangThai ?? 1,
+                DuongDan = chiTiet.DuongDan
             };
-            // Truyền lại các ViewBag cho dropdown
-            var kichCoList = await _kichCoService.GetAllAsync();
-            var mauSacList = await _mauSacService.GetAllAsync();
+            // --- SỬA KÍCH CỠ ---
+            var allKichCo = await _kichCoService.GetAllAsync();
+            var kichCoList = new List<SelectListItem>();
+            foreach (var kc in allKichCo)
+            {
+                if (kc.TrangThai)
+                {
+                    kichCoList.Add(new SelectListItem { Value = kc.KichCoId.ToString(), Text = kc.TenKichCo });
+                }
+                else if (kc.KichCoId == viewModel.KichCoId)
+                {
+                    kichCoList.Add(new SelectListItem { Value = kc.KichCoId.ToString(), Text = kc.TenKichCo + " (Ngưng hoạt động)" });
+                }
+            }
+            ViewBag.KichCoList = kichCoList;
+            ViewBag.DanhSachKichCo = allKichCo.ToList();
+            // --- END SỬA KÍCH CỠ ---
+            // --- SỬA MÀU SẮC ---
+            var allMauSac = await _mauSacService.GetAllAsync();
+            var mauSacList = new List<SelectListItem>();
+            foreach (var ms in allMauSac)
+            {
+                if (ms.TrangThai)
+                {
+                    mauSacList.Add(new SelectListItem { Value = ms.MauSacId.ToString(), Text = ms.TenMau });
+                }
+                else if (ms.MauSacId == viewModel.MauSacId)
+                {
+                    mauSacList.Add(new SelectListItem { Value = ms.MauSacId.ToString(), Text = ms.TenMau + " (Ngưng hoạt động)" });
+                }
+            }
+            ViewBag.MauSacList = mauSacList;
+            ViewBag.DanhSachMauSac = allMauSac.ToList();
+            // --- END SỬA MÀU SẮC ---
             var anhList = await _anhService.GetAllAsync();
-            ViewBag.KichCoList = new SelectList(kichCoList, "KichCoId", "TenKichCo", viewModel.KichCoId);
-            ViewBag.MauSacList = new SelectList(mauSacList, "MauSacId", "TenMau", viewModel.MauSacId);
-            ViewBag.AnhList = new SelectList(anhList, "AnhId", "DuongDan");
+            ViewBag.AnhList = new SelectList(anhList, "AnhId", "DuongDan", viewModel.AnhId);
             ViewBag.SanPhamId = chiTiet.SanPhamId;
             return View(viewModel);
         }

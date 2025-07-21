@@ -70,9 +70,10 @@
                 <label class="form-label">Thương hiệu</label>
                 <select id="filterThuongHieu" class="form-select">
                     <option value="">Tất cả</option>
-                    @foreach (SelectListItem th in ViewBag.ThuongHieus ?? new List<SelectListItem>())
+                    @foreach (var th in (ViewBag.DanhSachThuongHieu as List<FurryFriends.API.Models.DTO.ThuongHieuDTO> ?? new List<FurryFriends.API.Models.DTO.ThuongHieuDTO>()))
                     {
-                        <option value="@th.Value">@th.Text</option>
+                        var text = th.TrangThai ? th.TenThuongHieu : th.TenThuongHieu + " (Ngưng hoạt động)";
+                        <option value="@text">@text</option>
                     }
                 </select>
             </div>
@@ -80,9 +81,10 @@
                 <label class="form-label">Chất liệu</label>
                 <select id="filterChatLieu" class="form-select">
                     <option value="">Tất cả</option>
-                    @foreach (SelectListItem cl in ViewBag.ChatLieus ?? new List<SelectListItem>())
+                    @foreach (var cl in (ViewBag.DanhSachChatLieu as List<FurryFriends.API.Models.DTO.ChatLieuDTO> ?? new List<FurryFriends.API.Models.DTO.ChatLieuDTO>()))
                     {
-                        <option value="@cl.Value">@cl.Text</option>
+                        var text = cl.TrangThai ? cl.TenChatLieu : cl.TenChatLieu + " (Ngưng hoạt động)";
+                        <option value="@text">@text</option>
                     }
                 </select>
             </div>
@@ -90,9 +92,10 @@
                 <label class="form-label">Thành phần</label>
                 <select id="filterThanhPhan" class="form-select">
                     <option value="">Tất cả</option>
-                    @foreach (SelectListItem tp in ViewBag.ThanhPhans ?? new List<SelectListItem>())
+                    @foreach (var tp in (ViewBag.DanhSachThanhPhan as List<FurryFriends.API.Models.DTO.ThanhPhanDTO> ?? new List<FurryFriends.API.Models.DTO.ThanhPhanDTO>()))
                     {
-                        <option value="@tp.Value">@tp.Text</option>
+                        var text = tp.TrangThai ? tp.TenThanhPhan : tp.TenThanhPhan + " (Ngưng hoạt động)";
+                        <option value="@text">@text</option>
                     }
                 </select>
             </div>
@@ -132,9 +135,19 @@
                                     @(item.LoaiSanPham == "DoAn" ? "Đồ ăn" : "Đồ dùng")
                                 </td>
                                 <td>
-                                    @if (item.TenChatLieus != null && item.TenChatLieus.Any(x => !string.IsNullOrWhiteSpace(x)))
+                                    @if (item.ChatLieuIds != null && item.TenChatLieus != null && item.ChatLieuIds.Count == item.TenChatLieus.Count && item.ChatLieuIds.Count > 0)
                                     {
-                                        <span>@string.Join(", ", item.TenChatLieus.Where(x => !string.IsNullOrWhiteSpace(x)))</span>
+                                        var danhSachChatLieu = ViewBag.DanhSachChatLieu as List<FurryFriends.API.Models.DTO.ChatLieuDTO>;
+                                        var chatLieuNames = new List<string>();
+                                        for (int i = 0; i < item.ChatLieuIds.Count; i++)
+                                        {
+                                            var id = item.ChatLieuIds[i];
+                                            var ten = item.TenChatLieus[i];
+                                            var cl = danhSachChatLieu?.FirstOrDefault(x => x.ChatLieuId == id);
+                                            var display = (cl != null && !cl.TrangThai) ? $"{ten} (Ngưng hoạt động)" : ten;
+                                            chatLieuNames.Add(display);
+                                        }
+                                        <span>@string.Join(", ", chatLieuNames)</span>
                                     }
                                     else
                                     {
@@ -142,16 +155,41 @@
                                     }
                                 </td>
                                 <td>
-                                    @if (item.TenThanhPhans != null && item.TenThanhPhans.Any(x => !string.IsNullOrWhiteSpace(x)))
+                                    @if (item.ThanhPhanIds != null && item.TenThanhPhans != null && item.ThanhPhanIds.Count == item.TenThanhPhans.Count && item.ThanhPhanIds.Count > 0)
                                     {
-                                        <span>@string.Join(", ", item.TenThanhPhans.Where(x => !string.IsNullOrWhiteSpace(x)))</span>
+                                        var danhSachThanhPhan = ViewBag.DanhSachThanhPhan as List<FurryFriends.API.Models.DTO.ThanhPhanDTO>;
+                                        var thanhPhanNames = new List<string>();
+                                        for (int i = 0; i < item.ThanhPhanIds.Count; i++)
+                                        {
+                                            var id = item.ThanhPhanIds[i];
+                                            var ten = item.TenThanhPhans[i];
+                                            var tp = danhSachThanhPhan?.FirstOrDefault(x => x.ThanhPhanId == id);
+                                            var display = (tp != null && !tp.TrangThai) ? $"{ten} (Ngưng hoạt động)" : ten;
+                                            thanhPhanNames.Add(display);
+                                        }
+                                        <span>@string.Join(", ", thanhPhanNames)</span>
                                     }
                                     else
                                     {
                                         <span class="text-muted">Không có</span>
                                     }
                                 </td>
-                                <td>@item.TenThuongHieu</td>
+                                <td>
+                                    @{
+                                        var thuongHieuId = item.ThuongHieuId;
+                                        var danhSachThuongHieu = ViewBag.DanhSachThuongHieu as List<FurryFriends.API.Models.DTO.ThuongHieuDTO>;
+                                        var th = danhSachThuongHieu?.FirstOrDefault(x => x.ThuongHieuId == thuongHieuId);
+                                        if (th != null)
+                                        {
+                                            var text = th.TrangThai ? th.TenThuongHieu : th.TenThuongHieu + " (Ngưng hoạt động)";
+                                            <span>@text</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@item.TenThuongHieu</span>
+                                        }
+                                    }
+                                </td>
                                 <td>@item.NgayTao.ToString("dd/MM/yyyy")</td>
                                 <td>
                                     @if (item.TrangThai)
@@ -264,12 +302,13 @@ $(document).ready(function () {
             return false;
         }
 
-        // Thương hiệu - so sánh với tên thương hiệu
+        // Thương hiệu - so sánh với tên thương hiệu (normalize)
         if (thuongHieu && thuongHieu !== '' && thuongHieu !== 'Tất cả') {
-            var thuongHieuText = $('#filterThuongHieu option:selected').text();
-            console.log('Thương hiệu filter:', thuongHieuText, 'Row data:', rowThuongHieu);
-            if (rowThuongHieu !== thuongHieuText) {
-                console.log('Filtered out by brand');
+            var thuongHieuText = $('#filterThuongHieu option:selected').text().trim();
+            var rowThuongHieuText = rowThuongHieu.trim();
+            var norm1 = thuongHieuText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            var norm2 = rowThuongHieuText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+            if (norm1 !== norm2) {
                 return false;
             }
         }

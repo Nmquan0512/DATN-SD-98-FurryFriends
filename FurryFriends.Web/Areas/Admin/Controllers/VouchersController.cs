@@ -22,6 +22,9 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             var vouchers = await _voucherService.GetAllAsync();
+            ViewBag.TotalCount = vouchers.Count();
+            ViewBag.ActiveCount = vouchers.Count(x => x.TrangThai == 1);
+            ViewBag.InactiveCount = vouchers.Count(x => x.TrangThai == 0);
             return View(vouchers);
         }
 

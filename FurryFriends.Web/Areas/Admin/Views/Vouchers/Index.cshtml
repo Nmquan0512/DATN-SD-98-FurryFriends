@@ -31,6 +31,26 @@
         <li class="breadcrumb-item active">Quản lý Voucher</li>
     </ol>
 </nav>
+<div class="row mb-4 g-3">
+    <div class="col-md-4">
+        <div class="bg-white shadow rounded p-4 border-start border-primary border-4">
+            <h6 class="text-muted">Tổng số voucher</h6>
+            <h3 class="fw-bold text-primary">@ViewBag.TotalCount</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="bg-white shadow rounded p-4 border-start border-success border-4">
+            <h6 class="text-muted">Đang hoạt động</h6>
+            <h3 class="fw-bold text-success">@ViewBag.ActiveCount</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="bg-white shadow rounded p-4 border-start border-secondary border-4">
+            <h6 class="text-muted">Ngừng hoạt động</h6>
+            <h3 class="fw-bold text-secondary">@ViewBag.InactiveCount</h3>
+        </div>
+    </div>
+</div>
 <div class="container mb-4" id="filterContainer">
     <div class="card shadow-sm p-3 mb-3" style="border-radius: 12px;">
         <div class="row align-items-center mb-2">

@@ -41,8 +41,34 @@
                             }
                         </td>
                         <td class="fw-semibold">@ViewBag.TenSanPham</td>
-                        <td><span class="badge bg-light text-dark border px-3 py-2">@item.TenMau</span></td>
-                        <td><span class="badge bg-info text-white px-3 py-2">@item.TenKichCo</span></td>
+                        <td>
+                            @{
+                                var danhSachMauSac = ViewBag.DanhSachMauSac as IEnumerable<FurryFriends.API.Models.DTO.MauSacDTO>;
+                                var ms = danhSachMauSac?.FirstOrDefault(x => x.TenMau == item.TenMau);
+                                if (ms != null && !ms.TrangThai)
+                                {
+                                    <span class="badge bg-light text-dark border px-3 py-2">@item.TenMau (Ngưng hoạt động)</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-dark border px-3 py-2">@item.TenMau</span>
+                                }
+                            }
+                        </td>
+                        <td>
+                            @{
+                                var danhSachKichCo = ViewBag.DanhSachKichCo as IEnumerable<FurryFriends.API.Models.DTO.KichCoDTO>;
+                                var kc = danhSachKichCo?.FirstOrDefault(x => x.TenKichCo == item.TenKichCo);
+                                if (kc != null && !kc.TrangThai)
+                                {
+                                    <span class="badge bg-info text-white px-3 py-2">@item.TenKichCo (Ngưng hoạt động)</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-info text-white px-3 py-2">@item.TenKichCo</span>
+                                }
+                            }
+                        </td>
                         <td class="text-end">@item.Gia.ToString("N0") đ</td>
                         <td class="text-center">@item.SoLuong</td>
                         <td>

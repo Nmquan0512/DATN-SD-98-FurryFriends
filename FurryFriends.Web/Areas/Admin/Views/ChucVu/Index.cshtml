@@ -19,6 +19,26 @@
         <li class="breadcrumb-item active">Quản lý chức vụ</li>
     </ol>
 </nav>
+<div class="row mb-4 g-3">
+    <div class="col-md-4">
+        <div class="bg-white shadow rounded p-4 border-start border-primary border-4">
+            <h6 class="text-muted">Tổng số chức vụ</h6>
+            <h3 class="fw-bold text-primary">@ViewBag.TotalCount</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="bg-white shadow rounded p-4 border-start border-success border-4">
+            <h6 class="text-muted">Đang hoạt động</h6>
+            <h3 class="fw-bold text-success">@ViewBag.ActiveCount</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="bg-white shadow rounded p-4 border-start border-secondary border-4">
+            <h6 class="text-muted">Ngừng hoạt động</h6>
+            <h3 class="fw-bold text-secondary">@ViewBag.InactiveCount</h3>
+        </div>
+    </div>
+</div>
 <div class="table-container table-responsive" id="chucVuTableContainer" style="margin-left: 10px; margin-right: 40px;">
     <table id="chucVuTable" class="table table-border table-hover">
         <thead>
