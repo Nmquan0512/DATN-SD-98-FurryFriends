@@ -1,117 +1,286 @@
-﻿@model FurryFriends.Web.ViewModels.SanPhamFullCreateViewModel;
-
+﻿@model FurryFriends.Web.ViewModels.SanPhamFullCreateViewModel
 @{
-    ViewData["Title"] = "Tạo sản phẩm mới đầy đủ";
+    ViewData["Title"] = "Tạo sản phẩm mới";
 }
 
-<h3 class="mt-4">🛒 Tạo sản phẩm mới</h3>
-<hr />
+<div class="container">
+    <h3 class="mt-4">🛒 Tạo sản phẩm mới</h3>
+    <hr />
 
-<!-- Form Tạo sản phẩm chính -->
-<form asp-controller="SanPham" asp-action="Create" method="post" novalidate>
-    <div class="mb-3">
-        <label asp-for="SanPham.TenSanPham" class="form-label">Tên sản phẩm</label>
-        <input asp-for="SanPham.TenSanPham" class="form-control" required />
-        <span asp-validation-for="SanPham.TenSanPham" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="SanPham.MoTa" class="form-label">Mô tả</label>
-        <textarea asp-for="SanPham.MoTa" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="SanPham.MoTa" class="text-danger"></span>
-    </div>
-    <div class="form-check mb-3">
-        <input asp-for="SanPham.TrangThai" class="form-check-input" type="checkbox" id="TrangThai" />
-        <label class="form-check-label" for="TrangThai">Đang hoạt động</label>
-    </div>
-    <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
-</form>
+    <form asp-action="Create" method="post" enctype="multipart/form-data" id="productForm">
+        <!-- Thông tin cơ bản -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5>Thông tin cơ bản</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="SanPham.TenSanPham" class="form-label">Tên sản phẩm *</label>
+                        <input asp-for="SanPham.TenSanPham" class="form-control" required />
+                        <span asp-validation-for="SanPham.TenSanPham" class="text-danger"></span>
+                    </div>
 
-<hr />
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Thương hiệu *</label>
+                        <select asp-for="SanPham.ThuongHieuId" class="form-select"
+                                asp-items="@(new SelectList(ViewBag.ThuongHieuList, "ThuongHieuId", "TenThuongHieu"))" required>
+                            <option value="">-- Chọn thương hiệu --</option>
+                        </select>
+                    </div>
+                </div>
 
-<!-- Form Thêm biến thể sản phẩm (Chi tiết) -->
-<h4 class="mt-4">🔍 Thêm biến thể sản phẩm</h4>
-<form asp-controller="SanPhamChiTiet" asp-action="Create" method="post" novalidate>
-    <input type="hidden" name="SanPhamId" value="@Model.SanPham.SanPhamId" />
-    <div class="row g-3">
-        <div class="col-md-4">
-            <label for="KichCoId" class="form-label">Kích cỡ</label>
-            <select class="form-select" name="KichCoId" id="KichCoId" required>
-                <option value="">-- Chọn kích cỡ --</option>
-                @foreach (var kc in Model.KichCos)
-                {
-                    <option value="@kc.KichCoId">@kc.TenKichCo</option>
-                }
-            </select>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Loại sản phẩm *</label>
+                        <select asp-for="SanPham.LoaiSanPham" class="form-select" id="loaiSanPham" required>
+                            <option value="">-- Chọn loại --</option>
+                            <option value="DoAn">Đồ ăn</option>
+                            <option value="DoDung">Đồ dùng</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div id="thanhPhanSection" style="display: none;">
+                            <label class="form-label">Thành phần *</label>
+                            <select asp-for="SanPham.ThanhPhanIds" class="form-select" multiple id="thanhPhanSelect">
+                                @foreach (var tp in ViewBag.ThanhPhanList)
+                                {
+                                    <option value="@tp.ThanhPhanId">@tp.TenThanhPhan</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div id="chatLieuSection" style="display: none;">
+                            <label class="form-label">Chất liệu *</label>
+                            <select asp-for="SanPham.ChatLieuIds" class="form-select" multiple id="chatLieuSelect">
+                                @foreach (var cl in ViewBag.ChatLieuList)
+                                {
+                                    <option value="@cl.ChatLieuId">@cl.TenChatLieu</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input asp-for="SanPham.TrangThai" class="form-check-input" checked />
+                    <label asp-for="SanPham.TrangThai" class="form-check-label">Kích hoạt</label>
+                </div>
+            </div>
         </div>
-        <div class="col-md-4">
-            <label for="MauSacId" class="form-label">Màu sắc</label>
-            <select class="form-select" name="MauSacId" id="MauSacId" required>
-                <option value="">-- Chọn màu sắc --</option>
-                @foreach (var ms in Model.MauSacs)
-                {
-                    <option value="@ms.MauSacId">@ms.TenMau</option>
-                }
-            </select>
+
+        <!-- Biến thể sản phẩm -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5>Biến thể sản phẩm</h5>
+            </div>
+            <div class="card-body">
+                <div id="variantContainer">
+                    @for (int i = 0; i < Model.ChiTietList.Count; i++)
+                    {
+                        <div class="variant-item border p-3 mb-3">
+                            <input type="hidden" asp-for="ChiTietList[@i].SanPhamChiTietId" />
+
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Màu sắc *</label>
+                                    <select asp-for="ChiTietList[@i].MauSacId" class="form-select" required>
+                                        <option value="">-- Chọn màu --</option>
+                                        @foreach (var ms in ViewBag.MauSacList)
+                                        {
+                                            <option value="@ms.MauSacId">@ms.TenMau</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Kích cỡ *</label>
+                                    <select asp-for="ChiTietList[@i].KichCoId" class="form-select" required>
+                                        <option value="">-- Chọn kích cỡ --</option>
+                                        @foreach (var kc in ViewBag.KichCoList)
+                                        {
+                                            <option value="@kc.KichCoId">@kc.TenKichCo</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Số lượng *</label>
+                                    <input asp-for="ChiTietList[@i].SoLuongTon" class="form-control" type="number" min="0" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Giá bán *</label>
+                                    <input asp-for="ChiTietList[@i].GiaBan" class="form-control" type="number" min="0" required />
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Mô tả</label>
+                                    <textarea asp-for="ChiTietList[@i].MoTa" class="form-control"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Ảnh sản phẩm</label>
+                                <input asp-for="ChiTietList[@i].Files" type="file" class="form-control" multiple
+                                       accept="/image/*" onchange="previewImages(this, 'preview_@i')" />
+                                <div id="preview_@i" class="d-flex flex-wrap mt-2 gap-2"></div>
+                            </div>
+
+                            <button type="button" class="btn btn-danger btn-sm remove-variant">Xóa biến thể</button>
+                        </div>
+                    }
+                </div>
+
+                <button type="button" class="btn btn-secondary mt-3" id="addVariant">+ Thêm biến thể</button>
+            </div>
         </div>
-        <div class="col-md-4">
-            <label for="GiaBan" class="form-label">Giá bán</label>
-            <input type="number" name="GiaBan" id="GiaBan" class="form-control" min="0" required />
+
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary me-2">Lưu sản phẩm</button>
+            <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
         </div>
-    </div>
-    <div class="mt-3">
-        <button type="submit" class="btn btn-secondary">Thêm chi tiết</button>
-    </div>
-</form>
-
-<hr />
-
-<!-- Form Upload ảnh cho sản phẩm chi tiết -->
-<h4 class="mt-4">📸 Upload ảnh sản phẩm</h4>
-<form asp-controller="Anh" asp-action="Upload" method="post" enctype="multipart/form-data" novalidate>
-    <div class="mb-3">
-        <label for="SanPhamChiTietId" class="form-label">Chọn Sản phẩm Chi tiết:</label>
-        <select class="form-select" name="SanPhamChiTietId" id="SanPhamChiTietId" required>
-            <option value="">-- Chọn --</option>
-            @foreach (var ct in Model.SanPhamChiTiets)
-            {
-                <option value="@ct.SanPhamChiTietId">@ct.TenHienThi</option>
-            }
-        </select>
-    </div>
-
-    <div class="mb-3">
-        <label for="files" class="form-label">Chọn ảnh:</label>
-        <input type="file" name="files" id="files" multiple class="form-control" accept="image/*" required />
-    </div>
-
-    <div class="mb-3">
-        <button type="submit" class="btn btn-success">Tải lên</button>
-    </div>
-</form>
-
-<!-- Preview ảnh upload -->
-<div id="preview" class="mt-3 d-flex flex-wrap gap-2"></div>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-        document.getElementById('files').addEventListener('change', function (e) {
-            const files = e.target.files;
-            const previewDiv = document.getElementById('preview');
-            previewDiv.innerHTML = '';
-            Array.from(files).forEach(file => {
-                if (!file.type.startsWith('image/')) return;
-                const reader = new FileReader();
-                reader.onload = e => {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.style.maxWidth = '150px';
-                    img.style.borderRadius = '4px';
-                    img.style.boxShadow = '0 0 6px rgba(0,0,0,0.15)';
-                    previewDiv.appendChild(img);
-                };
-                reader.readAsDataURL(file);
+        // Hiển thị/ẩn thành phần hoặc chất liệu theo loại sản phẩm
+        document.getElementById('loaiSanPham').addEventListener('change', function() {
+            const loaiSanPham = this.value;
+            const thanhPhanSection = document.getElementById('thanhPhanSection');
+            const chatLieuSection = document.getElementById('chatLieuSection');
+
+            if (loaiSanPham === 'DoAn') {
+                thanhPhanSection.style.display = 'block';
+                chatLieuSection.style.display = 'none';
+                document.getElementById('chatLieuSelect').selectedIndex = -1;
+            } else if (loaiSanPham === 'DoDung') {
+                thanhPhanSection.style.display = 'none';
+                chatLieuSection.style.display = 'block';
+                document.getElementById('thanhPhanSelect').selectedIndex = -1;
+            } else {
+                thanhPhanSection.style.display = 'none';
+                chatLieuSection.style.display = 'none';
+            }
+        });
+
+        // Thêm biến thể mới
+        document.getElementById('addVariant').addEventListener('click', function() {
+            const container = document.getElementById('variantContainer');
+            const index = container.children.length;
+
+            const html = `
+                <div class="variant-item border p-3 mb-3">
+                    <input type="hidden" name="ChiTietList[${index}].SanPhamChiTietId" value="" />
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Màu sắc *</label>
+                            <select name="ChiTietList[${index}].MauSacId" class="form-select" required>
+                                <option value="">-- Chọn màu --</option>
+                                @foreach (var ms in ViewBag.MauSacList)
+                                {
+                                        <option value="@ms.MauSacId">@ms.TenMau</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Kích cỡ *</label>
+                            <select name="ChiTietList[${index}].KichCoId" class="form-select" required>
+                                <option value="">-- Chọn kích cỡ --</option>
+                                @foreach (var kc in ViewBag.KichCoList)
+                                {
+                                        <option value="@kc.KichCoId">@kc.TenKichCo</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Số lượng *</label>
+                            <input name="ChiTietList[${index}].SoLuongTon" class="form-control" type="number" min="0" required />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Giá bán *</label>
+                            <input name="ChiTietList[${index}].GiaBan" class="form-control" type="number" min="0" required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mô tả</label>
+                            <textarea name="ChiTietList[${index}].MoTa" class="form-control"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ảnh sản phẩm</label>
+                        <input name="ChiTietList[${index}].Files" type="file" class="form-control" multiple
+                               accept="image/*" onchange="previewImages(this, 'preview_new_${index}')" />
+                        <div id="preview_new_${index}" class="d-flex flex-wrap mt-2 gap-2"></div>
+                    </div>
+
+                    <button type="button" class="btn btn-danger btn-sm remove-variant">Xóa biến thể</button>
+                </div>
+            `;
+
+            container.insertAdjacentHTML('beforeend', html);
+        });
+
+        // Xóa biến thể
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-variant')) {
+                if (document.querySelectorAll('.variant-item').length > 1) {
+                    e.target.closest('.variant-item').remove();
+                } else {
+                    alert('Sản phẩm phải có ít nhất 1 biến thể!');
+                }
+            }
+        });
+
+        // Xem trước ảnh
+        function previewImages(input, previewId) {
+            const preview = document.getElementById(previewId);
+            preview.innerHTML = '';
+
+            if (input.files) {
+                Array.from(input.files).forEach(file => {
+                    if (!file.type.startsWith('image/')) return;
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '100px';
+                        img.style.maxHeight = '100px';
+                        img.style.objectFit = 'cover';
+                        img.style.borderRadius = '4px';
+                        img.style.marginRight = '5px';
+                        img.style.marginBottom = '5px';
+                        preview.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        // Khởi tạo select2 cho các select multiple
+        $(document).ready(function() {
+            $('#thanhPhanSelect').select2({
+                placeholder: "Chọn thành phần",
+                allowClear: true
+            });
+
+            $('#chatLieuSelect').select2({
+                placeholder: "Chọn chất liệu",
+                allowClear: true
             });
         });
     </script>

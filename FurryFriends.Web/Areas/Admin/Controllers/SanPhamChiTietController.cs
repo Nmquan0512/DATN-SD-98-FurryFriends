@@ -1,118 +1,98 @@
 ﻿using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.Services.IService;
-using FurryFriends.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
-namespace FurryFriends.Web.Areas.Admin.Controllers 
-{ 
-
-[Area("Admin")]
+namespace FurryFriends.Web.Areas.Admin.Controllers
+{
+    [Area("Admin")]
     public class SanPhamChiTietController : Controller
     {
         private readonly ISanPhamChiTietService _chiTietService;
-        private readonly IAnhService _anhService;
+        private readonly ISanPhamService _sanPhamService;
+        private readonly IKichCoService _kichCoService;
+        private readonly IMauSacService _mauSacService;
 
-        public SanPhamChiTietController(ISanPhamChiTietService chiTietService, IAnhService anhService)
+        public SanPhamChiTietController(
+            ISanPhamChiTietService chiTietService,
+            ISanPhamService sanPhamService,
+            IKichCoService kichCoService,
+            IMauSacService mauSacService)
         {
             _chiTietService = chiTietService;
-            _anhService = anhService;
+            _sanPhamService = sanPhamService;
+            _kichCoService = kichCoService;
+            _mauSacService = mauSacService;
         }
 
-        // ------------ GET: Tạo chi tiết sản phẩm cho sản phẩm đã có ------------
-        [HttpGet]
-        public IActionResult Create(Guid sanPhamId)
+        public async Task<IActionResult> Index(Guid sanPhamId)
         {
-            var viewModel = new SanPhamChiTietCreateViewModel
-            {
-                SanPhamChiTietId = null
-            };
-
             ViewBag.SanPhamId = sanPhamId;
-            return View(viewModel);
+            var chiTietList = await _chiTietService.GetBySanPhamIdAsync(sanPhamId);
+            return View(chiTietList);
         }
 
-        // ------------ POST: Tạo chi tiết sản phẩm ------------
+        public async Task<IActionResult> Create(Guid sanPhamId)
+        {
+            ViewBag.SanPhamId = sanPhamId;
+            ViewBag.MauSacList = await _mauSacService.GetAllAsync();
+            ViewBag.KichCoList = await _kichCoService.GetAllAsync();
+            return View(new SanPhamChiTietDTO { SanPhamId = sanPhamId });
+        }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Guid sanPhamId, SanPhamChiTietCreateViewModel model)
+        public async Task<IActionResult> Create(SanPhamChiTietDTO dto)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.SanPhamId = sanPhamId;
-                return View(model);
+                ViewBag.MauSacList = await _mauSacService.GetAllAsync();
+                ViewBag.KichCoList = await _kichCoService.GetAllAsync();
+                return View(dto);
             }
 
-            var dto = new SanPhamChiTietDTO
-            {
-                SanPhamId = sanPhamId,
-                MauSacId = model.MauSacId,
-                KichCoId = model.KichCoId,
-                SoLuong = model.SoLuongTon,
-                Gia = model.GiaBan
-            };
-
-            var result = await _chiTietService.CreateAsync(dto);
-            if (result.Data == null)
-            {
-                ModelState.AddModelError("", "Không thể tạo chi tiết sản phẩm.");
-                ViewBag.SanPhamId = sanPhamId;
-                return View(model);
-            }
-
-            // Upload ảnh nếu có
-            if (model.Files != null && model.Files.Any())
-            {
-                foreach (var file in model.Files)
-                {
-                    await _anhService.UploadAsync(file, result.Data.SanPhamChiTietId);
-                }
-            }
-
-            return RedirectToAction("Details", "SanPham", new { id = sanPhamId });
+            await _chiTietService.CreateAsync(dto);
+            return RedirectToAction("Index", new { sanPhamId = dto.SanPhamId });
         }
 
-        // ------------ POST: Cập nhật chi tiết sản phẩm ------------
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var chiTiet = await _chiTietService.GetByIdAsync(id);
+            if (chiTiet == null) return NotFound();
+
+            ViewBag.MauSacList = await _mauSacService.GetAllAsync();
+            ViewBag.KichCoList = await _kichCoService.GetAllAsync();
+            return View(chiTiet);
+        }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, SanPhamChiTietCreateViewModel model)
+        public async Task<IActionResult> Edit(SanPhamChiTietDTO dto)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.SanPhamId = id;
-                return View(model);
+                ViewBag.MauSacList = await _mauSacService.GetAllAsync();
+                ViewBag.KichCoList = await _kichCoService.GetAllAsync();
+                return View(dto);
             }
 
-            var dto = new SanPhamChiTietDTO
-            {
-                MauSacId = model.MauSacId,
-                KichCoId = model.KichCoId,
-                SoLuong = model.SoLuongTon,
-                Gia = model.GiaBan
-            };
-
-            var result = await _chiTietService.UpdateAsync(id, dto);
-            if (!result.Data)
-            {
-                ModelState.AddModelError("", "Không thể cập nhật chi tiết sản phẩm.");
-                ViewBag.SanPhamId = id;
-                return View(model);
-            }
-
-            return RedirectToAction("Index", "SanPham");
+            await _chiTietService.UpdateAsync(dto);
+            return RedirectToAction("Index", new { sanPhamId = dto.SanPhamId });
         }
 
-        // ------------ POST: Xóa chi tiết sản phẩm ------------
-        [HttpPost]
-        public async Task<IActionResult> Delete(Guid id, Guid sanPhamId)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var success = await _chiTietService.DeleteAsync(id);
-            if (!success)
-            {
-                TempData["Error"] = "Không thể xóa sản phẩm chi tiết.";
-            }
+            var chiTiet = await _chiTietService.GetByIdAsync(id);
+            if (chiTiet == null) return NotFound();
 
-            return RedirectToAction("Details", "SanPham", new { id = sanPhamId });
+            return View(chiTiet);
         }
 
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(Guid id, Guid sanPhamId)
+        {
+            await _chiTietService.DeleteAsync(id);
+            return RedirectToAction("Index", new { sanPhamId });
+        }
     }
+
 }

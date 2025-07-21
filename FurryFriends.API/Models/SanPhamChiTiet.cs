@@ -31,8 +31,8 @@ public class SanPhamChiTiet
 
 	public string MoTa { get; set; }
 
-	[Required]
-	public int TrangThai { get; set; }
+	
+	public bool TrangThai { get; set; }
 
 	[ForeignKey("SanPhamId")]
 	public virtual SanPham SanPham { get; set; }

@@ -1,8 +1,14 @@
-﻿using FurryFriends.API.Models.DTO;
+﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.ViewModels;
-
-public class SanPhamFullCreateViewModel
+namespace FurryFriends.Web.ViewModels
 {
-    public SanPhamDTO SanPham { get; set; } = new();
-    public List<SanPhamChiTietCreateViewModel> ChiTietList { get; set; } = new();
+    public class SanPhamFullCreateViewModel
+    {
+        public SanPhamDTO SanPham { get; set; } = new();
+        public List<SanPhamChiTietCreateViewModel> ChiTietList { get; set; } = new();
+
+
+    }
 }
+

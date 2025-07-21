@@ -25,7 +25,6 @@ namespace FurryFriends.API.Services
             {
                 SanPhamChiTietId = x.SanPhamChiTietId,
                 SanPhamId = x.SanPhamId,
-                
                 KichCoId = x.KichCoId,
                 TenKichCo = x.KichCo?.TenKichCo,
                 MauSacId = x.MauSacId,
@@ -43,30 +42,29 @@ namespace FurryFriends.API.Services
 
         public async Task<SanPhamChiTietDTO?> GetByIdAsync(Guid id)
         {
-            var item = await _repository.GetByIdAsync(id);
-            if (item == null) return null;
+            var x = await _repository.GetByIdAsync(id);
+            if (x == null) return null;
 
             return new SanPhamChiTietDTO
             {
-                SanPhamChiTietId = item.SanPhamChiTietId,
-                SanPhamId = item.SanPhamId,
-               
-                KichCoId = item.KichCoId,
-                TenKichCo = item.KichCo?.TenKichCo,
-                MauSacId = item.MauSacId,
-                TenMau = item.MauSac?.TenMau,
-                Gia = item.Gia,
-                SoLuong = item.SoLuong,
-                MoTa = item.MoTa,
-                AnhId = item.AnhId,
-                DuongDan = item.Anh?.DuongDan,
-                NgayTao = item.NgayTao,
-                NgaySua = item.NgaySua,
-                TrangThai = item.TrangThai
+                SanPhamChiTietId = x.SanPhamChiTietId,
+                SanPhamId = x.SanPhamId,
+                KichCoId = x.KichCoId,
+                TenKichCo = x.KichCo?.TenKichCo,
+                MauSacId = x.MauSacId,
+                TenMau = x.MauSac?.TenMau,
+                Gia = x.Gia,
+                SoLuong = x.SoLuong,
+                MoTa = x.MoTa,
+                AnhId = x.AnhId,
+                DuongDan = x.Anh?.DuongDan,
+                NgayTao = x.NgayTao,
+                NgaySua = x.NgaySua,
+                TrangThai = x.TrangThai
             };
         }
 
-        public async Task<bool> CreateAsync(SanPhamChiTietDTO dto)
+        public async Task<Guid> CreateAsync(SanPhamChiTietDTO dto)
         {
             var entity = new SanPhamChiTiet
             {
@@ -77,41 +75,42 @@ namespace FurryFriends.API.Services
                 Gia = dto.Gia,
                 SoLuong = dto.SoLuong,
                 MoTa = dto.MoTa,
-                AnhId = dto.AnhId, // chỉ lưu Id, không upload ảnh
-                NgayTao = DateTime.Now,
-                TrangThai = dto.TrangThai ?? 1
+                AnhId = dto.AnhId,
+                NgayTao = DateTime.UtcNow,
+                TrangThai = dto.TrangThai // hoặc mặc định là 1 nếu cần
             };
 
             await _repository.AddAsync(entity);
             await _repository.SaveAsync();
-            return true;
+
+            return entity.SanPhamChiTietId;
         }
 
         public async Task<bool> UpdateAsync(Guid id, SanPhamChiTietDTO dto)
         {
-            var entity = await _repository.GetByIdAsync(id);
-            if (entity == null) return false;
+            var e = await _repository.GetByIdAsync(id);
+            if (e == null) return false;
 
-            entity.KichCoId = dto.KichCoId;
-            entity.MauSacId = dto.MauSacId;
-            entity.Gia = dto.Gia;
-            entity.SoLuong = dto.SoLuong;
-            entity.MoTa = dto.MoTa;
-            entity.AnhId = dto.AnhId; // cập nhật ảnh nếu có
-            entity.NgaySua = DateTime.Now;
-            entity.TrangThai = dto.TrangThai ?? entity.TrangThai;
+            e.KichCoId = dto.KichCoId;
+            e.MauSacId = dto.MauSacId;
+            e.Gia = dto.Gia;
+            e.SoLuong = dto.SoLuong;
+            e.MoTa = dto.MoTa;
+            e.AnhId = dto.AnhId;
+            e.NgaySua = DateTime.UtcNow;
+            e.TrangThai = dto.TrangThai;
 
-            _repository.Update(entity);
+            _repository.Update(e);
             await _repository.SaveAsync();
             return true;
         }
 
         public async Task<bool> DeleteAsync(Guid id)
         {
-            var entity = await _repository.GetByIdAsync(id);
-            if (entity == null) return false;
+            var e = await _repository.GetByIdAsync(id);
+            if (e == null) return false;
 
-            _repository.Delete(entity);
+            _repository.Delete(e);
             await _repository.SaveAsync();
             return true;
         }

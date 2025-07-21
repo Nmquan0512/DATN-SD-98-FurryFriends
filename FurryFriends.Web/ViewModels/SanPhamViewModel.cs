@@ -1,4 +1,5 @@
-﻿namespace FurryFriends.Web.ViewModels
+﻿using FurryFriends.API.Models.DTO;
+namespace FurryFriends.Web.ViewModels
 {
     public class SanPhamViewModel
     {

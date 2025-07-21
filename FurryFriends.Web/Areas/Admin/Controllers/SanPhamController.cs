@@ -11,92 +11,123 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         private readonly ISanPhamService _sanPhamService;
         private readonly ISanPhamChiTietService _chiTietService;
         private readonly IAnhService _anhService;
+        private readonly IThuongHieuService _thuongHieuService;
+        private readonly IThanhPhanService _thanhPhanService;
+        private readonly IChatLieuService _chatLieuService;
+        private readonly IMauSacService _mauSacService;
+        private readonly IKichCoService _kichCoService;
 
         public SanPhamController(
             ISanPhamService sanPhamService,
             ISanPhamChiTietService chiTietService,
-            IAnhService anhService)
+            IAnhService anhService,
+            IThuongHieuService thuongHieuService,
+            IThanhPhanService thanhPhanService,
+            IChatLieuService chatLieuService,
+            IMauSacService mauSacService,
+            IKichCoService kichCoService)
         {
             _sanPhamService = sanPhamService;
             _chiTietService = chiTietService;
             _anhService = anhService;
+            _thuongHieuService = thuongHieuService;
+            _thanhPhanService = thanhPhanService;
+            _chatLieuService = chatLieuService;
+            _mauSacService = mauSacService;
+            _kichCoService = kichCoService;
         }
 
-        // ---------------- GET: Hiển thị danh sách sản phẩm ----------------
         public async Task<IActionResult> Index()
         {
             var result = await _sanPhamService.GetAllAsync();
             return View(result);
         }
 
-        // ---------------- GET: Hiển thị form tạo mới ----------------
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var viewModel = new SanPhamFullCreateViewModel
+            await LoadDropdownData();
+
+            var model = new SanPhamFullCreateViewModel
             {
                 SanPham = new SanPhamDTO(),
-                ChiTietList = new List<SanPhamChiTietCreateViewModel>()
+                ChiTietList = new List<SanPhamChiTietCreateViewModel> { new() }
             };
-            return View(viewModel);
+
+            return View(model);
         }
 
-        // ---------------- POST: Tạo sản phẩm đầy đủ ----------------
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SanPhamFullCreateViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(model);
-
-            // 1. Tạo sản phẩm chính
-            var sanPhamToCreate = new SanPhamDTO
             {
-                TenSanPham = model.SanPham.TenSanPham,
-                LoaiSanPham = model.SanPham.LoaiSanPham,
-                ThanhPhanIds = model.SanPham.ThanhPhanIds,
-                ChatLieuIds = model.SanPham.ChatLieuIds,
-                ThuongHieuId = model.SanPham.ThuongHieuId,
-                TrangThai = model.SanPham.TrangThai
-            };
-
-            var createdSanPham = await _sanPhamService.CreateAsync(sanPhamToCreate);
-            if (createdSanPham == null || createdSanPham.SanPhamId == Guid.Empty)
-            {
-                ModelState.AddModelError("", "Không thể tạo sản phẩm.");
+                await LoadDropdownData();
                 return View(model);
             }
 
-            // 2. Tạo chi tiết sản phẩm
+            // 1. Tạo sản phẩm chính
+            var sanPham = await _sanPhamService.CreateAsync(model.SanPham);
+            if (sanPham == null)
+            {
+                ModelState.AddModelError("", "❌ Không thể tạo sản phẩm chính.");
+                await LoadDropdownData();
+                return View(model);
+            }
+
+            // 2. Tạo biến thể sản phẩm và upload ảnh
             foreach (var chiTiet in model.ChiTietList)
             {
-                var chiTietToCreate = new SanPhamChiTietDTO
+                var chiTietDTO = new SanPhamChiTietDTO
                 {
-                    SanPhamId = createdSanPham.SanPhamId,
+                    SanPhamId = sanPham.SanPhamId,
                     MauSacId = chiTiet.MauSacId,
                     KichCoId = chiTiet.KichCoId,
                     SoLuong = chiTiet.SoLuongTon,
-                    Gia = chiTiet.GiaBan
+                    Gia = chiTiet.GiaBan,
+                    MoTa = chiTiet.MoTa
                 };
 
-                var createdChiTiet = await _chiTietService.CreateAsync(chiTietToCreate);
-                if (createdChiTiet?.Data == null)
+                var chiTietResult = await _chiTietService.CreateAsync(chiTietDTO);
+                if (!chiTietResult.Success || chiTietResult.Data == null)
                 {
-                    // Ghi log hoặc thông báo nếu cần
+                    ModelState.AddModelError("", "❌ Không thể tạo biến thể sản phẩm.");
                     continue;
                 }
 
-                // 3. Upload ảnh nếu có
+                var chiTietId = chiTietResult.Data.SanPhamChiTietId;
+
+                // 3. Upload ảnh cho biến thể
                 if (chiTiet.Files != null && chiTiet.Files.Any())
                 {
                     foreach (var file in chiTiet.Files)
                     {
-                        await _anhService.UploadAsync(file, createdChiTiet.Data.SanPhamChiTietId);
+                        try
+                        {
+                            var upload = await _anhService.UploadAsync(file, chiTietId);
+                            if (upload == null)
+                                ModelState.AddModelError("", $"❌ Upload thất bại: {file.FileName}");
+                        }
+                        catch (Exception ex)
+                        {
+                            ModelState.AddModelError("", $"❌ Lỗi khi upload ảnh: {file.FileName} - {ex.Message}");
+                        }
                     }
                 }
             }
 
+            TempData["Success"] = "✅ Tạo sản phẩm và các biến thể thành công!";
             return RedirectToAction("Index");
+        }
+
+        private async Task LoadDropdownData()
+        {
+            ViewBag.ThuongHieuList = await _thuongHieuService.GetAllAsync();
+            ViewBag.ThanhPhanList = await _thanhPhanService.GetAllAsync();
+            ViewBag.ChatLieuList = await _chatLieuService.GetAllAsync();
+            ViewBag.MauSacList = await _mauSacService.GetAllAsync();
+            ViewBag.KichCoList = await _kichCoService.GetAllAsync();
         }
     }
 }

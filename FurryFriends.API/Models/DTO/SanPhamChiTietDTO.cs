@@ -7,7 +7,7 @@ namespace FurryFriends.API.Models.DTO
     public class SanPhamChiTietDTO
     {
         
-        public Guid SanPhamChiTietId { get; set; }
+        public Guid SanPhamChiTietId { get; set; } = Guid.NewGuid();
         public Guid SanPhamId { get; set; }
         public Guid MauSacId { get; set; }
         public string? TenSanPham { get; set; } 
@@ -33,6 +33,6 @@ namespace FurryFriends.API.Models.DTO
 
         public DateTime? NgaySua { get; set; }
 
-        public int? TrangThai { get; set; }
+        public bool TrangThai { get; set; }
     }
 }

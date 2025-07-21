@@ -31,7 +31,7 @@ namespace FurryFriends.API.Controllers
         {
             var result = await _service.GetByIdAsync(id);
             if (result == null)
-                return NotFound();
+                return NotFound(new { message = "Không tìm thấy sản phẩm chi tiết." });
 
             return Ok(result);
         }
@@ -43,11 +43,15 @@ namespace FurryFriends.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var success = await _service.CreateAsync(dto);
-            if (!success)
-                return StatusCode(500, "Tạo sản phẩm chi tiết thất bại.");
-
-            return Ok(new { message = "Tạo thành công",SanPhamChiTietId = success });
+            try
+            {
+                var newId = await _service.CreateAsync(dto);
+                return Ok(new { message = "Tạo thành công", SanPhamChiTietId = newId });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi tạo sản phẩm chi tiết.", error = ex.Message });
+            }
         }
 
         // PUT: api/SanPhamChiTiet/{id}
@@ -61,7 +65,7 @@ namespace FurryFriends.API.Controllers
             if (!success)
                 return NotFound(new { message = "Không tìm thấy sản phẩm chi tiết." });
 
-            return Ok(new { message = "Cập nhật thành công" , SanPhamChiTietId = success });
+            return Ok(new { message = "Cập nhật thành công" });
         }
 
         // DELETE: api/SanPhamChiTiet/{id}
@@ -72,7 +76,7 @@ namespace FurryFriends.API.Controllers
             if (!success)
                 return NotFound(new { message = "Không tìm thấy sản phẩm chi tiết để xóa." });
 
-            return Ok(new { message = "Xóa thành công" , SanPhamChiTietId =success });
+            return Ok(new { message = "Xóa thành công" });
         }
     }
 }
