@@ -1,0 +1,61 @@
+﻿@model FurryFriends.API.Models.DTO.SanPhamDTO
+@{
+    ViewData["Title"] = "Chỉnh sửa sản phẩm";
+}
+
+<h2>Chỉnh sửa Sản phẩm</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="SanPhamId" />
+
+    <div class="form-group">
+        <label asp-for="TenSanPham"></label>
+        <input asp-for="TenSanPham" class="form-control" />
+        <span asp-validation-for="TenSanPham" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="LoaiSanPham"></label>
+        <select asp-for="LoaiSanPham" class="form-control">
+            <option value="DoAn">Đồ ăn</option>
+            <option value="DoDung">Đồ dùng</option>
+        </select>
+        <span asp-validation-for="LoaiSanPham" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ThuongHieuId">Thương hiệu</label>
+        <select asp-for="ThuongHieuId" class="form-control" asp-items="@(new SelectList(ViewBag.ThuongHieuList, "ThuongHieuId", "Ten"))"></select>
+        <span asp-validation-for="ThuongHieuId" class="text-danger"></span>
+    </div>
+
+    @if (Model.LoaiSanPham == "DoAn")
+    {
+        <div class="form-group">
+            <label>Thành phần</label>
+            <select asp-for="ThanhPhanIds" class="form-control" multiple asp-items="@(new MultiSelectList(ViewBag.ThanhPhanList, "ThanhPhanId", "Ten"))"></select>
+        </div>
+    }
+    else
+    {
+        <div class="form-group">
+            <label>Chất liệu</label>
+            <select asp-for="ChatLieuIds" class="form-control" multiple asp-items="@(new MultiSelectList(ViewBag.ChatLieuList, "ChatLieuId", "Ten"))"></select>
+        </div>
+    }
+
+    <div class="form-group">
+        <label asp-for="TrangThai"></label>
+        <select asp-for="TrangThai" class="form-control">
+            <option value="true">Đang bán</option>
+            <option value="false">Ngừng bán</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

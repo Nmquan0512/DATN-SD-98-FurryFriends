@@ -181,7 +181,7 @@
                                         <a asp-area="Admin" asp-controller="SanPham" asp-action="Delete" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-danger action-btn" title="Xoá" onclick="return confirm('Bạn có chắc muốn xoá sản phẩm này?');">
                                             <i class="fas fa-trash"></i>
                                         </a>
-                                        <a asp-area="Admin" asp-controller="SanPhamChiTiet" asp-action="Index" asp-route-sanPhamId="@item.SanPhamId" class="btn btn-sm btn-outline-secondary" title="Chi tiết sản phẩm">
+                                        <a asp-area="Admin" asp-controller="Details" asp-action="Index" asp-route-sanPhamId="@item.SanPhamId" class="btn btn-sm btn-outline-secondary" title="Chi tiết sản phẩm">
                                             <i class="fas fa-boxes-stacked"></i>
                                         </a>
                                     </div>

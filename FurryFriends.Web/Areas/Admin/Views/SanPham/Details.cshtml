@@ -1,0 +1,68 @@
+@model List<FurryFriends.API.Models.DTO.SanPhamChiTietDTO>
+@using FurryFriends.API.Models.DTO
+
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    var sanPham = ViewBag.SanPham as SanPhamDTO;
+}
+
+<h2>Chi tiết sản phẩm: @sanPham?.TenSanPham</h2>
+
+<div class="mb-4">
+    <p><strong>Loại sản phẩm:</strong> @sanPham?.LoaiSanPham</p>
+    <p><strong>Thương hiệu:</strong> @sanPham?.TenThuongHieu</p>
+    <p><strong>Trạng thái:</strong> @(sanPham?.TrangThai == true ? "Đang bán" : "Ngừng bán")</p>
+
+    @if (sanPham?.LoaiSanPham == "DoAn")
+    {
+        <p><strong>Thành phần:</strong> @string.Join(", ", sanPham.TenThanhPhans ?? new List<string>())</p>
+    }
+    else if (sanPham?.LoaiSanPham == "DoDung")
+    {
+        <p><strong>Chất liệu:</strong> @string.Join(", ", sanPham.TenChatLieus ?? new List<string>())</p>
+    }
+</div>
+
+<a asp-action="AddChiTiet" asp-route-sanPhamId="@sanPham?.SanPhamId" class="btn btn-success mb-3">➕ Thêm biến thể</a>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Màu sắc</th>
+            <th>Kích cỡ</th>
+            <th>Giá bán</th>
+            <th>Số lượng</th>
+            <th>Trạng thái</th>
+            <th style="width:160px;">Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.TenMau</td>
+                    <td>@item.TenKichCo</td>
+                    <td>@item.Gia.ToString("N0") ₫</td>
+                    <td>@item.SoLuong</td>
+                    <td>@(item.TrangThai ? "✔" : "❌")</td>
+                    <td>
+                        <a asp-action="EditChiTiet" asp-route-id="@item.SanPhamChiTietId" class="btn btn-sm btn-warning">Sửa</a>
+                        <form asp-action="DeleteChiTiet" asp-route-id="@item.SanPhamChiTietId" asp-route-sanPhamId="@item.SanPhamId" method="post" style="display:inline-block;" onsubmit="return confirm('Xác nhận xóa?');">
+                            <button class="btn btn-sm btn-danger">Xóa</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6" class="text-center">Chưa có biến thể nào.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary">⬅ Trở lại danh sách</a>
