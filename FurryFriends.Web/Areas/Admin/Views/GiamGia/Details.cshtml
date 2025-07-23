@@ -1,0 +1,33 @@
+﻿@model FurryFriends.API.Models.DTO.GiamGiaDTO
+
+@{
+    ViewData["Title"] = "Chi tiết chương trình giảm giá";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="mb-3">
+    <strong>Tên chương trình:</strong> @Model.TenGiamGia
+</div>
+<div class="mb-3">
+    <strong>Phần trăm khuyến mãi:</strong> @Model.PhanTramKhuyenMai %
+</div>
+<div class="mb-3">
+    <strong>Ngày bắt đầu:</strong> @Model.NgayBatDau?.ToString("dd/MM/yyyy")
+</div>
+<div class="mb-3">
+    <strong>Ngày kết thúc:</strong> @Model.NgayKetThuc?.ToString("dd/MM/yyyy")
+</div>
+<div class="mb-3">
+    <strong>Trạng thái:</strong>
+    @if (Model.TrangThai)
+    {
+        <span class="badge bg-success">Đang áp dụng</span>
+    }
+    else
+    {
+        <span class="badge bg-secondary">Ngừng áp dụng</span>
+    }
+</div>
+
+<a asp-action="Index" class="btn btn-secondary">Quay lại</a>

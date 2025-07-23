@@ -1,0 +1,93 @@
+﻿@model FurryFriends.Web.ViewModels.GiamGiaCreateViewModel
+
+@{
+    ViewData["Title"] = "Tạo mới chương trình giảm giá";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="GiamGia.TenGiamGia" class="form-label"></label>
+            <input asp-for="GiamGia.TenGiamGia" class="form-control" />
+            <span asp-validation-for="GiamGia.TenGiamGia" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label asp-for="GiamGia.PhanTramKhuyenMai" class="form-label"></label>
+            <input asp-for="GiamGia.PhanTramKhuyenMai" class="form-control" />
+            <span asp-validation-for="GiamGia.PhanTramKhuyenMai" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <label asp-for="GiamGia.TrangThai" class="form-label"></label>
+            <select asp-for="GiamGia.TrangThai" class="form-control">
+                <option value="true">Đang áp dụng</option>
+                <option value="false">Ngừng áp dụng</option>
+            </select>
+            <span asp-validation-for="GiamGia.TrangThai" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label asp-for="GiamGia.NgayBatDau" class="form-label"></label>
+            <input asp-for="GiamGia.NgayBatDau" class="form-control" type="date" />
+            <span asp-validation-for="GiamGia.NgayBatDau" class="text-danger"></span>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label asp-for="GiamGia.NgayKetThuc" class="form-label"></label>
+            <input asp-for="GiamGia.NgayKetThuc" class="form-control" type="date" />
+            <span asp-validation-for="GiamGia.NgayKetThuc" class="text-danger"></span>
+        </div>
+    </div>
+
+    <hr />
+    <h4 class="mb-3">Chọn sản phẩm áp dụng giảm giá</h4>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @for (int i = 0; i < Model.SanPhamChiTietList.Count; i++)
+        {
+            var sp = Model.SanPhamChiTietList[i];
+            <div class="col">
+                <div class="card h-100">
+                    <img src="@sp.DuongDan" class="card-img-top" alt="Ảnh sản phẩm" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@sp.TenSanPham</h5>
+                        <p class="card-text">
+                            Màu: <strong>@sp.TenMau</strong><br />
+                            Kích cỡ: <strong>@sp.TenKichCo</strong><br />
+                            Giá: <strong>@sp.Gia.ToString("N0") ₫</strong>
+                        </p>
+                        <div class="form-check">
+                            <input type="hidden" name="SanPhamChiTietList[@i].DuocChon" value="false" />
+                            <input class="form-check-input" type="checkbox"
+                                   name="SanPhamChiTietList[@i].DuocChon"
+                                   value="true" @(sp.DuocChon ? "checked" : "") />
+                            <label class="form-check-label">Chọn</label>
+                        </div>
+
+                        <input type="hidden" name="SanPhamChiTietList[@i].SanPhamChiTietId" value="@sp.SanPhamChiTietId" />
+                        <input type="hidden" name="SanPhamChiTietList[@i].TenSanPham" value="@sp.TenSanPham" />
+                        <input type="hidden" name="SanPhamChiTietList[@i].TenMau" value="@sp.TenMau" />
+                        <input type="hidden" name="SanPhamChiTietList[@i].TenKichCo" value="@sp.TenKichCo" />
+                        <input type="hidden" name="SanPhamChiTietList[@i].Gia" value="@sp.Gia" />
+                        <input type="hidden" name="SanPhamChiTietList[@i].DuongDan" value="@sp.DuongDan" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-success">Tạo chương trình</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

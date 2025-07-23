@@ -13,8 +13,7 @@ namespace FurryFriends.API.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //optionsBuilder.UseSqlServer("Data Source=ANH2005\\SQLEXPRESS;Initial Catalog=duantn;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
-                optionsBuilder.UseSqlServer("Data Source=XCBA2\\SQLEXPRESS;Initial Catalog=DATN;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Data Source=DELL\\SQLEXPRESS;Initial Catalog=DATN1;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
             }
         }
 
@@ -48,11 +47,12 @@ namespace FurryFriends.API.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Gọi các hàm cấu hình chi tiết
             ConfigureTaiKhoan(modelBuilder);
             ConfigureSanPham(modelBuilder);
             ConfigureGioHang(modelBuilder);
             ConfigureHoaDon(modelBuilder);
-            ConfigureDotGiamGia(modelBuilder);
+            ConfigureDotGiamGiaSanPham(modelBuilder);
             ConfigureSanPhamThanhPhanChatLieu(modelBuilder);
 
             // Seed admin account
@@ -103,7 +103,7 @@ namespace FurryFriends.API.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<TaiKhoan>()
-                  .HasOne(tk => tk.KhachHang)
+                .HasOne(tk => tk.KhachHang)
                 .WithMany(kh => kh.TaiKhoans)
                 .HasForeignKey(tk => tk.KhachHangId);
 
@@ -162,7 +162,6 @@ namespace FurryFriends.API.Data
                 .Property(hdct => hdct.Gia)
                 .HasPrecision(18, 2);
 
-
             modelBuilder.Entity<HoaDon>()
                 .HasOne(hd => hd.TaiKhoan)
                 .WithMany(tk => tk.HoaDons)
@@ -200,13 +199,19 @@ namespace FurryFriends.API.Data
                 .OnDelete(DeleteBehavior.Restrict);
         }
 
-        private void ConfigureDotGiamGia(ModelBuilder modelBuilder)
+        private void ConfigureDotGiamGiaSanPham(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DotGiamGiaSanPham>()
-                .HasOne(dg => dg.GiamGia)
-                .WithMany(gg => gg.DotGiamGiaSanPhams)
-                .HasForeignKey(dg => dg.GiamGiaId)
+                .HasOne(d => d.GiamGia)
+                .WithMany(g => g.DotGiamGiaSanPhams)
+                .HasForeignKey(d => d.GiamGiaId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<DotGiamGiaSanPham>()
+                .HasOne(d => d.SanPhamChiTiet)
+                .WithMany(sp => sp.DotGiamGiaSanPhams)
+                .HasForeignKey(d => d.SanPhamChiTietId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
 
         private void ConfigureSanPhamThanhPhanChatLieu(ModelBuilder modelBuilder)

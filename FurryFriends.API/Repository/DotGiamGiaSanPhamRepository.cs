@@ -2,68 +2,86 @@
 using FurryFriends.API.Models;
 using FurryFriends.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace FurryFriends.API.Repositories
 {
     public class DotGiamGiaSanPhamRepository : IDotGiamGiaSanPhamRepository
     {
         private readonly AppDbContext _context;
-        private readonly DbSet<DotGiamGiaSanPham> _dbSet;
 
         public DotGiamGiaSanPhamRepository(AppDbContext context)
         {
             _context = context;
-            _dbSet = _context.Set<DotGiamGiaSanPham>();
         }
 
         public async Task<IEnumerable<DotGiamGiaSanPham>> GetAllAsync()
         {
-            return await _dbSet
+            return await _context.DotGiamGiaSanPhams
                 .Include(d => d.GiamGia)
-                .Include(d => d.SanPham)
+                .Include(d => d.SanPhamChiTiet)
                 .ToListAsync();
         }
 
         public async Task<DotGiamGiaSanPham?> GetByIdAsync(Guid id)
         {
-            return await _dbSet
+            return await _context.DotGiamGiaSanPhams
                 .Include(d => d.GiamGia)
-                .Include(d => d.SanPham)
+                .Include(d => d.SanPhamChiTiet)
                 .FirstOrDefaultAsync(d => d.DotGiamGiaSanPhamId == id);
-        }
-
-        public async Task<IEnumerable<DotGiamGiaSanPham>> FindAsync(Expression<Func<DotGiamGiaSanPham, bool>> predicate)
-        {
-            return await _dbSet
-                .Include(d => d.GiamGia)
-                .Include(d => d.SanPham)
-                .Where(predicate)
-                .ToListAsync();
         }
 
         public async Task AddAsync(DotGiamGiaSanPham entity)
         {
-            await _dbSet.AddAsync(entity);
-        }
-
-        public void Update(DotGiamGiaSanPham entity)
-        {
-            _dbSet.Update(entity);
-        }
-
-        public void Delete(DotGiamGiaSanPham entity)
-        {
-            _dbSet.Remove(entity);
-        }
-
-        public async Task SaveAsync()
-        {
+            await _context.DotGiamGiaSanPhams.AddAsync(entity);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(DotGiamGiaSanPham entity)
+        {
+            _context.DotGiamGiaSanPhams.Update(entity);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var dot = await GetByIdAsync(id);
+            if (dot != null)
+            {
+                _context.DotGiamGiaSanPhams.Remove(dot);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await _context.DotGiamGiaSanPhams.AnyAsync(d => d.DotGiamGiaSanPhamId == id);
+        }
+
+        public async Task<IEnumerable<DotGiamGiaSanPham>> GetBySanPhamIdAsync(Guid sanPhamId)
+        {
+            return await _context.DotGiamGiaSanPhams
+                .Where(d => d.SanPhamChiTiet != null && d.SanPhamChiTiet.SanPhamId == sanPhamId)
+                .Include(d => d.GiamGia)
+                .Include(d => d.SanPhamChiTiet)
+                .ToListAsync();
+        }
+        public async Task DeleteByGiamGiaIdAsync(Guid giamGiaId)
+        {
+            var list = await _context.DotGiamGiaSanPhams
+                .Where(d => d.GiamGiaId == giamGiaId)
+                .ToListAsync();
+
+            _context.DotGiamGiaSanPhams.RemoveRange(list);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<DotGiamGiaSanPham>> GetByGiamGiaIdAsync(Guid giamGiaId)
+        {
+            return await _context.DotGiamGiaSanPhams
+                .Where(d => d.GiamGiaId == giamGiaId)
+                .Include(d => d.GiamGia)
+                .Include(d => d.SanPhamChiTiet)
+                .ToListAsync();
         }
     }
 }

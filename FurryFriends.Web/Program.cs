@@ -19,15 +19,10 @@ builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
 
 builder.Services.AddHttpClient<IGiamGiaService, GiamGiaService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7289/api/");
+    client.BaseAddress = new Uri("https://localhost:7289/");
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
-builder.Services.AddHttpClient<IDotGiamGiaService, DotGiamGiaService>(client =>
-{
-    client.BaseAddress = new Uri("https://localhost:7289/api/");
-    client.Timeout = TimeSpan.FromSeconds(30);
-});
 builder.Services.AddHttpClient<IDiaChiKhachHangService, DiaChiKhachHangService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");

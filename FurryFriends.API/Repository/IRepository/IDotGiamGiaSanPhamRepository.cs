@@ -1,7 +1,6 @@
 ﻿using FurryFriends.API.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace FurryFriends.API.Repository.IRepository
@@ -10,10 +9,12 @@ namespace FurryFriends.API.Repository.IRepository
     {
         Task<IEnumerable<DotGiamGiaSanPham>> GetAllAsync();
         Task<DotGiamGiaSanPham?> GetByIdAsync(Guid id);
-        Task<IEnumerable<DotGiamGiaSanPham>> FindAsync(Expression<Func<DotGiamGiaSanPham, bool>> predicate);
         Task AddAsync(DotGiamGiaSanPham entity);
-        void Update(DotGiamGiaSanPham entity);
-        void Delete(DotGiamGiaSanPham entity);
-        Task SaveAsync();
+        Task UpdateAsync(DotGiamGiaSanPham entity);
+        Task DeleteByGiamGiaIdAsync(Guid giamGiaId);
+        Task DeleteAsync(Guid id);
+        Task<bool> ExistsAsync(Guid id);
+        Task<IEnumerable<DotGiamGiaSanPham>> GetBySanPhamIdAsync(Guid sanPhamId);
+        Task<IEnumerable<DotGiamGiaSanPham>> GetByGiamGiaIdAsync(Guid giamGiaId);
     }
 }

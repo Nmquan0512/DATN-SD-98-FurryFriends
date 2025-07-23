@@ -1,85 +1,78 @@
-﻿using FurryFriends.API.Models;
-using FurryFriends.API.Repository.IRepository;
+﻿using FurryFriends.API.Models.DTO;
+using FurryFriends.API.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FurryFriends.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class GiamGiaController : Controller
+    public class GiamGiaController : ControllerBase
     {
-        private readonly IGiamGiaRepository _giamGiaRepo;
+        private readonly IGiamGiaService _giamGiaService;
 
-        public GiamGiaController(IGiamGiaRepository giamGiaRepo)
+        public GiamGiaController(IGiamGiaService giamGiaService)
         {
-            _giamGiaRepo = giamGiaRepo;
+            _giamGiaService = giamGiaService;
         }
 
+        // GET: api/GiamGia
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _giamGiaRepo.GetAllAsync();
-            return Ok(result);
+            var giamGias = await _giamGiaService.GetAllAsync();
+            return Ok(giamGias);
         }
 
+        // GET: api/GiamGia/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var result = await _giamGiaRepo.GetByIdAsync(id);
-            if (result == null) return NotFound();
-            return Ok(result);
+            var giamGia = await _giamGiaService.GetByIdAsync(id);
+            if (giamGia == null)
+                return NotFound("Không tìm thấy mã giảm giá");
+
+            return Ok(giamGia);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] GiamGia giamGia)
+        public async Task<IActionResult> Create([FromBody] GiamGiaDTO dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            giamGia.GiamGiaId = Guid.NewGuid();
-            giamGia.NgayTao = DateTime.UtcNow;
-            giamGia.NgayCapNhat = DateTime.UtcNow;
-
-            await _giamGiaRepo.AddAsync(giamGia);
-            await _giamGiaRepo.SaveAsync();
-            return CreatedAtAction(nameof(GetById), new { id = giamGia.GiamGiaId }, giamGia);
+            var created = await _giamGiaService.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.GiamGiaId }, created);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] GiamGia updated)
+        public async Task<IActionResult> Update(Guid id, [FromBody] GiamGiaDTO dto)
         {
-            var existing = await _giamGiaRepo.GetByIdAsync(id);
-            if (existing == null) return NotFound();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            existing.TenGiamGia = updated.TenGiamGia;
-            existing.PhanTramKhuyenMai = updated.PhanTramKhuyenMai;
-            existing.NgayBatDau = updated.NgayBatDau;
-            existing.NgayKetThuc = updated.NgayKetThuc;
-            existing.TrangThai = updated.TrangThai;
-            existing.NgayCapNhat = DateTime.UtcNow;
+            if (id != dto.GiamGiaId)
+                return BadRequest("ID không khớp với DTO");
 
-            _giamGiaRepo.Update(existing);
-            await _giamGiaRepo.SaveAsync();
-            return NoContent();
+            var updated = await _giamGiaService.UpdateAsync(id, dto);
+            if (updated == null)
+                return NotFound("Không tìm thấy mã giảm giá để cập nhật");
+
+            return Ok(updated);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var entity = await _giamGiaRepo.GetByIdAsync(id);
-            if (entity == null) return NotFound();
 
-            _giamGiaRepo.Delete(entity);
-            await _giamGiaRepo.SaveAsync();
-            return NoContent();
-        }
-
-        [HttpGet("{id}/phantram")]
-        public async Task<IActionResult> GetPhanTramKhuyenMai(Guid id)
+        // POST: api/GiamGia/{id}/assign-sanphamchitiet
+        [HttpPost("{id}/assign-sanphamchitiet")]
+        public async Task<IActionResult> AssignSanPhamChiTiet(Guid id, [FromBody] List<Guid> sanPhamChiTietIds)
         {
-            var giamGia = await _giamGiaRepo.GetByIdAsync(id);
-            if (giamGia == null) return NotFound();
-            return Ok(giamGia.PhanTramKhuyenMai);
+            if (sanPhamChiTietIds == null || !sanPhamChiTietIds.Any())
+                return BadRequest("Danh sách sản phẩm chi tiết không được rỗng.");
+
+            var result = await _giamGiaService.AddSanPhamChiTietToGiamGiaAsync(id, sanPhamChiTietIds);
+            if (!result)
+                return BadRequest("Không thể gán sản phẩm chi tiết vào đợt giảm giá");
+
+            return Ok("Gán sản phẩm chi tiết thành công");
         }
     }
 }

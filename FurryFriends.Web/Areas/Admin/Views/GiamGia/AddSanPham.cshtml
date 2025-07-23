@@ -1,0 +1,75 @@
+﻿@model FurryFriends.Web.ViewModels.GiamGiaCreateViewModel
+
+@{
+    ViewData["Title"] = "Thêm sản phẩm vào đợt giảm giá";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h4 class="mb-4">Đợt giảm giá: <strong>@Model.GiamGia.TenGiamGia</strong></h4>
+
+<form asp-action="AddSanPham" method="post">
+    <input type="hidden" asp-for="GiamGia.GiamGiaId" />
+
+    <table class="table table-bordered table-striped mt-3 align-middle">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>Chọn</th>
+                <th>Ảnh</th>
+                <th>Tên sản phẩm</th>
+                <th>Màu sắc</th>
+                <th>Kích cỡ</th>
+                <th>Giá bán</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.SanPhamChiTietList.Count; i++)
+            {
+                var sp = Model.SanPhamChiTietList[i];
+                <tr>
+                    <td class="text-center">
+                        <input type="checkbox"
+                               name="SanPhamChiTietList[@i].DuocChon"
+                               value="true"
+                               @(sp.DuocChon ? "checked" : "") />
+                        <input type="hidden" name="SanPhamChiTietList[@i].DuocChon" value="false" />
+                        <input type="hidden" name="SanPhamChiTietList[@i].SanPhamChiTietId" value="@sp.SanPhamChiTietId" />
+                        <input type="hidden" name="SanPhamChiTietList[@i].TenSanPham" value="@sp.TenSanPham" />
+                        <input type="hidden" name="SanPhamChiTietList[@i].TenMau" value="@sp.TenMau" />
+                        <input type="hidden" name="SanPhamChiTietList[@i].TenKichCo" value="@sp.TenKichCo" />
+                        <input type="hidden" name="SanPhamChiTietList[@i].Gia" value="@sp.Gia" />
+                        <input type="hidden" name="SanPhamChiTietList[@i].DuongDan" value="@sp.DuongDan" />
+                    </td>
+                    <td class="text-center">
+                        @if (!string.IsNullOrEmpty(sp.DuongDan))
+                        {
+                            <img src="@sp.DuongDan" alt="Ảnh" style="max-width: 70px; max-height: 70px;" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">Không có ảnh</span>
+                        }
+                    </td>
+                    <td>@sp.TenSanPham</td>
+                    <td>@sp.TenMau</td>
+                    <td>@sp.TenKichCo</td>
+                    <td>@sp.Gia.ToString("N0") đ</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="mt-3">
+        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        <a asp-action="Details" asp-route-id="@Model.GiamGia.GiamGiaId" class="btn btn-secondary ms-2">Quay lại</a>
+    </div>
+</form>
+
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success mt-3">@TempData["success"]</div>
+}
+@if (TempData["error"] != null)
+{
+    <div class="alert alert-danger mt-3">@TempData["error"]</div>
+}
