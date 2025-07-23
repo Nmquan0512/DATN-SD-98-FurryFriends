@@ -25,7 +25,7 @@ namespace FurryFriends.API.Models
 
         // Navigation properties
         [JsonIgnore]
-        public virtual ICollection<DotGiamGiaSanPham>? DotGiamGiaSanPhams { get; set; }
+      
         public virtual ICollection<SanPhamChiTiet>? SanPhamChiTiets { get; set; }
         public virtual ICollection<SanPhamThanhPhan>? SanPhamThanhPhans { get; set; }
         public virtual ICollection<SanPhamChatLieu>? SanPhamChatLieus { get; set; }

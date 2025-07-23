@@ -45,7 +45,7 @@ public class SanPhamChiTiet
 
 	[ForeignKey("AnhId")]
 	public virtual Anh Anh { get; set; }
-
-	public virtual ICollection<GioHangChiTiet> GioHangChiTiets { get; set; }
+    public virtual ICollection<DotGiamGiaSanPham>? DotGiamGiaSanPhams { get; set; }
+    public virtual ICollection<GioHangChiTiet> GioHangChiTiets { get; set; }
 
 }
