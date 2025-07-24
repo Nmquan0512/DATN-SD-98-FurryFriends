@@ -68,7 +68,13 @@ builder.Services.AddScoped<ISanPhamChiTietService, SanPhamChiTietService>();
 builder.Services.AddScoped<IThongTinCaNhanService, ThongTinCaNhanService>();
 
 builder.Services.AddScoped<IDotGiamGiaSanPhamRepository, DotGiamGiaSanPhamRepository>();
-builder.Services.AddScoped<IGiamGiaService, GiamGiaService>();
+builder.Services.AddScoped<IGiamGiaService, GiamGiaService>(provider =>
+    new GiamGiaService(
+        provider.GetRequiredService<IGiamGiaRepository>(),
+        provider.GetRequiredService<IDotGiamGiaSanPhamRepository>(),
+        provider.GetRequiredService<ISanPhamChiTietRepository>()
+    )
+);
 
 // Add CORS policy cho phép web admin truy cập API
 builder.Services.AddCors(options =>

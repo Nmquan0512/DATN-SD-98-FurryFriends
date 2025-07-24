@@ -83,5 +83,11 @@ namespace FurryFriends.API.Repositories
                 .Include(d => d.SanPhamChiTiet)
                 .ToListAsync();
         }
+
+        public async Task AddRangeAsync(IEnumerable<DotGiamGiaSanPham> entities)
+        {
+            await _context.DotGiamGiaSanPhams.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+        }
     }
 }

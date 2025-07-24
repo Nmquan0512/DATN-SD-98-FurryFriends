@@ -10,5 +10,6 @@ namespace FurryFriends.Web.Services.IService
         Task<ApiResult<GiamGiaDTO>> CreateAsync(GiamGiaDTO dto);
         Task<ApiResult<bool>> UpdateAsync(Guid id, GiamGiaDTO dto);
         Task<bool> AddSanPhamChiTietToGiamGiaAsync(Guid giamGiaId, List<Guid> sanPhamChiTietIds);
+        Task<bool> DeleteAsync(Guid id);
     }
 }

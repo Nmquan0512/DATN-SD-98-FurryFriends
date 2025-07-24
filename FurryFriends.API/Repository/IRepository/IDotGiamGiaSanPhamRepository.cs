@@ -16,5 +16,6 @@ namespace FurryFriends.API.Repository.IRepository
         Task<bool> ExistsAsync(Guid id);
         Task<IEnumerable<DotGiamGiaSanPham>> GetBySanPhamIdAsync(Guid sanPhamId);
         Task<IEnumerable<DotGiamGiaSanPham>> GetByGiamGiaIdAsync(Guid giamGiaId);
+        Task AddRangeAsync(IEnumerable<DotGiamGiaSanPham> entities);
     }
 }

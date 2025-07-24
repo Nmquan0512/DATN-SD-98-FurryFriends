@@ -41,6 +41,10 @@ namespace FurryFriends.Web.Services
                 return new ApiResult<GiamGiaDTO> { Data = data };
             }
 
+            // Log toàn bộ response lỗi
+            var errorContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("API Error Content: " + errorContent);
+
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
                 var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
@@ -54,7 +58,7 @@ namespace FurryFriends.Web.Services
             {
                 Errors = new Dictionary<string, string[]>
                 {
-                    { "", new[] { "Lỗi không xác định!" } }
+                    { "", new[] { "Lỗi không xác định! " + errorContent } }
                 }
             };
         }

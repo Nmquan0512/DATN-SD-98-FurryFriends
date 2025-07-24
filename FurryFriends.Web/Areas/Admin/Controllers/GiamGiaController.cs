@@ -10,11 +10,13 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     {
         private readonly IGiamGiaService _giamGiaService;
         private readonly ISanPhamChiTietService _sanPhamChiTietService;
+        private readonly ISanPhamService _sanPhamService;
 
-        public GiamGiaController(IGiamGiaService giamGiaService, ISanPhamChiTietService sanPhamChiTietService)
+        public GiamGiaController(IGiamGiaService giamGiaService, ISanPhamChiTietService sanPhamChiTietService, ISanPhamService sanPhamService)
         {
             _giamGiaService = giamGiaService;
             _sanPhamChiTietService = sanPhamChiTietService;
+            _sanPhamService = sanPhamService;
         }
 
         public async Task<IActionResult> Index()
@@ -29,23 +31,20 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         // ✅ GET: Admin/GiamGia/Create
         public async Task<IActionResult> Create()
         {
-            var sanPhams = await _sanPhamChiTietService.GetAllAsync();
-
-            var viewModel = new GiamGiaCreateViewModel
+            // Lấy danh sách sản phẩm chi tiết cho modal (truyền qua ViewBag)
+            var sanPhamsChiTiet = await _sanPhamChiTietService.GetAllAsync();
+            var sanPhams = await _sanPhamService.GetAllAsync();
+            var list = sanPhamsChiTiet.Select(spct => new
             {
-                SanPhamChiTietList = sanPhams.Select(sp => new SanPhamChiTietGiamGiaItemViewModel
-                {
-                    SanPhamChiTietId = sp.SanPhamChiTietId,
-                    TenSanPham = sp.TenSanPham ?? "",
-                    TenMau = sp.TenMau ?? "",
-                    TenKichCo = sp.TenKichCo ?? "",
-                    Gia = sp.Gia,
-                    DuongDan = sp.DuongDan,
-                    DuocChon = false
-                }).ToList()
-            };
-
-            return View(viewModel);
+                spct.SanPhamChiTietId,
+                TenSanPham = sanPhams.FirstOrDefault(sp => sp.SanPhamId == spct.SanPhamId)?.TenSanPham ?? "",
+                spct.TenMau,
+                spct.TenKichCo,
+                spct.Gia,
+                spct.DuongDan
+            }).ToList();
+            ViewBag.SanPhamChiTietList = list;
+            return View(new GiamGiaCreateViewModel());
         }
 
         // ✅ POST: Admin/GiamGia/Create
@@ -53,85 +52,54 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(GiamGiaCreateViewModel model)
         {
-            // Lấy danh sách sản phẩm được chọn
-            var selectedSanPham = model.SanPhamChiTietList
-                .Where(x => x.DuocChon)
-                .ToList();
-            model.GiamGia.SanPhamChiTietIds = selectedSanPham.Select(x => x.SanPhamChiTietId).ToList();
-
-            // Thêm validate chọn sản phẩm
-            if (selectedSanPham.Count == 0)
+            if (model.SanPhamChiTietIds == null || !model.SanPhamChiTietIds.Any())
             {
-                ModelState.AddModelError("SanPhamChiTietList", "Vui lòng chọn ít nhất một sản phẩm áp dụng giảm giá.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                var sanPhams = await _sanPhamChiTietService.GetAllAsync();
-                model.SanPhamChiTietList = sanPhams.Select(sp => new SanPhamChiTietGiamGiaItemViewModel
+                ModelState.AddModelError("SanPhamChiTietIds", "Vui lòng chọn ít nhất một sản phẩm áp dụng giảm giá.");
+                // Lấy lại danh sách cho modal
+                var sanPhamsChiTiet = await _sanPhamChiTietService.GetAllAsync();
+                var sanPhams = await _sanPhamService.GetAllAsync();
+                var list = sanPhamsChiTiet.Select(spct => new
                 {
-                    SanPhamChiTietId = sp.SanPhamChiTietId,
-                    TenSanPham = sp.TenSanPham ?? "",
-                    TenMau = sp.TenMau ?? "",
-                    TenKichCo = sp.TenKichCo ?? "",
-                    Gia = sp.Gia,
-                    DuongDan = sp.DuongDan,
-                    DuocChon = model.GiamGia.SanPhamChiTietIds.Contains(sp.SanPhamChiTietId)
+                    spct.SanPhamChiTietId,
+                    TenSanPham = sanPhams.FirstOrDefault(sp => sp.SanPhamId == spct.SanPhamId)?.TenSanPham ?? "",
+                    spct.TenMau,
+                    spct.TenKichCo,
+                    spct.Gia,
+                    spct.DuongDan
                 }).ToList();
-
+                ViewBag.SanPhamChiTietList = list;
                 return View(model);
             }
-
-            // Log toàn bộ danh sách sản phẩm chi tiết và sản phẩm được chọn
-            System.Diagnostics.Debug.WriteLine($"[LOG] Tổng số sản phẩm gửi lên: {model.SanPhamChiTietList?.Count}");
-            if (model.SanPhamChiTietList != null)
-            {
-                for (int i = 0; i < model.SanPhamChiTietList.Count; i++)
-                {
-                    var sp = model.SanPhamChiTietList[i];
-                    System.Diagnostics.Debug.WriteLine($"[LOG] SP[{i}]: Id={sp.SanPhamChiTietId}, Ten={sp.TenSanPham}, DuocChon={sp.DuocChon}");
-                }
-            }
-            System.Diagnostics.Debug.WriteLine($"[LOG] Số sản phẩm được chọn: {selectedSanPham.Count}");
-            foreach (var sp in selectedSanPham)
-            {
-                System.Diagnostics.Debug.WriteLine($"[LOG] Chọn: Id={sp.SanPhamChiTietId}, Ten={sp.TenSanPham}");
-            }
-
-            // Debug: Log trạng thái DuocChon của từng sản phẩm
-            for (int i = 0; i < model.SanPhamChiTietList.Count; i++)
-            {
-                var sp = model.SanPhamChiTietList[i];
-                Console.WriteLine($"[DEBUG] SP[{i}]: Id={sp.SanPhamChiTietId}, DuocChon={sp.DuocChon}");
-            }
-
-            // Nếu backend yêu cầu TenSanPham, truyền thêm vào payload
-            foreach (var sp in selectedSanPham)
-            {
-                // Tạo object động nếu cần
-                // Nếu backend yêu cầu object { id, tenSanPham }, hãy truyền đúng dạng này
-            }
-
+            model.GiamGia.SanPhamChiTietIds = model.SanPhamChiTietIds;
             var result = await _giamGiaService.CreateAsync(model.GiamGia);
             if (result.Success)
             {
                 TempData["success"] = "Tạo chương trình giảm giá thành công!";
                 return RedirectToAction("Index");
             }
-
             if (result.Errors != null)
             {
                 foreach (var err in result.Errors)
                 {
-                    // Bỏ qua lỗi TenSanPham khi tạo giảm giá
-                    if (err.Key == "TenSanPham") continue;
                     foreach (var msg in err.Value)
                     {
                         ModelState.AddModelError(err.Key, msg);
                     }
                 }
             }
-
+            // Lấy lại danh sách cho modal nếu có lỗi
+            var sanPhamsChiTiet2 = await _sanPhamChiTietService.GetAllAsync();
+            var sanPhams2 = await _sanPhamService.GetAllAsync();
+            var list2 = sanPhamsChiTiet2.Select(spct => new
+            {
+                spct.SanPhamChiTietId,
+                TenSanPham = sanPhams2.FirstOrDefault(sp => sp.SanPhamId == spct.SanPhamId)?.TenSanPham ?? "",
+                spct.TenMau,
+                spct.TenKichCo,
+                spct.Gia,
+                spct.DuongDan
+            }).ToList();
+            ViewBag.SanPhamChiTietList = list2;
             return View(model);
         }
 
@@ -170,60 +138,120 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             var item = await _giamGiaService.GetByIdAsync(id);
             if (item == null) return NotFound();
+
+            // Lấy danh sách sản phẩm chi tiết từ service
+            var allChiTiet = await _sanPhamChiTietService.GetAllAsync();
+            var sanPhams = await _sanPhamService.GetAllAsync();
+            var list = allChiTiet
+                .Where(spct => item.SanPhamChiTietIds != null && item.SanPhamChiTietIds.Select(x => x.ToString()).Contains(spct.SanPhamChiTietId.ToString()))
+                .Select(spct => new {
+                    spct.SanPhamChiTietId,
+                    TenSanPham = sanPhams.FirstOrDefault(sp => sp.SanPhamId == spct.SanPhamId)?.TenSanPham ?? "",
+                    spct.TenMau,
+                    spct.TenKichCo,
+                    spct.Gia,
+                    spct.DuongDan
+                }).ToList();
+            ViewBag.SanPhamChiTietList = list;
             return View(item);
         }
 
-        // ✅ GET: Admin/GiamGia/AddSanPham/{id}
-        public async Task<IActionResult> AddSanPham(Guid id)
+        // Modal gán sản phẩm chi tiết cho giảm giá
+        [HttpGet]
+        public async Task<IActionResult> LoadGanSanPhamModal(Guid id)
         {
             var giamGia = await _giamGiaService.GetByIdAsync(id);
-            if (giamGia == null) return NotFound();
-
-            var sanPhams = await _sanPhamChiTietService.GetAllAsync();
-
-            var viewModel = new GiamGiaCreateViewModel
-            {
-                GiamGia = giamGia,
-                SanPhamChiTietList = sanPhams.Select(sp => new SanPhamChiTietGiamGiaItemViewModel
+            if (giamGia == null) return Content("Không tìm thấy chương trình!");
+            var allChiTiet = await _sanPhamChiTietService.GetAllAsync();
+            var sanPhams = await _sanPhamService.GetAllAsync();
+            var list = allChiTiet.Select(spct => new
                 {
-                    SanPhamChiTietId = sp.SanPhamChiTietId,
-                    TenSanPham = sp.TenSanPham ?? "",
-                    TenMau = sp.TenMau ?? "",
-                    TenKichCo = sp.TenKichCo ?? "",
-                    Gia = sp.Gia,
-                    DuongDan = sp.DuongDan,
-                    DuocChon = giamGia.SanPhamChiTietIds?.Contains(sp.SanPhamChiTietId) ?? false
-                }).ToList()
-            };
-
-            return View(viewModel);
+                SanPhamChiTietId = spct.SanPhamChiTietId.ToString(), // ép về string GUID
+                TenSanPham = sanPhams.FirstOrDefault(sp => sp.SanPhamId == spct.SanPhamId)?.TenSanPham ?? "",
+                spct.TenMau,
+                spct.TenKichCo,
+                spct.Gia,
+                spct.DuongDan,
+                DuocChon = giamGia.SanPhamChiTietIds != null && giamGia.SanPhamChiTietIds.Contains(spct.SanPhamChiTietId)
+            }).ToList();
+            ViewBag.SanPhamChiTietList = list;
+            ViewBag.GiamGiaId = id;
+            return PartialView("_GanSanPhamModal");
         }
 
-        // ✅ POST: Admin/GiamGia/AddSanPham/{id}
+        // POST: Gán sản phẩm chi tiết vào giảm giá (AJAX)
+        [HttpPost]
+        public async Task<IActionResult> AssignSanPhamChiTiet(Guid id, [FromBody] List<string> sanPhamChiTietIds)
+        {
+            if (sanPhamChiTietIds == null || !sanPhamChiTietIds.Any())
+                return BadRequest("Không có sản phẩm nào được chọn!");
+            var guids = sanPhamChiTietIds.Select(x => Guid.Parse(x)).ToList();
+            var result = await _giamGiaService.AddSanPhamChiTietToGiamGiaAsync(id, guids);
+            if (result) return Ok();
+            return BadRequest("Không thể gán sản phẩm!");
+        }
+
+        // POST: Xóa giảm giá (AJAX)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            // IGiamGiaService không có DeleteAsync, nên trả về lỗi hoặc NotImplemented
+            return BadRequest("Chức năng xóa chưa được triển khai đúng ở service!");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddSanPham(Guid id)
+        {
+            // Lấy chương trình giảm giá
+            var giamGia = await _giamGiaService.GetByIdAsync(id);
+            if (giamGia == null) return NotFound();
+            // Lấy danh sách sản phẩm chi tiết
+            var sanPhamChiTietList = await _sanPhamChiTietService.GetAllAsync();
+            var sanPhams = await _sanPhamService.GetAllAsync();
+            // Join tên sản phẩm cha
+            var list = sanPhamChiTietList.Select(spct => new {
+                spct.SanPhamChiTietId,
+                TenSanPham = sanPhams.FirstOrDefault(sp => sp.SanPhamId == spct.SanPhamId)?.TenSanPham ?? "",
+                spct.TenMau,
+                spct.TenKichCo,
+                spct.Gia,
+                spct.DuongDan
+            }).ToList();
+            // Lấy các sản phẩm đã được gán cho chương trình này
+            var daGan = giamGia.SanPhamChiTietIds ?? new List<Guid>();
+            var model = new GiamGiaCreateViewModel
+            {
+                GiamGia = giamGia,
+                SanPhamChiTietIds = daGan.ToList()
+            };
+            ViewBag.SanPhamChiTietList = list;
+            return View("AddSanPham", model);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddSanPham(GiamGiaCreateViewModel model)
         {
-            var selectedIds = model.SanPhamChiTietList
-                                   .Where(x => x.DuocChon)
-                                   .Select(x => x.SanPhamChiTietId)
-                                   .ToList();
+            if (model.GiamGia == null || model.GiamGia.GiamGiaId == Guid.Empty)
+                return BadRequest();
 
-            if (selectedIds.Count == 0)
+            if (model.SanPhamChiTietIds != null && model.SanPhamChiTietIds.Any())
             {
-                TempData["error"] = "Vui lòng chọn ít nhất một sản phẩm.";
-                return RedirectToAction("AddSanPham", new { id = model.GiamGia.GiamGiaId });
-            }
-
-            var success = await _giamGiaService.AddSanPhamChiTietToGiamGiaAsync(model.GiamGia.GiamGiaId, selectedIds);
-            if (success)
-            {
-                TempData["success"] = "Gán sản phẩm chi tiết vào giảm giá thành công!";
+                await _giamGiaService.AddSanPhamChiTietToGiamGiaAsync(model.GiamGia.GiamGiaId, model.SanPhamChiTietIds);
+                TempData["success"] = "Gán sản phẩm thành công!";
                 return RedirectToAction("Details", new { id = model.GiamGia.GiamGiaId });
             }
-
-            TempData["error"] = "Gán sản phẩm thất bại.";
-            return RedirectToAction("AddSanPham", new { id = model.GiamGia.GiamGiaId });
+            else
+            {
+                TempData["error"] = "Vui lòng chọn ít nhất một sản phẩm!";
+                // Lấy lại dữ liệu để render lại view
+                var giamGia = await _giamGiaService.GetByIdAsync(model.GiamGia.GiamGiaId);
+                var sanPhamChiTietList = await _sanPhamChiTietService.GetAllAsync();
+                model.GiamGia = giamGia;
+                ViewBag.SanPhamChiTietList = sanPhamChiTietList;
+                return View("AddSanPham", model);
+            }
         }
     }
 }
