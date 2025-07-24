@@ -31,10 +31,7 @@ namespace FurryFriends.API.Services
                 TrangThai = x.TrangThai,
                 NgayTao = x.NgayTao,
                 NgayCapNhat = x.NgayCapNhat,
-                SanPhamChiTietIds = x.DotGiamGiaSanPhams?
-                    .Select(d => d.SanPhamChiTietId ?? Guid.Empty)
-                    .Where(id => id != Guid.Empty)
-                    .ToList()
+                SanPhamChiTietIds = x.DotGiamGiaSanPhams?.Select(d => d.SanPhamChiTietId).ToList()
             });
         }
 
@@ -53,10 +50,7 @@ namespace FurryFriends.API.Services
                 TrangThai = entity.TrangThai,
                 NgayTao = entity.NgayTao,
                 NgayCapNhat = entity.NgayCapNhat,
-                SanPhamChiTietIds = entity.DotGiamGiaSanPhams?
-                    .Select(d => d.SanPhamChiTietId ?? Guid.Empty)
-                    .Where(id => id != Guid.Empty)
-                    .ToList()
+                SanPhamChiTietIds = entity.DotGiamGiaSanPhams?.Select(d => d.SanPhamChiTietId).Where(id => id != Guid.Empty).ToList()
             };
         }
 
@@ -83,10 +77,14 @@ namespace FurryFriends.API.Services
             {
                 foreach (var spId in dto.SanPhamChiTietIds)
                 {
+                    // Lấy SanPhamId từ SanPhamChiTiet
+                    var chiTiet = await _dotGiamGiaSanPhamRepo.GetByIdAsync(spId);
+                    if (chiTiet == null) throw new Exception($"SanPhamChiTietId {spId} không tồn tại!");
                     var dot = new DotGiamGiaSanPham
                     {
                         DotGiamGiaSanPhamId = Guid.NewGuid(),
                         GiamGiaId = newId,
+                        SanPhamId = chiTiet.SanPhamId, // Lấy đúng SanPhamId
                         SanPhamChiTietId = spId
                     };
                     await _dotGiamGiaSanPhamRepo.AddAsync(dot);

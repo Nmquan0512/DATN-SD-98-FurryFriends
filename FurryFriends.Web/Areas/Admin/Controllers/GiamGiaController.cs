@@ -53,10 +53,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(GiamGiaCreateViewModel model)
         {
-            model.GiamGia.SanPhamChiTietIds = model.SanPhamChiTietList
+            // Lấy danh sách sản phẩm được chọn
+            var selectedSanPham = model.SanPhamChiTietList
                 .Where(x => x.DuocChon)
-                .Select(x => x.SanPhamChiTietId)
                 .ToList();
+            model.GiamGia.SanPhamChiTietIds = selectedSanPham.Select(x => x.SanPhamChiTietId).ToList();
+
+            // Thêm validate chọn sản phẩm
+            if (selectedSanPham.Count == 0)
+            {
+                ModelState.AddModelError("SanPhamChiTietList", "Vui lòng chọn ít nhất một sản phẩm áp dụng giảm giá.");
+            }
 
             if (!ModelState.IsValid)
             {
@@ -75,6 +82,36 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 return View(model);
             }
 
+            // Log toàn bộ danh sách sản phẩm chi tiết và sản phẩm được chọn
+            System.Diagnostics.Debug.WriteLine($"[LOG] Tổng số sản phẩm gửi lên: {model.SanPhamChiTietList?.Count}");
+            if (model.SanPhamChiTietList != null)
+            {
+                for (int i = 0; i < model.SanPhamChiTietList.Count; i++)
+                {
+                    var sp = model.SanPhamChiTietList[i];
+                    System.Diagnostics.Debug.WriteLine($"[LOG] SP[{i}]: Id={sp.SanPhamChiTietId}, Ten={sp.TenSanPham}, DuocChon={sp.DuocChon}");
+                }
+            }
+            System.Diagnostics.Debug.WriteLine($"[LOG] Số sản phẩm được chọn: {selectedSanPham.Count}");
+            foreach (var sp in selectedSanPham)
+            {
+                System.Diagnostics.Debug.WriteLine($"[LOG] Chọn: Id={sp.SanPhamChiTietId}, Ten={sp.TenSanPham}");
+            }
+
+            // Debug: Log trạng thái DuocChon của từng sản phẩm
+            for (int i = 0; i < model.SanPhamChiTietList.Count; i++)
+            {
+                var sp = model.SanPhamChiTietList[i];
+                Console.WriteLine($"[DEBUG] SP[{i}]: Id={sp.SanPhamChiTietId}, DuocChon={sp.DuocChon}");
+            }
+
+            // Nếu backend yêu cầu TenSanPham, truyền thêm vào payload
+            foreach (var sp in selectedSanPham)
+            {
+                // Tạo object động nếu cần
+                // Nếu backend yêu cầu object { id, tenSanPham }, hãy truyền đúng dạng này
+            }
+
             var result = await _giamGiaService.CreateAsync(model.GiamGia);
             if (result.Success)
             {
@@ -86,6 +123,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             {
                 foreach (var err in result.Errors)
                 {
+                    // Bỏ qua lỗi TenSanPham khi tạo giảm giá
+                    if (err.Key == "TenSanPham") continue;
                     foreach (var msg in err.Value)
                     {
                         ModelState.AddModelError(err.Key, msg);

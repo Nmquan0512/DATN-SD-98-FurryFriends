@@ -38,7 +38,21 @@ namespace FurryFriends.API.Controllers
         public async Task<IActionResult> Create([FromBody] GiamGiaDTO dto)
         {
             if (!ModelState.IsValid)
+            {
+                // Log lỗi ModelState
+                foreach (var key in ModelState.Keys)
+                {
+                    var errors = ModelState[key]?.Errors;
+                    if (errors != null && errors.Count > 0)
+                    {
+                        foreach (var err in errors)
+                        {
+                            Console.WriteLine($"[ModelStateError] {key}: {err.ErrorMessage}");
+                        }
+                    }
+                }
                 return BadRequest(ModelState);
+            }
 
             var created = await _giamGiaService.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = created.GiamGiaId }, created);

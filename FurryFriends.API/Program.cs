@@ -8,6 +8,7 @@ using FurryFriends.API.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.FileProviders;
+using FurryFriends.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -65,6 +66,10 @@ builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 builder.Services.AddScoped<ISanPhamChiTietRepository, SanPhamChiTietRepository>();
 builder.Services.AddScoped<ISanPhamChiTietService, SanPhamChiTietService>();
 builder.Services.AddScoped<IThongTinCaNhanService, ThongTinCaNhanService>();
+
+builder.Services.AddScoped<IDotGiamGiaSanPhamRepository, DotGiamGiaSanPhamRepository>();
+builder.Services.AddScoped<IGiamGiaService, GiamGiaService>();
+
 // Add CORS policy cho phép web admin truy cập API
 builder.Services.AddCors(options =>
 {

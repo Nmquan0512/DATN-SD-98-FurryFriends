@@ -102,6 +102,12 @@ builder.Services.AddHttpClient<ISanPhamService, SanPhamService>(client =>
 
 // Cách đúng đã kiểm tra
 
+builder.Services.AddHttpClient<IDotGiamGiaService, DotGiamGiaService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
 
 // Thêm cấu hình xác thực Google và Facebook
 builder.Services.AddAuthentication(options =>

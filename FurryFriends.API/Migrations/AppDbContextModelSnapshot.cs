@@ -32,6 +32,9 @@ namespace FurryFriends.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("SanPhamChiTietId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("TenAnh")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -95,6 +98,17 @@ namespace FurryFriends.API.Migrations
                     b.HasKey("ChucVuId");
 
                     b.ToTable("ChucVus");
+
+                    b.HasData(
+                        new
+                        {
+                            ChucVuId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            MoTaChucVu = "Quản trị viên hệ thống",
+                            NgayCapNhat = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(4974),
+                            NgayTao = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(4973),
+                            TenChucVu = "admin",
+                            TrangThai = true
+                        });
                 });
 
             modelBuilder.Entity("FurryFriends.API.Models.DiaChiKhachHang", b =>
@@ -167,6 +181,9 @@ namespace FurryFriends.API.Migrations
                     b.Property<decimal>("PhanTramGiamGia")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<Guid>("SanPhamChiTietId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("SanPhamId")
                         .IsRequired()
                         .HasColumnType("uniqueidentifier");
@@ -177,6 +194,8 @@ namespace FurryFriends.API.Migrations
                     b.HasKey("DotGiamGiaSanPhamId");
 
                     b.HasIndex("GiamGiaId");
+
+                    b.HasIndex("SanPhamChiTietId");
 
                     b.HasIndex("SanPhamId");
 
@@ -558,15 +577,29 @@ namespace FurryFriends.API.Migrations
                         .HasFilter("[TaiKhoanId] IS NOT NULL");
 
                     b.ToTable("NhanViens");
+
+                    b.HasData(
+                        new
+                        {
+                            NhanVienId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            ChucVuId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            DiaChi = "Hà Nội",
+                            Email = "admin@furryfriends.local",
+                            GioiTinh = "Nam",
+                            HoVaTen = "Admin hệ thống",
+                            NgayCapNhat = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(5024),
+                            NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayTao = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(5024),
+                            SDT = "0123456789",
+                            TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            TrangThai = true
+                        });
                 });
 
             modelBuilder.Entity("FurryFriends.API.Models.SanPham", b =>
                 {
                     b.Property<Guid>("SanPhamId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("TaiKhoanId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("TenSanPham")
@@ -580,8 +613,6 @@ namespace FurryFriends.API.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("SanPhamId");
-
-                    b.HasIndex("TaiKhoanId");
 
                     b.HasIndex("ThuongHieuId");
 
@@ -668,6 +699,16 @@ namespace FurryFriends.API.Migrations
                         .IsUnique();
 
                     b.ToTable("TaiKhoans");
+
+                    b.HasData(
+                        new
+                        {
+                            TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            NgayTaoTaiKhoan = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(4712),
+                            Password = "123456",
+                            TrangThai = true,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("FurryFriends.API.Models.ThanhPhan", b =>
@@ -864,6 +905,12 @@ namespace FurryFriends.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("SanPhamChiTiet", "SanPhamChiTiet")
+                        .WithMany("DotGiamGiaSanPhams")
+                        .HasForeignKey("SanPhamChiTietId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("FurryFriends.API.Models.SanPham", "SanPham")
                         .WithMany("DotGiamGiaSanPhams")
                         .HasForeignKey("SanPhamId")
@@ -873,6 +920,8 @@ namespace FurryFriends.API.Migrations
                     b.Navigation("GiamGia");
 
                     b.Navigation("SanPham");
+
+                    b.Navigation("SanPhamChiTiet");
                 });
 
             modelBuilder.Entity("FurryFriends.API.Models.GioHang", b =>
@@ -990,17 +1039,10 @@ namespace FurryFriends.API.Migrations
 
             modelBuilder.Entity("FurryFriends.API.Models.SanPham", b =>
                 {
-                    b.HasOne("FurryFriends.API.Models.TaiKhoan", "TaiKhoan")
-                        .WithMany("SanPhams")
-                        .HasForeignKey("TaiKhoanId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("FurryFriends.API.Models.ThuongHieu", "ThuongHieu")
                         .WithMany("SanPhams")
                         .HasForeignKey("ThuongHieuId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("TaiKhoan");
 
                     b.Navigation("ThuongHieu");
                 });
@@ -1161,8 +1203,6 @@ namespace FurryFriends.API.Migrations
                     b.Navigation("HoaDons");
 
                     b.Navigation("NhanVien");
-
-                    b.Navigation("SanPhams");
                 });
 
             modelBuilder.Entity("FurryFriends.API.Models.ThanhPhan", b =>
@@ -1182,6 +1222,8 @@ namespace FurryFriends.API.Migrations
 
             modelBuilder.Entity("SanPhamChiTiet", b =>
                 {
+                    b.Navigation("DotGiamGiaSanPhams");
+
                     b.Navigation("GioHangChiTiets");
                 });
 #pragma warning restore 612, 618
