@@ -3,6 +3,33 @@
   "WorkspaceRootPath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\views\\giohangs\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802171902_m.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\views\\sanphamkhachhang\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\views\\sanphamkhachhang\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802164715_m.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802164244_m.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{134F7FEB-158E-4485-BCEF-71BF0E89AA1B}|FurryFriends.API\\FurryFriends.API.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{134F7FEB-158E-4485-BCEF-71BF0E89AA1B}|FurryFriends.API\\FurryFriends.API.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.api\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{134F7FEB-158E-4485-BCEF-71BF0E89AA1B}|FurryFriends.API\\FurryFriends.API.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.api\\furryfriends.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\areas\\admin\\views\\giamgia\\addsanpham.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
@@ -24,9 +51,6 @@
       "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\areas\\admin\\views\\giamgia\\create.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{134F7FEB-158E-4485-BCEF-71BF0E89AA1B}|FurryFriends.API\\FurryFriends.API.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.api\\data\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\viewmodels\\sanphamchitietviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -46,9 +70,6 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{134F7FEB-158E-4485-BCEF-71BF0E89AA1B}|FurryFriends.API\\FurryFriends.API.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\areas\\admin\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
@@ -117,9 +138,6 @@
       "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\services\\sanphamservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{134F7FEB-158E-4485-BCEF-71BF0E89AA1B}|FurryFriends.API\\FurryFriends.API.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.api\\furryfriends.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\views\\auth\\dangnhap.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
@@ -153,7 +171,7 @@
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250716034911_nmqu.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{134F7FEB-158E-4485-BCEF-71BF0E89AA1B}|FurryFriends.API\\FurryFriends.API.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.api\\migrations\\20250724043647_nmq.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{134F7FEB-158E-4485-BCEF-71BF0E89AA1B}|FurryFriends.API\\FurryFriends.API.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.api\\migrations\\20250802172651_m.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -163,7 +181,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 12,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -179,32 +197,92 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "GiamGiaController.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\GiamGiaController.cs",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\GiamGiaController.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\GiamGiaController.cs",
-              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Controllers\\GiamGiaController.cs",
-              "ViewState": "AQIAAFYAAAAAjJmZmZkJwBEAAAA7AAAA",
+              "DocumentIndex": 56,
+              "Title": "20250802172651_m.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802172651_m.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250802172651_m.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802172651_m.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250802172651_m.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACYAAAASAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T18:33:05.217Z",
+              "WhenOpened": "2025-08-02T17:26:51.816Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "20250802171902_m.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802171902_m.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250802171902_m.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802171902_m.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250802171902_m.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-02T17:19:03.42Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\SanPhamKhachHang\\Details.cshtml",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\SanPhamKhachHang\\Details.cshtml",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\SanPhamKhachHang\\Details.cshtml",
+              "RelativeToolTip": "FurryFriends.Web\\Views\\SanPhamKhachHang\\Details.cshtml",
+              "ViewState": "AQIAAG8BAAAAWGZmZmYkwIABAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-02T17:06:42.194Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\SanPhamKhachHang\\Index.cshtml",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\SanPhamKhachHang\\Index.cshtml",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\SanPhamKhachHang\\Index.cshtml",
+              "RelativeToolTip": "FurryFriends.Web\\Views\\SanPhamKhachHang\\Index.cshtml",
+              "ViewState": "AQIAACkBAAAACDMzMzMLwEQBAAAKAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-02T16:59:48.926Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\GioHangs\\Index.cshtml",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\GioHangs\\Index.cshtml",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\GioHangs\\Index.cshtml",
+              "RelativeToolTip": "FurryFriends.Web\\Views\\GioHangs\\Index.cshtml",
+              "ViewState": "AQIAAO8AAAAAMDMzMzMGwHoCAABbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-02T16:58:23.183Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "20250723175910_nmq.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723175910_nmq.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723175910_nmq.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723175910_nmq.cs",
-              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250723175910_nmq.cs",
+              "DocumentIndex": 4,
+              "Title": "20250802164715_m.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802164715_m.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250802164715_m.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802164715_m.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250802164715_m.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T17:59:11.047Z"
+              "WhenOpened": "2025-08-02T16:47:16.112Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 5,
+              "Title": "20250802164244_m.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802164244_m.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250802164244_m.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802164244_m.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250802164244_m.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-02T16:42:44.643Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
               "Title": "20250723174342_nmq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723174342_nmq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723174342_nmq.cs",
@@ -222,14 +300,13 @@
               "RelativeDocumentMoniker": "FurryFriends.API\\Data\\AppDbContext.cs",
               "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Data\\AppDbContext.cs",
               "RelativeToolTip": "FurryFriends.API\\Data\\AppDbContext.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABcAAAA4AAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAABFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-05T19:31:43.822Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-05T19:31:43.822Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 10,
               "Title": "Index.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\GiamGia\\Index.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\GiamGia\\Index.cshtml",
@@ -237,12 +314,11 @@
               "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\GiamGia\\Index.cshtml",
               "ViewState": "AQIAAAQAAAAAAAAAAAAIwCgAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-23T19:23:48.033Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-23T19:23:48.033Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 15,
               "Title": "Create.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\GiamGia\\Create.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\GiamGia\\Create.cshtml",
@@ -250,12 +326,11 @@
               "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\GiamGia\\Create.cshtml",
               "ViewState": "AQIAAG0AAAAAPDMzMzMLwIoAAAAcAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-23T19:48:42.573Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-23T19:48:42.573Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 14,
               "Title": "GiamGiaService.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\GiamGiaService.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Services\\GiamGiaService.cs",
@@ -263,12 +338,11 @@
               "RelativeToolTip": "FurryFriends.Web\\Services\\GiamGiaService.cs",
               "ViewState": "AQIAADQAAAAAAAAAAAAswGcAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T18:34:55.831Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-23T18:34:55.831Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 11,
               "Title": "Index.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\Anh\\Index.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\Anh\\Index.cshtml",
@@ -276,12 +350,11 @@
               "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\Anh\\Index.cshtml",
               "ViewState": "AQIAAAwAAACAj5mZmRkWwB4AAAAmAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-13T16:37:47.514Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-13T16:37:47.514Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 12,
               "Title": "GiamGiaController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\GiamGiaController.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\GiamGiaController.cs",
@@ -289,448 +362,23 @@
               "RelativeToolTip": "FurryFriends.API\\Controllers\\GiamGiaController.cs",
               "ViewState": "AQIAAD4AAAAAAAAAAAAAwFIAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T18:33:40.912Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-23T18:33:40.912Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 9,
               "Title": "AddSanPham.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\GiamGia\\AddSanPham.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\GiamGia\\AddSanPham.cshtml",
               "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\GiamGia\\AddSanPham.cshtml",
               "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\GiamGia\\AddSanPham.cshtml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB8AAABLAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAA9AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-24T10:00:19.96Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "SanPhamChiTiet.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\SanPhamChiTiet.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Models\\SanPhamChiTiet.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\SanPhamChiTiet.cs",
-              "RelativeToolTip": "FurryFriends.API\\Models\\SanPhamChiTiet.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-24T07:40:08.564Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-24T10:00:19.96Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "SanPhamChiTietViewModel.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\ViewModels\\SanPhamChiTietViewModel.cs",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\ViewModels\\SanPhamChiTietViewModel.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\ViewModels\\SanPhamChiTietViewModel.cs",
-              "RelativeToolTip": "FurryFriends.Web\\ViewModels\\SanPhamChiTietViewModel.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAyAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-24T07:48:25.646Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "SanPhamChiTietDTO.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\SanPhamChiTietDTO.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DTO\\SanPhamChiTietDTO.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\SanPhamChiTietDTO.cs",
-              "RelativeToolTip": "FurryFriends.API\\Models\\DTO\\SanPhamChiTietDTO.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAIAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-16T03:28:13.907Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Program.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Program.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Program.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Program.cs",
-              "RelativeToolTip": "FurryFriends.API\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAEYAAAA+AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T19:18:55.481Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "20250724042703_nmq.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250724042703_nmq.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250724042703_nmq.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250724042703_nmq.cs",
-              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250724042703_nmq.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAAlAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-24T04:27:03.94Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 50,
-              "Title": "20250724043647_nmq.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250724043647_nmq.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250724043647_nmq.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250724043647_nmq.cs",
-              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250724043647_nmq.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-24T04:36:47.996Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "20250724043356_nmq.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250724043356_nmq.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250724043356_nmq.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250724043356_nmq.cs",
-              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250724043356_nmq.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-24T04:33:57.066Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
-              "Title": "_Layout.cshtml",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml",
-              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml",
-              "ViewState": "AQIAAHAAAABANDMzM/MmwJsAAABCAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-13T20:18:28.049Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "Program.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Program.cs",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Program.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Program.cs",
-              "RelativeToolTip": "FurryFriends.Web\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAFIAAAADAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-13T16:08:19.916Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\appsettings.json",
-              "RelativeDocumentMoniker": "FurryFriends.API\\appsettings.json",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\appsettings.json",
-              "RelativeToolTip": "FurryFriends.API\\appsettings.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAACHAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-07-18T16:47:56.322Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "GiamGiaRepository.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Repository\\GiamGiaRepository.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Repository\\GiamGiaRepository.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Repository\\GiamGiaRepository.cs",
-              "RelativeToolTip": "FurryFriends.API\\Repository\\GiamGiaRepository.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T18:33:51.895Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "GiamGiaService.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Services\\GiamGiaService.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Services\\GiamGiaService.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Services\\GiamGiaService.cs",
-              "RelativeToolTip": "FurryFriends.API\\Services\\GiamGiaService.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAABNAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T18:34:00.566Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "20250723174204_nmq.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723174204_nmq.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723174204_nmq.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723174204_nmq.cs",
-              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250723174204_nmq.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T17:42:05.382Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 21,
-              "Title": "DotGiamGiasController.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\DotGiamGiasController.cs",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\DotGiamGiasController.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\DotGiamGiasController.cs",
-              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Controllers\\DotGiamGiasController.cs",
-              "ViewState": "AQIAABAAAACAzczMzIwnwCAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T17:55:43.897Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "20250723173955_nmq.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723173955_nmq.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723173955_nmq.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723173955_nmq.cs",
-              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250723173955_nmq.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T17:39:55.532Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
-              "Title": "20250723173649_nmq.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723173649_nmq.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723173649_nmq.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723173649_nmq.cs",
-              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250723173649_nmq.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T17:36:50.581Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
-              "Title": "DotGiamGiaSanPham.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DotGiamGiaSanPham.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DotGiamGiaSanPham.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DotGiamGiaSanPham.cs",
-              "RelativeToolTip": "FurryFriends.API\\Models\\DotGiamGiaSanPham.cs",
-              "ViewState": "AQIAAAkAAACAzMzMzEwfwA0AAAASAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T17:55:54.494Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
-              "Title": "DotGiamGiaController.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\DotGiamGiaController.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\DotGiamGiaController.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\DotGiamGiaController.cs",
-              "RelativeToolTip": "FurryFriends.API\\Controllers\\DotGiamGiaController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACAAAAASAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-23T17:10:35.38Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 49,
-              "Title": "20250716034911_nmqu.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250716034911_nmqu.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250716034911_nmqu.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250716034911_nmqu.cs",
-              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250716034911_nmqu.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-16T03:49:12.491Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 34,
-              "Title": "SanPhamDTO.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\SanPhamDTO.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DTO\\SanPhamDTO.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\SanPhamDTO.cs",
-              "RelativeToolTip": "FurryFriends.API\\Models\\DTO\\SanPhamDTO.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACoAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-13T22:18:39.63Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\SanPham\\Index.cshtml",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\SanPham\\Index.cshtml",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\SanPham\\Index.cshtml",
-              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\SanPham\\Index.cshtml",
-              "ViewState": "AQIAAJAAAAAAlpmZmRkmwJcAAAAoAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-13T20:08:54.646Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 36,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\HoaDon\\Index.cshtml",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\HoaDon\\Index.cshtml",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\HoaDon\\Index.cshtml",
-              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\HoaDon\\Index.cshtml",
-              "ViewState": "AQIAAHEBAAAAcGZmZqYowIcBAAAZAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-13T19:20:31.496Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 37,
-              "Title": "SanPhamService.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\SanPhamService.cs",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Services\\SanPhamService.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\SanPhamService.cs",
-              "RelativeToolTip": "FurryFriends.Web\\Services\\SanPhamService.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-13T16:18:43.067Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "20250718165647_nmq.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250718165647_nmq.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250718165647_nmq.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250718165647_nmq.cs",
-              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250718165647_nmq.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-18T16:56:47.84Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
-              "Title": "Upload.cshtml",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\Anh\\Upload.cshtml",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\Anh\\Upload.cshtml",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\Anh\\Upload.cshtml",
-              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\Anh\\Upload.cshtml",
-              "ViewState": "AQIAAAAAAADpMzMzMzMbwA4AAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-19T17:57:25.068Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 28,
-              "Title": "Edit.cshtml",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\SanPhamChiTiet\\Edit.cshtml",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\SanPhamChiTiet\\Edit.cshtml",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\SanPhamChiTiet\\Edit.cshtml",
-              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\SanPhamChiTiet\\Edit.cshtml",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-20T03:18:33.264Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "20250718165101_nmq.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250718165101_nmq.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250718165101_nmq.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250718165101_nmq.cs",
-              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250718165101_nmq.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-18T16:51:01.986Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 39,
-              "Title": "DangNhap.cshtml",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\Auth\\DangNhap.cshtml",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\Auth\\DangNhap.cshtml",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\Auth\\DangNhap.cshtml",
-              "RelativeToolTip": "FurryFriends.Web\\Views\\Auth\\DangNhap.cshtml",
-              "ViewState": "AQIAAJkBAAAAAAAAAAAowLgBAAAsAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-08T17:17:33.103Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 40,
-              "Title": "Create.cshtml",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\NhanVien\\Create.cshtml",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\NhanVien\\Create.cshtml",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\NhanVien\\Create.cshtml",
-              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\NhanVien\\Create.cshtml",
-              "ViewState": "AQIAALQAAAAANTMzM7MiwMAAAAAYAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-08T16:36:18.624Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
-              "Title": "SanPhamChiTietService.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\SanPhamChiTietService.cs",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Services\\SanPhamChiTietService.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\SanPhamChiTietService.cs",
-              "RelativeToolTip": "FurryFriends.Web\\Services\\SanPhamChiTietService.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACIAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-16T04:19:22.704Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 33,
-              "Title": "SanPhamChiTietController.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\SanPhamChiTietController.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\SanPhamChiTietController.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\SanPhamChiTietController.cs",
-              "RelativeToolTip": "FurryFriends.API\\Controllers\\SanPhamChiTietController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-16T03:34:46.56Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 41,
-              "Title": "Voucher.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\Voucher.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Models\\Voucher.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\Voucher.cs",
-              "RelativeToolTip": "FurryFriends.API\\Models\\Voucher.cs",
-              "ViewState": "AQIAAAIAAAAANDMzMzP7vxgAAAAMAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-05T19:32:36.932Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 35,
-              "Title": "HoaDon.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\HoaDon.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Models\\HoaDon.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\HoaDon.cs",
-              "RelativeToolTip": "FurryFriends.API\\Models\\HoaDon.cs",
-              "ViewState": "AQIAAC8AAACAmZmZmdk+wBEAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-13T22:09:45.864Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 42,
-              "Title": "VoucherController.cs",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\VoucherController.cs",
-              "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\VoucherController.cs",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\VoucherController.cs",
-              "RelativeToolTip": "FurryFriends.API\\Controllers\\VoucherController.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-05T19:32:26.708Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 43,
-              "Title": "FurryFriends.Web.csproj",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\FurryFriends.Web.csproj",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
-              "RelativeToolTip": "FurryFriends.Web\\FurryFriends.Web.csproj",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-07-05T19:27:51.33Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 38,
               "Title": "FurryFriends.API.csproj",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
               "RelativeDocumentMoniker": "FurryFriends.API\\FurryFriends.API.csproj",
@@ -742,7 +390,439 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\appsettings.json",
+              "RelativeDocumentMoniker": "FurryFriends.API\\appsettings.json",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\appsettings.json",
+              "RelativeToolTip": "FurryFriends.API\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAkAAAAhAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-07-18T16:47:56.322Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "20250723175910_nmq.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723175910_nmq.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723175910_nmq.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723175910_nmq.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250723175910_nmq.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T17:59:11.047Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "GiamGiaController.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\GiamGiaController.cs",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\GiamGiaController.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\GiamGiaController.cs",
+              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Controllers\\GiamGiaController.cs",
+              "ViewState": "AQIAAFYAAAAAjJmZmZkJwBEAAAA7AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T18:33:05.217Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "SanPhamChiTiet.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\SanPhamChiTiet.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Models\\SanPhamChiTiet.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\SanPhamChiTiet.cs",
+              "RelativeToolTip": "FurryFriends.API\\Models\\SanPhamChiTiet.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-24T07:40:08.564Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "SanPhamChiTietViewModel.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\ViewModels\\SanPhamChiTietViewModel.cs",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\ViewModels\\SanPhamChiTietViewModel.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\ViewModels\\SanPhamChiTietViewModel.cs",
+              "RelativeToolTip": "FurryFriends.Web\\ViewModels\\SanPhamChiTietViewModel.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAyAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-24T07:48:25.646Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "SanPhamChiTietDTO.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\SanPhamChiTietDTO.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DTO\\SanPhamChiTietDTO.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\SanPhamChiTietDTO.cs",
+              "RelativeToolTip": "FurryFriends.API\\Models\\DTO\\SanPhamChiTietDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-16T03:28:13.907Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Program.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Program.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Program.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Program.cs",
+              "RelativeToolTip": "FurryFriends.API\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAEYAAAA+AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T19:18:55.481Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "20250724042703_nmq.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250724042703_nmq.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250724042703_nmq.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250724042703_nmq.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250724042703_nmq.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAAlAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-24T04:27:03.94Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "20250724043356_nmq.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250724043356_nmq.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250724043356_nmq.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250724043356_nmq.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250724043356_nmq.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-24T04:33:57.066Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AQIAAHAAAABANDMzM/MmwJsAAABCAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-13T20:18:28.049Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "Program.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Program.cs",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Program.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Program.cs",
+              "RelativeToolTip": "FurryFriends.Web\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAFIAAAADAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-13T16:08:19.916Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "GiamGiaRepository.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Repository\\GiamGiaRepository.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Repository\\GiamGiaRepository.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Repository\\GiamGiaRepository.cs",
+              "RelativeToolTip": "FurryFriends.API\\Repository\\GiamGiaRepository.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T18:33:51.895Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "GiamGiaService.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Services\\GiamGiaService.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Services\\GiamGiaService.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Services\\GiamGiaService.cs",
+              "RelativeToolTip": "FurryFriends.API\\Services\\GiamGiaService.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAABNAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T18:34:00.566Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "20250723174204_nmq.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723174204_nmq.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723174204_nmq.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723174204_nmq.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250723174204_nmq.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T17:42:05.382Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "DotGiamGiasController.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\DotGiamGiasController.cs",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\DotGiamGiasController.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\DotGiamGiasController.cs",
+              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Controllers\\DotGiamGiasController.cs",
+              "ViewState": "AQIAABAAAACAzczMzIwnwCAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T17:55:43.897Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "20250723173955_nmq.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723173955_nmq.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723173955_nmq.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723173955_nmq.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250723173955_nmq.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T17:39:55.532Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "20250723173649_nmq.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723173649_nmq.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723173649_nmq.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723173649_nmq.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250723173649_nmq.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T17:36:50.581Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "DotGiamGiaSanPham.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DotGiamGiaSanPham.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DotGiamGiaSanPham.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DotGiamGiaSanPham.cs",
+              "RelativeToolTip": "FurryFriends.API\\Models\\DotGiamGiaSanPham.cs",
+              "ViewState": "AQIAAAkAAACAzMzMzEwfwA0AAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T17:55:54.494Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "DotGiamGiaController.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\DotGiamGiaController.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\DotGiamGiaController.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\DotGiamGiaController.cs",
+              "RelativeToolTip": "FurryFriends.API\\Controllers\\DotGiamGiaController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACAAAAASAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T17:10:35.38Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 55,
+              "Title": "20250716034911_nmqu.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250716034911_nmqu.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250716034911_nmqu.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250716034911_nmqu.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250716034911_nmqu.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-16T03:49:12.491Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "SanPhamDTO.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\SanPhamDTO.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DTO\\SanPhamDTO.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\SanPhamDTO.cs",
+              "RelativeToolTip": "FurryFriends.API\\Models\\DTO\\SanPhamDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACoAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-13T22:18:39.63Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\SanPham\\Index.cshtml",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\SanPham\\Index.cshtml",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\SanPham\\Index.cshtml",
+              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\SanPham\\Index.cshtml",
+              "ViewState": "AQIAAJAAAAAAlpmZmRkmwJcAAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-13T20:08:54.646Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\HoaDon\\Index.cshtml",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\HoaDon\\Index.cshtml",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\HoaDon\\Index.cshtml",
+              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\HoaDon\\Index.cshtml",
+              "ViewState": "AQIAAHEBAAAAcGZmZqYowIcBAAAZAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-13T19:20:31.496Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 44,
+              "Title": "SanPhamService.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\SanPhamService.cs",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Services\\SanPhamService.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\SanPhamService.cs",
+              "RelativeToolTip": "FurryFriends.Web\\Services\\SanPhamService.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-13T16:18:43.067Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "20250718165647_nmq.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250718165647_nmq.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250718165647_nmq.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250718165647_nmq.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250718165647_nmq.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-18T16:56:47.84Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "Upload.cshtml",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\Anh\\Upload.cshtml",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\Anh\\Upload.cshtml",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\Anh\\Upload.cshtml",
+              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\Anh\\Upload.cshtml",
+              "ViewState": "AQIAAAAAAADpMzMzMzMbwA4AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-19T17:57:25.068Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "Edit.cshtml",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\SanPhamChiTiet\\Edit.cshtml",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\SanPhamChiTiet\\Edit.cshtml",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\SanPhamChiTiet\\Edit.cshtml",
+              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\SanPhamChiTiet\\Edit.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-20T03:18:33.264Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "20250718165101_nmq.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250718165101_nmq.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250718165101_nmq.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250718165101_nmq.cs",
+              "RelativeToolTip": "FurryFriends.API\\Migrations\\20250718165101_nmq.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-18T16:51:01.986Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "DangNhap.cshtml",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\Auth\\DangNhap.cshtml",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\Auth\\DangNhap.cshtml",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\Auth\\DangNhap.cshtml",
+              "RelativeToolTip": "FurryFriends.Web\\Views\\Auth\\DangNhap.cshtml",
+              "ViewState": "AQIAAJkBAAAAAAAAAAAowLgBAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-08T17:17:33.103Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "Create.cshtml",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\NhanVien\\Create.cshtml",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\NhanVien\\Create.cshtml",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\NhanVien\\Create.cshtml",
+              "RelativeToolTip": "FurryFriends.Web\\Areas\\Admin\\Views\\NhanVien\\Create.cshtml",
+              "ViewState": "AQIAALQAAAAANTMzM7MiwMAAAAAYAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-08T16:36:18.624Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "SanPhamChiTietService.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\SanPhamChiTietService.cs",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Services\\SanPhamChiTietService.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\SanPhamChiTietService.cs",
+              "RelativeToolTip": "FurryFriends.Web\\Services\\SanPhamChiTietService.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACIAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-16T04:19:22.704Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "SanPhamChiTietController.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\SanPhamChiTietController.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\SanPhamChiTietController.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\SanPhamChiTietController.cs",
+              "RelativeToolTip": "FurryFriends.API\\Controllers\\SanPhamChiTietController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-16T03:34:46.56Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "Voucher.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\Voucher.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Models\\Voucher.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\Voucher.cs",
+              "RelativeToolTip": "FurryFriends.API\\Models\\Voucher.cs",
+              "ViewState": "AQIAAAIAAAAANDMzMzP7vxgAAAAMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-05T19:32:36.932Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "HoaDon.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\HoaDon.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Models\\HoaDon.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\HoaDon.cs",
+              "RelativeToolTip": "FurryFriends.API\\Models\\HoaDon.cs",
+              "ViewState": "AQIAAC8AAACAmZmZmdk+wBEAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-13T22:09:45.864Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 48,
+              "Title": "VoucherController.cs",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\VoucherController.cs",
+              "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\VoucherController.cs",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\VoucherController.cs",
+              "RelativeToolTip": "FurryFriends.API\\Controllers\\VoucherController.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-05T19:32:26.708Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 49,
+              "Title": "FurryFriends.Web.csproj",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\FurryFriends.Web.csproj",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
+              "RelativeToolTip": "FurryFriends.Web\\FurryFriends.Web.csproj",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAB4AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-07-05T19:27:51.33Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 50,
               "Title": "ThuongHieuDTO.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\ThuongHieuDTO.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DTO\\ThuongHieuDTO.cs",
@@ -754,7 +834,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 51,
               "Title": "ThuongHieuService.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\ThuongHieuService.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Services\\ThuongHieuService.cs",
@@ -766,7 +846,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 52,
               "Title": "KichCoController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\KichCoController.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\KichCoController.cs",
@@ -778,7 +858,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 53,
               "Title": "ChatLieuController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\ChatLieuController.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\ChatLieuController.cs",
@@ -790,7 +870,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 54,
               "Title": "Microsoft.PackageDependencyResolution.targets",
               "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\8.0.303\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
               "ToolTip": "C:\\Program Files\\dotnet\\sdk\\8.0.303\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",

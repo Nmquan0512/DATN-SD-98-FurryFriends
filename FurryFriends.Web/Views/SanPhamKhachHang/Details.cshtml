@@ -1,29 +1,597 @@
 ﻿@model FurryFriends.Web.ViewModels.SanPhamViewModel
 
 @{
-    ViewData["Title"] = "Chi tiết sản phẩm";
+    Layout = null;
 }
 
-<h2>@Model.TenSanPham</h2>
-<p><strong>Mô tả:</strong> @Model.MoTa</p>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>@Model.TenSanPham - FurryFriends</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --info-color: #06b6d4;
+            --light-bg: #f8fafc;
+            --dark-text: #1e293b;
+            --border-color: #e2e8f0;
+        }
 
-<div class="row">
-    @foreach (var chiTiet in Model.ChiTietList)
-    {
-        <div class="col-md-6 mb-4">
-            <div class="card h-100 shadow">
-                <img src="https://localhost:7296/images/@(System.IO.Path.GetFileName(chiTiet.DanhSachAnh.FirstOrDefault() ?? "default.png"))"
-                     class="card-img-top"
-                     alt="Ảnh sản phẩm chi tiết"
-                     style="height: 250px; object-fit: cover;" />
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-                <div class="card-body">
-                    <p><strong>Màu sắc:</strong> @chiTiet.MauSac</p>
-                    <p><strong>Kích cỡ:</strong> @chiTiet.KichCo</p>
-                    <p><strong>Số lượng còn:</strong> @chiTiet.SoLuongTon</p>
-                    <p><strong>Giá bán:</strong> @chiTiet.GiaBan.ToString("N0") VNĐ</p>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--dark-text);
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            max-width: 1400px;
+            overflow: hidden;
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .header-section h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content-section {
+            padding: 2rem;
+        }
+
+        .product-overview {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image-gallery {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .product-info h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+        }
+
+        .product-description {
+            color: #64748b;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .product-meta {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .meta-item i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .variants-section {
+            background: var(--light-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .variants-section h3 {
+            color: var(--dark-text);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .variant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .variant-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .variant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .variant-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .variant-content {
+            padding: 1.5rem;
+        }
+
+        .variant-specs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .spec-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .spec-item i {
+            color: var(--primary-color);
+        }
+
+        .variant-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--success-color);
+            margin-bottom: 1rem;
+        }
+
+        .stock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .in-stock {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+        }
+
+        .out-of-stock {
+            background: linear-gradient(135deg, var(--danger-color), #dc2626);
+            color: white;
+        }
+
+        .variant-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-modern {
+            border-radius: 12px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            border: none;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary-modern {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-success-modern {
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: white;
+        }
+
+        .btn-info-modern {
+            background: linear-gradient(135deg, var(--info-color), #0891b2);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        .modal-modern .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-modern .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 20px 20px 0 0;
+            padding: 1.5rem 2rem;
+        }
+
+        .modal-modern .modal-body {
+            padding: 2rem;
+        }
+
+        .modal-modern .modal-footer {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .quantity-input {
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+        }
+
+        .back-button {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 1rem 1.5rem;
+            text-decoration: none;
+            color: var(--dark-text);
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            color: var(--primary-color);
+        }
+
+        .breadcrumb-modern {
+            background: var(--light-bg);
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .breadcrumb-modern .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb-modern .breadcrumb-item.active {
+            color: var(--dark-text);
+            font-weight: 600;
+        }
+
+        @@media (max-width: 768px) {
+            .main-container {
+                margin: 1rem;
+                border-radius: 15px;
+            }
+
+            .header-section {
+                padding: 1.5rem;
+            }
+
+            .header-section h1 {
+                font-size: 2rem;
+            }
+
+            .content-section {
+                padding: 1rem;
+            }
+
+            .product-info h2 {
+                font-size: 1.5rem;
+            }
+
+            .variant-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .variant-actions {
+                flex-direction: column;
+            }
+
+            .btn-modern {
+                width: 100%;
+            }
+
+            .back-button {
+                top: 1rem;
+                left: 1rem;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            .product-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .variant-specs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="@Url.Action("Index", "SanPhamKhachHang")" class="back-button">
+        <i class="bi bi-arrow-left"></i> Quay lại
+    </a>
+
+    <div class="main-container">
+        <div class="header-section">
+            <h1><i class="bi bi-box-seam"></i> Chi tiết sản phẩm</h1>
+            <p>Khám phá thông tin chi tiết và các biến thể của sản phẩm</p>
+        </div>
+
+        <div class="content-section">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="breadcrumb-modern">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "SanPhamKhachHang")">Sản phẩm</a></li>
+                    <li class="breadcrumb-item active">@Model.TenSanPham</li>
+                </ol>
+            </nav>
+
+            <!-- Product Overview -->
+            <div class="product-overview">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="product-image-gallery">
+                            <img src="@($"https://localhost:7289/images/{System.IO.Path.GetFileName(Model.AnhDaiDienUrl)}")"
+                                 class="main-image"
+                                 alt="@Model.TenSanPham" />
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="product-info">
+                            <h2>@Model.TenSanPham</h2>
+                            <p class="product-description">@Model.MoTa</p>
+                            
+                            <div class="product-meta">
+                                <div class="meta-item">
+                                    <i class="bi bi-tag"></i>
+                                    <span>@Model.ChiTietList.Count() biến thể</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="bi bi-box"></i>
+                                    <span>@Model.ChiTietList.Count(c => c.SoLuongTon > 0) còn hàng</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="bi bi-currency-dollar"></i>
+                                    <span>@Model.ChiTietList.Min(c => c.GiaBan).ToString("N0")đ - @Model.ChiTietList.Max(c => c.GiaBan).ToString("N0")đ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Variants -->
+            <div class="variants-section">
+                <h3><i class="bi bi-grid-3x3-gap"></i> Các biến thể sản phẩm</h3>
+                <div class="variant-grid">
+                    @foreach (var chiTiet in Model.ChiTietList)
+                    {
+                        <div class="variant-card">
+                            <img src="@($"https://localhost:7289/images/{System.IO.Path.GetFileName(chiTiet.DanhSachAnh.FirstOrDefault() ?? "default.png")}")"
+                                 class="variant-image"
+                                 alt="@Model.TenSanPham - @chiTiet.MauSac @chiTiet.KichCo" />
+                            
+                            <div class="variant-content">
+                                <div class="variant-specs">
+                                    <div class="spec-item">
+                                        <i class="bi bi-palette"></i>
+                                        <span>@chiTiet.MauSac</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <i class="bi bi-rulers"></i>
+                                        <span>@chiTiet.KichCo</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <i class="bi bi-box"></i>
+                                        <span>Còn @chiTiet.SoLuongTon</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <i class="bi bi-tag"></i>
+                                        <span>ID: @chiTiet.SanPhamChiTietId.ToString().Substring(0, 8)...</span>
+                                    </div>
+                                </div>
+
+                                <div class="variant-price">
+                                    @chiTiet.GiaBan.ToString("N0") đ
+                                </div>
+
+                                @if (chiTiet.SoLuongTon > 0)
+                                {
+                                    <div class="stock-status in-stock">
+                                        <i class="bi bi-check-circle"></i>
+                                        Còn hàng
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="stock-status out-of-stock">
+                                        <i class="bi bi-x-circle"></i>
+                                        Hết hàng
+                                    </div>
+                                }
+
+                                <div class="variant-actions">
+                                    @if (chiTiet.SoLuongTon > 0)
+                                    {
+                                        <button type="button"
+                                                class="btn btn-modern btn-success-modern"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#addToCartModal-@chiTiet.SanPhamChiTietId">
+                                            <i class="bi bi-cart-plus"></i> Thêm vào giỏ
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-modern btn-secondary" disabled>
+                                            <i class="bi bi-x-circle"></i> Hết hàng
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Modal for this variant -->
+                            <div class="modal fade modal-modern" id="addToCartModal-@chiTiet.SanPhamChiTietId" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">
+                                                <i class="bi bi-cart-plus"></i> Thêm "@Model.TenSanPham" vào giỏ hàng
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <form asp-controller="GioHangs" asp-action="AddToCart" method="post">
+                                            <div class="modal-body">
+                                                <input type="hidden" name="SanPhamId" value="@Model.SanPhamId" />
+                                                <input type="hidden" name="SanPhamChiTietId" value="@chiTiet.SanPhamChiTietId" />
+
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="bi bi-palette"></i> Màu sắc:
+                                                        </label>
+                                                        <p class="text-muted">@chiTiet.MauSac</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="bi bi-rulers"></i> Kích cỡ:
+                                                        </label>
+                                                        <p class="text-muted">@chiTiet.KichCo</p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row mb-3">
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="bi bi-currency-dollar"></i> Giá:
+                                                        </label>
+                                                        <p class="text-success fw-bold fs-5">@chiTiet.GiaBan.ToString("N0") đ</p>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <label class="form-label fw-semibold">
+                                                            <i class="bi bi-box"></i> Còn lại:
+                                                        </label>
+                                                        <p class="text-muted">@chiTiet.SoLuongTon sản phẩm</p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="SoLuong-@chiTiet.SanPhamChiTietId" class="form-label fw-semibold">
+                                                        <i class="bi bi-hash"></i> Số lượng:
+                                                    </label>
+                                                    <input type="number" 
+                                                           name="SoLuong" 
+                                                           id="SoLuong-@chiTiet.SanPhamChiTietId"
+                                                           class="form-control quantity-input" 
+                                                           value="1" 
+                                                           min="1" 
+                                                           max="@chiTiet.SoLuongTon"
+                                                           required />
+                                                    <small class="text-muted">Tối đa: @chiTiet.SoLuongTon sản phẩm</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-modern btn-secondary" data-bs-dismiss="modal">
+                                                    <i class="bi bi-x-circle"></i> Hủy
+                                                </button>
+                                                <button type="submit" class="btn btn-modern btn-success-modern">
+                                                    <i class="bi bi-cart-check"></i> Thêm vào giỏ
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
-    }
-</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -17,7 +17,7 @@ else
         <input type="text" class="form-control w-auto mb-2" id="filterSanPham" placeholder="Tìm kiếm sản phẩm..." style="min-width:220px;max-width:300px;">
     </div>
     <form asp-action="AddSanPham" method="post" id="formGanSanPham">
-        <input type="hidden" asp-for="GiamGia.GiamGiaId" />
+    <input type="hidden" asp-for="GiamGia.GiamGiaId" />
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="sanPhamList">
             @foreach (var sp in sanPhamChiTietList)
             {
@@ -29,12 +29,12 @@ else
                         </div>
                         @if (!string.IsNullOrEmpty(sp.DuongDan))
                         {
-                            <img src="https://localhost:7289@(sp.DuongDan)" alt="Ảnh" class="card-img-top" style="height: 180px; object-fit: cover; border-top-left-radius: 1.25rem; border-top-right-radius: 1.25rem;" />
+                            <img src="@sp.DuongDan" alt="Ảnh" class="card-img-top" style="height: 180px; object-fit: cover; border-top-left-radius: 1.25rem; border-top-right-radius: 1.25rem;" />
                         }
                         else
                         {
                             <div class="d-flex align-items-center justify-content-center bg-light" style="height: 180px; border-top-left-radius: 1.25rem; border-top-right-radius: 1.25rem;">
-                                <span class="text-muted">Không có ảnh</span>
+                            <span class="text-muted">Không có ảnh</span>
                             </div>
                         }
                         <div class="card-body">
@@ -50,8 +50,8 @@ else
         <div class="d-flex justify-content-end gap-3 mt-4">
             <button type="submit" class="btn btn-primary btn-lg px-4"><i class="fas fa-save me-2"></i>Lưu thay đổi</button>
             <a asp-action="Index" asp-controller="GiamGia" class="btn btn-secondary btn-lg px-4"><i class="fas fa-arrow-left me-2"></i>Quay lại</a>
-        </div>
-    </form>
+    </div>
+</form>
     <style>
         .product-card:hover {
             box-shadow: 0 0 0 6px #0d6efd33, 0 8px 24px rgba(0,0,0,0.08);

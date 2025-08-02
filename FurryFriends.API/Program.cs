@@ -28,8 +28,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-builder.Services.AddScoped<IHinhThucThanhToanRepository, HinhThucThanhToanRepository>(); //sửa ơ đây
 // Add Repository Services
 builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 builder.Services.AddScoped<IGiamGiaRepository, GiamGiaRepository>();
@@ -68,7 +66,15 @@ builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 builder.Services.AddScoped<ISanPhamChiTietRepository, SanPhamChiTietRepository>();
 builder.Services.AddScoped<ISanPhamChiTietService, SanPhamChiTietService>();
 builder.Services.AddScoped<IThongTinCaNhanService, ThongTinCaNhanService>();
-<<<<<<< HEAD
+
+builder.Services.AddScoped<IHinhThucThanhToanRepository, HinhThucThanhToanRepository>();
+builder.Services.AddScoped<IGioHangRepository, GioHangRepository>();
+builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
+builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
+builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
+builder.Services.AddScoped<INhanVienRepository, NhanVIenRepository>();
+builder.Services.AddScoped<IThongBaoRepository, ThongBaoRepository>();
+builder.Services.AddScoped<IDiaChiKhachHangRepository, DiaChiKhachHangRepository>();
 
 builder.Services.AddScoped<IDotGiamGiaSanPhamRepository, DotGiamGiaSanPhamRepository>();
 builder.Services.AddScoped<IGiamGiaService, GiamGiaService>(provider =>
@@ -79,9 +85,6 @@ builder.Services.AddScoped<IGiamGiaService, GiamGiaService>(provider =>
     )
 );
 
-=======
-builder.Services.AddScoped<IGioHangRepository, GioHangRepository>(); //sửa ơ đây
->>>>>>> origin/HuyTruongDatHang
 // Add CORS policy cho phép web admin truy cập API
 builder.Services.AddCors(options =>
 {
@@ -93,14 +96,6 @@ builder.Services.AddCors(options =>
                   .WithMethods("GET", "POST", "DELETE", "OPTIONS");
         });
 });
-builder.Services.AddDistributedMemoryCache(); //sửa ơ đây
-builder.Services.AddSession(options => //sửa ơ đây
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-}); //sửa ơ đây
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -111,7 +106,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseSession(); //sửa ơ đây
 
 
 // Use CORS

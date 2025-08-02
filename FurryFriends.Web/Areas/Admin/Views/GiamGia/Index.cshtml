@@ -18,27 +18,40 @@
             <i class="fas fa-plus me-1"></i> Tạo mới chương trình
         </a>
     </div>
-    <div class="row mb-4 g-3">
+    <div class="row mb-3">
         <div class="col-md-4">
-            <div class="bg-white shadow rounded p-4 border-start border-primary border-4">
-                <h6 class="text-muted">Tổng số chương trình</h6>
-                <h3 class="fw-bold text-primary">@total</h3>
+            <div class="card border-0 shadow-sm rounded-3 bg-primary text-white">
+                <div class="card-body py-3 d-flex align-items-center">
+                    <i class="fas fa-list fa-2x me-3"></i>
+                    <div>
+                        <div class="fs-5 fw-bold">@total</div>
+                        <div class="small">Tổng số chương trình</div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="bg-white shadow rounded p-4 border-start border-success border-4">
-                <h6 class="text-muted">Đang áp dụng</h6>
-                <h3 class="fw-bold text-success">@active</h3>
+            <div class="card border-0 shadow-sm rounded-3 bg-success text-white">
+                <div class="card-body py-3 d-flex align-items-center">
+                    <i class="fas fa-check-circle fa-2x me-3"></i>
+                    <div>
+                        <div class="fs-5 fw-bold">@active</div>
+                        <div class="small">Đang áp dụng</div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="bg-white shadow rounded p-4 border-start border-secondary border-4">
-                <h6 class="text-muted">Ngừng áp dụng</h6>
-                <h3 class="fw-bold text-secondary">@inactive</h3>
+            <div class="card border-0 shadow-sm rounded-3 bg-secondary text-white">
+                <div class="card-body py-3 d-flex align-items-center">
+                    <i class="fas fa-times-circle fa-2x me-3"></i>
+                    <div>
+                        <div class="fs-5 fw-bold">@inactive</div>
+                        <div class="small">Ngừng áp dụng</div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-
 </div>
     <div class="card shadow-sm rounded-4 border-0">
         <div class="card-body p-0">
@@ -114,132 +127,43 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
-
     <script>
-        // ================== CONFIG ==================
-        const API_BASE = "https://localhost:7289/api/GiamGia";
-
-        // ================== DATATABLE ==================
         $(document).ready(function () {
             $('#giamGiaTable').DataTable({
                 language: {
                     search: "Tìm kiếm:",
                     lengthMenu: "Hiển thị _MENU_ dòng",
                     info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
-                    paginate: { previous: "Trước", next: "Sau" },
+                    paginate: {
+                        previous: "Trước",
+                        next: "Sau"
+                    },
                     zeroRecords: "Không tìm thấy dữ liệu phù hợp"
                 },
                 responsive: true,
                 order: [[2, 'desc']]
             });
         });
-
-        // ================== TOOLTIP ==================
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        let selectedGiamGiaId = null;
+        // Xóa: khi mở modal, lưu id
+        let idToDelete = null;
+        document.getElementById('modalXoa').addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            idToDelete = button.getAttribute('data-id');
+        });
+        // Xác nhận xóa
+        document.getElementById('btnXacNhanXoa').onclick = function () {
+            if (!idToDelete) return;
+            fetch(`/Admin/GiamGia/Delete/${idToDelete}`, { method: 'POST', headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() } })
+                .then(res => {
+                    if (res.ok) location.reload();
+                    else alert('Xóa thất bại!');
+                });
+        };
+        // Kích hoạt tooltip cho icon
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.map(function (tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
         });
-
-        // ================== XOÁ ==================
-        let idToDelete = null;
-
-        const modalXoa = document.getElementById('modalXoa');
-        if (modalXoa) {
-            modalXoa.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                idToDelete = button.getAttribute('data-id');
-            });
-
-            document.getElementById('btnXacNhanXoa').onclick = async function () {
-                if (!idToDelete) return;
-
-                try {
-                    const res = await fetch(`${API_BASE}/${idToDelete}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Accept': 'application/json'
-                            // Nếu API yêu cầu JWT:
-                            // 'Authorization': 'Bearer ' + token
-                        }
-                    });
-
-                    if (res.ok) {
-                        const modal = bootstrap.Modal.getInstance(modalXoa);
-                        modal.hide();
-                        location.reload();
-                    } else {
-                        const text = await res.text();
-                        alert('Xóa thất bại!\n' + text);
-                    }
-                } catch (e) {
-                    console.error(e);
-                    alert('Có lỗi mạng khi gọi API!');
-                }
-            };
-        }
-
-        // ================== GÁN SẢN PHẨM (nếu bạn VẪN dùng modal) ==================
-        let selectedGiamGiaId = null;
-        const modalGanSanPham = document.getElementById('modalGanSanPham');
-
-        // Chỉ gắn handler nếu modal tồn tại trong view
-        if (modalGanSanPham) {
-            modalGanSanPham.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                selectedGiamGiaId = button.getAttribute('data-id');
-
-                const content = document.getElementById('ganSanPhamContent');
-                content.innerHTML = 'Đang tải...';
-
-                // Load partial từ MVC
-                fetch(`/Admin/GiamGia/LoadGanSanPhamModal?id=${selectedGiamGiaId}`)
-                    .then(res => res.text())
-                    .then(html => content.innerHTML = html);
-            });
-
-            // Delegation: handle submit form trong partial (vì partial được inject bằng innerHTML)
-            document.addEventListener('submit', async function (e) {
-                const form = e.target;
-                if (!form || form.id !== 'formGanSanPham') return;
-
-                e.preventDefault();
-
-                const id = form.querySelector('input[name="id"]').value;
-                const checked = Array.from(form.querySelectorAll('.spct-checkbox-gan:checked')).map(cb => cb.value);
-
-                try {
-                    const res = await fetch(`${API_BASE}/${id}/assign-sanphamchitiet`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(checked)
-                    });
-
-                    if (res.ok) {
-                        alert('Gán sản phẩm thành công!');
-                        const modal = bootstrap.Modal.getInstance(modalGanSanPham);
-                        modal.hide();
-                        location.reload();
-                    } else {
-                        const text = await res.text();
-                        alert('Gán sản phẩm thất bại! ' + text);
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert('Lỗi mạng!');
-                }
-            });
-
-            // Delegation: filter trong modal
-            document.addEventListener('input', function (e) {
-                if (e.target && e.target.id === 'filterInputGan') {
-                    const filter = e.target.value.toLowerCase();
-                    document.querySelectorAll('#tableSanPhamGan tbody tr').forEach(function (row) {
-                        const search = row.getAttribute('data-search');
-                        row.style.display = search.includes(filter) ? '' : 'none';
-                    });
-                }
-            });
-        }
     </script>
 }
-
