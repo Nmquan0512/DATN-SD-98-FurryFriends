@@ -13,7 +13,12 @@ namespace FurryFriends.API.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=DELL\\SQLEXPRESS;Initial Catalog=DATN1;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+<<<<<<< HEAD
+                optionsBuilder.UseSqlServer("Server=XCBA2\\SQLEXPRESS;Database=DuanNhom11ModelsBanHang;Trusted_Connection=True;TrustServerCertificate=True");
+=======
+                //optionsBuilder.UseSqlServer("Data Source=ANH2005\\SQLEXPRESS;Initial Catalog=duantn;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Data Source=PHUNGHUYTRUONG\\SQLEXPRESS01;Initial Catalog=BanHang;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+>>>>>>> origin/HuyTruongDatHang
             }
         }
 
@@ -128,7 +133,7 @@ namespace FurryFriends.API.Data
                 .HasMany(sp => sp.SanPhamChiTiets)
                 .WithOne(spct => spct.SanPham)
                 .HasForeignKey(spct => spct.SanPhamId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict); //sửa ở đây lúc trước là Cascade sau sửa thành Restrict
 
             modelBuilder.Entity<SanPhamChiTiet>()
                 .Property(spct => spct.Gia)
@@ -150,6 +155,19 @@ namespace FurryFriends.API.Data
             modelBuilder.Entity<GioHangChiTiet>()
                 .Property(ghct => ghct.ThanhTien)
                 .HasPrecision(18, 2);
+
+            modelBuilder.Entity<GioHangChiTiet>() //Sửa ở đây
+                .HasOne(ghct => ghct.SanPham)
+                .WithMany(sp => sp.GioHangChiTiets) // nếu bạn không có navigation, dùng .WithMany()
+                .HasForeignKey(ghct => ghct.SanPhamId)
+                .OnDelete(DeleteBehavior.Restrict); // hoặc NoAction
+
+            modelBuilder.Entity<GioHangChiTiet>() //Sửa ở đây
+                .HasOne(ghct => ghct.SanPhamChiTiet)
+                .WithMany(spct => spct.GioHangChiTiets) // nếu có navigation
+                .HasForeignKey(ghct => ghct.SanPhamChiTietId)
+                .OnDelete(DeleteBehavior.Restrict); // hoặc NoAction
+
         }
 
         private void ConfigureHoaDon(ModelBuilder modelBuilder)
@@ -211,7 +229,7 @@ namespace FurryFriends.API.Data
                 .HasOne(d => d.SanPhamChiTiet)
                 .WithMany(sp => sp.DotGiamGiaSanPhams)
                 .HasForeignKey(d => d.SanPhamChiTietId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
         private void ConfigureSanPhamThanhPhanChatLieu(ModelBuilder modelBuilder)

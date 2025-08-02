@@ -21,5 +21,7 @@ namespace FurryFriends.API.Services.IServices
 
         // Thêm sản phẩm chi tiết vào đợt giảm giá
         Task<bool> AddSanPhamChiTietToGiamGiaAsync(Guid giamGiaId, List<Guid> sanPhamChiTietIds);
+
+        Task<bool> DeleteAsync(Guid id);
     }
 }

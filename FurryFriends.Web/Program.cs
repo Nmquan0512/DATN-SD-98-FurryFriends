@@ -100,7 +100,28 @@ builder.Services.AddHttpClient<ISanPhamService, SanPhamService>(client =>
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
 
+builder.Services.AddHttpClient<IGioHangService, GioHangService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289");          //sửa ơ đây thêm addhttpclient cho giỏ hàng
+})
+.ConfigurePrimaryHttpMessageHandler(() =>
+{
+    return new HttpClientHandler
+    {
+        // ⚠️ Chấp nhận mọi chứng chỉ (chỉ dùng trong dev)
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+});
+builder.Services.AddScoped<IHinhThucThanhToanService, HinhThucThanhToanService>(); //sửa ơ đây thêm addhttpclient cho hình thức thanh toán
+
+
 // Cách đúng đã kiểm tra
+
+builder.Services.AddHttpClient<IDotGiamGiaService, DotGiamGiaService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
 
 
 // Thêm cấu hình xác thực Google và Facebook
@@ -116,7 +137,7 @@ builder.Services.AddAuthentication(options =>
     options.ClientSecret = "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";
     options.CallbackPath = "/DangKy/DangNhapGoogleCallback";
 });
-
+builder.Services.AddDistributedMemoryCache(); //sửa ơ đây
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromHours(2);

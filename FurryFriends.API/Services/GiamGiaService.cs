@@ -9,13 +9,16 @@ namespace FurryFriends.API.Services
     {   
         private readonly IGiamGiaRepository _giamGiaRepo;
         private readonly IDotGiamGiaSanPhamRepository _dotGiamGiaSanPhamRepo;
+        private readonly ISanPhamChiTietRepository _sanPhamChiTietRepo; // Inject repo
 
         public GiamGiaService(
             IGiamGiaRepository giamGiaRepo,
-            IDotGiamGiaSanPhamRepository dotGiamGiaSanPhamRepo)
+            IDotGiamGiaSanPhamRepository dotGiamGiaSanPhamRepo,
+            ISanPhamChiTietRepository sanPhamChiTietRepo) // Add to constructor
         {
             _giamGiaRepo = giamGiaRepo;
             _dotGiamGiaSanPhamRepo = dotGiamGiaSanPhamRepo;
+            _sanPhamChiTietRepo = sanPhamChiTietRepo;
         }
 
         public async Task<IEnumerable<GiamGiaDTO>> GetAllAsync()
@@ -31,10 +34,7 @@ namespace FurryFriends.API.Services
                 TrangThai = x.TrangThai,
                 NgayTao = x.NgayTao,
                 NgayCapNhat = x.NgayCapNhat,
-                SanPhamChiTietIds = x.DotGiamGiaSanPhams?
-                    .Select(d => d.SanPhamChiTietId ?? Guid.Empty)
-                    .Where(id => id != Guid.Empty)
-                    .ToList()
+                SanPhamChiTietIds = x.DotGiamGiaSanPhams?.Select(d => d.SanPhamChiTietId).ToList()
             });
         }
 
@@ -53,10 +53,7 @@ namespace FurryFriends.API.Services
                 TrangThai = entity.TrangThai,
                 NgayTao = entity.NgayTao,
                 NgayCapNhat = entity.NgayCapNhat,
-                SanPhamChiTietIds = entity.DotGiamGiaSanPhams?
-                    .Select(d => d.SanPhamChiTietId ?? Guid.Empty)
-                    .Where(id => id != Guid.Empty)
-                    .ToList()
+                SanPhamChiTietIds = entity.DotGiamGiaSanPhams?.Select(d => d.SanPhamChiTietId).Where(id => id != Guid.Empty).ToList()
             };
         }
 
@@ -83,10 +80,14 @@ namespace FurryFriends.API.Services
             {
                 foreach (var spId in dto.SanPhamChiTietIds)
                 {
+                    // Lấy SanPhamId từ SanPhamChiTiet
+                    var chiTiet = await _sanPhamChiTietRepo.GetByIdAsync(spId);
+                    if (chiTiet == null) throw new Exception($"SanPhamChiTietId {spId} không tồn tại!");
                     var dot = new DotGiamGiaSanPham
                     {
                         DotGiamGiaSanPhamId = Guid.NewGuid(),
                         GiamGiaId = newId,
+                        SanPhamId = chiTiet.SanPhamId, // Lấy đúng SanPhamId
                         SanPhamChiTietId = spId
                     };
                     await _dotGiamGiaSanPhamRepo.AddAsync(dot);
@@ -134,20 +135,54 @@ namespace FurryFriends.API.Services
             var existing = await _dotGiamGiaSanPhamRepo.GetByGiamGiaIdAsync(giamGiaId);
             var existingIds = existing.Select(d => d.SanPhamChiTietId).ToHashSet();
 
+            // Xóa các sản phẩm không còn được chọn
+            var toRemove = existing.Where(d => !sanPhamChiTietIds.Contains(d.SanPhamChiTietId)).ToList();
+            if (toRemove.Any())
+            {
+                foreach (var dot in toRemove)
+                {
+                    await _dotGiamGiaSanPhamRepo.DeleteAsync(dot.DotGiamGiaSanPhamId);
+                }
+            }
+
+            // Thêm mới các sản phẩm được chọn mà chưa có
+            var newDots = new List<DotGiamGiaSanPham>();
             foreach (var spId in sanPhamChiTietIds)
             {
                 if (existingIds.Contains(spId)) continue;
-
+                var chiTiet = await _sanPhamChiTietRepo.GetByIdAsync(spId);
+                if (chiTiet == null)
+                {
+                    Console.WriteLine($"[ERROR] Không tìm thấy SanPhamChiTietId: {spId}");
+                    continue;
+                }
                 var dot = new DotGiamGiaSanPham
                 {
                     DotGiamGiaSanPhamId = Guid.NewGuid(),
                     GiamGiaId = giamGiaId,
-                    SanPhamChiTietId = spId
+                    SanPhamChiTietId = spId,
+                    SanPhamId = chiTiet.SanPhamId
                 };
-
-                await _dotGiamGiaSanPhamRepo.AddAsync(dot);
+                newDots.Add(dot);
+                Console.WriteLine($"[DEBUG] Thêm DotGiamGiaSanPham: SanPhamChiTietId={spId}, SanPhamId={chiTiet.SanPhamId}");
             }
+            if (newDots.Any())
+            {
+                Console.WriteLine($"[DEBUG] Tổng số DotGiamGiaSanPham sẽ thêm: {newDots.Count}");
+                await _dotGiamGiaSanPhamRepo.AddRangeAsync(newDots);
+            }
+            else
+            {
+                Console.WriteLine("[DEBUG] Không có DotGiamGiaSanPham mới để thêm.");
+            }
+            return true;
+        }
 
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            // Xóa các bản ghi DotGiamGiaSanPham liên quan trước
+            await _dotGiamGiaSanPhamRepo.DeleteByGiamGiaIdAsync(id);
+            await _giamGiaRepo.DeleteAsync(id);
             return true;
         }
     }

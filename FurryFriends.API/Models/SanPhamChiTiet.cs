@@ -48,4 +48,6 @@ public class SanPhamChiTiet
 
 	public virtual ICollection<GioHangChiTiet> GioHangChiTiets { get; set; }
 
+	public virtual ICollection<DotGiamGiaSanPham> DotGiamGiaSanPhams { get; set; }
+
 }

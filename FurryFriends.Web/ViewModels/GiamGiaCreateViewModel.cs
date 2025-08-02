@@ -13,13 +13,13 @@ namespace FurryFriends.Web.ViewModels
         public string TenKichCo { get; set; }
         public decimal Gia { get; set; }
         public string? DuongDan { get; set; } // ảnh
-        public bool DuocChon { get; set; } // để đánh dấu checkbox
+        public bool? DuocChon { get; set; } // để đánh dấu checkbox, nullable để binding chuẩn
     }
 
     public class GiamGiaCreateViewModel
     {
         public GiamGiaDTO GiamGia { get; set; } = new GiamGiaDTO();
-        public List<SanPhamChiTietGiamGiaItemViewModel> SanPhamChiTietList { get; set; } = new();
+        public List<Guid> SanPhamChiTietIds { get; set; } = new();
     }
 
 }

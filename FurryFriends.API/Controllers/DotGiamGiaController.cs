@@ -38,7 +38,6 @@ namespace FurryFriends.API.Controllers
             dot.NgayCapNhat = DateTime.UtcNow;
 
             await _repo.AddAsync(dot);
-            await _repo.SaveAsync();
             return CreatedAtAction(nameof(GetById), new { id = dot.DotGiamGiaSanPhamId }, dot);
         }
 
@@ -54,8 +53,7 @@ namespace FurryFriends.API.Controllers
             existing.TrangThai = updated.TrangThai;
             existing.NgayCapNhat = DateTime.UtcNow;
 
-            _repo.Update(existing);
-            await _repo.SaveAsync();
+            await _repo.UpdateAsync(existing);
             return NoContent();
         }
 
@@ -65,8 +63,7 @@ namespace FurryFriends.API.Controllers
             var entity = await _repo.GetByIdAsync(id);
             if (entity == null) return NotFound();
 
-            _repo.Delete(entity);
-            await _repo.SaveAsync();
+            await _repo.DeleteAsync(id);
             return NoContent();
         }
 

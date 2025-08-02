@@ -3,6 +3,8 @@
     public class SanPhamChiTietViewModel
     {
         public Guid SanPhamChiTietId { get; set; }
+
+        public string TenSanPham { get; set; } = "";
         public string MauSac { get; set; } = "";
         public string KichCo { get; set; } = "";
         public int SoLuongTon { get; set; }

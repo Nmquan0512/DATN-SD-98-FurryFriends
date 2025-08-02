@@ -39,5 +39,11 @@ namespace FurryFriends.API.Models
 
         [ForeignKey("SanPhamId")]
         public virtual SanPham SanPham { get; set; }
+
+        [Required]
+        public Guid SanPhamChiTietId { get; set; } // Thêm thuộc tính SanPhamChiTietId để liên kết với SanPhamChiTiet (sửa ở đấy)
+
+        [ForeignKey("SanPhamChiTietId")]
+        public virtual SanPhamChiTiet SanPhamChiTiet { get; set; } // Thêm thuộc tính SanPhamChiTietId để liên kết với SanPhamChiTiet (sửa ở đấy)
     }
 }

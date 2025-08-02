@@ -30,6 +30,10 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQW5oXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/Anh/Upload.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQW5oXFVwbG9hZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/ChatLieu/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcQ2hhdExpZXVcQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -82,20 +86,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcRG90R2lhbUdpYXNcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGias/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYXNcQ3JlYXRlLmNzaHRtbA==
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGia/AddSanPham.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYVxBZGRTYW5QaGFtLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGias/Delete.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYXNcRGVsZXRlLmNzaHRtbA==
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGia/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYVxDcmVhdGUuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGias/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYXNcRWRpdC5jc2h0bWw=
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGia/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYVxEZXRhaWxzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGias/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYXNcSW5kZXguY3NodG1s
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGia/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYVxFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/GiamGia/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcR2lhbUdpYVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/HoaDon/Details.cshtml]
@@ -172,6 +180,18 @@ build_metadata.AdditionalFiles.CssScope =
 
 [//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/NhanVien/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcTmhhblZpZW5cSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/SanPhamChiTiet/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2FuUGhhbUNoaVRpZXRcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/SanPhamChiTiet/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2FuUGhhbUNoaVRpZXRcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/SanPhamChiTiet/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = QXJlYXNcQWRtaW5cVmlld3NcU2FuUGhhbUNoaVRpZXRcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Areas/Admin/Views/SanPham/Create.cshtml]
@@ -294,6 +314,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFuZ0t5XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/GioHangs/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2lvSGFuZ3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/GioHangs/KetQuaThanhToan.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2lvSGFuZ3NcS2V0UXVhVGhhbmhUb2FuLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -304,6 +332,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/KhachHangLogin/DangNhap.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2hhY2hIYW5nTG9naW5cRGFuZ05oYXAuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/SanPhamKhachHang/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbUtoYWNoSGFuZ1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/SanPhamKhachHang/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbUtoYWNoSGFuZ1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Shared/Error.cshtml]

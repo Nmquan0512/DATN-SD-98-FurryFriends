@@ -1,75 +1,113 @@
 ﻿@model FurryFriends.Web.ViewModels.GiamGiaCreateViewModel
-
 @{
-    ViewData["Title"] = "Thêm sản phẩm vào đợt giảm giá";
+    ViewData["Title"] = "Gán sản phẩm cho chương trình giảm giá";
+    var sanPhamChiTietList = ViewBag.SanPhamChiTietList as IEnumerable<dynamic>;
+    var selectedCount = Model.SanPhamChiTietIds?.Count ?? 0;
 }
-
-<h2>@ViewData["Title"]</h2>
-
-<h4 class="mb-4">Đợt giảm giá: <strong>@Model.GiamGia.TenGiamGia</strong></h4>
-
-<form asp-action="AddSanPham" method="post">
-    <input type="hidden" asp-for="GiamGia.GiamGiaId" />
-
-    <table class="table table-bordered table-striped mt-3 align-middle">
-        <thead class="table-dark text-center">
-            <tr>
-                <th>Chọn</th>
-                <th>Ảnh</th>
-                <th>Tên sản phẩm</th>
-                <th>Màu sắc</th>
-                <th>Kích cỡ</th>
-                <th>Giá bán</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.SanPhamChiTietList.Count; i++)
+<h2 class="mb-4 fw-bold text-primary">@ViewData["Title"]</h2>
+<h4 class="mb-4">Chương trình: <strong class="text-success">@Model.GiamGia.TenGiamGia</strong></h4>
+@if (sanPhamChiTietList == null || !sanPhamChiTietList.Any())
+{
+    <div class="alert alert-info">Không có sản phẩm nào để gán.</div>
+}
+else
+{
+    <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap">
+        <span class="badge bg-primary fs-6 mb-2">Đã chọn: <span id="selectedCount">@selectedCount</span> sản phẩm</span>
+        <input type="text" class="form-control w-auto mb-2" id="filterSanPham" placeholder="Tìm kiếm sản phẩm..." style="min-width:220px;max-width:300px;">
+    </div>
+    <form asp-action="AddSanPham" method="post" id="formGanSanPham">
+        <input type="hidden" asp-for="GiamGia.GiamGiaId" />
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="sanPhamList">
+            @foreach (var sp in sanPhamChiTietList)
             {
-                var sp = Model.SanPhamChiTietList[i];
-                <tr>
-                    <td class="text-center">
-                        <input type="checkbox"
-                               name="SanPhamChiTietList[@i].DuocChon"
-                               value="true"
-                               @(sp.DuocChon ? "checked" : "") />
-                        <input type="hidden" name="SanPhamChiTietList[@i].DuocChon" value="false" />
-                        <input type="hidden" name="SanPhamChiTietList[@i].SanPhamChiTietId" value="@sp.SanPhamChiTietId" />
-                        <input type="hidden" name="SanPhamChiTietList[@i].TenSanPham" value="@sp.TenSanPham" />
-                        <input type="hidden" name="SanPhamChiTietList[@i].TenMau" value="@sp.TenMau" />
-                        <input type="hidden" name="SanPhamChiTietList[@i].TenKichCo" value="@sp.TenKichCo" />
-                        <input type="hidden" name="SanPhamChiTietList[@i].Gia" value="@sp.Gia" />
-                        <input type="hidden" name="SanPhamChiTietList[@i].DuongDan" value="@sp.DuongDan" />
-                    </td>
-                    <td class="text-center">
+                var isChecked = Model.SanPhamChiTietIds != null && Model.SanPhamChiTietIds.Contains(sp.SanPhamChiTietId);
+                <div class="col sanpham-item" data-search="@((sp.TenSanPham + " " + sp.TenMau + " " + sp.TenKichCo).ToLower())">
+                    <div class="card h-100 shadow-lg border-0 product-card @(isChecked ? "selected" : "")" style="transition: box-shadow 0.2s, border-color 0.2s; border-radius: 1.25rem;">
+                        <div class="position-absolute top-0 end-0 p-2">
+                            <input type="checkbox" name="SanPhamChiTietIds" value="@sp.SanPhamChiTietId" @(isChecked ? "checked" : "") class="form-check-input big-checkbox" onchange="updateSelectedCount()" />
+                        </div>
                         @if (!string.IsNullOrEmpty(sp.DuongDan))
                         {
-                            <img src="@sp.DuongDan" alt="Ảnh" style="max-width: 70px; max-height: 70px;" />
+                            <img src="https://localhost:7289@(sp.DuongDan)" alt="Ảnh" class="card-img-top" style="height: 180px; object-fit: cover; border-top-left-radius: 1.25rem; border-top-right-radius: 1.25rem;" />
                         }
                         else
                         {
-                            <span class="text-muted">Không có ảnh</span>
+                            <div class="d-flex align-items-center justify-content-center bg-light" style="height: 180px; border-top-left-radius: 1.25rem; border-top-right-radius: 1.25rem;">
+                                <span class="text-muted">Không có ảnh</span>
+                            </div>
                         }
-                    </td>
-                    <td>@sp.TenSanPham</td>
-                    <td>@sp.TenMau</td>
-                    <td>@sp.TenKichCo</td>
-                    <td>@sp.Gia.ToString("N0") đ</td>
-                </tr>
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold text-primary text-truncate" title="@sp.TenSanPham" style="font-size:1.25rem;">@sp.TenSanPham</h5>
+                            <div class="mb-2"><span class="badge bg-gradient bg-info text-dark fs-6 px-3 py-2">@sp.Gia.ToString("N0") đ</span></div>
+                            <div class="mb-1"><i class="fas fa-palette me-1"></i> <strong>Màu:</strong> @sp.TenMau</div>
+                            <div class="mb-1"><i class="fas fa-ruler-combined me-1"></i> <strong>Kích cỡ:</strong> @sp.TenKichCo</div>
+                        </div>
+                    </div>
+                </div>
             }
-        </tbody>
-    </table>
-
-    <div class="mt-3">
-        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-        <a asp-action="Details" asp-route-id="@Model.GiamGia.GiamGiaId" class="btn btn-secondary ms-2">Quay lại</a>
-    </div>
-</form>
-
-@if (TempData["success"] != null)
+        </div>
+        <div class="d-flex justify-content-end gap-3 mt-4">
+            <button type="submit" class="btn btn-primary btn-lg px-4"><i class="fas fa-save me-2"></i>Lưu thay đổi</button>
+            <a asp-action="Index" asp-controller="GiamGia" class="btn btn-secondary btn-lg px-4"><i class="fas fa-arrow-left me-2"></i>Quay lại</a>
+        </div>
+    </form>
+    <style>
+        .product-card:hover {
+            box-shadow: 0 0 0 6px #0d6efd33, 0 8px 24px rgba(0,0,0,0.08);
+            border-color: #0d6efd;
+            transform: translateY(-2px) scale(1.02);
+        }
+        .product-card.selected {
+            box-shadow: 0 0 0 6px #19875455, 0 8px 24px rgba(25,135,84,0.08);
+            border: 2px solid #198754;
+        }
+        .big-checkbox {
+            width: 1.7em;
+            height: 1.7em;
+            accent-color: #198754;
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #19875433;
+        }
+        .card-title.text-truncate {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 90%;
+        }
+    </style>
+    <script>
+        function updateSelectedCount() {
+            var count = document.querySelectorAll('.big-checkbox:checked').length;
+            document.getElementById('selectedCount').innerText = count;
+            // Highlight card khi chọn
+            document.querySelectorAll('.product-card').forEach(function(card, idx) {
+                var cb = card.querySelector('.big-checkbox');
+                if (cb && cb.checked) card.classList.add('selected');
+                else card.classList.remove('selected');
+            });
+        }
+        // Khởi tạo khi load trang
+        document.addEventListener('DOMContentLoaded', function() {
+            updateSelectedCount();
+            document.querySelectorAll('.big-checkbox').forEach(function(cb) {
+                cb.addEventListener('change', updateSelectedCount);
+            });
+            // Filter sản phẩm
+            document.getElementById('filterSanPham').addEventListener('input', function() {
+                var filter = this.value.toLowerCase();
+                document.querySelectorAll('.sanpham-item').forEach(function(item) {
+                    var search = item.getAttribute('data-search');
+                    item.style.display = search.includes(filter) ? '' : 'none';
+                });
+            });
+        });
+    </script>
+}
+@if (TempData["success"] != null && Context.Request.Method == "POST")
 {
     <div class="alert alert-success mt-3">@TempData["success"]</div>
 }
-@if (TempData["error"] != null)
+@if (TempData["error"] != null && Context.Request.Method == "POST")
 {
     <div class="alert alert-danger mt-3">@TempData["error"]</div>
 }

@@ -33,6 +33,8 @@ namespace FurryFriends.API.Models.DTO
         public DateTime? NgaySua { get; set; }
         public bool TrangThai { get; set; } = true;
 
+        public List<SanPhamChiTietDTO>? SanPhamChiTiets { get; set; } //thêm cái này
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             // Nếu cần validate nâng cao, thêm ở đây
