@@ -314,6 +314,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGFuZ0t5XEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/GioHangs/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2lvSGFuZ3NcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/GioHangs/KetQuaThanhToan.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcR2lvSGFuZ3NcS2V0UXVhVGhhbmhUb2FuLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -324,6 +332,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/KhachHangLogin/DangNhap.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcS2hhY2hIYW5nTG9naW5cRGFuZ05oYXAuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/SanPhamKhachHang/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbUtoYWNoSGFuZ1xEZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/SanPhamKhachHang/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2FuUGhhbUtoYWNoSGFuZ1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [//Mac/Home/Downloads/DATN-SD-98-FurryFriends/FurryFriends.Web/Views/Shared/Error.cshtml]

@@ -104,8 +104,13 @@ namespace FurryFriends.API.Migrations
                         {
                             ChucVuId = new Guid("22222222-2222-2222-2222-222222222222"),
                             MoTaChucVu = "Quản trị viên hệ thống",
+<<<<<<< HEAD
                             NgayCapNhat = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(4974),
                             NgayTao = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(4973),
+=======
+                            NgayCapNhat = new DateTime(2025, 7, 31, 5, 56, 0, 656, DateTimeKind.Utc).AddTicks(8989),
+                            NgayTao = new DateTime(2025, 7, 31, 5, 56, 0, 656, DateTimeKind.Utc).AddTicks(8989),
+>>>>>>> origin/HuyTruongDatHang
                             TenChucVu = "admin",
                             TrangThai = true
                         });
@@ -282,7 +287,7 @@ namespace FurryFriends.API.Migrations
                     b.Property<DateTime>("NgayTao")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("SanPhamChiTietId")
+                    b.Property<Guid>("SanPhamChiTietId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("SanPhamId")
@@ -359,7 +364,7 @@ namespace FurryFriends.API.Migrations
                     b.Property<DateTime>("NgayTao")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("NhanVienId")
+                    b.Property<Guid?>("NhanVienId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("SdtCuaKhachHang")
@@ -587,9 +592,15 @@ namespace FurryFriends.API.Migrations
                             Email = "admin@furryfriends.local",
                             GioiTinh = "Nam",
                             HoVaTen = "Admin hệ thống",
+<<<<<<< HEAD
                             NgayCapNhat = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(5024),
                             NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NgayTao = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(5024),
+=======
+                            NgayCapNhat = new DateTime(2025, 7, 31, 5, 56, 0, 656, DateTimeKind.Utc).AddTicks(9009),
+                            NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayTao = new DateTime(2025, 7, 31, 5, 56, 0, 656, DateTimeKind.Utc).AddTicks(9008),
+>>>>>>> origin/HuyTruongDatHang
                             SDT = "0123456789",
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
                             TrangThai = true
@@ -704,7 +715,11 @@ namespace FurryFriends.API.Migrations
                         new
                         {
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
+<<<<<<< HEAD
                             NgayTaoTaiKhoan = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(4712),
+=======
+                            NgayTaoTaiKhoan = new DateTime(2025, 7, 31, 5, 56, 0, 656, DateTimeKind.Utc).AddTicks(8902),
+>>>>>>> origin/HuyTruongDatHang
                             Password = "123456",
                             TrangThai = true,
                             UserName = "admin"
@@ -943,19 +958,23 @@ namespace FurryFriends.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("SanPhamChiTiet", null)
+                    b.HasOne("SanPhamChiTiet", "SanPhamChiTiet")
                         .WithMany("GioHangChiTiets")
-                        .HasForeignKey("SanPhamChiTietId");
+                        .HasForeignKey("SanPhamChiTietId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("FurryFriends.API.Models.SanPham", "SanPham")
                         .WithMany("GioHangChiTiets")
                         .HasForeignKey("SanPhamId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("GioHang");
 
                     b.Navigation("SanPham");
+
+                    b.Navigation("SanPhamChiTiet");
                 });
 
             modelBuilder.Entity("FurryFriends.API.Models.HoaDon", b =>
@@ -974,9 +993,7 @@ namespace FurryFriends.API.Migrations
 
                     b.HasOne("FurryFriends.API.Models.NhanVien", "NhanVien")
                         .WithMany()
-                        .HasForeignKey("NhanVienId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NhanVienId");
 
                     b.HasOne("FurryFriends.API.Models.TaiKhoan", "TaiKhoan")
                         .WithMany("HoaDons")
@@ -1115,7 +1132,7 @@ namespace FurryFriends.API.Migrations
                     b.HasOne("FurryFriends.API.Models.SanPham", "SanPham")
                         .WithMany("SanPhamChiTiets")
                         .HasForeignKey("SanPhamId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Anh");

@@ -12,5 +12,6 @@ namespace FurryFriends.API.Repository.IRepository
         Task AddAsync(Voucher voucher);
         Task UpdateAsync(Voucher voucher);
         Task DeleteAsync(Guid id);
+        Task<bool> CheckVoucherValidAsync(Guid voucherId); //sửa ở đây để check voucher
     }
 }
