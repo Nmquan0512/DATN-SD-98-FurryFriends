@@ -1,0 +1,29 @@
+﻿@model FurryFriends.Web.ViewModels.SanPhamViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+}
+
+<h2>@Model.TenSanPham</h2>
+<p><strong>Mô tả:</strong> @Model.MoTa</p>
+
+<div class="row">
+    @foreach (var chiTiet in Model.ChiTietList)
+    {
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow">
+                <img src="https://localhost:7296/images/@(System.IO.Path.GetFileName(chiTiet.DanhSachAnh.FirstOrDefault() ?? "default.png"))"
+                     class="card-img-top"
+                     alt="Ảnh sản phẩm chi tiết"
+                     style="height: 250px; object-fit: cover;" />
+
+                <div class="card-body">
+                    <p><strong>Màu sắc:</strong> @chiTiet.MauSac</p>
+                    <p><strong>Kích cỡ:</strong> @chiTiet.KichCo</p>
+                    <p><strong>Số lượng còn:</strong> @chiTiet.SoLuongTon</p>
+                    <p><strong>Giá bán:</strong> @chiTiet.GiaBan.ToString("N0") VNĐ</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -44,6 +44,7 @@ public class KhachHangLoginController : Controller
 
         // Lưu session
         HttpContext.Session.SetString("TaiKhoanId", result.TaiKhoanId.ToString());
+        HttpContext.Session.SetString("KhachHangId", result.KhachHangId.ToString()); //sửa ơ đây
         HttpContext.Session.SetString("Role", result.Role);
         HttpContext.Session.SetString("HoTen", result.HoTen ?? "");
 

@@ -56,11 +56,11 @@ namespace FurryFriends.API.Models
         [ForeignKey("HinhThucThanhToanId")]
         public virtual HinhThucThanhToan HinhThucThanhToan { get; set; }
 
-        [Required]
-        public Guid NhanVienId { get; set; } // Nhân viên tạo hóa đơn
+        //[Required]
+        public Guid? NhanVienId { get; set; } //thêm dấu ? vào đây (sửa ở đây)
 
         [ForeignKey("NhanVienId")]
-        public virtual NhanVien NhanVien { get; set; }
+        public virtual NhanVien? NhanVien { get; set; } //thêm dấu ? vào đây  (sửa ở đây)
 
         public string LoaiHoaDon { get; set; } // Loại hóa đơn (ví dụ: "BanTaiQuay", ...)
 
