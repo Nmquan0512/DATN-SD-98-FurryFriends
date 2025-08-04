@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FurryFriends.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2657404f0164f84c241892ed404bb204dd2dcf3b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0a19828544869f220b343d47442828f4a20c821d")]
 [assembly: System.Reflection.AssemblyProductAttribute("FurryFriends.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FurryFriends.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
