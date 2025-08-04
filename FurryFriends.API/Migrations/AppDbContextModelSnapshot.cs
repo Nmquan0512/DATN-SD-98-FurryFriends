@@ -104,8 +104,8 @@ namespace FurryFriends.API.Migrations
                         {
                             ChucVuId = new Guid("22222222-2222-2222-2222-222222222222"),
                             MoTaChucVu = "Quản trị viên hệ thống",
-                            NgayCapNhat = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(4974),
-                            NgayTao = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(4973),
+                            NgayCapNhat = new DateTime(2025, 7, 29, 20, 49, 53, 7, DateTimeKind.Utc).AddTicks(896),
+                            NgayTao = new DateTime(2025, 7, 29, 20, 49, 53, 7, DateTimeKind.Utc).AddTicks(894),
                             TenChucVu = "admin",
                             TrangThai = true
                         });
@@ -168,8 +168,7 @@ namespace FurryFriends.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("GiamGiaId")
-                        .IsRequired()
+                    b.Property<Guid>("GiamGiaId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("NgayCapNhat")
@@ -185,7 +184,6 @@ namespace FurryFriends.API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("SanPhamId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("TrangThai")
@@ -208,15 +206,13 @@ namespace FurryFriends.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("NgayBatDau")
-                        .IsRequired()
+                    b.Property<DateTime>("NgayBatDau")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("NgayCapNhat")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("NgayKetThuc")
-                        .IsRequired()
+                    b.Property<DateTime>("NgayKetThuc")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("NgayTao")
@@ -587,9 +583,9 @@ namespace FurryFriends.API.Migrations
                             Email = "admin@furryfriends.local",
                             GioiTinh = "Nam",
                             HoVaTen = "Admin hệ thống",
-                            NgayCapNhat = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(5024),
+                            NgayCapNhat = new DateTime(2025, 7, 29, 20, 49, 53, 7, DateTimeKind.Utc).AddTicks(928),
                             NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayTao = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(5024),
+                            NgayTao = new DateTime(2025, 7, 29, 20, 49, 53, 7, DateTimeKind.Utc).AddTicks(927),
                             SDT = "0123456789",
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
                             TrangThai = true
@@ -704,7 +700,7 @@ namespace FurryFriends.API.Migrations
                         new
                         {
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            NgayTaoTaiKhoan = new DateTime(2025, 7, 24, 4, 36, 44, 368, DateTimeKind.Utc).AddTicks(4712),
+                            NgayTaoTaiKhoan = new DateTime(2025, 7, 29, 20, 49, 53, 7, DateTimeKind.Utc).AddTicks(706),
                             Password = "123456",
                             TrangThai = true,
                             UserName = "admin"
@@ -911,15 +907,11 @@ namespace FurryFriends.API.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("FurryFriends.API.Models.SanPham", "SanPham")
+                    b.HasOne("FurryFriends.API.Models.SanPham", null)
                         .WithMany("DotGiamGiaSanPhams")
-                        .HasForeignKey("SanPhamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SanPhamId");
 
                     b.Navigation("GiamGia");
-
-                    b.Navigation("SanPham");
 
                     b.Navigation("SanPhamChiTiet");
                 });
