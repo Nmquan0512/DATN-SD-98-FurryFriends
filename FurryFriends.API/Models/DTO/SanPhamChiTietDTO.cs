@@ -33,6 +33,8 @@ namespace FurryFriends.API.Models.DTO
 
         public DateTime? NgaySua { get; set; }
 
+
         public int? TrangThai { get; set; }
+       
     }
 }

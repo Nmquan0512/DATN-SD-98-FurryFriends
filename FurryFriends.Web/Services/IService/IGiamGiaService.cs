@@ -1,15 +1,17 @@
-﻿using FurryFriends.API.Models;
-using FurryFriends.API.Models.DTO;
+﻿using FurryFriends.API.Models.DTO;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FurryFriends.Web.Services.IService
 {
     public interface IGiamGiaService
     {
         Task<IEnumerable<GiamGiaDTO>> GetAllAsync();
-        Task<GiamGiaDTO?> GetByIdAsync(Guid id);
-        Task<ApiResult<GiamGiaDTO>> CreateAsync(GiamGiaDTO dto);
-        Task<ApiResult<bool>> UpdateAsync(Guid id, GiamGiaDTO dto);
-        Task<bool> AddSanPhamChiTietToGiamGiaAsync(Guid giamGiaId, List<Guid> sanPhamChiTietIds);
+        Task<GiamGiaDTO> GetByIdAsync(Guid id);
+        Task<GiamGiaDTO> CreateAsync(GiamGiaDTO dto);
+        Task<GiamGiaDTO> UpdateAsync(Guid id, GiamGiaDTO dto);
         Task<bool> DeleteAsync(Guid id);
+        Task<bool> AssignProductsAsync(Guid giamGiaId, List<Guid> productIds);
     }
 }

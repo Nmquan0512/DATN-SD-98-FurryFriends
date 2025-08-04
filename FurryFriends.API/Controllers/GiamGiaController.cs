@@ -1,6 +1,10 @@
 ﻿using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace FurryFriends.API.Controllers
 {
@@ -15,94 +19,146 @@ namespace FurryFriends.API.Controllers
             _giamGiaService = giamGiaService;
         }
 
-        // GET: api/GiamGia
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<IEnumerable<GiamGiaDTO>>> GetAll()
         {
-            var giamGias = await _giamGiaService.GetAllAsync();
-            return Ok(giamGias);
+            try
+            {
+                var discounts = await _giamGiaService.GetAllAsync();
+                return Ok(discounts);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Lỗi khi lấy danh sách giảm giá");
+            }
         }
 
-        // GET: api/GiamGia/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<ActionResult<GiamGiaDTO>> GetById(Guid id)
         {
-            var giamGia = await _giamGiaService.GetByIdAsync(id);
-            if (giamGia == null)
-                return NotFound("Không tìm thấy mã giảm giá");
-
-            return Ok(giamGia);
+            try
+            {
+                var discount = await _giamGiaService.GetByIdAsync(id);
+                if (discount == null)
+                {
+                    return NotFound();
+                }
+                return Ok(discount);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Lỗi khi lấy thông tin giảm giá");
+            }
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] GiamGiaDTO dto)
+        public async Task<ActionResult<GiamGiaDTO>> Create([FromBody] GiamGiaDTO dto)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    // Log lỗi ModelState
-                    foreach (var key in ModelState.Keys)
-                    {
-                        var errors = ModelState[key]?.Errors;
-                        if (errors != null && errors.Count > 0)
-                        {
-                            foreach (var err in errors)
-                            {
-                                Console.WriteLine($"[ModelStateError] {key}: {err.ErrorMessage}");
-                            }
-                        }
-                    }
                     return BadRequest(ModelState);
                 }
 
-                var created = await _giamGiaService.CreateAsync(dto);
-                return CreatedAtAction(nameof(GetById), new { id = created.GiamGiaId }, created);
+                var createdDiscount = await _giamGiaService.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = createdDiscount.GiamGiaId }, createdDiscount);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);
             }
             catch (Exception ex)
             {
-                Console.WriteLine("API Exception: " + ex.ToString());
-                return StatusCode(500, "Lỗi hệ thống: " + ex.Message);
+                return StatusCode(500, "Lỗi khi tạo giảm giá");
             }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] GiamGiaDTO dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            try
+            {
+                if (id != dto.GiamGiaId)
+                {
+                    return BadRequest("ID không khớp");
+                }
 
-            if (id != dto.GiamGiaId)
-                return BadRequest("ID không khớp với DTO");
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var updated = await _giamGiaService.UpdateAsync(id, dto);
-            if (updated == null)
-                return NotFound("Không tìm thấy mã giảm giá để cập nhật");
+                var result = await _giamGiaService.UpdateAsync(dto);
+                if (result == null)
+                {
+                    return NotFound();
+                }
 
-            return Ok(updated);
+                return NoContent();
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Lỗi khi cập nhật giảm giá");
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var result = await _giamGiaService.DeleteAsync(id);
-            if (result) return Ok();
-            return BadRequest("Xóa thất bại!");
+            try
+            {
+                var result = await _giamGiaService.DeleteAsync(id);
+                if (!result)
+                {
+                    return NotFound();
+                }
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Lỗi khi xóa giảm giá");
+            }
         }
 
-
-        // POST: api/GiamGia/{id}/assign-sanphamchitiet
-        [HttpPost("{id}/assign-sanphamchitiet")]
-        public async Task<IActionResult> AssignSanPhamChiTiet(Guid id, [FromBody] List<Guid> sanPhamChiTietIds)
+        [HttpPost("{id}/assign-products")]
+        public async Task<IActionResult> AssignProducts(Guid id, [FromBody] List<Guid> productIds)
         {
-            if (sanPhamChiTietIds == null || !sanPhamChiTietIds.Any())
-                return BadRequest("Danh sách sản phẩm chi tiết không được rỗng.");
+            try
+            {
+                if (productIds == null || productIds.Count == 0)
+                {
+                    return BadRequest("Danh sách sản phẩm không được rỗng");
+                }
 
-            var result = await _giamGiaService.AddSanPhamChiTietToGiamGiaAsync(id, sanPhamChiTietIds);
-            if (!result)
-                return BadRequest("Không thể gán sản phẩm chi tiết vào đợt giảm giá");
+                var result = await _giamGiaService.AssignProductsAsync(id, productIds);
+                if (!result)
+                {
+                    return NotFound();
+                }
 
-            return Ok("Gán sản phẩm chi tiết thành công");
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Lỗi khi gán sản phẩm vào chương trình giảm giá");
+            }
         }
     }
 }

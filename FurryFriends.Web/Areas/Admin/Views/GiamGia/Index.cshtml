@@ -1,245 +1,184 @@
-﻿@model IEnumerable<FurryFriends.API.Models.DTO.GiamGiaDTO>
+﻿@using FurryFriends.API.Models.DTO
+@model IEnumerable<GiamGiaDTO>
+
 @{
     ViewData["Title"] = "Quản lý chương trình giảm giá";
-    var total = ViewBag.TotalCount ?? Model.Count();
-    var active = ViewBag.ActiveCount ?? Model.Count(x => x.TrangThai);
-    var inactive = ViewBag.InactiveCount ?? Model.Count(x => !x.TrangThai);
+    var now = DateTime.Now;
 }
-<div class="container-fluid px-4">
-    <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb bg-white rounded shadow-sm px-3 py-2">
-            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
-            <li class="breadcrumb-item active">Quản lý giảm giá</li>
-        </ol>
-    </nav>
+
+<div class="container-fluid">
+    <!-- Thông báo -->
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success">@TempData["success"]</div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["error"]</div>
+    }
+
+    <!-- Thống kê -->
+    <div class="row mb-4 g-3">
+        <div class="col-md-3">
+            <div class="card border-primary">
+                <div class="card-body">
+                    <h6 class="text-muted">Tổng số</h6>
+                    <h3 class="fw-bold text-primary">@Model.Count()</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-success">
+                <div class="card-body">
+                    <h6 class="text-muted">Đang hoạt động</h6>
+                    <h3 class="fw-bold text-success">@Model.Count(x => x.TrangThai && x.NgayBatDau <= now && x.NgayKetThuc >= now)</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-warning">
+                <div class="card-body">
+                    <h6 class="text-muted">Sắp diễn ra</h6>
+                    <h3 class="fw-bold text-warning">@Model.Count(x => x.NgayBatDau > now)</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-secondary">
+                <div class="card-body">
+                    <h6 class="text-muted">Đã kết thúc</h6>
+                    <h3 class="fw-bold text-secondary">@Model.Count(x => x.NgayKetThuc < now)</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tiêu đề và nút thêm mới -->
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0 fw-bold text-primary"><i class="fas fa-tags me-2"></i>@ViewData["Title"]</h2>
-        <a asp-action="Create" asp-area="Admin" asp-controller="GiamGia" class="btn btn-primary shadow-sm">
-            <i class="fas fa-plus me-1"></i> Tạo mới chương trình
+        <h2>@ViewData["Title"]</h2>
+        <a asp-area="Admin" asp-controller="GiamGia" asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Thêm mới
         </a>
     </div>
-    <div class="row mb-4 g-3">
-        <div class="col-md-4">
-            <div class="bg-white shadow rounded p-4 border-start border-primary border-4">
-                <h6 class="text-muted">Tổng số chương trình</h6>
-                <h3 class="fw-bold text-primary">@total</h3>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="bg-white shadow rounded p-4 border-start border-success border-4">
-                <h6 class="text-muted">Đang áp dụng</h6>
-                <h3 class="fw-bold text-success">@active</h3>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="bg-white shadow rounded p-4 border-start border-secondary border-4">
-                <h6 class="text-muted">Ngừng áp dụng</h6>
-                <h3 class="fw-bold text-secondary">@inactive</h3>
-            </div>
-        </div>
-    </div>
 
-</div>
-    <div class="card shadow-sm rounded-4 border-0">
-        <div class="card-body p-0">
-            <table id="giamGiaTable" class="table table-hover table-bordered align-middle mb-0 w-100">
-                <thead class="table-primary text-center">
-        <tr>
-            <th>Tên</th>
-            <th>Phần trăm (%)</th>
-            <th>Ngày bắt đầu</th>
-            <th>Ngày kết thúc</th>
-            <th>Trạng thái</th>
-                        <th class="text-center">Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                            <td class="fw-semibold">@item.TenGiamGia</td>
-                            <td class="text-center">@item.PhanTramKhuyenMai %</td>
-                            <td class="text-center">@item.NgayBatDau?.ToString("dd/MM/yyyy")</td>
-                            <td class="text-center">@item.NgayKetThuc?.ToString("dd/MM/yyyy")</td>
-                            <td class="text-center">
-                    @if (item.TrangThai)
-                    {
-                                    <span class="badge bg-success px-3 py-2">Đang áp dụng</span>
-                    }
-                    else
-                    {
-                                    <span class="badge bg-secondary px-3 py-2">Ngừng áp dụng</span>
-                    }
-                </td>
-                            <td class="text-center">
-                                <a asp-action="Details" asp-route-id="@item.GiamGiaId" class="btn btn-sm btn-outline-info me-1" title="Chi tiết" data-bs-toggle="tooltip">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a asp-action="Edit" asp-route-id="@item.GiamGiaId" class="btn btn-sm btn-outline-warning me-1" title="Sửa" data-bs-toggle="tooltip">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a asp-action="AddSanPham" asp-route-id="@item.GiamGiaId" class="btn btn-sm btn-outline-primary me-1" title="Gán sản phẩm" data-bs-toggle="tooltip">
-                                    <i class="fas fa-link"></i>
-                                </a>
-                                <button type="button" class="btn btn-sm btn-outline-danger" title="Xóa" data-bs-toggle="modal" data-bs-target="#modalXoa" data-id="@item.GiamGiaId">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-        </div>
-    </div>
-</div>
-<!-- Modal xác nhận xóa -->
-<div class="modal fade" id="modalXoa" tabindex="-1" aria-labelledby="modalXoaLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalXoaLabel"><i class="fas fa-trash"></i> Xác nhận xóa</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Bạn có chắc chắn muốn xóa chương trình giảm giá này không?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-danger" id="btnXacNhanXoa">Xóa</button>
-            </div>
-        </div>
-    </div>
-</div>
-@section Scripts {
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" />
+    <!-- Bảng danh sách -->
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="dataTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên chương trình</th>
+                            <th>Giảm giá</th>
+                            <th>Thời gian</th>
+                            <th>Sản phẩm</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var (item, index) in Model.Select((item, index) => (item, index + 1)))
+                        {
+                            <tr>
+                                <td>@index</td>
+                                <td>@item.TenGiamGia</td>
+                                <td>@item.PhanTramKhuyenMai%</td>
+                                <td>
+                                    @item.NgayBatDau.ToString("dd/MM/yyyy") - @item.NgayKetThuc.ToString("dd/MM/yyyy")
+                                    @if (item.NgayBatDau > now)
+                                    {
+                                        <span class="badge bg-info ms-2">Sắp diễn ra</span>
+                                    }
+                                    else if (item.NgayKetThuc < now)
+                                    {
+                                        <span class="badge bg-secondary ms-2">Đã kết thúc</span>
+                                    }
+                                </td>
+                                <td>
+                                    @item.SoLuongSanPhamApDung
+                                    @if (item.SoLuongSanPhamApDung > 0)
+                                    {
+                                        <a asp-action="Details" asp-route-id="@item.GiamGiaId" class="text-primary ms-1">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!item.TrangThai)
+                                    {
+                                        <span class="badge bg-secondary">Đã tắt</span>
+                                    }
+                                    else if (item.NgayBatDau <= now && item.NgayKetThuc >= now)
+                                    {
+                                        <span class="badge bg-success">Đang chạy</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">Không hoạt động</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Edit" asp-route-id="@item.GiamGiaId" class="btn btn-outline-primary" title="Sửa">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.GiamGiaId" class="btn btn-outline-info" title="Chi tiết">
+                                            <i class="fas fa-info-circle"></i>
+                                        </a>
+                                        <button class="btn btn-outline-danger" title="Xóa"
+                                                data-bs-toggle="modal" data-bs-target="#deleteModal-@item.GiamGiaId">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
 
-    <script>
-        // ================== CONFIG ==================
-        const API_BASE = "https://localhost:7289/api/GiamGia";
-
-        // ================== DATATABLE ==================
-        $(document).ready(function () {
-            $('#giamGiaTable').DataTable({
-                language: {
-                    search: "Tìm kiếm:",
-                    lengthMenu: "Hiển thị _MENU_ dòng",
-                    info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
-                    paginate: { previous: "Trước", next: "Sau" },
-                    zeroRecords: "Không tìm thấy dữ liệu phù hợp"
-                },
-                responsive: true,
-                order: [[2, 'desc']]
-            });
-        });
-
-        // ================== TOOLTIP ==================
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-
-        // ================== XOÁ ==================
-        let idToDelete = null;
-
-        const modalXoa = document.getElementById('modalXoa');
-        if (modalXoa) {
-            modalXoa.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                idToDelete = button.getAttribute('data-id');
-            });
-
-            document.getElementById('btnXacNhanXoa').onclick = async function () {
-                if (!idToDelete) return;
-
-                try {
-                    const res = await fetch(`${API_BASE}/${idToDelete}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Accept': 'application/json'
-                            // Nếu API yêu cầu JWT:
-                            // 'Authorization': 'Bearer ' + token
+                                    <!-- Modal xóa -->
+                                    <div class="modal fade" id="deleteModal-@item.GiamGiaId" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header bg-danger text-white">
+                                                    <h5 class="modal-title">Xác nhận xóa</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>Bạn có chắc muốn xóa chương trình <strong>@item.TenGiamGia</strong>?</p>
+                                                    <p class="text-danger">Tất cả sản phẩm áp dụng sẽ bị xóa theo!</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                    <form asp-action="Delete" method="post">
+                                                        <input type="hidden" name="id" value="@item.GiamGiaId" />
+                                                        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
                         }
-                    });
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-                    if (res.ok) {
-                        const modal = bootstrap.Modal.getInstance(modalXoa);
-                        modal.hide();
-                        location.reload();
-                    } else {
-                        const text = await res.text();
-                        alert('Xóa thất bại!\n' + text);
-                    }
-                } catch (e) {
-                    console.error(e);
-                    alert('Có lỗi mạng khi gọi API!');
-                }
-            };
-        }
-
-        // ================== GÁN SẢN PHẨM (nếu bạn VẪN dùng modal) ==================
-        let selectedGiamGiaId = null;
-        const modalGanSanPham = document.getElementById('modalGanSanPham');
-
-        // Chỉ gắn handler nếu modal tồn tại trong view
-        if (modalGanSanPham) {
-            modalGanSanPham.addEventListener('show.bs.modal', function (event) {
-                const button = event.relatedTarget;
-                selectedGiamGiaId = button.getAttribute('data-id');
-
-                const content = document.getElementById('ganSanPhamContent');
-                content.innerHTML = 'Đang tải...';
-
-                // Load partial từ MVC
-                fetch(`/Admin/GiamGia/LoadGanSanPhamModal?id=${selectedGiamGiaId}`)
-                    .then(res => res.text())
-                    .then(html => content.innerHTML = html);
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable({
+                language: {
+                    url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/vi.json'
+                },
+                columnDefs: [
+                    { orderable: false, targets: [0, 6] }
+                ],
+                order: [[3, 'asc']]
             });
-
-            // Delegation: handle submit form trong partial (vì partial được inject bằng innerHTML)
-            document.addEventListener('submit', async function (e) {
-                const form = e.target;
-                if (!form || form.id !== 'formGanSanPham') return;
-
-                e.preventDefault();
-
-                const id = form.querySelector('input[name="id"]').value;
-                const checked = Array.from(form.querySelectorAll('.spct-checkbox-gan:checked')).map(cb => cb.value);
-
-                try {
-                    const res = await fetch(`${API_BASE}/${id}/assign-sanphamchitiet`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(checked)
-                    });
-
-                    if (res.ok) {
-                        alert('Gán sản phẩm thành công!');
-                        const modal = bootstrap.Modal.getInstance(modalGanSanPham);
-                        modal.hide();
-                        location.reload();
-                    } else {
-                        const text = await res.text();
-                        alert('Gán sản phẩm thất bại! ' + text);
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert('Lỗi mạng!');
-                }
-            });
-
-            // Delegation: filter trong modal
-            document.addEventListener('input', function (e) {
-                if (e.target && e.target.id === 'filterInputGan') {
-                    const filter = e.target.value.toLowerCase();
-                    document.querySelectorAll('#tableSanPhamGan tbody tr').forEach(function (row) {
-                        const search = row.getAttribute('data-search');
-                        row.style.display = search.includes(filter) ? '' : 'none';
-                    });
-                }
-            });
-        }
+        });
     </script>
 }
-

@@ -2,6 +2,10 @@
 using FurryFriends.API.Models;
 using FurryFriends.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FurryFriends.API.Repositories
 {
@@ -17,16 +21,13 @@ namespace FurryFriends.API.Repositories
         public async Task<IEnumerable<DotGiamGiaSanPham>> GetAllAsync()
         {
             return await _context.DotGiamGiaSanPhams
-                .Include(d => d.GiamGia)
-                .Include(d => d.SanPhamChiTiet)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
-        public async Task<DotGiamGiaSanPham?> GetByIdAsync(Guid id)
+        public async Task<DotGiamGiaSanPham> GetByIdAsync(Guid id)
         {
             return await _context.DotGiamGiaSanPhams
-                .Include(d => d.GiamGia)
-                .Include(d => d.SanPhamChiTiet)
                 .FirstOrDefaultAsync(d => d.DotGiamGiaSanPhamId == id);
         }
 
@@ -36,58 +37,62 @@ namespace FurryFriends.API.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task AddRangeAsync(IEnumerable<DotGiamGiaSanPham> entities)
+        {
+            await _context.DotGiamGiaSanPhams.AddRangeAsync(entities);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task UpdateAsync(DotGiamGiaSanPham entity)
         {
+            entity.NgayCapNhat = DateTime.UtcNow;
             _context.DotGiamGiaSanPhams.Update(entity);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            var dot = await GetByIdAsync(id);
-            if (dot != null)
+            var entity = await _context.DotGiamGiaSanPhams.FindAsync(id);
+            if (entity != null)
             {
-                _context.DotGiamGiaSanPhams.Remove(dot);
+                _context.DotGiamGiaSanPhams.Remove(entity);
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteByGiamGiaIdAsync(Guid giamGiaId)
+        {
+            var entities = await _context.DotGiamGiaSanPhams
+                .Where(d => d.GiamGiaId == giamGiaId)
+                .ToListAsync();
+
+            if (entities.Any())
+            {
+                _context.DotGiamGiaSanPhams.RemoveRange(entities);
                 await _context.SaveChangesAsync();
             }
         }
 
         public async Task<bool> ExistsAsync(Guid id)
         {
-            return await _context.DotGiamGiaSanPhams.AnyAsync(d => d.DotGiamGiaSanPhamId == id);
-        }
-
-        public async Task<IEnumerable<DotGiamGiaSanPham>> GetBySanPhamIdAsync(Guid sanPhamId)
-        {
             return await _context.DotGiamGiaSanPhams
-                .Where(d => d.SanPhamChiTiet != null && d.SanPhamChiTiet.SanPhamId == sanPhamId)
-                .Include(d => d.GiamGia)
-                .Include(d => d.SanPhamChiTiet)
-                .ToListAsync();
-        }
-        public async Task DeleteByGiamGiaIdAsync(Guid giamGiaId)
-        {
-            var list = await _context.DotGiamGiaSanPhams
-                .Where(d => d.GiamGiaId == giamGiaId)
-                .ToListAsync();
-
-            _context.DotGiamGiaSanPhams.RemoveRange(list);
-            await _context.SaveChangesAsync();
+                .AnyAsync(d => d.DotGiamGiaSanPhamId == id);
         }
 
         public async Task<IEnumerable<DotGiamGiaSanPham>> GetByGiamGiaIdAsync(Guid giamGiaId)
         {
             return await _context.DotGiamGiaSanPhams
                 .Where(d => d.GiamGiaId == giamGiaId)
-                .Include(d => d.GiamGia)
-                .Include(d => d.SanPhamChiTiet)
+                .AsNoTracking()
                 .ToListAsync();
         }
 
-        public async Task AddRangeAsync(IEnumerable<DotGiamGiaSanPham> entities)
+        public async Task<IEnumerable<DotGiamGiaSanPham>> GetBySanPhamChiTietIdAsync(Guid sanPhamChiTietId)
         {
-            await _context.DotGiamGiaSanPhams.AddRangeAsync(entities);
-            await _context.SaveChangesAsync();
+            return await _context.DotGiamGiaSanPhams
+                .Where(d => d.SanPhamChiTietId == sanPhamChiTietId)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }

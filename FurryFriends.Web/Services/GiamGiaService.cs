@@ -1,9 +1,12 @@
-﻿using FurryFriends.API.Models;
-using FurryFriends.API.Models.DTO;
+﻿using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.Services.IService;
-using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
+using System.Threading.Tasks;
 
 namespace FurryFriends.Web.Services
 {
@@ -19,85 +22,123 @@ namespace FurryFriends.Web.Services
 
         public async Task<IEnumerable<GiamGiaDTO>> GetAllAsync()
         {
-            var result = await _httpClient.GetFromJsonAsync<IEnumerable<GiamGiaDTO>>(BaseUrl);
-            return result ?? new List<GiamGiaDTO>();
+            try
+            {
+                var response = await _httpClient.GetAsync(BaseUrl);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<IEnumerable<GiamGiaDTO>>();
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new ApplicationException("Lỗi khi lấy danh sách giảm giá", ex);
+            }
         }
 
-        public async Task<GiamGiaDTO?> GetByIdAsync(Guid id)
+        public async Task<GiamGiaDTO> GetByIdAsync(Guid id)
         {
-            var response = await _httpClient.GetAsync($"{BaseUrl}/{id}");
-            if (response.IsSuccessStatusCode)
+            try
+            {
+                var response = await _httpClient.GetAsync($"{BaseUrl}/{id}");
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                    return null;
+
+                response.EnsureSuccessStatusCode();
                 return await response.Content.ReadFromJsonAsync<GiamGiaDTO>();
-            return null;
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new ApplicationException($"Lỗi khi lấy giảm giá với ID {id}", ex);
+            }
         }
 
-        public async Task<ApiResult<GiamGiaDTO>> CreateAsync(GiamGiaDTO dto)
+        public async Task<GiamGiaDTO> CreateAsync(GiamGiaDTO dto)
         {
-            var response = await _httpClient.PostAsJsonAsync(BaseUrl, dto);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var data = await response.Content.ReadFromJsonAsync<GiamGiaDTO>();
-                return new ApiResult<GiamGiaDTO> { Data = data };
+                ValidateDto(dto);
+                var response = await _httpClient.PostAsJsonAsync(BaseUrl, dto);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<GiamGiaDTO>();
             }
-
-            // Log toàn bộ response lỗi
-            var errorContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("API Error Content: " + errorContent);
-
-            if (response.StatusCode == HttpStatusCode.BadRequest)
+            catch (ValidationException)
             {
-                var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-                return new ApiResult<GiamGiaDTO>
-                {
-                    Errors = errors?.Errors?.ToDictionary(e => e.Key, e => e.Value)
-                };
+                throw;
             }
-
-            return new ApiResult<GiamGiaDTO>
+            catch (HttpRequestException ex)
             {
-                Errors = new Dictionary<string, string[]>
-                {
-                    { "", new[] { "Lỗi không xác định! " + errorContent } }
-                }
-            };
+                throw new ApplicationException("Lỗi khi tạo giảm giá", ex);
+            }
         }
 
-        public async Task<ApiResult<bool>> UpdateAsync(Guid id, GiamGiaDTO dto)
+        public async Task<GiamGiaDTO> UpdateAsync(Guid id, GiamGiaDTO dto)
         {
-            var response = await _httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", dto);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return new ApiResult<bool> { Data = true };
+                if (id != dto.GiamGiaId)
+                    throw new ArgumentException("ID không khớp với đối tượng giảm giá");
+
+                ValidateDto(dto);
+                var response = await _httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", dto);
+                response.EnsureSuccessStatusCode();
+                return await response.Content.ReadFromJsonAsync<GiamGiaDTO>();
             }
-
-            if (response.StatusCode == HttpStatusCode.BadRequest)
+            catch (ValidationException)
             {
-                var errors = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
-                return new ApiResult<bool>
-                {
-                    Data = false,
-                    Errors = errors?.Errors?.ToDictionary(e => e.Key, e => e.Value)
-                };
+                throw;
             }
-
-            return new ApiResult<bool>
+            catch (ArgumentException)
             {
-                Data = false,
-                Errors = new() { { "", new[] { "Lỗi không xác định khi cập nhật!" } } }
-            };
-        }
-
-        public async Task<bool> AddSanPhamChiTietToGiamGiaAsync(Guid giamGiaId, List<Guid> sanPhamChiTietIds)
-        {
-            var response = await _httpClient.PostAsJsonAsync($"{BaseUrl}/{giamGiaId}/assign-sanphamchitiet", sanPhamChiTietIds);
-            return response.IsSuccessStatusCode;
+                throw;
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new ApplicationException($"Lỗi khi cập nhật giảm giá với ID {id}", ex);
+            }
         }
 
         public async Task<bool> DeleteAsync(Guid id)
         {
-            var response = await _httpClient.DeleteAsync($"{BaseUrl}/{id}");
-            return response.IsSuccessStatusCode;
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"{BaseUrl}/{id}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new ApplicationException($"Lỗi khi xóa giảm giá với ID {id}", ex);
+            }
+        }
+
+        public async Task<bool> AssignProductsAsync(Guid giamGiaId, List<Guid> productIds)
+        {
+            try
+            {
+                if (productIds == null || productIds.Count == 0)
+                    throw new ArgumentException("Danh sách sản phẩm không được rỗng");
+
+                var response = await _httpClient.PostAsJsonAsync(
+                    $"{BaseUrl}/{giamGiaId}/assign-products",
+                    productIds);
+
+                return response.IsSuccessStatusCode;
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
+            catch (HttpRequestException ex)
+            {
+                throw new ApplicationException($"Lỗi khi gán sản phẩm vào giảm giá {giamGiaId}", ex);
+            }
+        }
+
+        private void ValidateDto(GiamGiaDTO dto)
+        {
+            var validationResults = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(dto, new ValidationContext(dto), validationResults, true))
+            {
+                throw new ValidationException(string.Join("\n", validationResults.Select(r => r.ErrorMessage)));
+            }
         }
     }
 }

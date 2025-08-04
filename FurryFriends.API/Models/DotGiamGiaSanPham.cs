@@ -6,37 +6,31 @@ namespace FurryFriends.API.Models
     public class DotGiamGiaSanPham
     {
         [Key]
-        public Guid DotGiamGiaSanPhamId { get; set; }
+        public Guid DotGiamGiaSanPhamId { get; set; } = Guid.NewGuid();
 
         [Required]
-        public Guid? GiamGiaId { get; set; }
+        public Guid GiamGiaId { get; set; }
 
         [Required]
-        public Guid? SanPhamId { get; set; }
+        public Guid SanPhamChiTietId { get; set; }
 
         [Required]
         public decimal PhanTramGiamGia { get; set; }
 
         [Required]
-        public bool TrangThai { get; set; }
+        public bool TrangThai { get; set; } = true;
 
         [Required]
-        public DateTime NgayTao { get; set; }
+        public DateTime NgayTao { get; set; } = DateTime.UtcNow;
 
         [Required]
-        public DateTime NgayCapNhat { get; set; }
+        public DateTime NgayCapNhat { get; set; } = DateTime.UtcNow;
 
-        [Required]
-        public Guid SanPhamChiTietId { get; set; }
-
+        // Navigation properties
         [ForeignKey("GiamGiaId")]
-        public virtual GiamGia? GiamGia { get; set; }
-
-        [ForeignKey("SanPhamId")]
-        public virtual SanPham? SanPham { get; set; }
+        public virtual GiamGia GiamGia { get; set; }
 
         [ForeignKey("SanPhamChiTietId")]
-        public virtual SanPhamChiTiet? SanPhamChiTiet { get; set; }
+        public virtual SanPhamChiTiet SanPhamChiTiet { get; set; }
     }
-
 }
