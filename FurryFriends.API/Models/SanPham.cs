@@ -29,8 +29,7 @@ namespace FurryFriends.API.Models
         public virtual ICollection<SanPhamChiTiet>? SanPhamChiTiets { get; set; }
         public virtual ICollection<SanPhamThanhPhan>? SanPhamThanhPhans { get; set; }
         public virtual ICollection<SanPhamChatLieu>? SanPhamChatLieus { get; set; }
-        public ICollection<GioHangChiTiet>? GioHangChiTiets { get; set; }
-        public ICollection<HoaDonChiTiet>? HoaDonChiTiets { get; set; }
+
 
     }
 

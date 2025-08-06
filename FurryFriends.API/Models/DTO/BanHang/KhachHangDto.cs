@@ -11,11 +11,4 @@ namespace FurryFriends.API.Models.DTO.BanHang
         public int DiemTichLuy { get; set; }
         public bool LaKhachLe { get; set; } = false;
     }
-
-    public class TaoKhachHangRequest
-    {
-        public string TenKhachHang { get; set; }
-        public string SDT { get; set; }
-        public string Email { get; set; }
-    }
 }

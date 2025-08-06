@@ -31,7 +31,7 @@ namespace FurryFriends.API.Models
 
         [Required]
         public DateTime NgayTao { get; set; }
-
+        public decimal? GiaTriGiamToiDa { get; set; }
         public DateTime? NgayCapNhat { get; set; }
 
         [JsonIgnore]

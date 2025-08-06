@@ -13,17 +13,18 @@ namespace FurryFriends.API.Models.DTO.BanHang
         public decimal TongTien { get; set; }
         public decimal TienGiam { get; set; }
         public decimal ThanhTien { get; set; }
+        public VoucherDto Voucher { get; set; }
         public HinhThucThanhToanDto HinhThucThanhToan { get; set; }
         public string TrangThai { get; set; }
     }
 
     public class ChiTietHoaDonDto
     {
-        public Guid SanPhamId { get; set; }
+        public Guid SanPhamChiTietId { get; set; }
         public string TenSanPham { get; set; }
         public string MauSac { get; set; }
         public string KichCo { get; set; }
-        public decimal DonGia { get; set; }
+        public decimal Gia { get; set; }
         public int SoLuong { get; set; }
         public decimal ThanhTien { get; set; }
     }

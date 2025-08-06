@@ -8,13 +8,10 @@ namespace FurryFriends.API.Models
         [Key]
         public Guid HoaDonId { get; set; }
 
-        [Required]
-        public Guid TaiKhoanId { get; set; }
-
         public Guid? VoucherId { get; set; }
 
         [Required]
-        public Guid KhachHangId { get; set; }
+        public Guid  KhachHangId { get; set; }
 
         [Required]
         public Guid HinhThucThanhToanId { get; set; }
@@ -47,14 +44,15 @@ namespace FurryFriends.API.Models
         [ForeignKey("VoucherId")]
         public virtual Voucher Voucher { get; set; }
 
-        [ForeignKey("TaiKhoanId")]
-        public virtual TaiKhoan TaiKhoan { get; set; }
-
         [ForeignKey("KhachHangId")]
         public virtual KhachHang KhachHang { get; set; }
 
         [ForeignKey("HinhThucThanhToanId")]
         public virtual HinhThucThanhToan HinhThucThanhToan { get; set; }
+        public Guid? DiaChiGiaoHangId { get; set; } // ID địa chỉ giao hàng
+
+        [ForeignKey("DiaChiGiaoHangId")]
+        public virtual DiaChiKhachHang? DiaChiGiaoHang { get; set; }
 
         [Required]
         public Guid NhanVienId { get; set; } // Nhân viên tạo hóa đơn

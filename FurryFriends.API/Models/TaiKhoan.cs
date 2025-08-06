@@ -28,13 +28,11 @@ namespace FurryFriends.API.Models
         public virtual KhachHang? KhachHang { get; set; }
 
         public virtual NhanVien? NhanVien { get; set; }
-        public virtual ICollection<HoaDon>? HoaDons { get; set; }
 
         public TaiKhoan()
         {
             TaiKhoanId = Guid.NewGuid();
             TrangThai = true;
-            HoaDons = new List<HoaDon>();
         }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
