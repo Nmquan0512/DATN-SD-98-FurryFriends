@@ -12,6 +12,5 @@ namespace FurryFriends.API.Services.IServices
         Task<GiamGiaDTO> CreateAsync(GiamGiaDTO dto);
         Task<GiamGiaDTO> UpdateAsync(GiamGiaDTO dto);
         Task<bool> DeleteAsync(Guid id);
-        Task<bool> AssignProductsAsync(Guid giamGiaId, List<Guid> productIds);
     }
 }

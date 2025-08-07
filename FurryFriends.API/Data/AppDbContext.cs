@@ -13,7 +13,7 @@ namespace FurryFriends.API.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DELL\\SQLEXPRESS;Database=DATN;Trusted_Connection=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Server=DELL\\SQLEXPRESS;Database=DATN1;Trusted_Connection=True;TrustServerCertificate=True");
             }
         }
 
@@ -163,12 +163,6 @@ namespace FurryFriends.API.Data
                 .HasPrecision(18, 2);
 
             modelBuilder.Entity<HoaDon>()
-                .HasOne(hd => hd.TaiKhoan)
-                .WithMany(tk => tk.HoaDons)
-                .HasForeignKey(hd => hd.TaiKhoanId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<HoaDon>()
                 .HasOne(hd => hd.KhachHang)
                 .WithMany(kh => kh.HoaDons)
                 .HasForeignKey(hd => hd.KhachHangId)
@@ -192,11 +186,6 @@ namespace FurryFriends.API.Data
                 .HasForeignKey(hdct => hdct.HoaDonId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<HoaDonChiTiet>()
-                .HasOne(hdct => hdct.SanPham)
-                .WithMany(spct => spct.HoaDonChiTiets)
-                .HasForeignKey(hdct => hdct.SanPhamId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
 
         private void ConfigureDotGiamGiaSanPham(ModelBuilder modelBuilder)

@@ -3,159 +3,161 @@
 
 @{
     ViewData["Title"] = "Quản lý chương trình giảm giá";
-    var now = DateTime.Now;
+    var now = DateTime.UtcNow;
 }
 
-<div class="container-fluid">
+<div class="container-fluid py-4">
     <!-- Thông báo -->
     @if (TempData["success"] != null)
     {
-        <div class="alert alert-success">@TempData["success"]</div>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     }
     @if (TempData["error"] != null)
     {
-        <div class="alert alert-danger">@TempData["error"]</div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     }
 
-    <!-- Thống kê -->
-    <div class="row mb-4 g-3">
-        <div class="col-md-3">
-            <div class="card border-primary">
-                <div class="card-body">
-                    <h6 class="text-muted">Tổng số</h6>
-                    <h3 class="fw-bold text-primary">@Model.Count()</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-success">
-                <div class="card-body">
-                    <h6 class="text-muted">Đang hoạt động</h6>
-                    <h3 class="fw-bold text-success">@Model.Count(x => x.TrangThai && x.NgayBatDau <= now && x.NgayKetThuc >= now)</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-warning">
-                <div class="card-body">
-                    <h6 class="text-muted">Sắp diễn ra</h6>
-                    <h3 class="fw-bold text-warning">@Model.Count(x => x.NgayBatDau > now)</h3>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-secondary">
-                <div class="card-body">
-                    <h6 class="text-muted">Đã kết thúc</h6>
-                    <h3 class="fw-bold text-secondary">@Model.Count(x => x.NgayKetThuc < now)</h3>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Tiêu đề và nút thêm mới -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>@ViewData["Title"]</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-tags me-2 text-primary"></i>@ViewData["Title"]</h2>
         <a asp-area="Admin" asp-controller="GiamGia" asp-action="Create" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Thêm mới
+            <i class="fas fa-plus me-2"></i> Thêm chương trình mới
         </a>
     </div>
 
+    <!-- Thống kê -->
+    <div class="row mb-4 g-3">
+        <div class="col-xl-3 col-lg-6">
+            <div class="card shadow-sm border-start border-primary border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Tổng số chương trình</h6>
+                    <h3 class="fw-bold text-primary mb-0">@(Model?.Count() ?? 0)</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6">
+            <div class="card shadow-sm border-start border-success border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Đang diễn ra</h6>
+                    <h3 class="fw-bold text-success mb-0">@(Model?.Count(x => x.TrangThai && x.NgayBatDau <= now && x.NgayKetThuc >= now) ?? 0)</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6">
+            <div class="card shadow-sm border-start border-warning border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Sắp diễn ra</h6>
+                    <h3 class="fw-bold text-warning mb-0">@(Model?.Count(x => x.TrangThai && x.NgayBatDau > now) ?? 0)</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6">
+            <div class="card shadow-sm border-start border-secondary border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Đã kết thúc / Đã tắt</h6>
+                    <h3 class="fw-bold text-secondary mb-0">@(Model?.Count(x => !x.TrangThai || x.NgayKetThuc < now) ?? 0)</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bảng danh sách -->
-    <div class="card shadow">
-        <div class="card-body">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
             <div class="table-responsive">
-                <table class="table table-hover" id="dataTable">
+                <table class="table table-hover align-middle" id="giamGiaDataTable" style="width:100%">
                     <thead class="table-light">
                         <tr>
-                            <th>STT</th>
+                            <th class="text-center">STT</th>
                             <th>Tên chương trình</th>
-                            <th>Giảm giá</th>
-                            <th>Thời gian</th>
-                            <th>Sản phẩm</th>
-                            <th>Trạng thái</th>
-                            <th>Thao tác</th>
+                            <th class="text-center">Giảm giá</th>
+                            <th>Thời gian áp dụng</th>
+                            <th class="text-center">Số SP</th>
+                            <th class="text-center">Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var (item, index) in Model.Select((item, index) => (item, index + 1)))
+                        @if (Model != null && Model.Any())
                         {
-                            <tr>
-                                <td>@index</td>
-                                <td>@item.TenGiamGia</td>
-                                <td>@item.PhanTramKhuyenMai%</td>
-                                <td>
-                                    @item.NgayBatDau.ToString("dd/MM/yyyy") - @item.NgayKetThuc.ToString("dd/MM/yyyy")
-                                    @if (item.NgayBatDau > now)
-                                    {
-                                        <span class="badge bg-info ms-2">Sắp diễn ra</span>
-                                    }
-                                    else if (item.NgayKetThuc < now)
-                                    {
-                                        <span class="badge bg-secondary ms-2">Đã kết thúc</span>
-                                    }
-                                </td>
-                                <td>
-                                    @item.SoLuongSanPhamApDung
-                                    @if (item.SoLuongSanPhamApDung > 0)
-                                    {
-                                        <a asp-action="Details" asp-route-id="@item.GiamGiaId" class="text-primary ms-1">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    }
-                                </td>
-                                <td>
-                                    @if (!item.TrangThai)
-                                    {
-                                        <span class="badge bg-secondary">Đã tắt</span>
-                                    }
-                                    else if (item.NgayBatDau <= now && item.NgayKetThuc >= now)
-                                    {
-                                        <span class="badge bg-success">Đang chạy</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-warning">Không hoạt động</span>
-                                    }
-                                </td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <a asp-action="Edit" asp-route-id="@item.GiamGiaId" class="btn btn-outline-primary" title="Sửa">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a asp-action="Details" asp-route-id="@item.GiamGiaId" class="btn btn-outline-info" title="Chi tiết">
-                                            <i class="fas fa-info-circle"></i>
-                                        </a>
-                                        <button class="btn btn-outline-danger" title="Xóa"
-                                                data-bs-toggle="modal" data-bs-target="#deleteModal-@item.GiamGiaId">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
+                            var stt = 1;
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="text-center">@(stt++)</td>
+                                    <td class="fw-semibold">@item.TenGiamGia</td>
+                                    <td class="text-center text-danger fw-bold">@item.PhanTramKhuyenMai%</td>
+                                    <td>
+                                        @item.NgayBatDau.ToLocalTime().ToString("dd/MM/yy HH:mm")
+                                        <i class="fas fa-arrow-right mx-1 text-muted small"></i>
+                                        @item.NgayKetThuc.ToLocalTime().ToString("dd/MM/yy HH:mm")
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-primary rounded-pill">@item.SoLuongSanPhamApDung</span>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (!item.TrangThai)
+                                        {
+                                            <span class="badge bg-dark-subtle text-dark-emphasis border border-dark-subtle">Đã tắt</span>
+                                        }
+                                        else if (item.NgayBatDau > now)
+                                        {
 
-                                    <!-- Modal xóa -->
-                                    <div class="modal fade" id="deleteModal-@item.GiamGiaId" tabindex="-1">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-danger text-white">
-                                                    <h5 class="modal-title">Xác nhận xóa</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p>Bạn có chắc muốn xóa chương trình <strong>@item.TenGiamGia</strong>?</p>
-                                                    <p class="text-danger">Tất cả sản phẩm áp dụng sẽ bị xóa theo!</p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                                    <form asp-action="Delete" method="post">
-                                                        <input type="hidden" name="id" value="@item.GiamGiaId" />
-                                                        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
-                                                    </form>
+                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">Sắp diễn ra</span>
+                                        }
+                                        else if (item.NgayKetThuc < now)
+                                        {
+
+                                            <span class="badge bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle">Đã kết thúc</span>
+                                        }
+                                        else
+                                        {
+
+                                            <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle">Đang diễn ra</span>
+                                        }
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="Edit" asp-route-id="@item.GiamGiaId" class="btn btn-outline-primary" title="Xem chi tiết & Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-outline-danger" title="Xóa"
+                                                    data-bs-toggle="modal" data-bs-target="#deleteModal-@item.GiamGiaId">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+
+                                        <!-- Modal xóa -->
+                                        <div class="modal fade" id="deleteModal-@item.GiamGiaId" tabindex="-1">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i> Xác nhận xóa</h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Bạn có chắc muốn xóa vĩnh viễn chương trình <strong>"@item.TenGiamGia"</strong>?</p>
+                                                        <p class="text-danger mt-3"><i class="fas fa-info-circle me-1"></i> Hành động này không thể hoàn tác.</p>
+                                                    </div>
+                                                    <div class="modal-footer border-0">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                        <form asp-action="Delete" asp-route-id="@item.GiamGiaId" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
@@ -165,20 +167,25 @@
 </div>
 
 @section Scripts {
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" />
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
     <script>
         $(document).ready(function() {
-            $('#dataTable').DataTable({
-                language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/vi.json'
-                },
-                columnDefs: [
-                    { orderable: false, targets: [0, 6] }
-                ],
-                order: [[3, 'asc']]
-            });
+            if ($('#giamGiaDataTable tbody tr').length > 1 || ($('#giamGiaDataTable tbody tr').length === 1 && !$('#giamGiaDataTable tbody td[colspan]').length)) {
+                $('#giamGiaDataTable').DataTable({
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/2.0.8/i18n/vi.json'
+                    },
+                    pageLength: 10,
+                    lengthMenu: [10, 25, 50, 100],
+                    columnDefs: [
+                        { "orderable": false, "targets": [0, 6] }
+                    ],
+                    order: [[3, 'desc']]
+                });
+            }
         });
     </script>
 }

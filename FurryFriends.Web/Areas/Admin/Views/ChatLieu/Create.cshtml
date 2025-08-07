@@ -1,14 +1,13 @@
-@using FurryFriends.API.Models.DTO
-@model GiamGiaDTO
+@model FurryFriends.API.Models.DTO.ChatLieuDTO
+
 @{
-    ViewData["Title"] = "Tạo mới chương trình giảm giá";
-    var sanPhamChiTietList = ViewBag.Products as IEnumerable<SanPhamChiTietDTO>;
+    ViewData["Title"] = "Thêm chất liệu mới";
 }
 
 <div class="top-bar" style="padding-left: 50px;">
     <h1>@ViewData["Title"]</h1>
     <div class="top-bar-actions">
-        <a asp-area="Admin" asp-action="Index" asp-controller="GiamGia" class="btn btn-secondary">
+        <a asp-area="Admin" asp-action="Index" asp-controller="ChatLieu" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i>
             Quay lại
         </a>
@@ -18,117 +17,49 @@
 <nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
-        <li class="breadcrumb-item"><a asp-area="Admin" asp-action="Index" asp-controller="GiamGia">Quản lý giảm giá</a></li>
-        <li class="breadcrumb-item active">Tạo mới</li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-action="Index" asp-controller="ChatLieu">Quản lý chất liệu</a></li>
+        <li class="breadcrumb-item active">Thêm mới</li>
     </ol>
 </nav>
 
 <div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
     <div class="row justify-content-center">
-        <div class="col-md-12">
+        <div class="col-md-8">
             <div class="card shadow">
                 <div class="card-header">
-                    <h5 class="card-title mb-0">Thông tin chương trình giảm giá</h5>
+                    <h5 class="card-title mb-0">Thông tin chất liệu</h5>
                 </div>
                 <div class="card-body">
-                    <form asp-area="Admin" asp-action="Create" asp-controller="GiamGia" method="post" id="createDiscountForm" enctype="multipart/form-data">
-                        @Html.AntiForgeryToken()
+                    <form asp-area="Admin" asp-action="Create" asp-controller="ChatLieu" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="TenGiamGia" class="form-label">Tên chương trình <span class="text-danger">*</span></label>
-                                    <input asp-for="TenGiamGia" class="form-control" placeholder="Nhập tên chương trình giảm giá" />
-                                    <span asp-validation-for="TenGiamGia" class="text-danger"></span>
-                                </div>
+                        <div class="mb-3">
+                            <label asp-for="TenChatLieu" class="form-label">Tên chất liệu <span class="text-danger">*</span></label>
+                            <input asp-for="TenChatLieu" class="form-control" placeholder="Nhập tên chất liệu..." />
+                            <span asp-validation-for="TenChatLieu" class="text-danger"></span>
+                        </div>
 
-                                <div class="mb-3">
-                                    <label asp-for="PhanTramKhuyenMai" class="form-label">Phần trăm giảm giá <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <input asp-for="PhanTramKhuyenMai" class="form-control" type="number" min="1" max="100" step="0.01" />
-                                        <span class="input-group-text">%</span>
-                                    </div>
-                                    <span asp-validation-for="PhanTramKhuyenMai" class="text-danger"></span>
-                                </div>
-                            </div>
+                        <div class="mb-3">
+                            <label asp-for="MoTa" class="form-label">Mô tả</label>
+                            <textarea asp-for="MoTa" class="form-control" rows="3" placeholder="Nhập mô tả chất liệu..."></textarea>
+                            <span asp-validation-for="MoTa" class="text-danger"></span>
+                        </div>
 
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label asp-for="NgayBatDau" class="form-label">Ngày bắt đầu <span class="text-danger">*</span></label>
-                                    <input asp-for="NgayBatDau" class="form-control" type="datetime-local"
-                                           value="@Model.NgayBatDau.ToString("yyyy-MM-ddTHH:mm")" />
-                                    <span asp-validation-for="NgayBatDau" class="text-danger"></span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label asp-for="NgayKetThuc" class="form-label">Ngày kết thúc <span class="text-danger">*</span></label>
-                                    <input asp-for="NgayKetThuc" class="form-control" type="datetime-local"
-                                           value="@Model.NgayKetThuc.ToString("yyyy-MM-ddTHH:mm")" />
-                                    <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
-                                </div>
+                        <div class="mb-3">
+                            <label asp-for="TrangThai" class="form-label">Trạng thái</label>
+                            <div class="form-check">
+                                <input asp-for="TrangThai" class="form-check-input" type="checkbox" checked />
+                                <label asp-for="TrangThai" class="form-check-label">
+                                    Hoạt động
+                                </label>
                             </div>
                         </div>
 
-                        <div class="mb-4">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" asp-for="TrangThai">
-                                <label class="form-check-label" asp-for="TrangThai">Kích hoạt chương trình</label>
-                            </div>
-                        </div>
-
-                        <hr class="my-4" />
-
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">
-                                <i class="fas fa-boxes me-2"></i> Sản phẩm áp dụng
-                                <span class="badge bg-primary ms-2" id="selectedCountBadge">@Model.SoLuongSanPhamApDung</span>
-                            </h5>
-                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#productModal">
-                                <i class="fas fa-plus me-2"></i> Chọn sản phẩm
-                            </button>
-                        </div>
-
-                        <div id="selectedProductsContainer" class="mb-4">
-                            @if (Model.SanPhamChiTietIds != null && Model.SanPhamChiTietIds.Any())
-                            {
-                                foreach (var sp in sanPhamChiTietList.Where(x => Model.SanPhamChiTietIds.Contains(x.SanPhamChiTietId)))
-                                {
-                                    <div class="card mb-2 product-item" id="product-@sp.SanPhamChiTietId">
-                                        <div class="card-body py-2">
-                                            <div class="d-flex align-items-center">
-                                                <img src="@(sp.DuongDan ?? "/images/no-image.png")" style="width: 60px; height: 60px; object-fit: cover;" class="rounded me-3" />
-                                                <div class="flex-grow-1">
-                                                    <h6 class="mb-1">@sp.TenSanPham</h6>
-                                                    <small class="text-muted">@sp.TenMau | @sp.TenKichCo | @sp.Gia.ToString("N0")₫</small>
-                                                </div>
-                                                <button type="button" class="btn btn-sm btn-danger" onclick="removeSelectedProduct('@sp.SanPhamChiTietId')">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                }
-                            }
-                            else
-                            {
-                                <div class="alert alert-info mb-0">Chưa có sản phẩm nào được chọn</div>
-                            }
-                        </div>
-
-                        <!-- Hidden fields cho danh sách sản phẩm -->
-                        @if (Model.SanPhamChiTietIds != null)
-                        {
-                            for (int i = 0; i < Model.SanPhamChiTietIds.Count; i++)
-                            {
-                                <input type="hidden" name="selectedProducts" value="@Model.SanPhamChiTietIds[i]" />
-                            }
-                        }
-
-                        <div class="d-flex justify-content-end gap-2 mt-4">
-                            <a asp-area="Admin" asp-action="Index" asp-controller="GiamGia" class="btn btn-secondary">Hủy</a>
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-area="Admin" asp-action="Index" asp-controller="ChatLieu" class="btn btn-secondary">Hủy</a>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save me-2"></i> Lưu lại
+                                <i class="fas fa-save"></i>
+                                Lưu
                             </button>
                         </div>
                     </form>
@@ -138,167 +69,8 @@
     </div>
 </div>
 
-<!-- Product Selection Modal -->
-<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="productModalLabel">
-                    <i class="fas fa-boxes me-2"></i> Chọn sản phẩm áp dụng
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    <input type="text" id="productSearchInput" class="form-control" placeholder="Tìm kiếm sản phẩm..." />
-                </div>
-
-                <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th width="50px"></th>
-                                <th width="100px">Ảnh</th>
-                                <th>Tên sản phẩm</th>
-                                <th>Màu</th>
-                                <th>Kích thước</th>
-                                <th>Giá</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var sp in sanPhamChiTietList)
-                            {
-                                <tr data-id="@sp.SanPhamChiTietId" data-search="@($"{sp.TenSanPham} {sp.TenMau} {sp.TenKichCo}".ToLower())">
-                                    <td>
-                                        <input type="checkbox" class="form-check-input product-checkbox"
-                                               value="@sp.SanPhamChiTietId"
-                                               @(Model.SanPhamChiTietIds != null && Model.SanPhamChiTietIds.Contains(sp.SanPhamChiTietId) ? "checked" : "") />
-                                    </td>
-                                    <td>
-                                        <img src="@(sp.DuongDan ?? "/images/no-image.png")" style="width: 60px; height: 60px; object-fit: cover;" class="rounded" />
-                                    </td>
-                                    <td>@sp.TenSanPham</td>
-                                    <td>@sp.TenMau</td>
-                                    <td>@sp.TenKichCo</td>
-                                    <td>@sp.Gia.ToString("N0")₫</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary" id="confirmSelectionBtn">Xác nhận</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <script>
-        $(document).ready(function() {
-            // Product search functionality
-            $('#productSearchInput').on('input', function() {
-                const searchTerm = $(this).val().toLowerCase();
-                $('tbody tr').each(function() {
-                    const rowText = $(this).attr('data-search');
-                    $(this).toggle(rowText.includes(searchTerm));
-                });
-            });
-
-            // Confirm product selection
-            $('#confirmSelectionBtn').click(function() {
-                const selectedIds = [];
-                $('.product-checkbox:checked').each(function() {
-                    selectedIds.push($(this).val());
-                });
-
-                // Xóa các hidden field cũ
-                $('input[name="selectedProducts"]').remove();
-
-                // Thêm hidden field mới
-                selectedIds.forEach(function(id, index) {
-                    $('#createDiscountForm').append(
-                        $('<input>')
-                            .attr('type', 'hidden')
-                            .attr('name', 'selectedProducts')
-                            .attr('value', id)
-                    );
-                });
-
-                updateSelectedProductsDisplay();
-                $('#productModal').modal('hide');
-            });
-
-            // Remove selected product
-            window.removeSelectedProduct = function(productId) {
-                // Xóa hidden field tương ứng
-                $('input[name="selectedProducts"][value="' + productId + '"]').remove();
-                updateSelectedProductsDisplay();
-
-                // Uncheck in modal
-                $(`.product-checkbox[value="${productId}"]`).prop('checked', false);
-            };
-
-            // Update selected products display
-            function updateSelectedProductsDisplay() {
-                const selectedIds = $('input[name="selectedProducts"]').map(function() {
-                    return $(this).val();
-                }).get();
-
-                const $container = $('#selectedProductsContainer');
-                const $countBadge = $('#selectedCountBadge');
-
-                $countBadge.text(selectedIds.length);
-
-                if (selectedIds.length === 0) {
-                    $container.html('<div class="alert alert-info mb-0">Chưa có sản phẩm nào được chọn</div>');
-                    return;
-                }
-
-                let html = '';
-                $('tbody tr').each(function() {
-                    const productId = $(this).data('id');
-                    if (selectedIds.includes(productId)) {
-                        const $cells = $(this).find('td');
-                        html += `
-                            <div class="card mb-2 product-item" id="product-${productId}">
-                                <div class="card-body py-2">
-                                    <div class="d-flex align-items-center">
-                                        ${$cells[1].innerHTML}
-                                        <div class="flex-grow-1 ms-3">
-                                            <h6 class="mb-1">${$cells[2].textContent}</h6>
-                                            <small class="text-muted">${$cells[3].textContent} | ${$cells[4].textContent} | ${$cells[5].textContent}</small>
-                                        </div>
-                                        <button type="button" class="btn btn-sm btn-danger" onclick="removeSelectedProduct('${productId}')">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }
-                });
-
-                $container.html(html);
-            }
-
-            // Initialize checkbox states when modal opens
-            $('#productModal').on('show.bs.modal', function() {
-                const selectedIds = $('input[name="selectedProducts"]').map(function() {
-                    return $(this).val();
-                }).get();
-
-                $('.product-checkbox').each(function() {
-                    $(this).prop('checked', selectedIds.includes($(this).val()));
-                });
-            });
-        });
-    </script>
 }

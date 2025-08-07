@@ -10,8 +10,7 @@ namespace FurryFriends.Web.Services.IService
         Task<IEnumerable<GiamGiaDTO>> GetAllAsync();
         Task<GiamGiaDTO> GetByIdAsync(Guid id);
         Task<GiamGiaDTO> CreateAsync(GiamGiaDTO dto);
-        Task<GiamGiaDTO> UpdateAsync(Guid id, GiamGiaDTO dto);
+        Task<bool> UpdateAsync(Guid id, GiamGiaDTO dto);
         Task<bool> DeleteAsync(Guid id);
-        Task<bool> AssignProductsAsync(Guid giamGiaId, List<Guid> productIds);
     }
 }

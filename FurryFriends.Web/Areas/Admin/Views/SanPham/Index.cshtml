@@ -109,7 +109,6 @@
                     <thead class="table-light">
                         <tr>
                             <th>STT</th>
-                            <th>Mã SP</th>
                             <th>Tên sản phẩm</th>
                             <th>Loại</th>
                             <th>Chất liệu</th>
@@ -128,7 +127,7 @@
                         {
                             <tr>
                                 <td>@stt</td>
-                                <td>@item.SanPhamId.ToString().Substring(0, 8).ToUpper()</td>
+                              
                                 <td>@item.TenSanPham</td>
                                 <td>
                                     <span class="d-none loai-goc">@item.LoaiSanPham</span>

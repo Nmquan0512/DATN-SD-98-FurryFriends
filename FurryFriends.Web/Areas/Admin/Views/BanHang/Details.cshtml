@@ -1,0 +1,371 @@
+﻿@model FurryFriends.API.Models.DTO.BanHang.HoaDonBanHangDto
+@{
+    ViewData["Title"] = $"Hóa đơn - {Model.MaHoaDon}";
+    bool isEditable = Model.TrangThai == "Chưa thanh toán";
+}
+
+<div class="container-fluid pt-4">
+    <div class="row">
+        <!-- CỘT CHÍNH (SẢN PHẨM & CHI TIẾT) -->
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h4 class="m-0 font-weight-bold text-primary">Chi Tiết Hóa Đơn - @Model.MaHoaDon</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Khu vực tìm kiếm và thêm sản phẩm -->
+                    @if (isEditable)
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Tìm kiếm sản phẩm (Tên, Mã)</label>
+                            <input type="text" id="productSearchInput" class="form-control" placeholder="Quét mã vạch hoặc nhập tên sản phẩm..." />
+                        </div>
+                        <div id="productSearchResults" class="list-group mb-4" style="max-height: 200px; overflow-y: auto;">
+                            <!-- Kết quả tìm kiếm sản phẩm sẽ được load ở đây bằng AJAX -->
+                        </div>
+                    }
+
+                    <!-- Danh sách sản phẩm trong hóa đơn -->
+                    <h5>Danh sách sản phẩm</h5>
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th class="text-end">Đơn giá</th>
+                                <th class="text-center">Số lượng</th>
+                                <th class="text-end">Thành tiền</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ChiTietHoaDon)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.TenSanPham
+                                        <br />
+                                        <small class="text-muted">(@item.MauSac, @item.KichCo)</small>
+                                    </td>
+                                    <td class="text-end">@item.Gia.ToString("N0")</td>
+                                    <td class="text-center" style="width: 120px;">
+                                        @if (isEditable)
+                                        {
+                                            <form asp-action="CapNhatSoLuong" method="post" class="d-flex">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="hoaDonId" value="@Model.HoaDonId" />
+                                                <input type="hidden" name="sanPhamChiTietId" value="@item.SanPhamChiTietId" />
+                                                <input type="number" name="soLuongMoi" class="form-control form-control-sm" value="@item.SoLuong" min="1" onchange="this.form.submit()" />
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            @item.SoLuong
+                                        }
+                                    </td>
+                                    <td class="text-end">@item.ThanhTien.ToString("N0")</td>
+                                    <td>
+                                        @if (isEditable)
+                                        {
+                                            <form asp-action="XoaSanPham" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="hoaDonId" value="@Model.HoaDonId" />
+                                                <input type="hidden" name="sanPhamChiTietId" value="@item.SanPhamChiTietId" />
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn chắc chắn muốn xóa sản phẩm này?')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            @if (!Model.ChiTietHoaDon.Any())
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">Hóa đơn chưa có sản phẩm.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- CỘT PHỤ (THÔNG TIN & THANH TOÁN) -->
+        <div class="col-lg-4">
+            <!-- Thông tin khách hàng -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Thông Tin Khách Hàng</h6>
+                </div>
+                <div class="card-body">
+                    @if (isEditable)
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">Tìm khách hàng (SĐT, Tên)</label>
+                            <input type="text" id="customerSearchInput" class="form-control" placeholder="Nhập để tìm kiếm..." />
+                        </div>
+                        <div id="customerSearchResults" class="list-group mb-3" style="max-height: 150px; overflow-y: auto;">
+                            <!-- Kết quả tìm kiếm khách hàng -->
+                        </div>
+                    }
+
+                    <div id="customerInfo">
+                        <p><strong>Tên:</strong> @Model.KhachHang.TenKhachHang</p>
+                        <p><strong>SĐT:</strong> @(Model.KhachHang.SDT ?? "N/A")</p>
+                    </div>
+
+                    @if (isEditable)
+                    {
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createCustomerModal">
+                            Tạo Khách Hàng Mới
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Tổng kết & Thanh toán -->
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Tổng Kết</h6>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-6">Tổng tiền hàng:</dt>
+                        <dd class="col-6 text-end">@Model.TongTien.ToString("N0") đ</dd>
+
+                        <dt class="col-6">Giảm giá:</dt>
+                        <dd class="col-6 text-end text-danger">- @Model.TienGiam.ToString("N0") đ</dd>
+                    </dl>
+                    <hr />
+                    <dl class="row">
+                        <dt class="col-6 fs-5">THÀNH TIỀN:</dt>
+                        <dd class="col-6 text-end fs-5 fw-bold text-success">@Model.ThanhTien.ToString("N0") đ</dd>
+                    </dl>
+
+                    @if (isEditable)
+                    {
+                        <!-- Áp dụng Voucher -->
+                        <form asp-action="ApDungVoucher" method="post" class="input-group mb-3">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="hoaDonId" value="@Model.HoaDonId" />
+                            <input type="text" class="form-control" name="maVoucher" placeholder="Nhập mã voucher" value="@Model.Voucher?.MaVoucher" />
+                            <button class="btn btn-outline-secondary" type="submit">Áp dụng</button>
+                        </form>
+                        @if (Model.Voucher != null)
+                        {
+                            <form asp-action="GoBoVoucher" method="post" class="d-grid">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="hoaDonId" value="@Model.HoaDonId" />
+                                <button type="submit" class="btn btn-link text-danger p-0">Gỡ bỏ voucher</button>
+                            </form>
+                        }
+
+                        <hr />
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#thanhToanModal">
+                                <i class="bi bi-wallet2"></i> THANH TOÁN
+                            </button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#huyHoaDonModal">
+                                Hủy Hóa Đơn
+                            </button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            Hóa đơn đã <strong>@Model.TrangThai.ToLower()</strong>.
+                            <br />
+                            Hình thức thanh toán: <strong>@(Model.HinhThucThanhToan?.TenHinhThuc ?? "N/A")</strong>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Thanh Toán -->
+<div class="modal fade" id="thanhToanModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="ThanhToan" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="hoaDonId" value="@Model.HoaDonId" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác Nhận Thanh Toán</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h5>Tổng tiền cần thanh toán: <span class="text-success">@Model.ThanhTien.ToString("N0") đ</span></h5>
+                    <div class="mb-3">
+                        <label class="form-label">Hình thức thanh toán</label>
+                        <select name="HinhThucThanhToanId" class="form-select" required>
+                            <!-- TODO: Load danh sách hình thức thanh toán từ API -->
+                            <option value="ID_TIEN_MAT_TU_DB">Tiền mặt</option>
+                            <option value="ID_CHUYEN_KHOAN_TU_DB">Chuyển khoản</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tiền khách đưa (nếu là tiền mặt)</label>
+                        <input type="number" name="TienKhachDua" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ghi chú thanh toán</label>
+                        <textarea name="GhiChuThanhToan" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Xác Nhận</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Hủy Hóa Đơn -->
+<div class="modal fade" id="huyHoaDonModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="HuyHoaDon" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="hoaDonId" value="@Model.HoaDonId" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Xác Nhận Hủy Hóa Đơn</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn hủy hóa đơn này không?</p>
+                    <p class="text-danger">Hành động này không thể hoàn tác. Số lượng sản phẩm và voucher sẽ được hoàn trả.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
+                    <button type="submit" class="btn btn-danger">Đồng ý Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Tạo Khách Hàng Mới -->
+<div class="modal fade" id="createCustomerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="createCustomerForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tạo Khách Hàng Mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="createCustomerError" class="alert alert-danger" style="display:none;"></div>
+                    <div class="mb-3">
+                        <label class="form-label">Tên khách hàng</label>
+                        <input type="text" name="TenKhachHang" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại</label>
+                        <input type="text" name="SDT" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="Email" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Debounce function to delay execution
+            function debounce(func, delay) {
+                let timeout;
+                return function(...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(this, args), delay);
+                };
+            }
+
+            // Tìm kiếm sản phẩm
+            $('#productSearchInput').on('keyup', debounce(function () {
+                let keyword = $(this).val();
+                if (keyword.length > 2) {
+                    $.get('@Url.Action("TimKiemSanPham", "BanHang")', { keyword: keyword }, function (data) {
+                        $('#productSearchResults').html(data);
+                    });
+                } else {
+                     $('#productSearchResults').html('');
+                }
+            }, 500));
+
+            // Tìm kiếm khách hàng
+            $('#customerSearchInput').on('keyup', debounce(function () {
+                let keyword = $(this).val();
+                if (keyword.length > 2) {
+                    $.get('@Url.Action("TimKiemKhachHang", "BanHang")', { keyword: keyword }, function (data) {
+                        $('#customerSearchResults').html(data);
+                    });
+                } else {
+                     $('#customerSearchResults').html('');
+                }
+            }, 500));
+
+            // Gán khách hàng vào hóa đơn
+            $(document).on('click', '.select-customer-btn', function(e){
+                e.preventDefault();
+                let customerId = $(this).data('id');
+                let hoaDonId = '@Model.HoaDonId';
+
+                $.ajax({
+                    url: '@Url.Action("GanKhachHang", "BanHang")',
+                    type: 'POST',
+                    headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
+                    data: { hoaDonId: hoaDonId, khachHangId: customerId },
+                    success: function(response){
+                        if(response.success){
+                            window.location.reload(); // Tải lại trang để cập nhật thông tin
+                        } else {
+                            alert("Lỗi: " + response.message);
+                        }
+                    }
+                });
+            });
+
+            // Tạo khách hàng mới
+            $('#createCustomerForm').on('submit', function(e){
+                e.preventDefault();
+                let formData = {
+                    TenKhachHang: $(this).find('input[name="TenKhachHang"]').val(),
+                    SDT: $(this).find('input[name="SDT"]').val(),
+                    Email: $(this).find('input[name="Email"]').val()
+                };
+
+                $.ajax({
+                    url: '@Url.Action("TaoKhachHangMoi", "BanHang")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function(response){
+                        if(response.success){
+                            // Gán khách hàng vừa tạo vào hóa đơn
+                            $('.select-customer-btn[data-id="' + response.data.khachHangId + '"]').click();
+                            $('#createCustomerModal').modal('hide');
+                            window.location.reload();
+                        } else {
+                            $('#createCustomerError').text(response.message).show();
+                        }
+                    }
+                });
+            });
+
+        });
+    </script>
+}

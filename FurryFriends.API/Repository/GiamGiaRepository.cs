@@ -24,7 +24,9 @@ namespace FurryFriends.API.Repositories
 
             if (includeProducts)
             {
-                query = query.Include(g => g.DotGiamGiaSanPhams);
+                // Include cả SanPhamChiTiet để có thể lấy tên sản phẩm nếu cần
+                query = query.Include(g => g.DotGiamGiaSanPhams)
+                             .ThenInclude(dggsp => dggsp.SanPhamChiTiet);
             }
 
             return await query.AsNoTracking().ToListAsync();
@@ -32,36 +34,39 @@ namespace FurryFriends.API.Repositories
 
         public async Task<GiamGia> GetByIdAsync(Guid id, bool includeProducts = false)
         {
-            var query = _context.GiamGias.Where(g => g.GiamGiaId == id);
+            var query = _context.GiamGias.AsQueryable();
 
             if (includeProducts)
             {
+                // Khi lấy chi tiết, nên dùng tracking để có thể cập nhật
                 query = query.Include(g => g.DotGiamGiaSanPhams);
             }
+            else
+            {
+                query = query.AsNoTracking();
+            }
 
-            return await query.FirstOrDefaultAsync();
+            return await query.FirstOrDefaultAsync(g => g.GiamGiaId == id);
         }
 
         public async Task AddAsync(GiamGia entity)
         {
             await _context.GiamGias.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            // Không SaveChanges ở đây
         }
 
-        public async Task UpdateAsync(GiamGia entity)
+        public void Update(GiamGia entity)
         {
             entity.NgayCapNhat = DateTime.UtcNow;
-            _context.GiamGias.Update(entity);
-            await _context.SaveChangesAsync();
+            // Đánh dấu đối tượng là đã bị thay đổi, không cần Save
+            _context.Entry(entity).State = EntityState.Modified;
         }
 
-        public async Task DeleteAsync(Guid id)
+        public void Delete(GiamGia entity)
         {
-            var entity = await _context.GiamGias.FindAsync(id);
             if (entity != null)
             {
                 _context.GiamGias.Remove(entity);
-                await _context.SaveChangesAsync();
             }
         }
 
@@ -75,6 +80,12 @@ namespace FurryFriends.API.Repositories
             return await _context.GiamGias.AnyAsync(g =>
                 g.TenGiamGia.ToLower() == tenGiamGia.ToLower() &&
                 (!excludeId.HasValue || g.GiamGiaId != excludeId.Value));
+        }
+
+        // Phương thức Commit duy nhất
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

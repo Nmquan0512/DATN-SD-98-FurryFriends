@@ -3,7 +3,6 @@ using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Repository.IRepository;
 using FurryFriends.API.Services.IServices;
-using Org.BouncyCastle.Crypto;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,7 +14,7 @@ namespace FurryFriends.API.Services
     public class GiamGiaService : IGiamGiaService
     {
         private readonly IGiamGiaRepository _giamGiaRepo;
-        private readonly IDotGiamGiaSanPhamRepository _dotGiamGiaRepo;
+        private readonly IDotGiamGiaSanPhamRepository _dotGiamGiaRepo; // Vẫn cần để truy vấn
         private readonly IMapper _mapper;
 
         public GiamGiaService(
@@ -31,103 +30,117 @@ namespace FurryFriends.API.Services
         public async Task<GiamGiaDTO> GetByIdAsync(Guid id)
         {
             var entity = await _giamGiaRepo.GetByIdAsync(id, true);
-            return entity == null ? null : _mapper.Map<GiamGiaDTO>(entity);
+            if (entity == null) return null;
+
+            var dto = _mapper.Map<GiamGiaDTO>(entity);
+            // Lấy danh sách ID sản phẩm từ các đối tượng con
+            dto.SanPhamChiTietIds = entity.DotGiamGiaSanPhams.Select(d => d.SanPhamChiTietId).ToList();
+            return dto;
         }
 
         public async Task<IEnumerable<GiamGiaDTO>> GetAllAsync()
         {
             var entities = await _giamGiaRepo.GetAllAsync(true);
-            return _mapper.Map<IEnumerable<GiamGiaDTO>>(entities);
+            var dtos = _mapper.Map<IEnumerable<GiamGiaDTO>>(entities).ToList();
+
+            // Gán lại số lượng sản phẩm áp dụng cho mỗi DTO
+            foreach (var dto in dtos)
+            {
+                var entity = entities.FirstOrDefault(e => e.GiamGiaId == dto.GiamGiaId);
+                if (entity != null)
+                {
+                    dto.SanPhamChiTietIds = entity.DotGiamGiaSanPhams.Select(d => d.SanPhamChiTietId).ToList();
+                }
+            }
+            return dtos;
         }
 
         public async Task<GiamGiaDTO> CreateAsync(GiamGiaDTO dto)
         {
-            // Validate cơ bản
+            // Validate
             if (dto == null) throw new ArgumentNullException(nameof(dto));
-            if (dto.PhanTramKhuyenMai <= 0 || dto.PhanTramKhuyenMai > 100)
-                throw new ValidationException("Phần trăm giảm giá phải từ 1 đến 100");
-            if (dto.NgayKetThuc <= dto.NgayBatDau)
-                throw new ValidationException("Ngày kết thúc phải sau ngày bắt đầu");
-
-            // Kiểm tra trùng tên
             if (await _giamGiaRepo.TenGiamGiaExistsAsync(dto.TenGiamGia))
-                throw new InvalidOperationException("Tên chương trình giảm giá đã tồn tại");
+            {
+                throw new InvalidOperationException("Tên chương trình giảm giá đã tồn tại.");
+            }
 
-            // Tạo mới
-            var entity = _mapper.Map<GiamGia>(dto);
-            await _giamGiaRepo.AddAsync(entity);
+            // 1. Ánh xạ thuộc tính chính của GiamGia
+            var giamGiaEntity = _mapper.Map<GiamGia>(dto);
 
-            // Áp dụng cho sản phẩm nếu có
+            // 2. Xây dựng danh sách các sản phẩm liên quan trong bộ nhớ
             if (dto.SanPhamChiTietIds?.Any() == true)
             {
-                await AssignProductsAsync(entity.GiamGiaId, dto.SanPhamChiTietIds);
-            }
-            var updatedEntity = await _giamGiaRepo.GetByIdAsync(entity.GiamGiaId, true);
-            if (updatedEntity.DotGiamGiaSanPhams.Count != dto.SanPhamChiTietIds?.Count)
-            {
-                throw new Exception("Số lượng sản phẩm được áp dụng giảm giá không khớp");
+                foreach (var productId in dto.SanPhamChiTietIds)
+                {
+                    giamGiaEntity.DotGiamGiaSanPhams.Add(new DotGiamGiaSanPham
+                    {
+                        SanPhamChiTietId = productId,
+                        PhanTramGiamGia = giamGiaEntity.PhanTramKhuyenMai,
+                        TrangThai = true
+                    });
+                }
             }
 
-            return _mapper.Map<GiamGiaDTO>(entity);
+            // 3. Thêm toàn bộ "biểu đồ đối tượng" vào context
+            await _giamGiaRepo.AddAsync(giamGiaEntity);
+
+            // 4. Lưu tất cả thay đổi (cả GiamGia và DotGiamGiaSanPhams) trong MỘT GIAO DỊCH
+            await _giamGiaRepo.SaveAsync();
+
+            // Trả về DTO đã được tạo, ánh xạ lại để có đầy đủ thông tin
+            return _mapper.Map<GiamGiaDTO>(giamGiaEntity);
         }
+        // File: GiamGiaService.cs (API)
 
         public async Task<GiamGiaDTO> UpdateAsync(GiamGiaDTO dto)
         {
-            // Validate cơ bản
-            if (dto == null) throw new ArgumentNullException(nameof(dto));
-            if (dto.PhanTramKhuyenMai <= 0 || dto.PhanTramKhuyenMai > 100)
-                throw new ValidationException("Phần trăm giảm giá phải từ 1 đến 100");
-            if (dto.NgayKetThuc <= dto.NgayBatDau)
-                throw new ValidationException("Ngày kết thúc phải sau ngày bắt đầu");
-
-            var existing = await _giamGiaRepo.GetByIdAsync(dto.GiamGiaId);
-            if (existing == null) throw new KeyNotFoundException("Không tìm thấy chương trình giảm giá");
-
-            // Kiểm tra trùng tên (trừ chính nó)
-            if (await _giamGiaRepo.TenGiamGiaExistsAsync(dto.TenGiamGia, dto.GiamGiaId))
-                throw new InvalidOperationException("Tên chương trình giảm giá đã tồn tại");
-
-            // Cập nhật
-            _mapper.Map(dto, existing);
-            await _giamGiaRepo.UpdateAsync(existing);
-
-            // Cập nhật sản phẩm nếu có
-            if (dto.SanPhamChiTietIds != null)
+            // 1. Tải đối tượng GiamGia cũ CÙNG VỚI các sản phẩm liên quan
+            var existingEntity = await _giamGiaRepo.GetByIdAsync(dto.GiamGiaId, includeProducts: true);
+            if (existingEntity == null)
             {
-                await AssignProductsAsync(existing.GiamGiaId, dto.SanPhamChiTietIds);
+                throw new KeyNotFoundException("Không tìm thấy chương trình giảm giá để cập nhật.");
             }
 
-            return _mapper.Map<GiamGiaDTO>(existing);
+            // Validate trùng tên
+            if (await _giamGiaRepo.TenGiamGiaExistsAsync(dto.TenGiamGia, dto.GiamGiaId))
+            {
+                throw new InvalidOperationException("Tên chương trình giảm giá đã tồn tại.");
+            }
+
+            // 2. Chỉ cần gọi Mapper.Map
+            // AutoMapper sẽ tự động:
+            // - Cập nhật các thuộc tính chính (TenGiamGia, PhanTramKhuyenMai...).
+            // - Xóa các DotGiamGiaSanPhams không còn trong dto.SanPhamChiTietIds.
+            // - Thêm các DotGiamGiaSanPhams mới từ dto.SanPhamChiTietIds.
+            // - Cập nhật PhanTramGiamGia cho các DotGiamGiaSanPhams còn lại.
+            _mapper.Map(dto, existingEntity);
+
+            // 3. Lưu tất cả các thay đổi mà Mapper đã chuẩn bị
+            await _giamGiaRepo.SaveAsync();
+
+            return _mapper.Map<GiamGiaDTO>(existingEntity);
         }
 
         public async Task<bool> DeleteAsync(Guid id)
         {
-            await _dotGiamGiaRepo.DeleteByGiamGiaIdAsync(id);
-            await _giamGiaRepo.DeleteAsync(id);
-            return true;
-        }
-
-        public async Task<bool> AssignProductsAsync(Guid giamGiaId, List<Guid> productIds)
-        {
-            // Xóa các sản phẩm cũ
-            await _dotGiamGiaRepo.DeleteByGiamGiaIdAsync(giamGiaId);
-
-            // Lấy thông tin giảm giá để lấy phần trăm
-            var giamGia = await _giamGiaRepo.GetByIdAsync(giamGiaId);
-            if (giamGia == null) return false;
-
-            // Thêm các sản phẩm mới
-            var dotGiamGias = productIds.Select(productId => new DotGiamGiaSanPham
+            // Tải đối tượng cần xóa cùng với các liên kết
+            var entityToDelete = await _giamGiaRepo.GetByIdAsync(id, includeProducts: true);
+            if (entityToDelete == null)
             {
-                GiamGiaId = giamGiaId,
-                SanPhamChiTietId = productId,
-                PhanTramGiamGia = giamGia.PhanTramKhuyenMai,
-                TrangThai = true,
-                NgayTao = DateTime.UtcNow,
-                NgayCapNhat = DateTime.UtcNow
-            }).ToList();
+                return false; // Không tìm thấy để xóa
+            }
 
-            await _dotGiamGiaRepo.AddRangeAsync(dotGiamGias);
+            // Xóa các liên kết con trước
+            // EF Core sẽ tự động xử lý việc này khi bạn cấu hình Cascade Delete,
+            // nhưng xóa tường minh sẽ an toàn hơn.
+            entityToDelete.DotGiamGiaSanPhams.Clear();
+
+            // Xóa đối tượng cha
+            _giamGiaRepo.Delete(entityToDelete);
+
+            // Lưu lại các thay đổi
+            await _giamGiaRepo.SaveAsync();
+
             return true;
         }
     }

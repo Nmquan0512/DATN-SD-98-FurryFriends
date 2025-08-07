@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FurryFriends.API.Migrations
 {
     /// <inheritdoc />
-    public partial class db1 : Migration
+    public partial class db12 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -194,6 +194,7 @@ namespace FurryFriends.API.Migrations
                     TrangThai = table.Column<int>(type: "int", nullable: false),
                     SoLuong = table.Column<int>(type: "int", nullable: false),
                     NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    GiaTriGiamToiDa = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     NgayCapNhat = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -424,7 +425,6 @@ namespace FurryFriends.API.Migrations
                 columns: table => new
                 {
                     HoaDonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TaiKhoanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     VoucherId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     KhachHangId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     HinhThucThanhToanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -437,12 +437,18 @@ namespace FurryFriends.API.Migrations
                     TongTienSauKhiGiam = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     TrangThai = table.Column<int>(type: "int", nullable: false),
                     GhiChu = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DiaChiGiaoHangId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     NhanVienId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LoaiHoaDon = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HoaDons", x => x.HoaDonId);
+                    table.ForeignKey(
+                        name: "FK_HoaDons_DiaChiKhachHangs_DiaChiGiaoHangId",
+                        column: x => x.DiaChiGiaoHangId,
+                        principalTable: "DiaChiKhachHangs",
+                        principalColumn: "DiaChiId");
                     table.ForeignKey(
                         name: "FK_HoaDons_HinhThucThanhToans_HinhThucThanhToanId",
                         column: x => x.HinhThucThanhToanId,
@@ -462,12 +468,6 @@ namespace FurryFriends.API.Migrations
                         principalColumn: "NhanVienId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_HoaDons_TaiKhoans_TaiKhoanId",
-                        column: x => x.TaiKhoanId,
-                        principalTable: "TaiKhoans",
-                        principalColumn: "TaiKhoanId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_HoaDons_Vouchers_VoucherId",
                         column: x => x.VoucherId,
                         principalTable: "Vouchers",
@@ -485,8 +485,7 @@ namespace FurryFriends.API.Migrations
                     PhanTramGiamGia = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TrangThai = table.Column<bool>(type: "bit", nullable: false),
                     NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NgayCapNhat = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    SanPhamId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    NgayCapNhat = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -503,11 +502,6 @@ namespace FurryFriends.API.Migrations
                         principalTable: "SanPhamChiTiets",
                         principalColumn: "SanPhamChiTietId",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DotGiamGiaSanPhams_SanPhams_SanPhamId",
-                        column: x => x.SanPhamId,
-                        principalTable: "SanPhams",
-                        principalColumn: "SanPhamId");
                 });
 
             migrationBuilder.CreateTable(
@@ -516,14 +510,13 @@ namespace FurryFriends.API.Migrations
                 {
                     GioHangChiTietId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GioHangId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SanPhamId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SanPhamChiTietId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     SoLuong = table.Column<int>(type: "int", nullable: false),
                     DonGia = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     ThanhTien = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     TrangThai = table.Column<bool>(type: "bit", nullable: false),
                     NgayTao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    NgayCapNhat = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    SanPhamChiTietId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    NgayCapNhat = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -539,12 +532,6 @@ namespace FurryFriends.API.Migrations
                         column: x => x.SanPhamChiTietId,
                         principalTable: "SanPhamChiTiets",
                         principalColumn: "SanPhamChiTietId");
-                    table.ForeignKey(
-                        name: "FK_GioHangChiTiets_SanPhams_SanPhamId",
-                        column: x => x.SanPhamId,
-                        principalTable: "SanPhams",
-                        principalColumn: "SanPhamId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -552,7 +539,7 @@ namespace FurryFriends.API.Migrations
                 columns: table => new
                 {
                     HoaDonChiTietId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    SanPhamId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SanPhamChiTietId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     HoaDonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SoLuongSanPham = table.Column<int>(type: "int", nullable: false),
                     Gia = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false)
@@ -567,27 +554,27 @@ namespace FurryFriends.API.Migrations
                         principalColumn: "HoaDonId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_HoaDonChiTiets_SanPhams_SanPhamId",
-                        column: x => x.SanPhamId,
-                        principalTable: "SanPhams",
-                        principalColumn: "SanPhamId",
-                        onDelete: ReferentialAction.Restrict);
+                        name: "FK_HoaDonChiTiets_SanPhamChiTiets_SanPhamChiTietId",
+                        column: x => x.SanPhamChiTietId,
+                        principalTable: "SanPhamChiTiets",
+                        principalColumn: "SanPhamChiTietId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 table: "ChucVus",
                 columns: new[] { "ChucVuId", "MoTaChucVu", "NgayCapNhat", "NgayTao", "TenChucVu", "TrangThai" },
-                values: new object[] { new Guid("22222222-2222-2222-2222-222222222222"), "Quản trị viên hệ thống", new DateTime(2025, 7, 29, 20, 49, 53, 7, DateTimeKind.Utc).AddTicks(896), new DateTime(2025, 7, 29, 20, 49, 53, 7, DateTimeKind.Utc).AddTicks(894), "admin", true });
+                values: new object[] { new Guid("22222222-2222-2222-2222-222222222222"), "Quản trị viên hệ thống", new DateTime(2025, 8, 7, 8, 0, 34, 304, DateTimeKind.Utc).AddTicks(1532), new DateTime(2025, 8, 7, 8, 0, 34, 304, DateTimeKind.Utc).AddTicks(1531), "admin", true });
 
             migrationBuilder.InsertData(
                 table: "TaiKhoans",
                 columns: new[] { "TaiKhoanId", "KhachHangId", "NgayCapNhatCuoiCung", "NgayTaoTaiKhoan", "Password", "TrangThai", "UserName" },
-                values: new object[] { new Guid("11111111-1111-1111-1111-111111111111"), null, null, new DateTime(2025, 7, 29, 20, 49, 53, 7, DateTimeKind.Utc).AddTicks(706), "123456", true, "admin" });
+                values: new object[] { new Guid("11111111-1111-1111-1111-111111111111"), null, null, new DateTime(2025, 8, 7, 8, 0, 34, 304, DateTimeKind.Utc).AddTicks(1329), "123456", true, "admin" });
 
             migrationBuilder.InsertData(
                 table: "NhanViens",
                 columns: new[] { "NhanVienId", "ChucVuId", "DiaChi", "Email", "GioiTinh", "HoVaTen", "NgayCapNhat", "NgaySinh", "NgayTao", "SDT", "TaiKhoanId", "TrangThai" },
-                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), new Guid("22222222-2222-2222-2222-222222222222"), "Hà Nội", "admin@furryfriends.local", "Nam", "Admin hệ thống", new DateTime(2025, 7, 29, 20, 49, 53, 7, DateTimeKind.Utc).AddTicks(928), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 7, 29, 20, 49, 53, 7, DateTimeKind.Utc).AddTicks(927), "0123456789", new Guid("11111111-1111-1111-1111-111111111111"), true });
+                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), new Guid("22222222-2222-2222-2222-222222222222"), "Hà Nội", "admin@furryfriends.local", "Nam", "Admin hệ thống", new DateTime(2025, 8, 7, 8, 0, 34, 304, DateTimeKind.Utc).AddTicks(1581), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 8, 7, 8, 0, 34, 304, DateTimeKind.Utc).AddTicks(1581), "0123456789", new Guid("11111111-1111-1111-1111-111111111111"), true });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DiaChiKhachHangs_KhachHangId",
@@ -605,11 +592,6 @@ namespace FurryFriends.API.Migrations
                 column: "SanPhamChiTietId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DotGiamGiaSanPhams_SanPhamId",
-                table: "DotGiamGiaSanPhams",
-                column: "SanPhamId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_GioHangChiTiets_GioHangId",
                 table: "GioHangChiTiets",
                 column: "GioHangId");
@@ -618,11 +600,6 @@ namespace FurryFriends.API.Migrations
                 name: "IX_GioHangChiTiets_SanPhamChiTietId",
                 table: "GioHangChiTiets",
                 column: "SanPhamChiTietId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GioHangChiTiets_SanPhamId",
-                table: "GioHangChiTiets",
-                column: "SanPhamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GioHangs_KhachHangId",
@@ -635,9 +612,14 @@ namespace FurryFriends.API.Migrations
                 column: "HoaDonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HoaDonChiTiets_SanPhamId",
+                name: "IX_HoaDonChiTiets_SanPhamChiTietId",
                 table: "HoaDonChiTiets",
-                column: "SanPhamId");
+                column: "SanPhamChiTietId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_HoaDons_DiaChiGiaoHangId",
+                table: "HoaDons",
+                column: "DiaChiGiaoHangId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HoaDons_HinhThucThanhToanId",
@@ -653,11 +635,6 @@ namespace FurryFriends.API.Migrations
                 name: "IX_HoaDons_NhanVienId",
                 table: "HoaDons",
                 column: "NhanVienId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_HoaDons_TaiKhoanId",
-                table: "HoaDons",
-                column: "TaiKhoanId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_HoaDons_VoucherId",
@@ -739,9 +716,6 @@ namespace FurryFriends.API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DiaChiKhachHangs");
-
-            migrationBuilder.DropTable(
                 name: "DotGiamGiaSanPhams");
 
             migrationBuilder.DropTable(
@@ -766,16 +740,28 @@ namespace FurryFriends.API.Migrations
                 name: "GioHangs");
 
             migrationBuilder.DropTable(
-                name: "SanPhamChiTiets");
+                name: "HoaDons");
 
             migrationBuilder.DropTable(
-                name: "HoaDons");
+                name: "SanPhamChiTiets");
 
             migrationBuilder.DropTable(
                 name: "ChatLieus");
 
             migrationBuilder.DropTable(
                 name: "ThanhPhans");
+
+            migrationBuilder.DropTable(
+                name: "DiaChiKhachHangs");
+
+            migrationBuilder.DropTable(
+                name: "HinhThucThanhToans");
+
+            migrationBuilder.DropTable(
+                name: "NhanViens");
+
+            migrationBuilder.DropTable(
+                name: "Vouchers");
 
             migrationBuilder.DropTable(
                 name: "Anhs");
@@ -790,22 +776,13 @@ namespace FurryFriends.API.Migrations
                 name: "SanPhams");
 
             migrationBuilder.DropTable(
-                name: "HinhThucThanhToans");
-
-            migrationBuilder.DropTable(
-                name: "NhanViens");
-
-            migrationBuilder.DropTable(
-                name: "Vouchers");
-
-            migrationBuilder.DropTable(
-                name: "ThuongHieus");
-
-            migrationBuilder.DropTable(
                 name: "ChucVus");
 
             migrationBuilder.DropTable(
                 name: "TaiKhoans");
+
+            migrationBuilder.DropTable(
+                name: "ThuongHieus");
 
             migrationBuilder.DropTable(
                 name: "KhachHangs");

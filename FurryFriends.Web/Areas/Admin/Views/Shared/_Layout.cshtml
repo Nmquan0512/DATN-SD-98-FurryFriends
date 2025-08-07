@@ -104,6 +104,12 @@
                                 <span>Quản lý ảnh</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="@Url.Action("Index", "BanHang", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "BanHang" ? "active" : "")">
+                                <i class="nav-icon fas fa-image"></i>
+                                <span>BanHang</span>
+                            </a>
+                        </li>
 @*                         <li>
                             <a href="@Url.Action("Index", "DanhMuc", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DanhMuc" ? "active" : "")">
                                 <i class="nav-icon fas fa-tags"></i>

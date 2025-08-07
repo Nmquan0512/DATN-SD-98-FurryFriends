@@ -70,7 +70,8 @@ builder.Services.AddScoped<ISanPhamChiTietService, SanPhamChiTietService>();
 builder.Services.AddScoped<IThongTinCaNhanService, ThongTinCaNhanService>();
 builder.Services.AddScoped<IDotGiamGiaSanPhamRepository, DotGiamGiaSanPhamRepository>();
 builder.Services.AddScoped<IGiamGiaService, GiamGiaService>();
-
+builder.Services.AddScoped<IBanHangRepository, BanHangRepository>();
+builder.Services.AddScoped<IBanHangService, BanHangService>();
 ;
 // Add CORS policy cho phép web admin truy cập API
 builder.Services.AddCors(options =>

@@ -25,9 +25,8 @@ namespace FurryFriends.API.Repository
             {
                 var hoaDons = await _context.HoaDons
                     .Include(h => h.HoaDonChiTiets)
-                        .ThenInclude(ct => ct.SanPham)
+                        .ThenInclude(ct => ct.SanPhamChiTiet)
                     .Include(h => h.KhachHang)
-                    .Include(h => h.TaiKhoan)
                     .Include(h => h.Voucher)
                     .Include(h => h.HinhThucThanhToan)
                     .AsNoTracking() // Tối ưu performance
@@ -53,7 +52,7 @@ namespace FurryFriends.API.Repository
 
             var hoaDon = await _context.Set<HoaDon>()
                                  .Include(h => h.HoaDonChiTiets)
-                                 .ThenInclude(ct => ct.SanPham)
+                                 .ThenInclude(ct => ct.SanPhamChiTiet)
                                  .FirstOrDefaultAsync(h => h.HoaDonId == hoaDonId);
 
             if (hoaDon == null)
@@ -305,7 +304,7 @@ namespace FurryFriends.API.Repository
                     tongTienHang += thanhTien;
 
                     AddEnhancedProductRow(detailTable, stt.ToString(), normalFont, rowColor);
-                    AddEnhancedProductRow(detailTable, chiTiet.SanPham?.TenSanPham ?? "N/A", normalFont, rowColor);
+                    AddEnhancedProductRow(detailTable, chiTiet.SanPhamChiTiet.SanPham.TenSanPham ?? "N/A", normalFont, rowColor);
                     AddEnhancedProductRow(detailTable, chiTiet.SoLuongSanPham.ToString(), normalFont, rowColor, Element.ALIGN_CENTER);
                     AddEnhancedProductRow(detailTable, chiTiet.Gia.ToString("N0") + "đ", normalFont, rowColor, Element.ALIGN_RIGHT);
                     AddEnhancedProductRow(detailTable, thanhTien.ToString("N0") + "đ", boldFont, rowColor, Element.ALIGN_RIGHT);

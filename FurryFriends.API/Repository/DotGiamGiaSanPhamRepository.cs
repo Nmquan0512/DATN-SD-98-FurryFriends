@@ -18,81 +18,43 @@ namespace FurryFriends.API.Repositories
             _context = context;
         }
 
+        // ... Các hàm Get không thay đổi ...
         public async Task<IEnumerable<DotGiamGiaSanPham>> GetAllAsync()
         {
-            return await _context.DotGiamGiaSanPhams
-                .AsNoTracking()
-                .ToListAsync();
+            return await _context.DotGiamGiaSanPhams.AsNoTracking().ToListAsync();
         }
 
         public async Task<DotGiamGiaSanPham> GetByIdAsync(Guid id)
         {
-            return await _context.DotGiamGiaSanPhams
-                .FirstOrDefaultAsync(d => d.DotGiamGiaSanPhamId == id);
-        }
-
-        public async Task AddAsync(DotGiamGiaSanPham entity)
-        {
-            await _context.DotGiamGiaSanPhams.AddAsync(entity);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task AddRangeAsync(IEnumerable<DotGiamGiaSanPham> entities)
-        {
-            await _context.DotGiamGiaSanPhams.AddRangeAsync(entities);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateAsync(DotGiamGiaSanPham entity)
-        {
-            entity.NgayCapNhat = DateTime.UtcNow;
-            _context.DotGiamGiaSanPhams.Update(entity);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var entity = await _context.DotGiamGiaSanPhams.FindAsync(id);
-            if (entity != null)
-            {
-                _context.DotGiamGiaSanPhams.Remove(entity);
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task DeleteByGiamGiaIdAsync(Guid giamGiaId)
-        {
-            var entities = await _context.DotGiamGiaSanPhams
-                .Where(d => d.GiamGiaId == giamGiaId)
-                .ToListAsync();
-
-            if (entities.Any())
-            {
-                _context.DotGiamGiaSanPhams.RemoveRange(entities);
-                await _context.SaveChangesAsync();
-            }
-        }
-
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            return await _context.DotGiamGiaSanPhams
-                .AnyAsync(d => d.DotGiamGiaSanPhamId == id);
+            return await _context.DotGiamGiaSanPhams.FirstOrDefaultAsync(d => d.DotGiamGiaSanPhamId == id);
         }
 
         public async Task<IEnumerable<DotGiamGiaSanPham>> GetByGiamGiaIdAsync(Guid giamGiaId)
         {
             return await _context.DotGiamGiaSanPhams
                 .Where(d => d.GiamGiaId == giamGiaId)
-                .AsNoTracking()
-                .ToListAsync();
+                .ToListAsync(); // Dùng tracking để có thể xóa
         }
 
-        public async Task<IEnumerable<DotGiamGiaSanPham>> GetBySanPhamChiTietIdAsync(Guid sanPhamChiTietId)
+        public async Task<bool> ExistsAsync(Guid id)
         {
-            return await _context.DotGiamGiaSanPhams
-                .Where(d => d.SanPhamChiTietId == sanPhamChiTietId)
-                .AsNoTracking()
-                .ToListAsync();
+            return await _context.DotGiamGiaSanPhams.AnyAsync(d => d.DotGiamGiaSanPhamId == id);
+        }
+
+        // Các hàm thay đổi
+        public async Task AddRangeAsync(IEnumerable<DotGiamGiaSanPham> entities)
+        {
+            await _context.DotGiamGiaSanPhams.AddRangeAsync(entities);
+        }
+
+        public void DeleteRange(IEnumerable<DotGiamGiaSanPham> entities)
+        {
+            _context.DotGiamGiaSanPhams.RemoveRange(entities);
+        }
+
+        public async Task SaveAsync()
+        {
+            await _context.SaveChangesAsync();
         }
     }
 }

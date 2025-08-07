@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using FurryFriends.API.Data;
 using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO.BanHang;
 using FurryFriends.API.Models.DTO.BanHang.Requests;
@@ -13,87 +15,156 @@ namespace FurryFriends.API.Repository
 {
     public class BanHangRepository : IBanHangRepository
     {
-        private readonly ApplicationDbContext _context;
+        private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ILogger<BanHangRepository> _logger;
 
-        public BanHangRepository(ApplicationDbContext context, IMapper mapper)
+        public BanHangRepository(AppDbContext context, IMapper mapper, ILogger<BanHangRepository> logger)
         {
             _context = context;
             _mapper = mapper;
+            _logger = logger;
         }
 
-        public async Task<HoaDonBanHangDto> TaoHoaDon(TaoHoaDonRequest request)
+        #region Hóa Đơn
+
+        public async Task<IEnumerable<HoaDonBanHangDto>> GetAllHoaDonsAsync()
+        {
+            return await _context.HoaDons
+                .OrderByDescending(h => h.NgayTao)
+                .ProjectTo<HoaDonBanHangDto>(_mapper.ConfigurationProvider) // Dùng ProjectTo để tối ưu query
+                .ToListAsync();
+        }
+
+        public async Task<HoaDonBanHangDto> GetHoaDonByIdAsync(Guid id)
+        {
+            var hoaDon = await GetFullHoaDonQuery()
+                                 .FirstOrDefaultAsync(h => h.HoaDonId == id);
+
+            if (hoaDon == null) throw new KeyNotFoundException("Hóa đơn không tồn tại.");
+
+            return await MapToHoaDonDto(hoaDon);
+        }
+
+        public async Task<HoaDonBanHangDto> TaoHoaDonAsync(TaoHoaDonRequest request)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
-
             try
             {
                 var hoaDon = new HoaDon
                 {
                     HoaDonId = Guid.NewGuid(),
                     NgayTao = DateTime.Now,
-                    TrangThai = 0, // Chưa thanh toán
-                    LoaiHoaDon = "BanTaiQuay",
+                    TrangThai = (int)TrangThaiHoaDon.ChuaThanhToan,
                     GhiChu = request.GhiChu,
-                    NhanVienId = Guid.Parse("ID_NHAN_VIEN_HIEN_TAI") // Lấy từ auth
+                    NhanVienId = request.NhanVienId,
+                    // Bỏ trống các ID không cần thiết khi mới tạo
+                    HinhThucThanhToanId = Guid.Empty,
                 };
 
+                // Gán khách hàng
                 if (!request.LaKhachLe && request.KhachHangId.HasValue)
                 {
-                    hoaDon.KhachHangId = request.KhachHangId.Value;
-                    var khachHang = await _context.KhachHangs.FindAsync(request.KhachHangId.Value);
-                    if (khachHang != null)
-                    {
-                        hoaDon.TenCuaKhachHang = khachHang.TenKhachHang;
-                        hoaDon.SdtCuaKhachHang = khachHang.SDT;
-                        hoaDon.EmailCuaKhachHang = khachHang.EmailCuaKhachHang;
-                    }
+                    await GanKhachHangNoSave(hoaDon, request.KhachHangId.Value);
                 }
                 else
                 {
+                    // Tìm hoặc tạo khách lẻ
+                    var khachLe = await _context.KhachHangs.FirstOrDefaultAsync(k => k.TenKhachHang == "Khách lẻ");
+                    if (khachLe == null)
+                    {
+                        khachLe = new KhachHang { KhachHangId = Guid.NewGuid(), TenKhachHang = "Khách lẻ", NgayTaoTaiKhoan = DateTime.Now, TrangThai = 1 };
+                        await _context.KhachHangs.AddAsync(khachLe);
+                    }
+                    hoaDon.KhachHangId = khachLe.KhachHangId;
                     hoaDon.TenCuaKhachHang = "Khách lẻ";
+                }
+
+                // Xử lý đơn giao hàng
+                if (request.GiaoHang)
+                {
+                    hoaDon.LoaiHoaDon = "GiaoHang";
+                    if (request.DiaChiMoi == null) throw new InvalidOperationException("Đơn giao hàng phải có thông tin địa chỉ mới.");
+
+                    var newDiaChi = _mapper.Map<DiaChiKhachHang>(request.DiaChiMoi);
+                    newDiaChi.DiaChiId = Guid.NewGuid();
+                    newDiaChi.KhachHangId = hoaDon.KhachHangId;
+                    newDiaChi.NgayTao = DateTime.Now;
+                    newDiaChi.NgayCapNhat = DateTime.Now;
+
+                    await _context.DiaChiKhachHangs.AddAsync(newDiaChi);
+                    hoaDon.DiaChiGiaoHangId = newDiaChi.DiaChiId;
+                }
+                else
+                {
+                    hoaDon.LoaiHoaDon = "BanTaiQuay";
                 }
 
                 await _context.HoaDons.AddAsync(hoaDon);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return _mapper.Map<HoaDonBanHangDto>(hoaDon);
+                return await GetHoaDonByIdAsync(hoaDon.HoaDonId);
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync();
+                _logger.LogError(ex, "Lỗi khi tạo hóa đơn.");
                 throw;
             }
         }
 
-        public async Task<HoaDonBanHangDto> ThemSanPhamVaoHoaDon(ThemSanPhamVaoHoaDonRequest request)
+        public async Task<HoaDonBanHangDto> HuyHoaDonAsync(Guid hoaDonId)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
-
             try
             {
-                var hoaDon = await _context.HoaDons
-                    .Include(h => h.HoaDonChiTiets)
-                    .ThenInclude(hct => hct.SanPham)
-                    .FirstOrDefaultAsync(h => h.HoaDonId == request.HoaDonId);
+                var hoaDon = await GetEditableHoaDon(hoaDonId);
 
-                if (hoaDon == null)
-                    throw new Exception("Hóa đơn không tồn tại");
+                // Hoàn trả số lượng sản phẩm
+                foreach (var item in hoaDon.HoaDonChiTiets)
+                {
+                    var sanPhamChiTiet = await _context.SanPhamChiTiets.FindAsync(item.SanPhamChiTietId);
+                    if (sanPhamChiTiet != null) sanPhamChiTiet.SoLuong += item.SoLuongSanPham;
+                }
 
-                var sanPhamChiTiet = await _context.SanPhamChiTiets
-                    .Include(spct => spct.SanPham)
-                    .FirstOrDefaultAsync(spct => spct.SanPhamChiTietId == request.SanPhamChiTietId);
+                // Hoàn trả voucher
+                if (hoaDon.VoucherId.HasValue)
+                {
+                    var voucher = await _context.Vouchers.FindAsync(hoaDon.VoucherId.Value);
+                    if (voucher != null) voucher.SoLuong++;
+                }
 
-                if (sanPhamChiTiet == null)
-                    throw new Exception("Sản phẩm không tồn tại");
+                hoaDon.TrangThai = (int)TrangThaiHoaDon.DaHuy;
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
-                if (sanPhamChiTiet.SoLuong < request.SoLuong)
-                    throw new Exception("Số lượng sản phẩm không đủ");
+                return await GetHoaDonByIdAsync(hoaDonId);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, $"Lỗi khi hủy hóa đơn {hoaDonId}");
+                throw;
+            }
+        }
 
-                var existingItem = hoaDon.HoaDonChiTiets
-                    .FirstOrDefault(hct => hct.SanPhamId == sanPhamChiTiet.SanPhamId);
+        #endregion
 
+        #region Quản lý Sản phẩm trong Hóa đơn (LOGIC ĐÃ SỬA ĐÚNG)
+
+        public async Task<HoaDonBanHangDto> ThemSanPhamVaoHoaDonAsync(ThemSanPhamVaoHoaDonRequest request)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var hoaDon = await GetEditableHoaDon(request.HoaDonId);
+                var sanPhamChiTiet = await _context.SanPhamChiTiets.FindAsync(request.SanPhamChiTietId);
+
+                if (sanPhamChiTiet == null) throw new KeyNotFoundException("Sản phẩm không tồn tại.");
+                if (sanPhamChiTiet.SoLuong < request.SoLuong) throw new InvalidOperationException("Số lượng sản phẩm trong kho không đủ.");
+
+                var existingItem = hoaDon.HoaDonChiTiets.FirstOrDefault(hct => hct.SanPhamChiTietId == request.SanPhamChiTietId);
                 if (existingItem != null)
                 {
                     existingItem.SoLuongSanPham += request.SoLuong;
@@ -102,322 +173,314 @@ namespace FurryFriends.API.Repository
                 {
                     var newItem = new HoaDonChiTiet
                     {
-                        HoaDonChiTietId = Guid.NewGuid(),
                         HoaDonId = hoaDon.HoaDonId,
-                        SanPhamId = sanPhamChiTiet.SanPhamId,
+                        SanPhamChiTietId = sanPhamChiTiet.SanPhamChiTietId,
                         SoLuongSanPham = request.SoLuong,
                         Gia = sanPhamChiTiet.Gia
                     };
                     await _context.HoaDonChiTiets.AddAsync(newItem);
                 }
 
-                // Trừ số lượng tồn kho
                 sanPhamChiTiet.SoLuong -= request.SoLuong;
-                _context.SanPhamChiTiets.Update(sanPhamChiTiet);
-
-                // Cập nhật tổng tiền
-                hoaDon.TongTien = hoaDon.HoaDonChiTiets.Sum(hct => hct.SoLuongSanPham * hct.Gia);
-                hoaDon.TongTienSauKhiGiam = hoaDon.TongTien;
-
+                await TinhToanLaiTienHoaDon(hoaDon);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return await GetHoaDonById(hoaDon.HoaDonId);
+                return await GetHoaDonByIdAsync(hoaDon.HoaDonId);
             }
-            catch
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync();
+                _logger.LogError(ex, "Lỗi khi thêm sản phẩm vào hóa đơn.");
                 throw;
             }
         }
 
-        public async Task<HoaDonBanHangDto> XoaSanPhamKhoiHoaDon(Guid hoaDonId, Guid sanPhamChiTietId)
+        public async Task<HoaDonBanHangDto> XoaSanPhamKhoiHoaDonAsync(Guid hoaDonId, Guid sanPhamChiTietId)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
-            try
-            {
-                var hoaDon = await _context.HoaDons
-                    .Include(h => h.HoaDonChiTiets)
-                    .ThenInclude(hct => hct.SanPham)
-                    .FirstOrDefaultAsync(h => h.HoaDonId == hoaDonId);
-
-                if (hoaDon == null)
-                    throw new Exception("Hóa đơn không tồn tại");
-
-                var sanPhamChiTiet = await _context.SanPhamChiTiets
-                    .FirstOrDefaultAsync(spct => spct.SanPhamChiTietId == sanPhamChiTietId);
-
-                if (sanPhamChiTiet == null)
-                    throw new Exception("Sản phẩm không tồn tại");
-
-                var itemToRemove = hoaDon.HoaDonChiTiets
-                    .FirstOrDefault(hct => hct.SanPhamId == sanPhamChiTiet.SanPhamId);
-
-                if (itemToRemove == null)
-                    throw new Exception("Sản phẩm không có trong hóa đơn");
-
-                // Hoàn trả số lượng tồn kho
-                sanPhamChiTiet.SoLuong += itemToRemove.SoLuongSanPham;
-                _context.SanPhamChiTiets.Update(sanPhamChiTiet);
-
-                // Xóa sản phẩm khỏi hóa đơn
-                _context.HoaDonChiTiets.Remove(itemToRemove);
-
-                // Cập nhật tổng tiền
-                hoaDon.TongTien = hoaDon.HoaDonChiTiets
-                    .Where(hct => hct.HoaDonChiTietId != itemToRemove.HoaDonChiTietId)
-                    .Sum(hct => hct.SoLuongSanPham * hct.Gia);
-                hoaDon.TongTienSauKhiGiam = hoaDon.TongTien;
-
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                return await GetHoaDonById(hoaDon.HoaDonId);
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+            // Tương tự CapNhatSoLuongSanPhamAsync với số lượng là 0
+            return await CapNhatSoLuongSanPhamAsync(hoaDonId, sanPhamChiTietId, 0);
         }
 
-        public async Task<HoaDonBanHangDto> CapNhatSoLuongSanPham(Guid hoaDonId, Guid sanPhamChiTietId, int soLuong)
+        public async Task<HoaDonBanHangDto> CapNhatSoLuongSanPhamAsync(Guid hoaDonId, Guid sanPhamChiTietId, int soLuongMoi)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
-
             try
             {
-                var hoaDon = await _context.HoaDons
-                    .Include(h => h.HoaDonChiTiets)
-                    .ThenInclude(hct => hct.SanPham)
-                    .FirstOrDefaultAsync(h => h.HoaDonId == hoaDonId);
+                var hoaDon = await GetEditableHoaDon(hoaDonId);
+                var itemToUpdate = hoaDon.HoaDonChiTiets.FirstOrDefault(hct => hct.SanPhamChiTietId == sanPhamChiTietId);
+                if (itemToUpdate == null) throw new KeyNotFoundException("Sản phẩm không có trong hóa đơn.");
 
-                if (hoaDon == null)
-                    throw new Exception("Hóa đơn không tồn tại");
+                var sanPhamChiTiet = await _context.SanPhamChiTiets.FindAsync(sanPhamChiTietId);
+                if (sanPhamChiTiet == null) throw new KeyNotFoundException("Sản phẩm không tồn tại.");
 
-                var sanPhamChiTiet = await _context.SanPhamChiTiets
-                    .FirstOrDefaultAsync(spct => spct.SanPhamChiTietId == sanPhamChiTietId);
+                int soLuongCu = itemToUpdate.SoLuongSanPham;
+                int soLuongTonKhoHienTai = sanPhamChiTiet.SoLuong;
 
-                if (sanPhamChiTiet == null)
-                    throw new Exception("Sản phẩm không tồn tại");
+                if (soLuongTonKhoHienTai + soLuongCu < soLuongMoi)
+                    throw new InvalidOperationException("Số lượng sản phẩm trong kho không đủ.");
 
-                var itemToUpdate = hoaDon.HoaDonChiTiets
-                    .FirstOrDefault(hct => hct.SanPhamId == sanPhamChiTiet.SanPhamId);
+                sanPhamChiTiet.SoLuong = soLuongTonKhoHienTai + soLuongCu - soLuongMoi;
 
-                if (itemToUpdate == null)
-                    throw new Exception("Sản phẩm không có trong hóa đơn");
-
-                // Tính toán chênh lệch số lượng
-                int soLuongThayDoi = soLuong - itemToUpdate.SoLuongSanPham;
-
-                // Kiểm tra tồn kho
-                if (sanPhamChiTiet.SoLuong < soLuongThayDoi)
-                    throw new Exception("Số lượng sản phẩm không đủ");
-
-                // Cập nhật số lượng tồn kho
-                sanPhamChiTiet.SoLuong -= soLuongThayDoi;
-                _context.SanPhamChiTiets.Update(sanPhamChiTiet);
-
-                // Cập nhật số lượng trong hóa đơn
-                itemToUpdate.SoLuongSanPham = soLuong;
-
-                // Cập nhật tổng tiền
-                hoaDon.TongTien = hoaDon.HoaDonChiTiets.Sum(hct => hct.SoLuongSanPham * hct.Gia);
-                hoaDon.TongTienSauKhiGiam = hoaDon.TongTien;
-
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                return await GetHoaDonById(hoaDon.HoaDonId);
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        }
-
-        public async Task<HoaDonBanHangDto> ApDungVoucher(Guid hoaDonId, Guid voucherId)
-        {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
-            try
-            {
-                var hoaDon = await _context.HoaDons
-                    .FirstOrDefaultAsync(h => h.HoaDonId == hoaDonId);
-
-                if (hoaDon == null)
-                    throw new Exception("Hóa đơn không tồn tại");
-
-                var voucher = await _context.Vouchers.FindAsync(voucherId);
-                if (voucher == null)
-                    throw new Exception("Voucher không tồn tại");
-
-                if (voucher.NgayHetHan < DateTime.Now)
-                    throw new Exception("Voucher đã hết hạn");
-
-                if (voucher.SoLuong <= 0)
-                    throw new Exception("Voucher đã hết số lượng");
-
-                // Áp dụng voucher
-                hoaDon.VoucherId = voucher.VoucherId;
-                hoaDon.TongTienSauKhiGiam = hoaDon.TongTien * (1 - voucher.PhanTramGiamGia / 100);
-
-                // Giảm số lượng voucher
-                voucher.SoLuong--;
-                _context.Vouchers.Update(voucher);
-
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                return await GetHoaDonById(hoaDon.HoaDonId);
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        }
-
-        public async Task<HoaDonBanHangDto> ThanhToan(ThanhToanRequest request)
-        {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
-            try
-            {
-                var hoaDon = await _context.HoaDons
-                    .Include(h => h.HoaDonChiTiets)
-                    .ThenInclude(hct => hct.SanPham)
-                    .FirstOrDefaultAsync(h => h.HoaDonId == request.HoaDonId);
-
-                if (hoaDon == null)
-                    throw new Exception("Hóa đơn không tồn tại");
-
-                // Kiểm tra trạng thái hóa đơn
-                if (hoaDon.TrangThai == 1)
-                    throw new Exception("Hóa đơn đã được thanh toán");
-
-                // Cập nhật hình thức thanh toán
-                hoaDon.HinhThucThanhToanId = request.HinhThucThanhToanId;
-                hoaDon.TrangThai = 1; // Đã thanh toán
-                hoaDon.NgayTao = DateTime.Now;
-
-                // Xử lý thanh toán tiền mặt
-                var hinhThucTT = await _context.HinhThucThanhToans.FindAsync(request.HinhThucThanhToanId);
-                if (hinhThucTT != null && hinhThucTT.TenHinhThuc == "Tiền mặt")
+                if (soLuongMoi <= 0)
                 {
-                    if (request.TienKhachDua < hoaDon.TongTienSauKhiGiam)
-                        throw new Exception("Số tiền khách đưa không đủ");
+                    _context.HoaDonChiTiets.Remove(itemToUpdate);
+                }
+                else
+                {
+                    itemToUpdate.SoLuongSanPham = soLuongMoi;
                 }
 
+                await TinhToanLaiTienHoaDon(hoaDon);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return await GetHoaDonById(hoaDon.HoaDonId);
+                return await GetHoaDonByIdAsync(hoaDonId);
             }
-            catch
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Lỗi khi cập nhật số lượng sản phẩm.");
+                throw;
+            }
+        }
+
+        #endregion
+
+        #region Voucher & Khách hàng
+
+        public async Task<HoaDonBanHangDto> ApDungVoucherAsync(Guid hoaDonId, string maVoucher)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var hoaDon = await GetEditableHoaDon(hoaDonId);
+                var voucher = await _context.Vouchers.FirstOrDefaultAsync(v => v.TenVoucher.ToLower() == maVoucher.ToLower());
+
+                if (voucher == null) throw new KeyNotFoundException("Mã voucher không tồn tại.");
+                if (voucher.NgayKetThuc < DateTime.Now) throw new InvalidOperationException("Voucher đã hết hạn.");
+                if (voucher.SoLuong <= 0) throw new InvalidOperationException("Voucher đã hết lượt sử dụng.");
+
+                // Gỡ voucher cũ nếu có
+                if (hoaDon.VoucherId.HasValue) await GoBoVoucherNoSave(hoaDon);
+
+                hoaDon.VoucherId = voucher.VoucherId;
+                voucher.SoLuong--;
+
+                await TinhToanLaiTienHoaDon(hoaDon);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return await GetHoaDonByIdAsync(hoaDonId);
+            }
+            catch (Exception ex)
             {
                 await transaction.RollbackAsync();
                 throw;
             }
         }
 
-        public async Task<HoaDonBanHangDto> GetHoaDonById(Guid id)
+        public async Task<HoaDonBanHangDto> GoBoVoucherAsync(Guid hoaDonId)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            var hoaDon = await GetEditableHoaDon(hoaDonId);
+
+            await GoBoVoucherNoSave(hoaDon);
+            await TinhToanLaiTienHoaDon(hoaDon);
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return await GetHoaDonByIdAsync(hoaDonId);
+        }
+
+        public async Task<HoaDonBanHangDto> GanKhachHangAsync(Guid hoaDonId, Guid khachHangId)
+        {
+            var hoaDon = await GetEditableHoaDon(hoaDonId);
+            await GanKhachHangNoSave(hoaDon, khachHangId);
+            await _context.SaveChangesAsync();
+            return await GetHoaDonByIdAsync(hoaDonId);
+        }
+
+        #endregion
+
+        #region Thanh Toán
+
+        public async Task<HoaDonBanHangDto> ThanhToanHoaDonAsync(ThanhToanRequest request)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var hoaDon = await _context.HoaDons
+                    .Include(h => h.HoaDonChiTiets)
+                    .FirstOrDefaultAsync(h => h.HoaDonId == request.HoaDonId);
+
+                if (hoaDon == null) throw new KeyNotFoundException("Hóa đơn không tồn tại.");
+                if (hoaDon.TrangThai != (int)TrangThaiHoaDon.ChuaThanhToan)
+                    throw new InvalidOperationException("Hóa đơn đã được xử lý (thanh toán/hủy).");
+                if (!hoaDon.HoaDonChiTiets.Any())
+                    throw new InvalidOperationException("Không thể thanh toán hóa đơn rỗng.");
+
+                var hinhThucTT = await _context.HinhThucThanhToans.FindAsync(request.HinhThucThanhToanId);
+                if (hinhThucTT == null) throw new KeyNotFoundException("Hình thức thanh toán không tồn tại.");
+
+                await TinhToanLaiTienHoaDon(hoaDon); // Tính lại tiền lần cuối cho chắc
+
+                if (hinhThucTT.TenHinhThuc.Contains("Tiền mặt") && request.TienKhachDua < hoaDon.TongTienSauKhiGiam)
+                    throw new InvalidOperationException("Số tiền khách đưa không đủ.");
+
+                hoaDon.HinhThucThanhToanId = hinhThucTT.HinhThucThanhToanId;
+                hoaDon.TrangThai = (int)TrangThaiHoaDon.DaThanhToan;
+                hoaDon.NgayNhanHang = DateTime.Now; // Coi như ngày thanh toán là ngày nhận tại quầy
+                hoaDon.GhiChu = string.IsNullOrEmpty(hoaDon.GhiChu) ? request.GhiChuThanhToan : hoaDon.GhiChu + " | " + request.GhiChuThanhToan;
+                if (hoaDon.KhachHangId != Guid.Empty)
+                {
+                    var khachHang = await _context.KhachHangs.FindAsync(hoaDon.KhachHangId);
+                    if (khachHang != null && khachHang.TenKhachHang != "Khách lẻ")
+                    {
+                        khachHang.DiemKhachHang = (khachHang.DiemKhachHang ?? 0) + (int)(hoaDon.TongTienSauKhiGiam / 10000);
+                    }
+                }
+
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return await GetHoaDonByIdAsync(hoaDon.HoaDonId);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+        #endregion
+
+        #region Tìm kiếm và Khách hàng
+
+        public Task<IEnumerable<SanPhamBanHangDto>> TimKiemSanPhamAsync(string keyword)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<KhachHangDto>> TimKiemKhachHangAsync(string keyword)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<VoucherDto>> TimKiemVoucherHopLeAsync(Guid hoaDonId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<KhachHangDto> TaoKhachHangMoiAsync(TaoKhachHangRequest request)
+        {
+            var sdtExists = await _context.KhachHangs.AnyAsync(k => k.SDT == request.SDT && k.SDT != null);
+            if (sdtExists) throw new InvalidOperationException("Số điện thoại đã tồn tại.");
+
+            var khachHang = _mapper.Map<KhachHang>(request);
+            khachHang.KhachHangId = Guid.NewGuid();
+            khachHang.NgayTaoTaiKhoan = DateTime.Now;
+            khachHang.TrangThai = 1;
+
+            await _context.KhachHangs.AddAsync(khachHang);
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<KhachHangDto>(khachHang);
+        }
+
+        #endregion
+
+        #region Private Helper Methods
+
+        private async Task<HoaDon> GetEditableHoaDon(Guid hoaDonId)
         {
             var hoaDon = await _context.HoaDons
                 .Include(h => h.HoaDonChiTiets)
-                .ThenInclude(hct => hct.SanPham)
-                .Include(h => h.KhachHang)
-                .Include(h => h.HinhThucThanhToan)
-                .Include(h => h.Voucher)
-                .FirstOrDefaultAsync(h => h.HoaDonId == id);
+                .FirstOrDefaultAsync(h => h.HoaDonId == hoaDonId);
 
-            if (hoaDon == null)
-                throw new Exception("Hóa đơn không tồn tại");
+            if (hoaDon == null) throw new KeyNotFoundException("Hóa đơn không tồn tại.");
+            if (hoaDon.TrangThai != (int)TrangThaiHoaDon.ChuaThanhToan)
+                throw new InvalidOperationException("Không thể chỉnh sửa hóa đơn đã thanh toán hoặc đã hủy.");
 
-            return _mapper.Map<HoaDonBanHangDto>(hoaDon);
+            return hoaDon;
         }
 
-        public async Task<IEnumerable<SanPhamBanHangDto>> TimKiemSanPham(string keyword)
+        private async Task TinhToanLaiTienHoaDon(HoaDon hoaDon)
         {
-            var query = _context.SanPhams
-                .Include(sp => sp.SanPhamChiTiets)
-                .ThenInclude(spct => spct.MauSac)
-                .Include(sp => sp.SanPhamChiTiets)
-                .ThenInclude(spct => spct.KichCo)
-                .AsQueryable();
-
-            if (!string.IsNullOrEmpty(keyword))
+            hoaDon.TongTien = hoaDon.HoaDonChiTiets.Sum(hct => hct.SoLuongSanPham * hct.Gia);
+            decimal tienGiam = 0;
+            if (hoaDon.VoucherId.HasValue && hoaDon.VoucherId != Guid.Empty)
             {
-                query = query.Where(sp =>
-                    sp.TenSanPham.Contains(keyword) ||
-                    sp.MaSanPham.Contains(keyword) ||
-                    sp.SanPhamChiTiets.Any(spct =>
-                        spct.MauSac.TenMau.Contains(keyword) ||
-                        spct.KichCo.TenKichCo.Contains(keyword)));
-            }
-
-            var sanPhams = await query.ToListAsync();
-            return _mapper.Map<IEnumerable<SanPhamBanHangDto>>(sanPhams);
-        }
-
-        public async Task<IEnumerable<KhachHangDto>> TimKiemKhachHang(string keyword)
-        {
-            var query = _context.KhachHangs.AsQueryable();
-
-            if (!string.IsNullOrEmpty(keyword))
-            {
-                query = query.Where(kh =>
-                    kh.TenKhachHang.Contains(keyword) ||
-                    kh.SDT.Contains(keyword) ||
-                    kh.EmailCuaKhachHang.Contains(keyword));
-            }
-
-            var khachHangs = await query
-                .OrderBy(kh => kh.TenKhachHang)
-                .Take(20)
-                .ToListAsync();
-
-            return _mapper.Map<IEnumerable<KhachHangDto>>(khachHangs);
-        }
-
-        public async Task<KhachHangDto> TaoKhachHang(TaoKhachHangRequest request)
-        {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
-            try
-            {
-                // Kiểm tra SDT đã tồn tại chưa
-                var existingKhachHang = await _context.KhachHangs
-                    .FirstOrDefaultAsync(kh => kh.SDT == request.SDT);
-
-                if (existingKhachHang != null)
-                    throw new Exception("Số điện thoại đã được sử dụng");
-
-                var khachHang = new KhachHang
+                var voucher = await _context.Vouchers.FindAsync(hoaDon.VoucherId);
+                if (voucher != null)
                 {
-                    KhachHangId = Guid.NewGuid(),
-                    TenKhachHang = request.TenKhachHang,
-                    SDT = request.SDT,
-                    EmailCuaKhachHang = request.Email,
-                    DiemKhachHang = 0,
-                    NgayTaoTaiKhoan = DateTime.Now,
-                    NgayCapNhatCuoiCung = DateTime.Now,
-                    TrangThai = 1 // Hoạt động
-                };
-
-                await _context.KhachHangs.AddAsync(khachHang);
-                await _context.SaveChangesAsync();
-                await transaction.CommitAsync();
-
-                return _mapper.Map<KhachHangDto>(khachHang);
+                    tienGiam = hoaDon.TongTien * (voucher.PhanTramGiam / 100);
+                    if (voucher.GiaTriGiamToiDa.HasValue && tienGiam > voucher.GiaTriGiamToiDa.Value)
+                    {
+                        tienGiam = voucher.GiaTriGiamToiDa.Value;
+                    }
+                }
             }
-            catch
+            hoaDon.TongTienSauKhiGiam = hoaDon.TongTien - tienGiam;
+        }
+
+        private async Task GoBoVoucherNoSave(HoaDon hoaDon)
+        {
+            if (hoaDon.VoucherId.HasValue)
             {
-                await transaction.RollbackAsync();
-                throw;
+                var oldVoucher = await _context.Vouchers.FindAsync(hoaDon.VoucherId.Value);
+                if (oldVoucher != null) oldVoucher.SoLuong++;
+                hoaDon.VoucherId = null;
             }
         }
+
+        private async Task GanKhachHangNoSave(HoaDon hoaDon, Guid khachHangId)
+        {
+            var khachHang = await _context.KhachHangs.FindAsync(khachHangId);
+            if (khachHang == null) throw new KeyNotFoundException("Khách hàng không tồn tại.");
+            hoaDon.KhachHangId = khachHang.KhachHangId;
+            hoaDon.TenCuaKhachHang = khachHang.TenKhachHang;
+            hoaDon.SdtCuaKhachHang = khachHang.SDT;
+            hoaDon.EmailCuaKhachHang = khachHang.EmailCuaKhachHang;
+        }
+
+        private IQueryable<HoaDon> GetFullHoaDonQuery()
+        {
+            return _context.HoaDons
+               .AsNoTracking()
+               .Include(h => h.HoaDonChiTiets)
+                   .ThenInclude(hct => hct.SanPhamChiTiet)
+                       .ThenInclude(spct => spct.SanPham)
+               .Include(h => h.HoaDonChiTiets)
+                   .ThenInclude(hct => hct.SanPhamChiTiet)
+                   .ThenInclude(spct => spct.MauSac)
+               .Include(h => h.HoaDonChiTiets)
+                   .ThenInclude(hct => hct.SanPhamChiTiet)
+                   .ThenInclude(spct => spct.KichCo)
+               .Include(h => h.KhachHang)
+               .Include(h => h.HinhThucThanhToan)
+               .Include(h => h.Voucher);
+        }
+
+        private async Task<HoaDonBanHangDto> MapToHoaDonDto(HoaDon hoaDon)
+        {
+            var dto = _mapper.Map<HoaDonBanHangDto>(hoaDon);
+            await TinhToanLaiTienHoaDon(hoaDon);
+            dto.TongTien = hoaDon.TongTien;
+            dto.ThanhTien = hoaDon.TongTienSauKhiGiam;
+            dto.TienGiam = dto.TongTien - dto.ThanhTien;
+            return dto;
+        }
+        #endregion
+    }
+
+    public enum TrangThaiHoaDon
+    {
+        ChuaThanhToan = 0,
+        DaThanhToan = 1,
+        DaHuy = 2,
+        DangGiaoHang = 3,
+        DaGiaoThanhCong = 4,
+        HoanTra = 5
     }
 }
