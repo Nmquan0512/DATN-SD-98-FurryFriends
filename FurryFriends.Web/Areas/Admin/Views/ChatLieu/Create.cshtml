@@ -32,19 +32,19 @@
                 <div class="card-body">
                     <form asp-area="Admin" asp-action="Create" asp-controller="ChatLieu" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                        
+
                         <div class="mb-3">
                             <label asp-for="TenChatLieu" class="form-label">Tên chất liệu <span class="text-danger">*</span></label>
                             <input asp-for="TenChatLieu" class="form-control" placeholder="Nhập tên chất liệu..." />
                             <span asp-validation-for="TenChatLieu" class="text-danger"></span>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label asp-for="MoTa" class="form-label">Mô tả</label>
                             <textarea asp-for="MoTa" class="form-control" rows="3" placeholder="Nhập mô tả chất liệu..."></textarea>
                             <span asp-validation-for="MoTa" class="text-danger"></span>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label asp-for="TrangThai" class="form-label">Trạng thái</label>
                             <div class="form-check">
@@ -54,7 +54,7 @@
                                 </label>
                             </div>
                         </div>
-                        
+
                         <div class="d-flex justify-content-end gap-2">
                             <a asp-area="Admin" asp-action="Index" asp-controller="ChatLieu" class="btn btn-secondary">Hủy</a>
                             <button type="submit" class="btn btn-primary">
@@ -70,5 +70,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-} 
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

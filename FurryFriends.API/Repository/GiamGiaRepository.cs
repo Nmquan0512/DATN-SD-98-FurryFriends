@@ -2,6 +2,10 @@
 using FurryFriends.API.Models;
 using FurryFriends.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FurryFriends.API.Repositories
 {
@@ -14,37 +18,55 @@ namespace FurryFriends.API.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<GiamGia>> GetAllAsync()
+        public async Task<IEnumerable<GiamGia>> GetAllAsync(bool includeProducts = false)
         {
-            return await _context.GiamGias.ToListAsync();
+            var query = _context.GiamGias.AsQueryable();
+
+            if (includeProducts)
+            {
+                // Include cả SanPhamChiTiet để có thể lấy tên sản phẩm nếu cần
+                query = query.Include(g => g.DotGiamGiaSanPhams)
+                             .ThenInclude(dggsp => dggsp.SanPhamChiTiet);
+            }
+
+            return await query.AsNoTracking().ToListAsync();
         }
 
-        public async Task<GiamGia?> GetByIdAsync(Guid id)
+        public async Task<GiamGia> GetByIdAsync(Guid id, bool includeProducts = false)
         {
-            return await _context.GiamGias
-                .Include(g => g.DotGiamGiaSanPhams)
-                .FirstOrDefaultAsync(g => g.GiamGiaId == id);
+            var query = _context.GiamGias.AsQueryable();
+
+            if (includeProducts)
+            {
+                // Khi lấy chi tiết, nên dùng tracking để có thể cập nhật
+                query = query.Include(g => g.DotGiamGiaSanPhams);
+            }
+            else
+            {
+                query = query.AsNoTracking();
+            }
+
+            return await query.FirstOrDefaultAsync(g => g.GiamGiaId == id);
         }
 
         public async Task AddAsync(GiamGia entity)
         {
             await _context.GiamGias.AddAsync(entity);
-            await _context.SaveChangesAsync();
+            // Không SaveChanges ở đây
         }
 
-        public async Task UpdateAsync(GiamGia entity)
+        public void Update(GiamGia entity)
         {
-            _context.GiamGias.Update(entity);
-            await _context.SaveChangesAsync();
+            entity.NgayCapNhat = DateTime.UtcNow;
+            // Đánh dấu đối tượng là đã bị thay đổi, không cần Save
+            _context.Entry(entity).State = EntityState.Modified;
         }
 
-        public async Task DeleteAsync(Guid id)
+        public void Delete(GiamGia entity)
         {
-            var giamGia = await GetByIdAsync(id);
-            if (giamGia != null)
+            if (entity != null)
             {
-                _context.GiamGias.Remove(giamGia);
-                await _context.SaveChangesAsync();
+                _context.GiamGias.Remove(entity);
             }
         }
 
@@ -56,30 +78,14 @@ namespace FurryFriends.API.Repositories
         public async Task<bool> TenGiamGiaExistsAsync(string tenGiamGia, Guid? excludeId = null)
         {
             return await _context.GiamGias.AnyAsync(g =>
-                g.TenGiamGia.ToLower().Trim() == tenGiamGia.ToLower().Trim() &&
+                g.TenGiamGia.ToLower() == tenGiamGia.ToLower() &&
                 (!excludeId.HasValue || g.GiamGiaId != excludeId.Value));
         }
 
-        public async Task<IEnumerable<GiamGia>> GetActiveDiscountsAsync()
+        // Phương thức Commit duy nhất
+        public async Task SaveAsync()
         {
-            var today = DateTime.Today;
-            return await _context.GiamGias
-                .Where(g => g.TrangThai && g.NgayBatDau <= today && g.NgayKetThuc >= today)
-                .ToListAsync();
+            await _context.SaveChangesAsync();
         }
-        public async Task<IEnumerable<GiamGia>> GetAllWithSanPhamChiTietAsync()
-        {
-            return await _context.GiamGias
-                .Include(g => g.DotGiamGiaSanPhams)
-                .ToListAsync();
-        }
-
-        public async Task<GiamGia?> GetByIdWithSanPhamChiTietAsync(Guid id)
-        {
-            return await _context.GiamGias
-                .Include(g => g.DotGiamGiaSanPhams)
-                .FirstOrDefaultAsync(g => g.GiamGiaId == id);
-        }
-
     }
 }

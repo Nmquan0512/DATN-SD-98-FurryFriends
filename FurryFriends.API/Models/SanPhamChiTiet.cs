@@ -4,7 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class SanPhamChiTiet
 {
-	[Key]
+    public SanPhamChiTiet()
+    {
+        HoaDonChiTiets = new HashSet<HoaDonChiTiet>();
+        GioHangChiTiets = new HashSet<GioHangChiTiet>();
+        DotGiamGiaSanPhams = new HashSet<DotGiamGiaSanPham>();
+    }
+    [Key]
 	public Guid SanPhamChiTietId { get; set; }
 
 	[Required]
@@ -45,8 +51,8 @@ public class SanPhamChiTiet
 
 	[ForeignKey("AnhId")]
 	public virtual Anh Anh { get; set; }
-
-	public virtual ICollection<GioHangChiTiet> GioHangChiTiets { get; set; }
+    public ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }
+    public virtual ICollection<GioHangChiTiet> GioHangChiTiets { get; set; }
 
 	public virtual ICollection<DotGiamGiaSanPham> DotGiamGiaSanPhams { get; set; }
 

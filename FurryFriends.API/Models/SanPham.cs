@@ -11,7 +11,12 @@ namespace FurryFriends.API.Models
 
         [Required]
         public string TenSanPham { get; set; }
-
+        public SanPham()
+        {
+            SanPhamChiTiets = new HashSet<SanPhamChiTiet>();
+            SanPhamThanhPhans = new HashSet<SanPhamThanhPhan>();
+            SanPhamChatLieus = new HashSet<SanPhamChatLieu>();
+        }
 
         //[Required]
         public Guid? ThuongHieuId { get; set; }
@@ -25,12 +30,10 @@ namespace FurryFriends.API.Models
 
         // Navigation properties
         [JsonIgnore]
-        public virtual ICollection<DotGiamGiaSanPham>? DotGiamGiaSanPhams { get; set; }
-        public virtual ICollection<SanPhamChiTiet>? SanPhamChiTiets { get; set; }
-        public virtual ICollection<SanPhamThanhPhan>? SanPhamThanhPhans { get; set; }
-        public virtual ICollection<SanPhamChatLieu>? SanPhamChatLieus { get; set; }
-        public ICollection<GioHangChiTiet>? GioHangChiTiets { get; set; }
-        public ICollection<HoaDonChiTiet>? HoaDonChiTiets { get; set; }
+        public virtual ICollection<SanPhamChiTiet> SanPhamChiTiets { get; set; }
+        public virtual ICollection<SanPhamThanhPhan> SanPhamThanhPhans { get; set; }
+        public virtual ICollection<SanPhamChatLieu> SanPhamChatLieus { get; set; }
+
 
     }
 

@@ -13,7 +13,7 @@ namespace FurryFriends.API.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=XCBA2\\SQLEXPRESS;Database=DuanNhom11ModelsBanHang;Trusted_Connection=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Server=DELL\\SQLEXPRESS;Database=DATN1;Trusted_Connection=True;TrustServerCertificate=True");
             }
         }
 
@@ -54,47 +54,6 @@ namespace FurryFriends.API.Data
             ConfigureHoaDon(modelBuilder);
             ConfigureDotGiamGiaSanPham(modelBuilder);
             ConfigureSanPhamThanhPhanChatLieu(modelBuilder);
-
-            // Configure decimal precision for entities
-            modelBuilder.Entity<GiamGia>()
-                .Property(g => g.PhanTramKhuyenMai)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<HoaDon>()
-                .Property(h => h.TongTien)
-                .HasPrecision(18, 2);
-
-            modelBuilder.Entity<Voucher>()
-                .Property(v => v.PhanTramGiam)
-                .HasPrecision(18, 2);
-
-            // Seed hình thức thanh toán
-            modelBuilder.Entity<HinhThucThanhToan>().HasData(
-                new HinhThucThanhToan
-                {
-                    HinhThucThanhToanId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
-                    TenHinhThuc = "Thanh toán khi nhận hàng (COD)",
-                    MoTa = "Khách hàng thanh toán tiền mặt khi nhận hàng"
-                },
-                new HinhThucThanhToan
-                {
-                    HinhThucThanhToanId = Guid.Parse("55555555-5555-5555-5555-555555555555"),
-                    TenHinhThuc = "Chuyển khoản ngân hàng",
-                    MoTa = "Chuyển khoản qua tài khoản ngân hàng"
-                },
-                new HinhThucThanhToan
-                {
-                    HinhThucThanhToanId = Guid.Parse("66666666-6666-6666-6666-666666666666"),
-                    TenHinhThuc = "Ví điện tử",
-                    MoTa = "Thanh toán qua ví điện tử (Momo, ZaloPay, VNPay)"
-                },
-                new HinhThucThanhToan
-                {
-                    HinhThucThanhToanId = Guid.Parse("77777777-7777-7777-7777-777777777777"),
-                    TenHinhThuc = "Thẻ tín dụng/ghi nợ",
-                    MoTa = "Thanh toán qua thẻ Visa, Mastercard, JCB"
-                }
-            );
 
             // Seed admin account
             modelBuilder.Entity<TaiKhoan>().HasData(new TaiKhoan
@@ -185,24 +144,6 @@ namespace FurryFriends.API.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<GioHangChiTiet>()
-                .HasOne(ghct => ghct.GioHang)
-                .WithMany(gh => gh.GioHangChiTiets)
-                .HasForeignKey(ghct => ghct.GioHangId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<GioHangChiTiet>()
-                .HasOne(ghct => ghct.SanPham)
-                .WithMany(sp => sp.GioHangChiTiets)
-                .HasForeignKey(ghct => ghct.SanPhamId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<GioHangChiTiet>()
-                .HasOne(ghct => ghct.SanPhamChiTiet)
-                .WithMany(spct => spct.GioHangChiTiets)
-                .HasForeignKey(ghct => ghct.SanPhamChiTietId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<GioHangChiTiet>()
                 .Property(ghct => ghct.DonGia)
                 .HasPrecision(18, 2);
 
@@ -220,12 +161,6 @@ namespace FurryFriends.API.Data
             modelBuilder.Entity<HoaDonChiTiet>()
                 .Property(hdct => hdct.Gia)
                 .HasPrecision(18, 2);
-
-            modelBuilder.Entity<HoaDon>()
-                .HasOne(hd => hd.TaiKhoan)
-                .WithMany(tk => tk.HoaDons)
-                .HasForeignKey(hd => hd.TaiKhoanId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<HoaDon>()
                 .HasOne(hd => hd.KhachHang)
@@ -251,11 +186,6 @@ namespace FurryFriends.API.Data
                 .HasForeignKey(hdct => hdct.HoaDonId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<HoaDonChiTiet>()
-                .HasOne(hdct => hdct.SanPham)
-                .WithMany(spct => spct.HoaDonChiTiets)
-                .HasForeignKey(hdct => hdct.SanPhamId)
-                .OnDelete(DeleteBehavior.Restrict);
         }
 
         private void ConfigureDotGiamGiaSanPham(ModelBuilder modelBuilder)
@@ -271,10 +201,6 @@ namespace FurryFriends.API.Data
                 .WithMany(sp => sp.DotGiamGiaSanPhams)
                 .HasForeignKey(d => d.SanPhamChiTietId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<DotGiamGiaSanPham>()
-                .Property(d => d.PhanTramGiamGia)
-                .HasPrecision(18, 2);
         }
 
         private void ConfigureSanPhamThanhPhanChatLieu(ModelBuilder modelBuilder)

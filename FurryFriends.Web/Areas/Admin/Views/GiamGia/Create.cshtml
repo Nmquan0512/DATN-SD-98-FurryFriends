@@ -1,281 +1,196 @@
-﻿@model FurryFriends.Web.ViewModels.GiamGiaCreateViewModel
+﻿@using FurryFriends.API.Models.DTO
+@model GiamGiaDTO
 @{
     ViewData["Title"] = "Tạo mới chương trình giảm giá";
-    var sanPhamChiTietList = ViewBag.SanPhamChiTietList as IEnumerable<dynamic>;
+    var sanPhamList = ViewBag.Products as IEnumerable<SanPhamChiTietDTO> ?? new List<SanPhamChiTietDTO>();
 }
-<div class="top-bar" style="padding-left: 50px;">
-    <h1>@ViewData["Title"]</h1>
-    <div class="top-bar-actions">
-        <a asp-area="Admin" asp-action="Index" asp-controller="GiamGia" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i>
-            Quay lại
+
+<div class="container-fluid py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"><i class="fas fa-home me-1"></i> Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="GiamGia" asp-action="Index">Quản lý giảm giá</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Tạo mới</li>
+        </ol>
+    </nav>
+
+    <!-- Tiêu đề -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-tag me-2 text-primary"></i>@ViewData["Title"]</h2>
+        <a asp-area="Admin" asp-controller="GiamGia" asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
         </a>
     </div>
-</div>
-<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Dashboard" asp-action="Index">Trang chủ</a></li>
-        <li class="breadcrumb-item"><a asp-area="Admin" asp-action="Index" asp-controller="GiamGia">Quản lý giảm giá</a></li>
-        <li class="breadcrumb-item active">Tạo mới</li>
-    </ol>
-</nav>
-<div class="form-container" style="margin-left: 10px; margin-right: 40px;">
+
+    <!-- Form -->
     <div class="card shadow-sm border-0">
-        <div class="card-header bg-white border-0 py-3">
-            <div class="d-flex align-items-center">
-                <div class="card-icon primary me-3">
-                    <i class="fas fa-plus"></i>
-                </div>
-                <div>
-                    <h5 class="card-title mb-0">Thông tin chương trình giảm giá</h5>
-                    <small class="text-muted">Nhập thông tin để tạo chương trình giảm giá mới</small>
-                </div>
-            </div>
-        </div>
-        <div class="card-body p-4">
-            <form asp-area="Admin" asp-action="Create" asp-controller="GiamGia" method="post" id="formCreateGiamGia">
-                @if (!ViewData.ModelState.IsValid && ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
-                {
-                    <div class="alert alert-danger d-flex align-items-center" role="alert" style="font-size: 1.1rem; padding: 1rem;">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <div>
-                            <ul class="mb-0">
-                                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                                {
-                                    <li>@error.ErrorMessage</li>
-                                }
-                            </ul>
-                        </div>
-                    </div>
-                }
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="GiamGia.TenGiamGia" class="form-label fw-semibold">
-                                <i class="fas fa-tag me-2 text-primary"></i>Tên chương trình
-                            </label>
-                            <input asp-for="GiamGia.TenGiamGia" class="form-control form-control-lg" />
-                            <span asp-validation-for="GiamGia.TenGiamGia" class="text-danger small"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label asp-for="GiamGia.PhanTramKhuyenMai" class="form-label fw-semibold">
-                                <i class="fas fa-percent me-2 text-primary"></i>Phần trăm khuyến mãi
-                            </label>
-                            <div class="input-group input-group-lg">
-                                <input asp-for="GiamGia.PhanTramKhuyenMai" class="form-control" type="number" min="0" max="100" step="0.01" />
-                                <span class="input-group-text bg-light border-start-0">
-                                    <i class="fas fa-percent text-muted"></i>
-                                </span>
+        <div class="card-body p-lg-4 p-3">
+            <form asp-area="Admin" asp-controller="GiamGia" asp-action="Create" method="post" id="giamGiaForm">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="row g-4 mb-4">
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label asp-for="TenGiamGia" class="form-label fw-semibold">Tên chương trình <span class="text-danger">*</span></label>
+                                <input asp-for="TenGiamGia" class="form-control" placeholder="Ví dụ: Giảm giá hè 2025" />
+                                <span asp-validation-for="TenGiamGia" class="text-danger small"></span>
                             </div>
-                            <span asp-validation-for="GiamGia.PhanTramKhuyenMai" class="text-danger small"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label asp-for="GiamGia.TrangThai" class="form-label fw-semibold">
-                                <i class="fas fa-toggle-on me-2 text-primary"></i>Trạng thái
-                            </label>
-                            <div class="d-flex gap-4 mt-2">
-                                <div class="form-check form-check-lg">
-                                    <input class="form-check-input" type="radio" asp-for="GiamGia.TrangThai" value="true" id="TrangThai_True" />
-                                    <label class="form-check-label fw-medium" for="TrangThai_True">
-                                        <i class="fas fa-check-circle text-success me-2"></i>Áp dụng
-                                    </label>
-                                </div>
-                                <div class="form-check form-check-lg">
-                                    <input class="form-check-input" type="radio" asp-for="GiamGia.TrangThai" value="false" id="TrangThai_False" />
-                                    <label class="form-check-label fw-medium" for="TrangThai_False">
-                                        <i class="fas fa-times-circle text-danger me-2"></i>Không áp dụng
-                                    </label>
-                                </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="NgayBatDau" class="form-label fw-semibold">Ngày bắt đầu <span class="text-danger">*</span></label>
+                                <input asp-for="NgayBatDau" class="form-control" type="datetime-local" value="@Model.NgayBatDau.ToLocalTime().ToString("yyyy-MM-ddTHH:mm")" />
+                                <span asp-validation-for="NgayBatDau" class="text-danger small"></span>
                             </div>
-                            <span asp-validation-for="GiamGia.TrangThai" class="text-danger small"></span>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="NgayKetThuc" class="form-label fw-semibold">Ngày kết thúc <span class="text-danger">*</span></label>
+                                <input asp-for="NgayKetThuc" class="form-control" type="datetime-local" value="@Model.NgayKetThuc.ToLocalTime().ToString("yyyy-MM-ddTHH:mm")" />
+                                <span asp-validation-for="NgayKetThuc" class="text-danger small"></span>
+                            </div>
                         </div>
                     </div>
-        </div>
-                <div class="row g-4 mt-2">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="GiamGia.NgayBatDau" class="form-label fw-semibold">
-                                <i class="fas fa-calendar-alt me-2 text-primary"></i>Ngày bắt đầu
-                            </label>
-                            <input asp-for="GiamGia.NgayBatDau" class="form-control form-control-lg" type="date" />
-                            <span asp-validation-for="GiamGia.NgayBatDau" class="text-danger small"></span>
-        </div>
-    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label asp-for="GiamGia.NgayKetThuc" class="form-label fw-semibold">
-                                <i class="fas fa-calendar-check me-2 text-primary"></i>Ngày kết thúc
-                            </label>
-                            <input asp-for="GiamGia.NgayKetThuc" class="form-control form-control-lg" type="date" />
-                            <span asp-validation-for="GiamGia.NgayKetThuc" class="text-danger small"></span>
-        </div>
-        </div>
-    </div>
-    <hr />
-                <h4 class="mb-3"><i class="fas fa-box-open me-2 text-primary"></i>Chọn sản phẩm áp dụng giảm giá</h4>
-                <button type="button" class="btn btn-outline-primary mb-3" data-bs-toggle="modal" data-bs-target="#modalSanPham">
-                    <i class="fas fa-search"></i> Chọn sản phẩm khuyến mãi
-                </button>
-                <div id="selectedProducts">
-                    <!-- Danh sách sản phẩm đã chọn sẽ render ở đây bằng JS -->
+                    <div class="col-lg-4">
+                        <div class="mb-3">
+                            <label asp-for="PhanTramKhuyenMai" class="form-label fw-semibold">Phần trăm giảm (%) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <input asp-for="PhanTramKhuyenMai" class="form-control" type="number" min="1" max="100" step="0.1" placeholder="5.5" />
+                                <span class="input-group-text bg-light">%</span>
+                            </div>
+                            <span asp-validation-for="PhanTramKhuyenMai" class="text-danger small"></span>
+                        </div>
+                        <div class="form-check form-switch mt-4">
+                            <input class="form-check-input" type="checkbox" role="switch" id="trangThaiSwitch" asp-for="TrangThai">
+                            <label class="form-check-label fw-semibold" for="trangThaiSwitch" asp-for="TrangThai">Kích hoạt chương trình</label>
+                        </div>
+                    </div>
                 </div>
-                <input type="hidden" id="SanPhamChiTietIds" name="SanPhamChiTietIds" value="@string.Join(",", Model.SanPhamChiTietIds ?? new List<Guid>())" />
-                <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top">
-                    <a asp-area="Admin" asp-action="Index" asp-controller="GiamGia" class="btn btn-light btn-lg px-4">
-                        <i class="fas fa-arrow-left me-2"></i>Quay lại
-                    </a>
-                    <button type="submit" class="btn btn-primary btn-lg px-4">
-                        <i class="fas fa-save me-2"></i>Tạo chương trình
+
+                <hr class="my-4" />
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">
+                        <i class="fas fa-boxes me-2 text-primary"></i> Sản phẩm áp dụng
+                        <span class="badge bg-primary rounded-pill ms-2" id="productCount">@(Model.SanPhamChiTietIds?.Count ?? 0)</span>
+                    </h5>
+                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#productModal">
+                        <i class="fas fa-plus me-1"></i> Chọn sản phẩm
+                    </button>
+                </div>
+
+                <div id="selectedProducts" class="mb-4"></div>
+                <div id="hiddenProductInputs"></div>
+
+                <div class="text-end mt-4">
+                    <a asp-action="Index" class="btn btn-secondary">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-primary px-4 py-2">
+                        <i class="fas fa-save me-2"></i> Tạo chương trình
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
 <!-- Modal chọn sản phẩm -->
-<div class="modal fade" id="modalSanPham" tabindex="-1" aria-labelledby="modalSanPhamLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalSanPhamLabel"><i class="fas fa-box"></i> Chọn sản phẩm chi tiết áp dụng</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <input type="text" id="filterInput" class="form-control mb-3" placeholder="Tìm kiếm theo tên, màu, size..." />
-                <div style="max-height: 500px; overflow-y: auto;">
-                    <table class="table table-bordered table-hover align-middle" id="tableSanPham">
-                        <thead class="table-light">
-                            <tr>
-                                <th></th>
-                                <th>Ảnh</th>
-                                <th>Tên sản phẩm</th>
-                                <th>Màu</th>
-                                <th>Kích cỡ</th>
-                                <th>Giá</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (sanPhamChiTietList != null)
-                            {
-                                foreach (var sp in sanPhamChiTietList)
-                                {
-                                    <tr data-search="@((sp.TenSanPham + " " + sp.TenMau + " " + sp.TenKichCo).ToLower())" data-id="@sp.SanPhamChiTietId">
-                                        <td><input type="checkbox" class="spct-checkbox" value="@sp.SanPhamChiTietId" /></td>
-                                        <td>
-                                            @if (!string.IsNullOrEmpty(sp.DuongDan))
-                                            {
-                                                var imgSrc = sp.DuongDan.StartsWith("http://localhost:7289") || sp.DuongDan.StartsWith("https://localhost:7289")
-                                                    ? sp.DuongDan
-                                                    : $"https://localhost:7289{(sp.DuongDan.StartsWith("/") ? sp.DuongDan : "/" + sp.DuongDan)}";
-                                                <img src="@imgSrc" style="width:60px;height:60px;object-fit:cover;" />
-                                            }
-                                            else
-                                            {
-                                                <span class="text-muted">Không có</span>
-                                            }
-                                        </td>
-                                        <td>@sp.TenSanPham</td>
-                                        <td>@sp.TenMau</td>
-                                        <td>@sp.TenKichCo</td>
-                                        <td>@sp.Gia.ToString("N0") ₫</td>
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary" id="btnChonSanPham">Xác nhận</button>
-            </div>
-        </div>
-    </div>
-</div>
+@await Html.PartialAsync("_ProductSelectionModal", sanPhamList)
+
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
-        // Lọc sản phẩm trong modal
-        document.getElementById('filterInput').addEventListener('input', function () {
-            var filter = this.value.toLowerCase();
-            document.querySelectorAll('#tableSanPham tbody tr').forEach(function (row) {
-                var search = row.getAttribute('data-search');
-                row.style.display = search.includes(filter) ? '' : 'none';
-            });
-        });
-        // Hàm lấy danh sách id sản phẩm đã chọn từ checkbox trong modal
-        function getCheckedSanPhamIds() {
-            return Array.from(document.querySelectorAll('.spct-checkbox:checked')).map(cb => cb.value);
-        }
-        // Khi xác nhận chọn sản phẩm trong modal
-        document.getElementById('btnChonSanPham').addEventListener('click', function () {
-            var checked = getCheckedSanPhamIds();
-            document.getElementById('SanPhamChiTietIds').value = checked.join(',');
-            renderSelectedProducts();
-            var modal = bootstrap.Modal.getInstance(document.getElementById('modalSanPham'));
-            modal.hide();
-        });
-        // Hiển thị danh sách đã chọn
-        function renderSelectedProducts() {
-            var ids = document.getElementById('SanPhamChiTietIds').value.split(',').filter(x => x);
-            var allRows = Array.from(document.querySelectorAll('#tableSanPham tbody tr'));
-            var html = '';
-            ids.forEach(id => {
-                var row = allRows.find(r => r.getAttribute('data-id') === id);
-                if (row) {
-                    var tds = row.querySelectorAll('td');
-                    html += `<div class='card mb-2'><div class='card-body d-flex align-items-center gap-3'>` +
-                        tds[1].innerHTML +
-                        `<div><b>${tds[2].innerText}</b><br/>Màu: ${tds[3].innerText} | Size: ${tds[4].innerText} | Giá: ${tds[5].innerText}</div>` +
-                        `<button type='button' class='btn btn-sm btn-danger ms-auto' onclick='removeSelectedProduct("${id}")'><i class='fas fa-times'></i></button>` +
-                        `</div></div>`;
+        // Các hàm renderSelectedProducts, updateHiddenInputs, removeProduct...
+        // ... (Giữ nguyên toàn bộ script từ câu trả lời hoàn chỉnh trước đó cho trang Create/Edit)
+        // Hàm để render lại danh sách sản phẩm đã chọn
+        function renderSelectedProducts(selectedIds) {
+            const $container = $('#selectedProducts');
+            const $countBadge = $('#productCount');
+            const sanPhamDataSource = @Html.Raw(Json.Serialize(sanPhamList));
+
+            $countBadge.text(selectedIds.length);
+
+            if (selectedIds.length === 0) {
+                $container.html('<div class="alert alert-light text-center border mb-0 py-2"><i class="fas fa-info-circle me-2"></i> Chưa có sản phẩm nào được chọn</div>');
+                return;
+            }
+
+            let html = '';
+            selectedIds.forEach(id => {
+                const sp = sanPhamDataSource.find(p => p.sanPhamChiTietId === id);
+                if (sp) {
+                    const imageUrl = sp.duongDan ? `https://localhost:7289${sp.duongDan}` : '/images/no-image.png';
+                    html += `
+                        <div class="card mb-2 border" id="product-card-${sp.sanPhamChiTietId}">
+                            <div class="card-body p-2">
+                                <div class="d-flex align-items-center">
+                                    <img src="${imageUrl}" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1 small">${sp.tenSanPham}</h6>
+                                        <small class="text-muted">${sp.tenMau} - ${sp.tenKichCo} - ${sp.gia.toLocaleString('vi-VN')}₫</small>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-link text-danger" onclick="removeProduct('${sp.sanPhamChiTietId}')" title="Bỏ chọn">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>`;
                 }
             });
-            document.getElementById('selectedProducts').innerHTML = html;
+            $container.html(html);
         }
-        // Khi bỏ chọn sản phẩm ngoài form, cập nhật lại checkbox trong modal và input hidden
-        function removeSelectedProduct(id) {
-            var ids = document.getElementById('SanPhamChiTietIds').value.split(',').filter(x => x && x !== id);
-            document.getElementById('SanPhamChiTietIds').value = ids.join(',');
-            // Đồng bộ lại checkbox trong modal
-            document.querySelectorAll('.spct-checkbox').forEach(cb => {
-                cb.checked = ids.includes(cb.value);
+
+        // Hàm để cập nhật hidden inputs
+        function updateHiddenInputs(selectedIds) {
+            const $hiddenContainer = $('#hiddenProductInputs');
+            $hiddenContainer.empty();
+            selectedIds.forEach(id => {
+                $hiddenContainer.append(`<input type="hidden" name="selectedProducts" value="${id}" />`);
             });
-            renderSelectedProducts();
         }
-        // Khi mở modal, tick lại các sản phẩm đã chọn dựa trên input hidden
-        document.getElementById('modalSanPham').addEventListener('show.bs.modal', function () {
-            var ids = document.getElementById('SanPhamChiTietIds').value.split(',').filter(x => x);
-            document.querySelectorAll('.spct-checkbox').forEach(cb => {
-                cb.checked = ids.includes(cb.value);
+
+        // Hàm xóa sản phẩm
+        function removeProduct(productId) {
+            let selectedIds = $('input[name="selectedProducts"]').map((_, el) => $(el).val()).get();
+            selectedIds = selectedIds.filter(id => id !== productId);
+
+            updateHiddenInputs(selectedIds);
+            renderSelectedProducts(selectedIds);
+        }
+
+        $(document).ready(function() {
+            let initialSelectedIds = @Html.Raw(Json.Serialize(Model.SanPhamChiTietIds ?? new List<Guid>()));
+
+            updateHiddenInputs(initialSelectedIds);
+            renderSelectedProducts(initialSelectedIds);
+
+            $('#confirmProducts').click(function() {
+                const selectedIds = [];
+                $('.product-check:checked').each(function() {
+                    selectedIds.push($(this).val());
+                });
+
+                updateHiddenInputs(selectedIds);
+                renderSelectedProducts(selectedIds);
+                $('#productModal').modal('hide');
             });
-        });
-        // Khi click vào checkbox trong modal, cập nhật luôn input hidden và hiển thị ngoài form
-        document.querySelectorAll('.spct-checkbox').forEach(cb => {
-            cb.addEventListener('change', function () {
-                var checked = getCheckedSanPhamIds();
-                document.getElementById('SanPhamChiTietIds').value = checked.join(',');
-                renderSelectedProducts();
+
+            $('#productModal').on('show.bs.modal', function() {
+                const currentSelectedIds = $('input[name="selectedProducts"]').map((_, el) => $(el).val()).get();
+                $('.product-check').each(function() {
+                    $(this).prop('checked', currentSelectedIds.includes($(this).val()));
+                });
+                $('#selectAllProducts').prop('checked', false);
             });
-        });
-        // Khi submit form, tạo lại input ẩn cho từng GUID
-        document.getElementById('formCreateGiamGia').addEventListener('submit', function (e) {
-            var ids = document.getElementById('SanPhamChiTietIds').value.split(',').filter(x => x);
-            // Xóa input cũ
-            document.querySelectorAll('input[name="SanPhamChiTietIds"]').forEach(el => el.remove());
-            ids.forEach(id => {
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'SanPhamChiTietIds';
-                input.value = id;
-                this.appendChild(input);
+
+            $('#NgayKetThuc, #NgayBatDau').on('change', function() {
+                const startDate = $('#NgayBatDau').val();
+                const endDate = $('#NgayKetThuc').val();
+                if (startDate && endDate && new Date(endDate) <= new Date(startDate)) {
+                    $('#NgayKetThuc')[0].setCustomValidity('Ngày kết thúc phải sau ngày bắt đầu.');
+                    $('#NgayKetThuc')[0].reportValidity();
+                } else {
+                    $('#NgayKetThuc')[0].setCustomValidity('');
+                }
             });
         });
     </script>
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
 }

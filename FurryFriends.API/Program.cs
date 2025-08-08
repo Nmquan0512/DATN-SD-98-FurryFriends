@@ -1,14 +1,16 @@
 using FurryFriends.API.Data;
 using FurryFriends.API.Models;
+using FurryFriends.API.Repositories;
 using FurryFriends.API.Repository;
 using FurryFriends.API.Repository.IRepository;
-using FurryFriends.API.Services.IServices;
 using FurryFriends.API.Services;
+using FurryFriends.API.Services.IServices;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using FurryFriends.API.Repositories;
-using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
+using AutoMapper;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,7 +64,7 @@ builder.Services.AddScoped<IKichCoService, KichCoService>();
 builder.Services.AddScoped<
     ISanPhamService,
     SanPhamService>();
-
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 // Trong FurryFriends.API.Program.cs
 builder.Services.AddScoped<IKichCoRepository, KichCoRepository>();
 builder.Services.AddScoped<IAnhService, AnhService>();
@@ -73,25 +75,11 @@ builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 builder.Services.AddScoped<ISanPhamChiTietRepository, SanPhamChiTietRepository>();
 builder.Services.AddScoped<ISanPhamChiTietService, SanPhamChiTietService>();
 builder.Services.AddScoped<IThongTinCaNhanService, ThongTinCaNhanService>();
-
-builder.Services.AddScoped<IHinhThucThanhToanRepository, HinhThucThanhToanRepository>();
-builder.Services.AddScoped<IGioHangRepository, GioHangRepository>();
-builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
-builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
-builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
-builder.Services.AddScoped<INhanVienRepository, NhanVIenRepository>();
-builder.Services.AddScoped<IThongBaoRepository, ThongBaoRepository>();
-builder.Services.AddScoped<IDiaChiKhachHangRepository, DiaChiKhachHangRepository>();
-
 builder.Services.AddScoped<IDotGiamGiaSanPhamRepository, DotGiamGiaSanPhamRepository>();
-builder.Services.AddScoped<IGiamGiaService, GiamGiaService>(provider =>
-    new GiamGiaService(
-        provider.GetRequiredService<IGiamGiaRepository>(),
-        provider.GetRequiredService<IDotGiamGiaSanPhamRepository>(),
-        provider.GetRequiredService<ISanPhamChiTietRepository>()
-    )
-);
-
+builder.Services.AddScoped<IGiamGiaService, GiamGiaService>();
+builder.Services.AddScoped<IBanHangRepository, BanHangRepository>();
+builder.Services.AddScoped<IBanHangService, BanHangService>();
+;
 // Add CORS policy cho phép web admin truy cập API
 builder.Services.AddCors(options =>
 {
@@ -131,3 +119,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+   

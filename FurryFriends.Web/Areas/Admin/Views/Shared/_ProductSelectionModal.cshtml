@@ -1,0 +1,94 @@
+﻿@model IEnumerable<FurryFriends.API.Models.DTO.SanPhamChiTietDTO>
+
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="productModalLabel"><i class="fas fa-boxes me-2"></i> Chọn sản phẩm để áp dụng giảm giá</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <span class="input-group-text bg-light"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" id="searchProduct" class="form-control" placeholder="Tìm kiếm theo tên, màu, kích thước...">
+                </div>
+                <div class="table-responsive" style="max-height: 50vh; overflow-y: auto;">
+                    <table class="table table-hover table-sm align-middle">
+                        <thead class="sticky-top bg-light">
+                            <tr>
+                                <th width="50px" class="text-center">
+                                    <input type="checkbox" id="selectAllProducts" class="form-check-input">
+                                </th>
+                                <th width="80px">Ảnh</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Màu sắc</th>
+                                <th>Kích thước</th>
+                                <th class="text-end">Giá bán</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                @foreach (var sp in Model)
+                                {
+                                    <tr data-search="@($"{sp.TenSanPham} {sp.TenMau} {sp.TenKichCo}".ToLower())">
+                                        <td class="text-center">
+                                            <input type="checkbox" class="form-check-input product-check" value="@sp.SanPhamChiTietId">
+                                        </td>
+                                        <td>
+                                            <img src="https://localhost:7289@(sp.DuongDan ?? "/images/no-image.png")" class="rounded border" style="width: 50px; height: 50px; object-fit: cover;" alt="@sp.TenSanPham">
+                                        </td>
+                                        <td>@sp.TenSanPham</td>
+                                        <td>@sp.TenMau</td>
+                                        <td>@sp.TenKichCo</td>
+                                        <td class="text-end fw-semibold">@sp.Gia.ToString("N0")₫</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center py-4 text-muted">
+                                        <i class="fas fa-box-open fa-2x mb-2"></i>
+                                        <p class="mb-0">Không có sản phẩm nào để chọn</p>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Hủy
+                </button>
+                <button type="button" class="btn btn-primary" id="confirmProducts">
+                    <i class="fas fa-check me-1"></i> Xác nhận lựa chọn
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thêm script cho Modal vào đây để nó được đóng gói cùng -->
+<script>
+    $(document).ready(function() {
+        // Hàm tìm kiếm và chọn tất cả chỉ áp dụng cho modal này
+        const modal = $('#productModal');
+
+        modal.find('#searchProduct').on('input', function() {
+            const searchTerm = $(this).val().toLowerCase();
+            modal.find('tbody tr').each(function() {
+                const rowText = $(this).data('search') || '';
+                $(this).toggle(rowText.includes(searchTerm));
+            });
+            // Reset checkbox chọn tất cả khi tìm kiếm
+            modal.find('#selectAllProducts').prop('checked', false);
+        });
+
+        modal.find('#selectAllProducts').change(function() {
+            // Chỉ tác động đến các checkbox đang hiển thị
+            modal.find('.product-check:visible').prop('checked', $(this).prop('checked'));
+        });
+    });
+</script>
