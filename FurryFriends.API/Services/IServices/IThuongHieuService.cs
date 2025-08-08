@@ -52,6 +52,21 @@ namespace FurryFriends.API.Services
 
         public async Task<ThuongHieuDTO> CreateAsync(ThuongHieuDTO dto)
         {
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(dto.TenThuongHieu))
+                throw new ArgumentException("Tên thương hiệu không được để trống");
+            
+            if (string.IsNullOrWhiteSpace(dto.Email))
+                throw new ArgumentException("Email không được để trống");
+            
+            if (string.IsNullOrWhiteSpace(dto.SDT))
+                throw new ArgumentException("Số điện thoại không được để trống");
+
+            // Check for duplicate name
+            var existingBrands = await _repository.GetAllAsync();
+            if (existingBrands.Any(x => x.TenThuongHieu.ToLower().Trim() == dto.TenThuongHieu.ToLower().Trim()))
+                throw new ArgumentException("Tên thương hiệu đã tồn tại");
+
             var entity = new ThuongHieu
             {
                 ThuongHieuId = Guid.NewGuid(),
@@ -72,6 +87,21 @@ namespace FurryFriends.API.Services
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null) return false;
+
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(dto.TenThuongHieu))
+                throw new ArgumentException("Tên thương hiệu không được để trống");
+            
+            if (string.IsNullOrWhiteSpace(dto.Email))
+                throw new ArgumentException("Email không được để trống");
+            
+            if (string.IsNullOrWhiteSpace(dto.SDT))
+                throw new ArgumentException("Số điện thoại không được để trống");
+
+            // Check for duplicate name (excluding current item)
+            var existingBrands = await _repository.GetAllAsync();
+            if (existingBrands.Any(x => x.ThuongHieuId != id && x.TenThuongHieu.ToLower().Trim() == dto.TenThuongHieu.ToLower().Trim()))
+                throw new ArgumentException("Tên thương hiệu đã tồn tại");
 
             existing.TenThuongHieu = dto.TenThuongHieu;
             existing.Email = dto.Email;

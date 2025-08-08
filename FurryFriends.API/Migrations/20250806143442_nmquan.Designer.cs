@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FurryFriends.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250802172651_m")]
-    partial class m
+    [Migration("20250806143442_nmquan")]
+    partial class nmquan
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,7 +57,6 @@ namespace FurryFriends.API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("MoTa")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TenChatLieu")
@@ -107,8 +106,8 @@ namespace FurryFriends.API.Migrations
                         {
                             ChucVuId = new Guid("22222222-2222-2222-2222-222222222222"),
                             MoTaChucVu = "Quản trị viên hệ thống",
-                            NgayCapNhat = new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4558),
-                            NgayTao = new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4557),
+                            NgayCapNhat = new DateTime(2025, 8, 6, 14, 34, 39, 782, DateTimeKind.Utc).AddTicks(6188),
+                            NgayTao = new DateTime(2025, 8, 6, 14, 34, 39, 782, DateTimeKind.Utc).AddTicks(6187),
                             TenChucVu = "admin",
                             TrangThai = true
                         });
@@ -536,7 +535,6 @@ namespace FurryFriends.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MoTa")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TenMau")
@@ -619,9 +617,9 @@ namespace FurryFriends.API.Migrations
                             Email = "admin@furryfriends.local",
                             GioiTinh = "Nam",
                             HoVaTen = "Admin hệ thống",
-                            NgayCapNhat = new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4603),
+                            NgayCapNhat = new DateTime(2025, 8, 6, 14, 34, 39, 782, DateTimeKind.Utc).AddTicks(6318),
                             NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayTao = new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4602),
+                            NgayTao = new DateTime(2025, 8, 6, 14, 34, 39, 782, DateTimeKind.Utc).AddTicks(6317),
                             SDT = "0123456789",
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
                             TrangThai = true
@@ -736,7 +734,7 @@ namespace FurryFriends.API.Migrations
                         new
                         {
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            NgayTaoTaiKhoan = new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4512),
+                            NgayTaoTaiKhoan = new DateTime(2025, 8, 6, 14, 34, 39, 782, DateTimeKind.Utc).AddTicks(6116),
                             Password = "123456",
                             TrangThai = true,
                             UserName = "admin"
@@ -802,7 +800,6 @@ namespace FurryFriends.API.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("DiaChi")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -810,7 +807,6 @@ namespace FurryFriends.API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MoTa")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SDT")

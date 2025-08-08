@@ -46,6 +46,16 @@ namespace FurryFriends.API.Services
 
         public async Task<KichCoDTO> CreateAsync(KichCoDTO dto)
         {
+            // Kiểm tra trùng tên
+            var allEntities = await _repository.GetAllAsync();
+            var isDuplicate = allEntities.Any(x => 
+                x.TenKichCo.ToLower().Trim() == dto.TenKichCo.ToLower().Trim());
+
+            if (isDuplicate)
+            {
+                throw new InvalidOperationException("Tên kích cỡ đã tồn tại");
+            }
+
             var entity = new KichCo
             {
                 KichCoId = Guid.NewGuid(),
@@ -63,6 +73,17 @@ namespace FurryFriends.API.Services
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null) return false;
+
+            // Kiểm tra trùng tên (trừ chính nó)
+            var allEntities = await _repository.GetAllAsync();
+            var isDuplicate = allEntities.Any(x => 
+                x.KichCoId != id && 
+                x.TenKichCo.ToLower().Trim() == dto.TenKichCo.ToLower().Trim());
+
+            if (isDuplicate)
+            {
+                throw new InvalidOperationException("Tên kích cỡ đã tồn tại");
+            }
 
             existing.TenKichCo = dto.TenKichCo;
             existing.MoTa = dto.MoTa;

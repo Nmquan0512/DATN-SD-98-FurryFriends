@@ -9,13 +9,13 @@ namespace FurryFriends.API.Models.DTO
     {
         public Guid SanPhamId { get; set; } = Guid.NewGuid();
 
-        [Required(ErrorMessage = "Tên sản phẩm là bắt buộc.")]
-        [StringLength(100, ErrorMessage = "Tên sản phẩm tối đa 100 ký tự.")]
-        public string TenSanPham { get; set; }
+        [Required(ErrorMessage = "Tên sản phẩm không được để trống")]
+        [StringLength(255, ErrorMessage = "Tên sản phẩm vượt quá giới hạn ký tự cho phép")]
+        public string TenSanPham { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Loại sản phẩm là bắt buộc.")]
         [RegularExpression("DoAn|DoDung", ErrorMessage = "Loại sản phẩm phải là 'DoAn' hoặc 'DoDung'.")]
-        public string LoaiSanPham { get; set; } // "DoAn" hoặc "DoDung"
+        public string LoaiSanPham { get; set; } = string.Empty; // "DoAn" hoặc "DoDung"
 
         // Nếu là Đồ Ăn
         public List<Guid>? ThanhPhanIds { get; set; }
@@ -37,8 +37,20 @@ namespace FurryFriends.API.Models.DTO
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            // Nếu cần validate nâng cao, thêm ở đây
-            yield break;
-                }
+            if (string.IsNullOrWhiteSpace(TenSanPham))
+            {
+                yield return new ValidationResult("Tên sản phẩm không được để trống", new[] { nameof(TenSanPham) });
+            }
+
+            if (TenSanPham?.Length > 255)
+            {
+                yield return new ValidationResult("Tên sản phẩm vượt quá giới hạn ký tự cho phép", new[] { nameof(TenSanPham) });
+            }
+
+            if (ThuongHieuId == Guid.Empty)
+            {
+                yield return new ValidationResult("Thương hiệu không được để trống", new[] { nameof(ThuongHieuId) });
+            }
+        }
     }
 }

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "BF0z0b1VP5f+K/F5UsXQzmaLLBlnLnWGt4CQBGeIitA=",
+  "Hash": "geHQYNpkXbzGYBx0SHNOJ+3BMLonL/8PC/xX7CmeFi4=",
   "Source": "FurryFriends.Web",
   "BasePath": "_content/FurryFriends.Web",
   "Mode": "Default",
@@ -91,6 +91,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\d5ddbf16-75b0-443c-9d33-1d8973f8fc5e.png"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\d621fa5c-1b6a-49c6-a3a4-5034f10de27c.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Project",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/d621fa5c-1b6a-49c6-a3a4-5034f10de27c.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\d621fa5c-1b6a-49c6-a3a4-5034f10de27c.png"
     },
     {
       "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\Debug\\net8.0\\scopedcss\\bundle\\FurryFriends.Web.styles.css",

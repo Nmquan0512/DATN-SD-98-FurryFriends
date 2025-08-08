@@ -1,6 +1,8 @@
 ﻿using FurryFriends.API.Data;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic; // Added for List
+using System.Linq; // Added for Any
 
 namespace FurryFriends.API.Models.DTO
 {
@@ -8,18 +10,39 @@ namespace FurryFriends.API.Models.DTO
     {
         public Guid KichCoId { get; set; }
 
-        [Required]
-        [StringLength(50)]
-        [RegularExpression(@"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯàáâãèéêìíòóôõùúăđĩũơưẠ-ỹ\s0-9]+$", ErrorMessage = "Tên chỉ được chứa chữ cái tiếng Việt, số và khoảng trắng")]
+        [Required(ErrorMessage = "Tên kích cỡ không được để trống")]
+        [StringLength(50, ErrorMessage = "Tên kích cỡ không được vượt quá 50 ký tự")]
         public string TenKichCo { get; set; }
 
+        [StringLength(500, ErrorMessage = "Mô tả không được vượt quá 500 ký tự")]
         public string MoTa { get; set; }
+        
+        [Required(ErrorMessage = "Trạng thái là bắt buộc")]
         public bool TrangThai { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            var _context = (AppDbContext)validationContext.GetService(typeof(AppDbContext));
+            var results = new List<ValidationResult>();
 
+            // Kiểm tra tên không được null hoặc rỗng
+            if (string.IsNullOrWhiteSpace(TenKichCo))
+            {
+                results.Add(new ValidationResult("Tên kích cỡ không được để trống", new[] { nameof(TenKichCo) }));
+                return results;
+            }
+
+            // Kiểm tra ký tự đặc biệt - chỉ từ chối một số ký tự đặc biệt nhất định
+            if (TenKichCo.Contains("%") || TenKichCo.Contains("@") || TenKichCo.Contains("#") || 
+                TenKichCo.Contains("$") || TenKichCo.Contains("!") || TenKichCo.Contains("_") ||
+                TenKichCo.Contains("^") || TenKichCo.Contains("&") || TenKichCo.Contains("*") ||
+                TenKichCo.Contains("(") || TenKichCo.Contains(")"))
+            {
+                results.Add(new ValidationResult("Tên kích cỡ không được chứa ký tự đặc biệt", new[] { nameof(TenKichCo) }));
+                return results;
+            }
+
+            // Kiểm tra trùng tên (nếu có context)
+            var _context = (AppDbContext)validationContext.GetService(typeof(AppDbContext));
             if (_context != null)
             {
                 var isDuplicate = _context.KichCos
@@ -28,9 +51,11 @@ namespace FurryFriends.API.Models.DTO
 
                 if (isDuplicate)
                 {
-                    yield return new ValidationResult("Tên kích cỡ đã tồn tại.", new[] { nameof(TenKichCo) });
+                    results.Add(new ValidationResult("Tên kích cỡ đã tồn tại", new[] { nameof(TenKichCo) }));
                 }
             }
+
+            return results;
         }
     }
 }

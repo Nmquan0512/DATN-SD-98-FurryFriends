@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FurryFriends.API.Migrations
 {
     /// <inheritdoc />
-    public partial class m : Migration
+    public partial class nmquan : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,7 +34,7 @@ namespace FurryFriends.API.Migrations
                 {
                     ChatLieuId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TenChatLieu = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    MoTa = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MoTa = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TrangThai = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -129,7 +129,7 @@ namespace FurryFriends.API.Migrations
                     MauSacId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     TenMau = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     MaMau = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MoTa = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MoTa = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TrangThai = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -175,8 +175,8 @@ namespace FurryFriends.API.Migrations
                     TenThuongHieu = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SDT = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MoTa = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DiaChi = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MoTa = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TrangThai = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -580,7 +580,7 @@ namespace FurryFriends.API.Migrations
             migrationBuilder.InsertData(
                 table: "ChucVus",
                 columns: new[] { "ChucVuId", "MoTaChucVu", "NgayCapNhat", "NgayTao", "TenChucVu", "TrangThai" },
-                values: new object[] { new Guid("22222222-2222-2222-2222-222222222222"), "Quản trị viên hệ thống", new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4558), new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4557), "admin", true });
+                values: new object[] { new Guid("22222222-2222-2222-2222-222222222222"), "Quản trị viên hệ thống", new DateTime(2025, 8, 6, 14, 34, 39, 782, DateTimeKind.Utc).AddTicks(6188), new DateTime(2025, 8, 6, 14, 34, 39, 782, DateTimeKind.Utc).AddTicks(6187), "admin", true });
 
             migrationBuilder.InsertData(
                 table: "HinhThucThanhToans",
@@ -596,12 +596,12 @@ namespace FurryFriends.API.Migrations
             migrationBuilder.InsertData(
                 table: "TaiKhoans",
                 columns: new[] { "TaiKhoanId", "KhachHangId", "NgayCapNhatCuoiCung", "NgayTaoTaiKhoan", "Password", "TrangThai", "UserName" },
-                values: new object[] { new Guid("11111111-1111-1111-1111-111111111111"), null, null, new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4512), "123456", true, "admin" });
+                values: new object[] { new Guid("11111111-1111-1111-1111-111111111111"), null, null, new DateTime(2025, 8, 6, 14, 34, 39, 782, DateTimeKind.Utc).AddTicks(6116), "123456", true, "admin" });
 
             migrationBuilder.InsertData(
                 table: "NhanViens",
                 columns: new[] { "NhanVienId", "ChucVuId", "DiaChi", "Email", "GioiTinh", "HoVaTen", "NgayCapNhat", "NgaySinh", "NgayTao", "SDT", "TaiKhoanId", "TrangThai" },
-                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), new Guid("22222222-2222-2222-2222-222222222222"), "Hà Nội", "admin@furryfriends.local", "Nam", "Admin hệ thống", new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4603), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4602), "0123456789", new Guid("11111111-1111-1111-1111-111111111111"), true });
+                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), new Guid("22222222-2222-2222-2222-222222222222"), "Hà Nội", "admin@furryfriends.local", "Nam", "Admin hệ thống", new DateTime(2025, 8, 6, 14, 34, 39, 782, DateTimeKind.Utc).AddTicks(6318), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 8, 6, 14, 34, 39, 782, DateTimeKind.Utc).AddTicks(6317), "0123456789", new Guid("11111111-1111-1111-1111-111111111111"), true });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DiaChiKhachHangs_KhachHangId",

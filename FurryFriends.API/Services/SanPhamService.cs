@@ -90,8 +90,10 @@ namespace FurryFriends.API.Services
             existing.TrangThai = dto.TrangThai;
 
             // Xóa quan hệ cũ
-            _context.SanPhamThanhPhans.RemoveRange(existing.SanPhamThanhPhans);
-            _context.SanPhamChatLieus.RemoveRange(existing.SanPhamChatLieus);
+            if (existing.SanPhamThanhPhans != null)
+                _context.SanPhamThanhPhans.RemoveRange(existing.SanPhamThanhPhans);
+            if (existing.SanPhamChatLieus != null)
+                _context.SanPhamChatLieus.RemoveRange(existing.SanPhamChatLieus);
 
             // Thêm quan hệ mới
             if (dto.LoaiSanPham == "DoAn" && dto.ThanhPhanIds != null)
@@ -181,11 +183,11 @@ namespace FurryFriends.API.Services
                 TenSanPham = x.TenSanPham,
                 ThuongHieuId = x.ThuongHieuId ?? Guid.Empty,
                 TenThuongHieu = x.ThuongHieu?.TenThuongHieu,
-                LoaiSanPham = x.SanPhamThanhPhans.Any() ? "DoAn" : "DoDung",
-                ThanhPhanIds = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhanId).ToList(),
-                ChatLieuIds = x.SanPhamChatLieus?.Select(cl => cl.ChatLieuId).ToList(),
-                TenThanhPhans = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhan?.TenThanhPhan).ToList(),
-                TenChatLieus = x.SanPhamChatLieus?.Select(cl => cl.ChatLieu?.TenChatLieu).ToList(),
+                LoaiSanPham = (x.SanPhamThanhPhans?.Any() == true) ? "DoAn" : "DoDung",
+                ThanhPhanIds = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhanId).ToList() ?? new List<Guid>(),
+                ChatLieuIds = x.SanPhamChatLieus?.Select(cl => cl.ChatLieuId).ToList() ?? new List<Guid>(),
+                TenThanhPhans = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhan?.TenThanhPhan).ToList() ?? new List<string>(),
+                TenChatLieus = x.SanPhamChatLieus?.Select(cl => cl.ChatLieu?.TenChatLieu).ToList() ?? new List<string>(),
                 TrangThai = x.TrangThai
             };
         }

@@ -3,6 +3,8 @@ using FurryFriends.API.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace FurryFriends.API.Controllers
 {
@@ -36,24 +38,88 @@ namespace FurryFriends.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ThanhPhanDTO dto)
         {
+            // Explicit validation
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(dto);
+            
+            if (!Validator.TryValidateObject(dto, validationContext, validationResults, true))
+            {
+                foreach (var validationResult in validationResults)
+                {
+                    foreach (var memberName in validationResult.MemberNames)
+                    {
+                        ModelState.AddModelError(memberName, validationResult.ErrorMessage);
+                    }
+                }
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var created = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.ThanhPhanId }, created);
+            try
+            {
+                var created = await _service.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = created.ThanhPhanId }, created);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("TenThanhPhan", ex.Message);
+                return new BadRequestObjectResult(ModelState);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError("TenThanhPhan", ex.Message);
+                return new BadRequestObjectResult(ModelState);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi khi tạo thành phần: {ex.Message}");
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] ThanhPhanDTO dto)
         {
+            // Explicit validation
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(dto);
+            
+            if (!Validator.TryValidateObject(dto, validationContext, validationResults, true))
+            {
+                foreach (var validationResult in validationResults)
+                {
+                    foreach (var memberName in validationResult.MemberNames)
+                    {
+                        ModelState.AddModelError(memberName, validationResult.ErrorMessage);
+                    }
+                }
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _service.UpdateAsync(id, dto);
-            if (!result)
-                return NotFound("Không tìm thấy thành phần!");
+            try
+            {
+                var result = await _service.UpdateAsync(id, dto);
+                if (!result)
+                    return NotFound("Không tìm thấy thành phần!");
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("TenThanhPhan", ex.Message);
+                return new BadRequestObjectResult(ModelState);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError("TenThanhPhan", ex.Message);
+                return new BadRequestObjectResult(ModelState);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi khi cập nhật thành phần: {ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]

@@ -44,6 +44,11 @@ namespace FurryFriends.API.Services
 
         public async Task<MauSacDTO> CreateAsync(MauSacDTO dto)
         {
+            // Check for duplicate name
+            var existingColors = await _repository.GetAllAsync();
+            if (existingColors.Any(x => x.TenMau.ToLower().Trim() == dto.TenMau.ToLower().Trim()))
+                throw new ArgumentException("Tên màu sắc đã tồn tại");
+
             var entity = new MauSac
             {
                 MauSacId = Guid.NewGuid(),
@@ -62,6 +67,11 @@ namespace FurryFriends.API.Services
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null) return false;
+
+            // Check for duplicate name (excluding current item)
+            var existingColors = await _repository.GetAllAsync();
+            if (existingColors.Any(x => x.MauSacId != id && x.TenMau.ToLower().Trim() == dto.TenMau.ToLower().Trim()))
+                throw new ArgumentException("Tên màu sắc đã tồn tại");
 
             existing.TenMau = dto.TenMau;
             existing.MaMau = dto.MaMau;

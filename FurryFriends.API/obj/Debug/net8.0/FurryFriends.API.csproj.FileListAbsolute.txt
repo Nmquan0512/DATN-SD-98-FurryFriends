@@ -377,6 +377,8 @@ C:\Users\Lenovo\OneDrive\Desktop\New folder (2)\DATN-SD-98-FurryFriends\FurryFri
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\bin\Debug\net8.0\NuGet.ProjectModel.dll
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\bin\Debug\net8.0\NuGet.Protocol.dll
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\bin\Debug\net8.0\NuGet.Versioning.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\bin\Debug\net8.0\nunit.framework.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\bin\Debug\net8.0\nunit.framework.legacy.dll
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\bin\Debug\net8.0\PdfSharpCore.dll
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\bin\Debug\net8.0\ICSharpCode.SharpZipLib.dll
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\bin\Debug\net8.0\SixLabors.Fonts.dll

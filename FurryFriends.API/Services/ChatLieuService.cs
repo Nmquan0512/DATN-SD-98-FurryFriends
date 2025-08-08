@@ -46,6 +46,13 @@ namespace FurryFriends.API.Services
 
         public async Task<ChatLieuDTO> CreateAsync(ChatLieuDTO dto)
         {
+            // Kiểm tra trùng tên
+            var existing = await _repository.GetAllAsync();
+            if (existing.Any(x => x.TenChatLieu.ToLower().Trim() == dto.TenChatLieu.ToLower().Trim()))
+            {
+                throw new InvalidOperationException("Tên chất liệu đã tồn tại.");
+            }
+
             var entity = new ChatLieu
             {
                 ChatLieuId = Guid.NewGuid(),
@@ -64,6 +71,13 @@ namespace FurryFriends.API.Services
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null) return false;
+
+            // Kiểm tra trùng tên (trừ chính nó)
+            var allExisting = await _repository.GetAllAsync();
+            if (allExisting.Any(x => x.ChatLieuId != id && x.TenChatLieu.ToLower().Trim() == dto.TenChatLieu.ToLower().Trim()))
+            {
+                throw new InvalidOperationException("Tên chất liệu đã tồn tại.");
+            }
 
             existing.TenChatLieu = dto.TenChatLieu;
             existing.MoTa = dto.MoTa;

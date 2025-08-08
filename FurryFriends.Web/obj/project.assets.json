@@ -2363,6 +2363,28 @@
           "lib/netstandard2.0/NuGet.Versioning.dll": {}
         }
       },
+      "NUnit/4.3.2": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/nunit.framework.dll": {
+            "related": ".legacy.xml;.xml"
+          },
+          "lib/net8.0/nunit.framework.legacy.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/nunit.framework.dll": {
+            "related": ".legacy.xml;.xml"
+          },
+          "lib/net8.0/nunit.framework.legacy.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "build/NUnit.props": {}
+        }
+      },
       "PDFsharp/6.0.0": {
         "type": "package",
         "dependencies": {
@@ -4062,6 +4084,7 @@
           "Microsoft.EntityFrameworkCore": "8.0.16",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.16",
           "Microsoft.VisualStudio.Web.CodeGeneration.Design": "8.0.7",
+          "NUnit": "4.3.2",
           "PdfSharpCore": "1.3.67",
           "Swashbuckle.AspNetCore": "6.4.0",
           "iTextSharp": "5.5.13.4",
@@ -8200,6 +8223,35 @@
         "nuget.versioning.nuspec"
       ]
     },
+    "NUnit/4.3.2": {
+      "sha512": "puVXayXNmEu7MFQSUswGmUjOy3M3baprMbkLl5PAutpeDoGTr+jPv33qAYsqxywi2wJCq8l/O3EhHoLulPE1iQ==",
+      "type": "package",
+      "path": "nunit/4.3.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "NOTICES.md",
+        "README.md",
+        "THIRD_PARTY_NOTICES.md",
+        "build/NUnit.props",
+        "icon.png",
+        "lib/net462/nunit.framework.dll",
+        "lib/net462/nunit.framework.legacy.dll",
+        "lib/net462/nunit.framework.legacy.xml",
+        "lib/net462/nunit.framework.xml",
+        "lib/net6.0/nunit.framework.dll",
+        "lib/net6.0/nunit.framework.legacy.dll",
+        "lib/net6.0/nunit.framework.legacy.xml",
+        "lib/net6.0/nunit.framework.xml",
+        "lib/net8.0/nunit.framework.dll",
+        "lib/net8.0/nunit.framework.legacy.dll",
+        "lib/net8.0/nunit.framework.legacy.xml",
+        "lib/net8.0/nunit.framework.xml",
+        "nunit.4.3.2.nupkg.sha512",
+        "nunit.nuspec"
+      ]
+    },
     "PDFsharp/6.0.0": {
       "sha512": "1Oy8i7FE37pazovE8lL7Vvxm6SL+v0LE7AxIruLCyq7hBOM4gmUcm1Rtw3T89t5+zYaNFrXK5+8+lYc4J1ybjg==",
       "type": "package",
@@ -12015,6 +12067,7 @@
       "Microsoft.AspNetCore.Authentication.Facebook >= 8.0.17",
       "Microsoft.AspNetCore.Authentication.Google >= 8.0.17",
       "Microsoft.AspNetCore.Authentication.MicrosoftAccount >= 8.0.17",
+      "NUnit >= 4.3.2",
       "PDFsharp >= 6.0.0",
       "PdfSharpCore >= 1.3.67",
       "iTextSharp >= 5.5.13.4"
@@ -12026,11 +12079,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
+      "projectUniqueName": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
       "projectName": "FurryFriends.Web",
-      "projectPath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
+      "projectPath": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
       "packagesPath": "C:\\Users\\x\\.nuget\\packages\\",
-      "outputPath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\",
+      "outputPath": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\x\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -12048,8 +12101,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {
-              "projectPath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj"
+            "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {
+              "projectPath": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj"
             }
           }
         }
@@ -12080,6 +12133,10 @@
           "Microsoft.AspNetCore.Authentication.MicrosoftAccount": {
             "target": "Package",
             "version": "[8.0.17, )"
+          },
+          "NUnit": {
+            "target": "Package",
+            "version": "[4.3.2, )"
           },
           "PDFsharp": {
             "target": "Package",

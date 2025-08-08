@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "m4oFI5I4JKFNNM+BgmHzxvRAhPS2TJxAUJBv1Q8uPQ0=",
+  "Hash": "hwRlGCPN1YGvHaafcy0+kye2M2ylZRtJqLKjP1mDcI8=",
   "Source": "FurryFriends.API",
   "BasePath": "_content/FurryFriends.API",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "FurryFriends.API\\wwwroot",
       "Source": "FurryFriends.API",
-      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "ContentRoot": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
       "BasePath": "_content/FurryFriends.API",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\63eb32ca-4f4d-4fad-8f0c-70f053c15293.jpg",
+      "Identity": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\63eb32ca-4f4d-4fad-8f0c-70f053c15293.jpg",
       "SourceId": "FurryFriends.API",
       "SourceType": "Discovered",
-      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "ContentRoot": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
       "BasePath": "_content/FurryFriends.API",
       "RelativePath": "images/63eb32ca-4f4d-4fad-8f0c-70f053c15293.jpg",
       "AssetKind": "All",
@@ -36,10 +36,10 @@
       "OriginalItemSpec": "wwwroot\\images\\63eb32ca-4f4d-4fad-8f0c-70f053c15293.jpg"
     },
     {
-      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\9480c2ed-8f73-4ebd-aa9b-90685f64b244.png",
+      "Identity": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\9480c2ed-8f73-4ebd-aa9b-90685f64b244.png",
       "SourceId": "FurryFriends.API",
       "SourceType": "Discovered",
-      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "ContentRoot": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
       "BasePath": "_content/FurryFriends.API",
       "RelativePath": "images/9480c2ed-8f73-4ebd-aa9b-90685f64b244.png",
       "AssetKind": "All",
@@ -55,10 +55,10 @@
       "OriginalItemSpec": "wwwroot\\images\\9480c2ed-8f73-4ebd-aa9b-90685f64b244.png"
     },
     {
-      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\d5ddbf16-75b0-443c-9d33-1d8973f8fc5e.png",
+      "Identity": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\d5ddbf16-75b0-443c-9d33-1d8973f8fc5e.png",
       "SourceId": "FurryFriends.API",
       "SourceType": "Discovered",
-      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "ContentRoot": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
       "BasePath": "_content/FurryFriends.API",
       "RelativePath": "images/d5ddbf16-75b0-443c-9d33-1d8973f8fc5e.png",
       "AssetKind": "All",
@@ -72,6 +72,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\images\\d5ddbf16-75b0-443c-9d33-1d8973f8fc5e.png"
+    },
+    {
+      "Identity": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\d621fa5c-1b6a-49c6-a3a4-5034f10de27c.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/d621fa5c-1b6a-49c6-a3a4-5034f10de27c.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\d621fa5c-1b6a-49c6-a3a4-5034f10de27c.png"
     }
   ]
 }

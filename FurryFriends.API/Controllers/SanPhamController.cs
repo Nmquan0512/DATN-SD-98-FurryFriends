@@ -41,7 +41,7 @@ namespace FurryFriends.API.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound();
             }
             catch (Exception ex)
             {
@@ -52,6 +52,22 @@ namespace FurryFriends.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] SanPhamDTO dto)
         {
+            // Manual validation
+            if (string.IsNullOrWhiteSpace(dto.TenSanPham))
+            {
+                ModelState.AddModelError("TenSanPham", "Tên sản phẩm không được để trống");
+            }
+
+            if (dto.TenSanPham?.Length > 255)
+            {
+                ModelState.AddModelError("TenSanPham", "Tên sản phẩm vượt quá giới hạn ký tự cho phép");
+            }
+
+            if (dto.ThuongHieuId == Guid.Empty)
+            {
+                ModelState.AddModelError("ThuongHieuId", "Thương hiệu không được để trống");
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -59,6 +75,10 @@ namespace FurryFriends.API.Controllers
             {
                 var created = await _sanPhamService.CreateAsync(dto);
                 return CreatedAtAction(nameof(GetById), new { id = created.SanPhamId }, created);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ModelState);
             }
             catch (Exception ex)
             {
@@ -69,6 +89,22 @@ namespace FurryFriends.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] SanPhamDTO dto)
         {
+            // Manual validation
+            if (string.IsNullOrWhiteSpace(dto.TenSanPham))
+            {
+                ModelState.AddModelError("TenSanPham", "Tên sản phẩm không được để trống");
+            }
+
+            if (dto.TenSanPham?.Length > 255)
+            {
+                ModelState.AddModelError("TenSanPham", "Tên sản phẩm vượt quá giới hạn ký tự cho phép");
+            }
+
+            if (dto.ThuongHieuId == Guid.Empty)
+            {
+                ModelState.AddModelError("ThuongHieuId", "Thương hiệu không được để trống");
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -79,7 +115,11 @@ namespace FurryFriends.API.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ModelState);
             }
             catch (Exception ex)
             {
@@ -97,7 +137,7 @@ namespace FurryFriends.API.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound();
             }
             catch (Exception ex)
             {
