@@ -739,17 +739,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GiamGia"
+                "$ref": "#/components/schemas/GiamGiaDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/GiamGia"
+                "$ref": "#/components/schemas/GiamGiaDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/GiamGia"
+                "$ref": "#/components/schemas/GiamGiaDTO"
               }
             }
           }
@@ -802,17 +802,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GiamGia"
+                "$ref": "#/components/schemas/GiamGiaDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/GiamGia"
+                "$ref": "#/components/schemas/GiamGiaDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/GiamGia"
+                "$ref": "#/components/schemas/GiamGiaDTO"
               }
             }
           }
@@ -845,8 +845,8 @@
         }
       }
     },
-    "/api/GiamGia/{id}/phantram": {
-      "get": {
+    "/api/GiamGia/{id}/assign-sanphamchitiet": {
+      "post": {
         "tags": [
           "GiamGia"
         ],
@@ -861,6 +861,37 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success"
@@ -1056,6 +1087,29 @@
       "get": {
         "tags": [
           "HinhThucThanhToan"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/HinhThucThanhToan/{id}": {
+      "get": {
+        "tags": [
+          "HinhThucThanhToan"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -3321,6 +3375,7 @@
           "ngayCapNhat",
           "ngayTao",
           "phanTramGiamGia",
+          "sanPhamChiTietId",
           "sanPhamId",
           "trangThai"
         ],
@@ -3353,11 +3408,18 @@
             "type": "string",
             "format": "date-time"
           },
+          "sanPhamChiTietId": {
+            "type": "string",
+            "format": "uuid"
+          },
           "giamGia": {
             "$ref": "#/components/schemas/GiamGia"
           },
           "sanPham": {
             "$ref": "#/components/schemas/SanPham"
+          },
+          "sanPhamChiTiet": {
+            "$ref": "#/components/schemas/SanPhamChiTiet"
           }
         },
         "additionalProperties": false
@@ -3412,6 +3474,61 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DotGiamGiaSanPham"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GiamGiaDTO": {
+        "required": [
+          "ngayBatDau",
+          "ngayKetThuc",
+          "phanTramKhuyenMai",
+          "tenGiamGia",
+          "trangThai"
+        ],
+        "type": "object",
+        "properties": {
+          "giamGiaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenGiamGia": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "phanTramKhuyenMai": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number",
+            "format": "double"
+          },
+          "ngayBatDau": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ngayKetThuc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "trangThai": {
+            "type": "boolean"
+          },
+          "ngayTao": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ngayCapNhat": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sanPhamChiTietIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
             },
             "nullable": true
           }
@@ -3604,6 +3721,10 @@
             "type": "string",
             "format": "uuid"
           },
+          "diaChiCuaKhachHang": {
+            "type": "string",
+            "nullable": true
+          },
           "tenCuaKhachHang": {
             "type": "string",
             "nullable": true
@@ -3668,6 +3789,10 @@
             "type": "string",
             "nullable": true
           },
+          "thongTinVoucherLucMua": {
+            "type": "string",
+            "nullable": true
+          },
           "hoaDonChiTiets": {
             "type": "array",
             "items": {
@@ -3681,9 +3806,11 @@
       "HoaDonChiTiet": {
         "required": [
           "gia",
+          "giaLucMua",
           "hoaDonId",
           "sanPhamId",
-          "soLuongSanPham"
+          "soLuongSanPham",
+          "tenSanPhamLucMua"
         ],
         "type": "object",
         "properties": {
@@ -3715,6 +3842,43 @@
           },
           "sanPham": {
             "$ref": "#/components/schemas/SanPham"
+          },
+          "giaLucMua": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double"
+          },
+          "tenSanPhamLucMua": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "moTaSanPhamLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "thuongHieuLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "kichCoLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "mauSacLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "anhSanPhamLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "chatLieuLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "thanhPhanLucMua": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4190,6 +4354,13 @@
               "$ref": "#/components/schemas/GioHangChiTiet"
             },
             "nullable": true
+          },
+          "dotGiamGiaSanPhams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DotGiamGiaSanPham"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4539,6 +4710,15 @@
           "ghiChu": {
             "type": "string",
             "nullable": true
+          },
+          "diaChiId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "diaChiCuaKhachHang": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -4716,6 +4896,12 @@
           "ngayCapNhat": {
             "type": "string",
             "format": "date-time",
+            "nullable": true
+          },
+          "giaTriGiamToiDa": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
             "nullable": true
           }
         },

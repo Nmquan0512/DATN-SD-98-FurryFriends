@@ -128,7 +128,15 @@ namespace FurryFriends.API.Controllers
             }
 
             var tongTien = gioHang.GioHangChiTiets.Sum(ct => ct.ThanhTien);
-            var soTienGiam = tongTien * ((decimal)voucher.PhanTramGiam / 100m);
+            var phanTramGiam = (decimal)voucher.PhanTramGiam / 100m;
+            var soTienGiam = tongTien * phanTramGiam;
+
+            // Áp dụng giới hạn giảm tối đa (nếu có)
+            if (voucher.GiaTriGiamToiDa.HasValue && soTienGiam > voucher.GiaTriGiamToiDa.Value)
+            {
+                soTienGiam = voucher.GiaTriGiamToiDa.Value;
+            }
+
             var tongTienSauGiam = tongTien - soTienGiam;
 
             Console.WriteLine($"Tổng tiền: {tongTien}");

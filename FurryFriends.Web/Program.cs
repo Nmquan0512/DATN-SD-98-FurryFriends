@@ -1,6 +1,7 @@
 ﻿using FurryFriends.Web.Service.IService;
 using FurryFriends.Web.Service;
 using FurryFriends.Web.Services;
+using FurryFriends.Web.Services.IServices;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
@@ -10,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 
 builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
 {

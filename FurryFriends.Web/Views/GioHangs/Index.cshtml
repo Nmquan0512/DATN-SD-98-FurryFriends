@@ -496,18 +496,15 @@
                             <option value="">-- Chọn voucher --</option>
                             @foreach (var voucher in danhSachVouchers)
                             {
-                                if (voucher.VoucherId == selectedVoucherId)
+                                var text = $"{voucher.TenVoucher} ({voucher.PhanTramGiam:0}% giảm";
+                                if (voucher.GiaTriGiamToiDa > 0)
                                 {
-                                    <option value="@voucher.VoucherId" selected>
-                                        @voucher.TenVoucher (@voucher.PhanTramGiam.ToString("0")% giảm)
-                                    </option>
+                                    text += $", tối đa {voucher.GiaTriGiamToiDa:N0}đ";
                                 }
-                                else
-                                {
-                                    <option value="@voucher.VoucherId">
-                                        @voucher.TenVoucher (@voucher.PhanTramGiam.ToString("0")% giảm)
-                                    </option>
-                                }
+                                text += ")";
+
+                                var selected = voucher.VoucherId == selectedVoucherId ? "selected" : "";
+                                @Html.Raw($"<option value='{voucher.VoucherId}' {selected}>{text}</option>")
                             }
                         </select>
                     </div>
@@ -602,6 +599,26 @@
                 <form asp-controller="GioHangs" asp-action="ThanhToan" method="post">
                     <input type="hidden" name="KhachHangId" value="@Context.Session.GetString("KhachHangId")" />
                     <input type="hidden" name="VoucherId" value="@selectedVoucherId" />
+
+                    <div class="md:col-span-3">
+                        <label for="DiaChiId" class="block font-semibold mb-2">
+                            <i class="fas fa-map-marker-alt"></i> Địa chỉ giao hàng:
+                        </label>
+                        @if (ViewBag.DiaChiList is IEnumerable<SelectListItem> diaChiList && diaChiList.Any())
+                        {
+                            <select name="DiaChiId" id="DiaChiId" class="form-select-modern w-full" required>
+                                <option value="">-- Vui lòng chọn địa chỉ --</option>
+                                @foreach (var diaChi in diaChiList)
+                                {
+                                    <option value="@diaChi.Value">@diaChi.Text</option>
+                                }
+                            </select>
+                        }
+                        else
+                        {
+                            <p class="text-danger">Bạn chưa có địa chỉ giao hàng nào. Vui lòng thêm địa chỉ trước khi thanh toán.</p>
+                        }
+                    </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                         <div class="md:col-span-3">

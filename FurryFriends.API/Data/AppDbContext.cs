@@ -13,7 +13,7 @@ namespace FurryFriends.API.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=XCBA2\\SQLEXPRESS;Database=DuanNhom11ModelsBanHang;Trusted_Connection=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Data Source=PHUNGHUYTRUONG\\SQLEXPRESS01;Initial Catalog=ViewGanCuoi;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
             }
         }
 
@@ -169,7 +169,7 @@ namespace FurryFriends.API.Data
                 .HasMany(sp => sp.SanPhamChiTiets)
                 .WithOne(spct => spct.SanPham)
                 .HasForeignKey(spct => spct.SanPhamId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<SanPhamChiTiet>()
                 .Property(spct => spct.Gia)

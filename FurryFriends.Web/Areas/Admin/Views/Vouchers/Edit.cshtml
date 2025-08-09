@@ -77,6 +77,15 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
+                            <label asp-for="GiaTriGiamToiDa" class="form-label fw-semibold">
+                                <i class="fas fa-money-bill-wave me-2 text-primary"></i>Giá trị giảm tối đa (VNĐ)
+                            </label>
+                            <input asp-for="GiaTriGiamToiDa" class="form-control form-control-lg" placeholder="Nhập giá trị giảm tối đa (có thể để trống)" />
+                            <span asp-validation-for="GiaTriGiamToiDa" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
                             <label asp-for="TrangThai" class="form-label fw-semibold">
                                 <i class="fas fa-toggle-on me-2 text-primary"></i>Trạng thái
                             </label>

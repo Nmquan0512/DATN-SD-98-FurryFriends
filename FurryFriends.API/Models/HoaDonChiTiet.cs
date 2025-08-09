@@ -28,5 +28,27 @@ namespace FurryFriends.API.Models
         [ForeignKey("SanPhamId")]
         public virtual SanPham SanPham { get; set; }
 
+        [Required]
+        [Range(0, double.MaxValue, ErrorMessage = "Giá lúc mua không được âm")]
+        public decimal? GiaLucMua { get; set; } //Sửa ở đây (giá sp lúc mua)
+
+        // ✅ Dữ liệu snapshot từ SanPham
+        [Required]
+        public string? TenSanPhamLucMua { get; set; } //Sửa ở đây
+
+        public string? MoTaSanPhamLucMua { get; set; } //Sửa ở đây
+
+        public string? ThuongHieuLucMua { get; set; } //Sửa ở đây
+
+        // ✅ Dữ liệu snapshot từ SanPhamChiTiet
+        public string? KichCoLucMua { get; set; } //Sửa ở đây
+
+        public string? MauSacLucMua { get; set; } //Sửa ở đây
+
+        public string? AnhSanPhamLucMua { get; set; } //Sửa ở đây
+
+        public string? ChatLieuLucMua { get; set; } //Sửa ở đây
+
+        public string? ThanhPhanLucMua { get; set; } //Sửa ở đây
     }
 }

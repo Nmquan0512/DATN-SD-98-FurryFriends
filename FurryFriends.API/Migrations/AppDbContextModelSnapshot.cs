@@ -104,8 +104,8 @@ namespace FurryFriends.API.Migrations
                         {
                             ChucVuId = new Guid("22222222-2222-2222-2222-222222222222"),
                             MoTaChucVu = "Quản trị viên hệ thống",
-                            NgayCapNhat = new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4558),
-                            NgayTao = new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4557),
+                            NgayCapNhat = new DateTime(2025, 8, 9, 13, 45, 45, 896, DateTimeKind.Utc).AddTicks(633),
+                            NgayTao = new DateTime(2025, 8, 9, 13, 45, 45, 896, DateTimeKind.Utc).AddTicks(633),
                             TenChucVu = "admin",
                             TrangThai = true
                         });
@@ -363,6 +363,9 @@ namespace FurryFriends.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("DiaChiCuaKhachHang")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("EmailCuaKhachHang")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -401,6 +404,9 @@ namespace FurryFriends.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ThongTinVoucherLucMua")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("TongTien")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
@@ -436,18 +442,47 @@ namespace FurryFriends.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AnhSanPhamLucMua")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ChatLieuLucMua")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Gia")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal?>("GiaLucMua")
+                        .IsRequired()
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("HoaDonId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("KichCoLucMua")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MauSacLucMua")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MoTaSanPhamLucMua")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("SanPhamId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("SoLuongSanPham")
                         .HasColumnType("int");
+
+                    b.Property<string>("TenSanPhamLucMua")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ThanhPhanLucMua")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ThuongHieuLucMua")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("HoaDonChiTietId");
 
@@ -616,9 +651,9 @@ namespace FurryFriends.API.Migrations
                             Email = "admin@furryfriends.local",
                             GioiTinh = "Nam",
                             HoVaTen = "Admin hệ thống",
-                            NgayCapNhat = new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4603),
+                            NgayCapNhat = new DateTime(2025, 8, 9, 13, 45, 45, 896, DateTimeKind.Utc).AddTicks(652),
                             NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayTao = new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4602),
+                            NgayTao = new DateTime(2025, 8, 9, 13, 45, 45, 896, DateTimeKind.Utc).AddTicks(652),
                             SDT = "0123456789",
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
                             TrangThai = true
@@ -733,7 +768,7 @@ namespace FurryFriends.API.Migrations
                         new
                         {
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            NgayTaoTaiKhoan = new DateTime(2025, 8, 2, 17, 26, 49, 605, DateTimeKind.Utc).AddTicks(4512),
+                            NgayTaoTaiKhoan = new DateTime(2025, 8, 9, 13, 45, 45, 896, DateTimeKind.Utc).AddTicks(615),
                             Password = "123456",
                             TrangThai = true,
                             UserName = "admin"
@@ -832,6 +867,9 @@ namespace FurryFriends.API.Migrations
                     b.Property<Guid>("VoucherId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal?>("GiaTriGiamToiDa")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("NgayBatDau")
                         .HasColumnType("datetime2");
@@ -1147,7 +1185,7 @@ namespace FurryFriends.API.Migrations
                     b.HasOne("FurryFriends.API.Models.SanPham", "SanPham")
                         .WithMany("SanPhamChiTiets")
                         .HasForeignKey("SanPhamId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Anh");

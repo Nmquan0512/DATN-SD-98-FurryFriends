@@ -1,7 +1,10 @@
 ﻿using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO;
+using FurryFriends.API.Models.VNPay;
+using FurryFriends.Web.Service.IService;
 using FurryFriends.Web.Services;
 using FurryFriends.Web.Services.IService;
+using FurryFriends.Web.Services.IServices;
 using FurryFriends.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,10 +13,12 @@ namespace FurryFriends.Web.Controllers
 {
     public class GioHangsController : Controller
     {
+        private readonly IVnPayService _vnPayService;
         private readonly IGioHangService _gioHangService;
         private readonly IVoucherService _voucherService;
         private readonly IKhachHangService _khachHangService;
         private readonly IHinhThucThanhToanService _hinhThucThanhToanService;
+        private readonly IDiaChiKhachHangService _diaChiKhachHangService;
         private Guid GetKhachHangId()
         {
             var sessionValue = HttpContext.Session.GetString("KhachHangId"); // ✅ Sửa tại đây
@@ -27,12 +32,14 @@ namespace FurryFriends.Web.Controllers
         }
 
 
-        public GioHangsController(IGioHangService gioHangService, IVoucherService voucherService, IKhachHangService khachHangService, IHinhThucThanhToanService hinhThucThanhToanService)
+        public GioHangsController(IGioHangService gioHangService, IVoucherService voucherService, IKhachHangService khachHangService, IHinhThucThanhToanService hinhThucThanhToanService, IDiaChiKhachHangService diaChiKhachHangService, IVnPayService vnPayService)
         {
             _gioHangService = gioHangService;
             _voucherService = voucherService;
             _khachHangService = khachHangService;
             _hinhThucThanhToanService = hinhThucThanhToanService;
+            _diaChiKhachHangService = diaChiKhachHangService;
+            _vnPayService = vnPayService;
         }
 
         public async Task<IActionResult> Index(Guid? voucherId = null)
@@ -48,6 +55,16 @@ namespace FurryFriends.Web.Controllers
                 ViewBag.TienSauGiam = await _gioHangService.TinhTongTienSauVoucher(khachHangId, voucherId.Value);
             }
             ViewBag.HinhThucThanhToanList = await _hinhThucThanhToanService.GetAllAsync();
+            var diaChiList = await _diaChiKhachHangService.GetByKhachHangIdAsync(khachHangId);
+            var diaChiSelectList = diaChiList.Select(d => new SelectListItem
+            {
+                Value = d.DiaChiId.ToString(),
+                Text = $"{d.ThanhPho} - {d.PhuongXa} - {d.MoTa} - {d.TenDiaChi}"
+            }).ToList();
+
+            ViewBag.DiaChiList = diaChiSelectList;
+
+
             return View(gioHang);
         }
 
@@ -101,6 +118,16 @@ namespace FurryFriends.Web.Controllers
             var hinhThucThanhToans = await _hinhThucThanhToanService.GetAllAsync();
             ViewBag.HinhThucThanhToanList = new SelectList(hinhThucThanhToans, "HinhThucThanhToanId", "TenHinhThuc");
 
+            var diaChiList = await _diaChiKhachHangService.GetByKhachHangIdAsync(khachHangId);
+            var diaChiSelectList = diaChiList.Select(d => new SelectListItem
+            {
+                Value = d.DiaChiId.ToString(),
+                Text = $"{d.ThanhPho} - {d.PhuongXa} - {d.MoTa} - {d.TenDiaChi}"
+            }).ToList();
+
+            ViewBag.DiaChiList = diaChiSelectList;
+
+
             // Gửi DTO rỗng ban đầu để bind vào form
             var model = new ThanhToanDTO
             {
@@ -124,8 +151,28 @@ namespace FurryFriends.Web.Controllers
             // Validate
             if (dto.HinhThucThanhToanId == Guid.Empty)
             {
-                ViewBag.HinhThucThanhToanList = await _hinhThucThanhToanService.GetAllAsync();
                 ModelState.AddModelError("HinhThucThanhToanId", "Vui lòng chọn hình thức thanh toán.");
+            }
+
+            // Validate địa chỉ
+            if (!dto.DiaChiId.HasValue || dto.DiaChiId == Guid.Empty)
+            {
+                ModelState.AddModelError("DiaChiId", "Vui lòng chọn địa chỉ giao hàng.");
+            }
+
+            // Nếu có lỗi thì load lại ViewBag và return View
+            if (!ModelState.IsValid)
+            {
+                ViewBag.HinhThucThanhToanList = new SelectList(await _hinhThucThanhToanService.GetAllAsync(), "HinhThucThanhToanId", "TenHinhThuc");
+                var diaChiList = await _diaChiKhachHangService.GetByKhachHangIdAsync(dto.KhachHangId);
+                var diaChiSelectList = diaChiList.Select(d => new SelectListItem
+                {
+                    Value = d.DiaChiId.ToString(),
+                    Text = $"{d.ThanhPho} - {d.PhuongXa} - {d.MoTa} - {d.TenDiaChi}"
+                }).ToList();
+
+                ViewBag.DiaChiList = diaChiSelectList;
+
                 return View(dto);
             }
 
@@ -151,10 +198,78 @@ namespace FurryFriends.Web.Controllers
             dto.GhiChu = "Hóa đơn Online";
             dto.NhanVienId = null; // hoặc gán nhân viên nếu có logic khác
 
+            var hinhThuc = await _hinhThucThanhToanService.GetByIdAsync(dto.HinhThucThanhToanId);
+            if (hinhThuc != null && hinhThuc.TenHinhThuc.Equals("Chuyển khoản ngân hàng", StringComparison.OrdinalIgnoreCase))
+            {
+                // Lấy tổng tiền từ giỏ hàng
+                var gioHang = await _gioHangService.GetGioHangAsync(dto.KhachHangId);
+                decimal tongTien = 0;
+                if (dto.VoucherId.HasValue && dto.VoucherId != Guid.Empty)
+                {
+                    tongTien = await _gioHangService.TinhTongTienSauVoucher(dto.KhachHangId, dto.VoucherId.Value);
+                }
+                else
+                {
+                    tongTien = gioHang.GioHangChiTiets.Sum(x => x.ThanhTien);
+                }
+
+
+
+                // Lưu tạm DTO vào Session để callback xử lý
+                HttpContext.Session.SetString("ThanhToanDTO", System.Text.Json.JsonSerializer.Serialize(dto));
+
+                var paymentModel = new PaymentInformationModel
+                {
+                    Amount = (double)tongTien,
+                    OrderDescription = $"Thanh toán đơn hàng cho {dto.TenCuaKhachHang}",
+                    Name = dto.TenCuaKhachHang
+                };
+
+                var url = _vnPayService.CreatePaymentUrl(paymentModel, HttpContext);
+                return Redirect(url);
+            }
+
             var result = await _gioHangService.ThanhToanAsync(dto);
             return View("KetQuaThanhToan", (ThanhToanResultViewModel)result);
         }
 
+        public IActionResult CreatePaymentUrlVnpay(PaymentInformationModel model)
+        {
+            var url = _vnPayService.CreatePaymentUrl(model, HttpContext);
+
+            return Redirect(url);
+        }
+        //[HttpGet]
+        //public IActionResult PaymentCallbackVnpay()
+        //{
+        //    var response = _vnPayService.PaymentExecute(Request.Query);
+
+        //    return Json(response);
+        //}
+
+        [HttpGet]
+        public async Task<IActionResult> PaymentCallbackVnpay()
+        {
+            var response = _vnPayService.PaymentExecute(Request.Query);
+
+            if (response.Success)
+            {
+                // Lấy lại DTO từ Session
+                var dtoJson = HttpContext.Session.GetString("ThanhToanDTO");
+                if (!string.IsNullOrEmpty(dtoJson))
+                {
+                    var dto = System.Text.Json.JsonSerializer.Deserialize<ThanhToanDTO>(dtoJson);
+                    if (dto != null)
+                    {
+                        var result = await _gioHangService.ThanhToanAsync(dto);
+                        HttpContext.Session.Remove("ThanhToanDTO"); // Xóa sau khi xử lý
+                        return View("KetQuaThanhToan", (ThanhToanResultViewModel)result);
+                    }
+                }
+            }
+
+            return View("ThanhToanThatBai", response);
+        }
 
     }
 

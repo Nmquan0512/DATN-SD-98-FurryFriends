@@ -34,6 +34,10 @@ namespace FurryFriends.API.Models
 
             public DateTime? NgayCapNhat { get; set; }
 
+            [Range(0, double.MaxValue, ErrorMessage = "Giá trị giảm tối đa phải lớn hơn hoặc bằng 0.")]
+            public decimal? GiaTriGiamToiDa { get; set; } // nullable để có thể không giới hạn
+
+
             [JsonIgnore]
             public virtual ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
 

@@ -199,6 +199,13 @@ namespace FurryFriends.API.Repository
                 if (voucher != null)
                 {
                     soTienGiam = tongTienGoc * (voucher.PhanTramGiam / 100m);
+
+                    // Giới hạn mức giảm nếu có
+                    if (voucher.GiaTriGiamToiDa.HasValue && soTienGiam > voucher.GiaTriGiamToiDa.Value)
+                    {
+                        soTienGiam = voucher.GiaTriGiamToiDa.Value;
+                    }
+
                     tongThanhToan -= soTienGiam ?? 0;
                     voucher.SoLuong -= 1;
                 }
@@ -218,6 +225,16 @@ namespace FurryFriends.API.Repository
 
             var hoaDonId = Guid.NewGuid();
 
+            var diaChi = await _context.DiaChiKhachHangs
+                .FirstOrDefaultAsync(d => d.DiaChiId == dto.DiaChiId && d.KhachHangId == dto.KhachHangId);
+
+            if (diaChi == null)
+            {
+                return new { Success = false, Message = "Địa chỉ không tồn tại." };
+            }
+
+            var diaChiDayDu = $"{diaChi.ThanhPho} - {diaChi.PhuongXa} - {diaChi.MoTa} - {diaChi.TenDiaChi}";
+
             var hoaDon = new HoaDon
             {
                 HoaDonId = hoaDonId,
@@ -226,25 +243,77 @@ namespace FurryFriends.API.Repository
                 NhanVienId = dto.NhanVienId,
                 HinhThucThanhToanId = dto.HinhThucThanhToanId,
                 NgayTao = DateTime.UtcNow,
-                TongTien = tongThanhToan,
+                TongTien = tongTienGoc,
+                TongTienSauKhiGiam = tongThanhToan,
                 VoucherId = dto.VoucherId,
                 TrangThai = 1,
                 TenCuaKhachHang = dto.TenCuaKhachHang,
                 SdtCuaKhachHang = dto.SdtCuaKhachHang,
                 EmailCuaKhachHang = dto.EmailCuaKhachHang,
                 LoaiHoaDon = dto.LoaiHoaDon,
-                GhiChu = dto.GhiChu
+                GhiChu = dto.GhiChu,
+                DiaChiCuaKhachHang = diaChiDayDu // 👉 GÁN ĐỊA CHỈ Ở ĐÂY
             };
 
+
             // ✅ Gán chi tiết hóa đơn sau khi đã có biến `hoaDonId`
-            hoaDon.HoaDonChiTiets = gioHang.GioHangChiTiets.Select(ct => new HoaDonChiTiet
+            hoaDon.HoaDonChiTiets = new List<HoaDonChiTiet>();
+
+            foreach (var ct in gioHang.GioHangChiTiets)
             {
-                HoaDonChiTietId = Guid.NewGuid(),
-                HoaDonId = hoaDonId,
-                SanPhamId = ct.SanPhamId,
-                SoLuongSanPham = ct.SoLuong,
-                Gia = ct.DonGia
-            }).ToList();
+                var spct = await _context.SanPhamChiTiets
+                    .Include(sp => sp.SanPham)
+                        .ThenInclude(sp => sp.ThuongHieu)
+                    .Include(sp => sp.SanPham)
+                        .ThenInclude(sp => sp.SanPhamChatLieus)
+                            .ThenInclude(cl => cl.ChatLieu)
+                    .Include(sp => sp.SanPham)
+                        .ThenInclude(sp => sp.SanPhamThanhPhans)
+                            .ThenInclude(tp => tp.ThanhPhan)
+                    .Include(sp => sp.MauSac)
+                    .Include(sp => sp.KichCo)
+                    .Include(sp => sp.Anh)
+                    .FirstOrDefaultAsync(sp => sp.SanPhamChiTietId == ct.SanPhamChiTietId);
+
+                if (spct == null) continue;
+
+                var sp = spct.SanPham;
+
+                var chiTietHoaDon = new HoaDonChiTiet
+                {
+                    HoaDonChiTietId = Guid.NewGuid(),
+                    HoaDonId = hoaDonId,
+                    SanPhamId = ct.SanPhamId,
+                    SoLuongSanPham = ct.SoLuong,
+                    Gia = ct.DonGia,
+                    GiaLucMua = ct.DonGia,
+
+                    TenSanPhamLucMua = sp?.TenSanPham ?? "Không rõ",
+                    MoTaSanPhamLucMua = null, // Bỏ hoặc thêm property MoTa vào SanPham nếu cần
+                    ThuongHieuLucMua = sp?.ThuongHieu?.TenThuongHieu,
+                    ChatLieuLucMua = sp?.SanPhamChatLieus != null
+                        ? string.Join(", ", sp.SanPhamChatLieus.Select(cl => cl.ChatLieu.TenChatLieu))
+                        : null,
+                    ThanhPhanLucMua = sp?.SanPhamThanhPhans != null
+                        ? string.Join(", ", sp.SanPhamThanhPhans.Select(tp => tp.ThanhPhan.TenThanhPhan))
+                        : null,
+
+                    KichCoLucMua = spct.KichCo?.TenKichCo,
+                    MauSacLucMua = spct.MauSac?.TenMau,
+                    AnhSanPhamLucMua = spct.Anh?.DuongDan
+                };
+
+                hoaDon.HoaDonChiTiets.Add(chiTietHoaDon);
+            }
+
+            //hoaDon.HoaDonChiTiets = gioHang.GioHangChiTiets.Select(ct => new HoaDonChiTiet
+            //{
+            //    HoaDonChiTietId = Guid.NewGuid(),
+            //    HoaDonId = hoaDonId,
+            //    SanPhamId = ct.SanPhamId,
+            //    SoLuongSanPham = ct.SoLuong,
+            //    Gia = ct.DonGia
+            //}).ToList();
 
             await _context.HoaDons.AddAsync(hoaDon);
 
@@ -270,16 +339,39 @@ namespace FurryFriends.API.Repository
             Console.WriteLine($"HinhThucThanhToanId: {dto.HinhThucThanhToanId}");
             Console.WriteLine($"[LOG] ✅ Hóa đơn tạo: Id = {hoaDon.HoaDonId}, Tổng tiền = {hoaDon.TongTien}");
 
+            var hinhThuc = await _context.HinhThucThanhToans
+                .Where(ht => ht.HinhThucThanhToanId == dto.HinhThucThanhToanId)
+                .Select(ht => ht.TenHinhThuc)
+                .FirstOrDefaultAsync();
 
-            return new
+
+            return new ThanhToanResultDTO
             {
-                Success = true,
-                Message = "Thanh toán thành công.",
-                HoaDonId = hoaDon.HoaDonId,
-                TongTien = tongThanhToan,       // ✅ Trả về tiền thực tế sau giảm
-                GiamGia = soTienGiam,
-                TongTienGoc = tongTienGoc       // ✅ Trả về tiền gốc để tiện hiển thị nếu cần
+                HoaDonId = hoaDonId,
+                TenCuaKhachHang = dto.TenCuaKhachHang,
+                SdtCuaKhachHang = dto.SdtCuaKhachHang,
+                EmailCuaKhachHang = dto.EmailCuaKhachHang,
+                DiaChiCuaKhachHang = diaChiDayDu,
+                NgayTao = hoaDon.NgayTao,
+                HinhThucThanhToan = hinhThuc,// lấy từ lookup nào đó,
+                GhiChu = dto.GhiChu,
+                TongTien = tongTienGoc,
+                TongTienSauKhiGiam = tongThanhToan,
+                ChiTietSanPham = hoaDon.HoaDonChiTiets.Select(ct => new HoaDonChiTietOutputDTO
+                {
+                    TenSanPhamLucMua = ct.TenSanPhamLucMua,
+                    MoTaSanPhamLucMua = ct.MoTaSanPhamLucMua,
+                    ThuongHieuLucMua = ct.ThuongHieuLucMua,
+                    KichCoLucMua = ct.KichCoLucMua,
+                    MauSacLucMua = ct.MauSacLucMua,
+                    ChatLieuLucMua = ct.ChatLieuLucMua,
+                    ThanhPhanLucMua = ct.ThanhPhanLucMua,
+                    AnhSanPhamLucMua = ct.AnhSanPhamLucMua,
+                    SoLuong = ct.SoLuongSanPham,
+                    GiaLucMua = ct.GiaLucMua
+                }).ToList()
             };
+
         }
 
 

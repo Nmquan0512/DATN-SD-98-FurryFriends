@@ -19,6 +19,14 @@ namespace FurryFriends.Web.Services
 
             return await response.Content.ReadFromJsonAsync<IEnumerable<HinhThucThanhToan>>();
         }
+
+        public async Task<HinhThucThanhToan> GetByIdAsync(Guid id)
+        {
+            var response = await _httpClient.GetAsync($"https://localhost:7289/api/HinhThucThanhToan/{id}");
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<HinhThucThanhToan>();
+        }
     }
 
 }

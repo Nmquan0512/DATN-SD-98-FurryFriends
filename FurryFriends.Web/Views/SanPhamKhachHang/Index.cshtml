@@ -458,81 +458,86 @@
                             </div>
 
                             <!-- Modal -->
-                            <div class="modal fade modal-modern" id="addToCartModal-@item.SanPhamId" tabindex="-1">
-                                <div class="modal-dialog modal-dialog-centered modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">
-                                                <i class="bi bi-cart-plus"></i> Thêm "@item.TenSanPham" vào giỏ hàng
-                                            </h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <form asp-controller="GioHangs" asp-action="AddToCart" method="post">
-                                            <div class="modal-body">
-                                                <input type="hidden" name="SanPhamId" value="@item.SanPhamId" />
-
-                                                <div class="mb-4">
-                                                    <h6 class="fw-semibold mb-3">
-                                                        <i class="bi bi-list-check"></i> Chọn phân loại sản phẩm:
-                                                    </h6>
-                                                    @foreach (var chiTiet in item.ChiTietList.Where(c => c.SoLuongTon > 0))
-                                                    {
-                                                        <div class="product-variant">
-                                                            <input type="radio" 
-                                                                   name="SanPhamChiTietId" 
-                                                                   value="@chiTiet.SanPhamChiTietId" 
-                                                                   id="ct-@chiTiet.SanPhamChiTietId" 
-                                                                   required />
-                                                            <label for="ct-@chiTiet.SanPhamChiTietId" class="w-100 mb-0">
-                                                                <div class="row align-items-center">
-                                                                    <div class="col-md-4">
-                                                                        <strong>Màu: @chiTiet.MauSac</strong>
-                                                                    </div>
-                                                                    <div class="col-md-3">
-                                                                        <strong>Size: @chiTiet.KichCo</strong>
-                                                                    </div>
-                                                                    <div class="col-md-3">
-                                                                        <span class="text-success fw-bold">@chiTiet.GiaBan.ToString("N0")đ</span>
-                                                                    </div>
-                                                                    <div class="col-md-2">
-                                                                        <span class="badge bg-info">Còn @chiTiet.SoLuongTon</span>
-                                                                    </div>
-                                                                </div>
-                                                            </label>
-                                                        </div>
-                                                    }
-                                                </div>
-
-                                                <div class="mb-3">
-                                                    <label for="SoLuong-@item.SanPhamId" class="form-label fw-semibold">
-                                                        <i class="bi bi-hash"></i> Số lượng:
-                                                    </label>
-                                                    <input type="number" 
-                                                           name="SoLuong" 
-                                                           id="SoLuong-@item.SanPhamId"
-                                                           class="form-control quantity-input" 
-                                                           value="1" 
-                                                           min="1" 
-                                                           required />
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-modern btn-secondary" data-bs-dismiss="modal">
-                                                    <i class="bi bi-x-circle"></i> Hủy
-                                                </button>
-                                                <button type="submit" class="btn btn-modern btn-success-modern">
-                                                    <i class="bi bi-cart-check"></i> Thêm vào giỏ
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+                            
                         </div>
                     }
                 </div>
-            }
-        </div>
+                @foreach (var item in Model)
+                {
+                    <div class="modal fade modal-modern" id="addToCartModal-@item.SanPhamId" tabindex="-1" data-bs-backdrop="false"
+                         data-bs-keyboard="false">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">
+                                        <i class="bi bi-cart-plus"></i> Thêm "@item.TenSanPham" vào giỏ hàng
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <form asp-controller="GioHangs" asp-action="AddToCart" method="post">
+                                    <div class="modal-body">
+                                        <input type="hidden" name="SanPhamId" value="@item.SanPhamId" />
+
+                                        <div class="mb-4">
+                                            <h6 class="fw-semibold mb-3">
+                                                <i class="bi bi-list-check"></i> Chọn phân loại sản phẩm:
+                                            </h6>
+                                            @foreach (var chiTiet in item.ChiTietList.Where(c => c.SoLuongTon > 0))
+                                            {
+                                                <div class="product-variant">
+                                                    <input type="radio"
+                                                           name="SanPhamChiTietId"
+                                                           value="@chiTiet.SanPhamChiTietId"
+                                                           id="ct-@chiTiet.SanPhamChiTietId"
+                                                           required />
+                                                    <label for="ct-@chiTiet.SanPhamChiTietId" class="w-100 mb-0">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-md-4">
+                                                                <strong>Màu: @chiTiet.MauSac</strong>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <strong>Size: @chiTiet.KichCo</strong>
+                                                            </div>
+                                                            <div class="col-md-3">
+                                                                <span class="text-success fw-bold">@chiTiet.GiaBan.ToString("N0")đ</span>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <span class="badge bg-info">Còn @chiTiet.SoLuongTon</span>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="SoLuong-@item.SanPhamId" class="form-label fw-semibold">
+                                                <i class="bi bi-hash"></i> Số lượng:
+                                            </label>
+                                            <input type="number"
+                                                   name="SoLuong"
+                                                   id="SoLuong-@item.SanPhamId"
+                                                   class="form-control quantity-input"
+                                                   value="1"
+                                                   min="1"
+                                                   required />
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-modern btn-secondary" data-bs-dismiss="modal">
+                                            <i class="bi bi-x-circle"></i> Hủy
+                                        </button>
+                                        <button type="submit" class="btn btn-modern btn-success-modern">
+                                            <i class="bi bi-cart-check"></i> Thêm vào giỏ
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+                }
+                </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

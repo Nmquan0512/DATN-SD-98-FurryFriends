@@ -18,6 +18,7 @@ namespace FurryFriends.API.Models
 
         [Required]
         public Guid HinhThucThanhToanId { get; set; }
+        public string? DiaChiCuaKhachHang { get; set; } //sửa ở đây (thêm cái này để lưu địa chỉ khách hàng)
 
         //[Required(ErrorMessage = "Tên khách hàng không được để trống")]
         //[StringLength(100, ErrorMessage = "Tên khách hàng tối đa 100 ký tự")]
@@ -63,6 +64,7 @@ namespace FurryFriends.API.Models
         public virtual NhanVien? NhanVien { get; set; } //thêm dấu ? vào đây  (sửa ở đây)
 
         public string LoaiHoaDon { get; set; } // Loại hóa đơn (ví dụ: "BanTaiQuay", ...)
+        public string? ThongTinVoucherLucMua { get; set; } //sửa ở đây (cái này để lưu thông tin voucher khi mua hàng)
 
         public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }
 

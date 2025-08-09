@@ -20,5 +20,16 @@ namespace FurryFriends.API.Controllers
             var list = await _repository.GetAllAsync();
             return Ok(list);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var hinhThuc = await _repository.GetByIdAsync(id);
+            if (hinhThuc == null)
+                return NotFound();
+
+            return Ok(hinhThuc);
+        }
+
     }
 }

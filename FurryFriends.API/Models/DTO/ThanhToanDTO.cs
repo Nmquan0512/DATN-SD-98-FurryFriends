@@ -14,5 +14,8 @@
 
         public string? LoaiHoaDon { get; set; }
         public string? GhiChu { get; set; }
+
+        public Guid? DiaChiId { get; set; }
+        public string? DiaChiCuaKhachHang { get; set; }
     }
 }
