@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FurryFriends.API.Migrations
 {
     /// <inheritdoc />
-    public partial class db12 : Migration
+    public partial class ab : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -564,17 +564,17 @@ namespace FurryFriends.API.Migrations
             migrationBuilder.InsertData(
                 table: "ChucVus",
                 columns: new[] { "ChucVuId", "MoTaChucVu", "NgayCapNhat", "NgayTao", "TenChucVu", "TrangThai" },
-                values: new object[] { new Guid("22222222-2222-2222-2222-222222222222"), "Quản trị viên hệ thống", new DateTime(2025, 8, 7, 8, 0, 34, 304, DateTimeKind.Utc).AddTicks(1532), new DateTime(2025, 8, 7, 8, 0, 34, 304, DateTimeKind.Utc).AddTicks(1531), "admin", true });
+                values: new object[] { new Guid("22222222-2222-2222-2222-222222222222"), "Quản trị viên hệ thống", new DateTime(2025, 8, 9, 10, 22, 12, 215, DateTimeKind.Utc).AddTicks(5314), new DateTime(2025, 8, 9, 10, 22, 12, 215, DateTimeKind.Utc).AddTicks(5314), "admin", true });
 
             migrationBuilder.InsertData(
                 table: "TaiKhoans",
                 columns: new[] { "TaiKhoanId", "KhachHangId", "NgayCapNhatCuoiCung", "NgayTaoTaiKhoan", "Password", "TrangThai", "UserName" },
-                values: new object[] { new Guid("11111111-1111-1111-1111-111111111111"), null, null, new DateTime(2025, 8, 7, 8, 0, 34, 304, DateTimeKind.Utc).AddTicks(1329), "123456", true, "admin" });
+                values: new object[] { new Guid("11111111-1111-1111-1111-111111111111"), null, null, new DateTime(2025, 8, 9, 10, 22, 12, 215, DateTimeKind.Utc).AddTicks(5099), "123456", true, "admin" });
 
             migrationBuilder.InsertData(
                 table: "NhanViens",
                 columns: new[] { "NhanVienId", "ChucVuId", "DiaChi", "Email", "GioiTinh", "HoVaTen", "NgayCapNhat", "NgaySinh", "NgayTao", "SDT", "TaiKhoanId", "TrangThai" },
-                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), new Guid("22222222-2222-2222-2222-222222222222"), "Hà Nội", "admin@furryfriends.local", "Nam", "Admin hệ thống", new DateTime(2025, 8, 7, 8, 0, 34, 304, DateTimeKind.Utc).AddTicks(1581), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 8, 7, 8, 0, 34, 304, DateTimeKind.Utc).AddTicks(1581), "0123456789", new Guid("11111111-1111-1111-1111-111111111111"), true });
+                values: new object[] { new Guid("33333333-3333-3333-3333-333333333333"), new Guid("22222222-2222-2222-2222-222222222222"), "Hà Nội", "admin@furryfriends.local", "Nam", "Admin hệ thống", new DateTime(2025, 8, 9, 10, 22, 12, 215, DateTimeKind.Utc).AddTicks(5365), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 8, 9, 10, 22, 12, 215, DateTimeKind.Utc).AddTicks(5364), "0123456789", new Guid("11111111-1111-1111-1111-111111111111"), true });
 
             migrationBuilder.CreateIndex(
                 name: "IX_DiaChiKhachHangs_KhachHangId",

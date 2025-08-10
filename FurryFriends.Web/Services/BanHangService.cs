@@ -1,19 +1,16 @@
 ﻿using FurryFriends.API.Models.DTO.BanHang;
 using FurryFriends.API.Models.DTO.BanHang.Requests;
 using FurryFriends.Web.Services.IService;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
-using System.Threading.Tasks;
 
 namespace FurryFriends.Web.Services
 {
     public class BanHangService : IBanHangService
     {
         private readonly HttpClient _httpClient;
-        private const string BasePath = "api/ban-hang";
+        // ĐẢM BẢO ĐƯỜNG DẪN NÀY KHỚP VỚI [Route] CỦA API CONTROLLER
+        private const string BasePath = "api/BanHang";
 
         public BanHangService(HttpClient httpClient)
         {
@@ -23,12 +20,14 @@ namespace FurryFriends.Web.Services
         #region Hóa Đơn
         public async Task<IEnumerable<HoaDonBanHangDto>> GetAllHoaDonsAsync()
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<HoaDonBanHangDto>>($"{BasePath}/hoa-don");
+            var response = await _httpClient.GetAsync($"{BasePath}/hoa-don");
+            return await ProcessResponse<IEnumerable<HoaDonBanHangDto>>(response);
         }
 
         public async Task<HoaDonBanHangDto> GetHoaDonByIdAsync(Guid hoaDonId)
         {
-            return await _httpClient.GetFromJsonAsync<HoaDonBanHangDto>($"{BasePath}/hoa-don/{hoaDonId}");
+            var response = await _httpClient.GetAsync($"{BasePath}/hoa-don/{hoaDonId}");
+            return await ProcessResponse<HoaDonBanHangDto>(response);
         }
 
         public async Task<HoaDonBanHangDto> TaoHoaDonAsync(TaoHoaDonRequest request)
@@ -95,17 +94,20 @@ namespace FurryFriends.Web.Services
         #region Tìm kiếm
         public async Task<IEnumerable<SanPhamBanHangDto>> TimKiemSanPhamAsync(string keyword)
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<SanPhamBanHangDto>>($"{BasePath}/tim-kiem/san-pham?keyword={Uri.EscapeDataString(keyword ?? "")}");
+            var response = await _httpClient.GetAsync($"{BasePath}/tim-kiem/san-pham?keyword={Uri.EscapeDataString(keyword ?? "")}");
+            return await ProcessResponse<IEnumerable<SanPhamBanHangDto>>(response);
         }
 
         public async Task<IEnumerable<KhachHangDto>> TimKiemKhachHangAsync(string keyword)
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<KhachHangDto>>($"{BasePath}/tim-kiem/khach-hang?keyword={Uri.EscapeDataString(keyword ?? "")}");
+            var response = await _httpClient.GetAsync($"{BasePath}/tim-kiem/khach-hang?keyword={Uri.EscapeDataString(keyword ?? "")}");
+            return await ProcessResponse<IEnumerable<KhachHangDto>>(response);
         }
 
         public async Task<IEnumerable<VoucherDto>> TimKiemVoucherHopLeAsync(Guid hoaDonId)
         {
-            return await _httpClient.GetFromJsonAsync<IEnumerable<VoucherDto>>($"{BasePath}/hoa-don/{hoaDonId}/vouchers-hop-le");
+            var response = await _httpClient.GetAsync($"{BasePath}/hoa-don/{hoaDonId}/vouchers-hop-le");
+            return await ProcessResponse<IEnumerable<VoucherDto>>(response);
         }
         #endregion
 
@@ -117,17 +119,48 @@ namespace FurryFriends.Web.Services
         }
         #endregion
 
-        #region Helper Methods
-        private async Task<T> ProcessResponse<T>(HttpResponseMessage response, System.Net.HttpStatusCode expectedStatusCode = System.Net.HttpStatusCode.OK)
+        #region Helper Method để xử lý Response
+        /// <summary>
+        /// Xử lý phản hồi từ API. Nếu thành công, deserialize nội dung. Nếu thất bại, ném ra ApiException.
+        /// </summary>
+        private async Task<T> ProcessResponse<T>(HttpResponseMessage response, HttpStatusCode expectedStatusCode = HttpStatusCode.OK)
         {
             if (response.StatusCode == expectedStatusCode)
+            {
+                if (response.StatusCode == HttpStatusCode.NoContent || response.Content.Headers.ContentLength == 0)
+                {
+                    return default; // Trả về giá trị mặc định (null) nếu không có nội dung
+                }
+                return await response.Content.ReadFromJsonAsync<T>();
+            }
+
+            // Xử lý các trường hợp thành công khác (ví dụ: GET trả về OK)
+            if (response.IsSuccessStatusCode && response.StatusCode != expectedStatusCode)
             {
                 if (response.Content.Headers.ContentLength == 0) return default;
                 return await response.Content.ReadFromJsonAsync<T>();
             }
 
-            var errorMessage = await response.Content.ReadAsStringAsync();
-            throw new HttpRequestException($"API request failed with status {response.StatusCode}. Message: {errorMessage}");
+            // Xử lý lỗi
+            var errorContent = await response.Content.ReadAsStringAsync();
+            var errorMessage = errorContent;
+
+            // Cố gắng parse message từ cấu trúc JSON { "message": "Lỗi ở đây" } hoặc chỉ là một chuỗi "Lỗi ở đây"
+            try
+            {
+                var errorObject = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(errorContent);
+                if (errorObject != null && errorObject.TryGetValue("message", out var msg))
+                {
+                    errorMessage = msg;
+                }
+            }
+            catch
+            {
+                // Nếu không parse được, thì lỗi là một chuỗi đơn giản
+                errorMessage = errorContent.Trim('"');
+            }
+
+            throw new ApiException(errorMessage, response.StatusCode, errorContent);
         }
         #endregion
     }

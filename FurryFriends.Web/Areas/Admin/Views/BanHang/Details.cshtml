@@ -1,91 +1,61 @@
 ﻿@model FurryFriends.API.Models.DTO.BanHang.HoaDonBanHangDto
 @{
-    ViewData["Title"] = $"Hóa đơn - {Model.MaHoaDon}";
-    bool isEditable = Model.TrangThai == "Chưa thanh toán";
+    ViewData["Title"] = $"Hóa đơn tại quầy - {Model.MaHoaDon}";
+    bool isEditable = Model.TrangThai == "Chua Thanh Toan";
+    // Giả sử Controller đã cung cấp danh sách này qua ViewBag
+    var hinhThucThanhToanList = ViewBag.HinhThucThanhToanList as IEnumerable<FurryFriends.API.Models.DTO.BanHang.HinhThucThanhToanDto> ?? new List<FurryFriends.API.Models.DTO.BanHang.HinhThucThanhToanDto>();
 }
 
+<!-- Thư viện Toastr để hiển thị thông báo -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
 <div class="container-fluid pt-4">
+    <!-- Cần AntiForgeryToken để các lệnh gọi AJAX POST/PUT/DELETE sử dụng -->
+    @Html.AntiForgeryToken()
+
     <div class="row">
         <!-- CỘT CHÍNH (SẢN PHẨM & CHI TIẾT) -->
         <div class="col-lg-8">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h4 class="m-0 font-weight-bold text-primary">Chi Tiết Hóa Đơn - @Model.MaHoaDon</h4>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="m-0 font-weight-bold text-primary"><i class="fas fa-receipt me-2"></i>Chi Tiết Hóa Đơn - @Model.MaHoaDon</h5>
+                    <a asp-action="Index" class="btn btn-sm btn-outline-secondary"><i class="fas fa-arrow-left me-1"></i> Quay lại danh sách</a>
                 </div>
-                <div class="card-body">
+                <div class="card-body" id="invoiceDetailsContainer">
                     <!-- Khu vực tìm kiếm và thêm sản phẩm -->
                     @if (isEditable)
                     {
-                        <div class="mb-3">
-                            <label class="form-label">Tìm kiếm sản phẩm (Tên, Mã)</label>
-                            <input type="text" id="productSearchInput" class="form-control" placeholder="Quét mã vạch hoặc nhập tên sản phẩm..." />
-                        </div>
-                        <div id="productSearchResults" class="list-group mb-4" style="max-height: 200px; overflow-y: auto;">
-                            <!-- Kết quả tìm kiếm sản phẩm sẽ được load ở đây bằng AJAX -->
+                        <div class="p-3 bg-light rounded mb-3 position-relative">
+                            <label class="form-label fw-semibold">Thêm sản phẩm vào hóa đơn</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="productSearchInput" class="form-control" placeholder="Quét mã vạch hoặc nhập tên sản phẩm..." autocomplete="off" />
+                            </div>
+                            <div id="productSearchResults" class="list-group mt-1 position-absolute w-100" style="z-index: 1000;"></div>
                         </div>
                     }
 
                     <!-- Danh sách sản phẩm trong hóa đơn -->
-                    <h5>Danh sách sản phẩm</h5>
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Sản phẩm</th>
-                                <th class="text-end">Đơn giá</th>
-                                <th class="text-center">Số lượng</th>
-                                <th class="text-end">Thành tiền</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.ChiTietHoaDon)
-                            {
+                    <h5 class="mb-3">Danh sách sản phẩm</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        @item.TenSanPham
-                                        <br />
-                                        <small class="text-muted">(@item.MauSac, @item.KichCo)</small>
-                                    </td>
-                                    <td class="text-end">@item.Gia.ToString("N0")</td>
-                                    <td class="text-center" style="width: 120px;">
-                                        @if (isEditable)
-                                        {
-                                            <form asp-action="CapNhatSoLuong" method="post" class="d-flex">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="hoaDonId" value="@Model.HoaDonId" />
-                                                <input type="hidden" name="sanPhamChiTietId" value="@item.SanPhamChiTietId" />
-                                                <input type="number" name="soLuongMoi" class="form-control form-control-sm" value="@item.SoLuong" min="1" onchange="this.form.submit()" />
-                                            </form>
-                                        }
-                                        else
-                                        {
-                                            @item.SoLuong
-                                        }
-                                    </td>
-                                    <td class="text-end">@item.ThanhTien.ToString("N0")</td>
-                                    <td>
-                                        @if (isEditable)
-                                        {
-                                            <form asp-action="XoaSanPham" method="post">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="hoaDonId" value="@Model.HoaDonId" />
-                                                <input type="hidden" name="sanPhamChiTietId" value="@item.SanPhamChiTietId" />
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn chắc chắn muốn xóa sản phẩm này?')">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                        }
-                                    </td>
+                                    <th>Sản phẩm</th>
+                                    <th class="text-end">Đơn giá</th>
+                                    <th class="text-center" style="width: 130px;">Số lượng</th>
+                                    <th class="text-end">Thành tiền</th>
+                                    @if (isEditable)
+                                    {
+                                        <th style="width: 50px;"></th>
+                                    }
                                 </tr>
-                            }
-                            @if (!Model.ChiTietHoaDon.Any())
-                            {
-                                <tr>
-                                    <td colspan="5" class="text-center text-muted">Hóa đơn chưa có sản phẩm.</td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody id="invoiceItemsTableBody">
+                                <!-- Dữ liệu sẽ được render động bằng JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -93,199 +63,71 @@
         <!-- CỘT PHỤ (THÔNG TIN & THANH TOÁN) -->
         <div class="col-lg-4">
             <!-- Thông tin khách hàng -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Thông Tin Khách Hàng</h6>
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-user-tag me-2"></i>Thông Tin Khách Hàng</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body" id="customerInfoContainer">
                     @if (isEditable)
                     {
-                        <div class="mb-3">
-                            <label class="form-label">Tìm khách hàng (SĐT, Tên)</label>
-                            <input type="text" id="customerSearchInput" class="form-control" placeholder="Nhập để tìm kiếm..." />
-                        </div>
-                        <div id="customerSearchResults" class="list-group mb-3" style="max-height: 150px; overflow-y: auto;">
-                            <!-- Kết quả tìm kiếm khách hàng -->
+                        <div class="position-relative">
+                            <div class="input-group mb-2">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" id="customerSearchInput" class="form-control" placeholder="Tìm SĐT/Tên khách hàng..." autocomplete="off" />
+                            </div>
+                            <div id="customerSearchResults" class="list-group mt-1 position-absolute w-100" style="z-index: 1000;"></div>
                         </div>
                     }
 
-                    <div id="customerInfo">
-                        <p><strong>Tên:</strong> @Model.KhachHang.TenKhachHang</p>
-                        <p><strong>SĐT:</strong> @(Model.KhachHang.SDT ?? "N/A")</p>
+                    <div id="customerInfo" class="mt-3">
+                        <!-- Dữ liệu sẽ được render động bằng JavaScript -->
                     </div>
 
                     @if (isEditable)
                     {
-                        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createCustomerModal">
-                            Tạo Khách Hàng Mới
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" data-bs-toggle="modal" data-bs-target="#createCustomerModal">
+                            <i class="fas fa-user-plus me-1"></i> Tạo Khách Hàng Mới
                         </button>
                     }
                 </div>
             </div>
 
             <!-- Tổng kết & Thanh toán -->
-            <div class="card shadow">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Tổng Kết</h6>
+            <div class="card shadow-sm">
+                <div class="card-header bg-light py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-cash-register me-2"></i>Tổng Kết & Thanh Toán</h6>
                 </div>
-                <div class="card-body">
-                    <dl class="row mb-0">
-                        <dt class="col-6">Tổng tiền hàng:</dt>
-                        <dd class="col-6 text-end">@Model.TongTien.ToString("N0") đ</dd>
-
-                        <dt class="col-6">Giảm giá:</dt>
-                        <dd class="col-6 text-end text-danger">- @Model.TienGiam.ToString("N0") đ</dd>
-                    </dl>
-                    <hr />
-                    <dl class="row">
-                        <dt class="col-6 fs-5">THÀNH TIỀN:</dt>
-                        <dd class="col-6 text-end fs-5 fw-bold text-success">@Model.ThanhTien.ToString("N0") đ</dd>
-                    </dl>
-
-                    @if (isEditable)
-                    {
-                        <!-- Áp dụng Voucher -->
-                        <form asp-action="ApDungVoucher" method="post" class="input-group mb-3">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="hoaDonId" value="@Model.HoaDonId" />
-                            <input type="text" class="form-control" name="maVoucher" placeholder="Nhập mã voucher" value="@Model.Voucher?.MaVoucher" />
-                            <button class="btn btn-outline-secondary" type="submit">Áp dụng</button>
-                        </form>
-                        @if (Model.Voucher != null)
-                        {
-                            <form asp-action="GoBoVoucher" method="post" class="d-grid">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="hoaDonId" value="@Model.HoaDonId" />
-                                <button type="submit" class="btn btn-link text-danger p-0">Gỡ bỏ voucher</button>
-                            </form>
-                        }
-
-                        <hr />
-                        <div class="d-grid gap-2">
-                            <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#thanhToanModal">
-                                <i class="bi bi-wallet2"></i> THANH TOÁN
-                            </button>
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#huyHoaDonModal">
-                                Hủy Hóa Đơn
-                            </button>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info">
-                            Hóa đơn đã <strong>@Model.TrangThai.ToLower()</strong>.
-                            <br />
-                            Hình thức thanh toán: <strong>@(Model.HinhThucThanhToan?.TenHinhThuc ?? "N/A")</strong>
-                        </div>
-                    }
+                <div class="card-body" id="summaryContainer">
+                    <!-- Dữ liệu sẽ được render động bằng JavaScript -->
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-
-<!-- Modal Thanh Toán -->
-<div class="modal fade" id="thanhToanModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form asp-action="ThanhToan" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="hoaDonId" value="@Model.HoaDonId" />
-                <div class="modal-header">
-                    <h5 class="modal-title">Xác Nhận Thanh Toán</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <h5>Tổng tiền cần thanh toán: <span class="text-success">@Model.ThanhTien.ToString("N0") đ</span></h5>
-                    <div class="mb-3">
-                        <label class="form-label">Hình thức thanh toán</label>
-                        <select name="HinhThucThanhToanId" class="form-select" required>
-                            <!-- TODO: Load danh sách hình thức thanh toán từ API -->
-                            <option value="ID_TIEN_MAT_TU_DB">Tiền mặt</option>
-                            <option value="ID_CHUYEN_KHOAN_TU_DB">Chuyển khoản</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Tiền khách đưa (nếu là tiền mặt)</label>
-                        <input type="number" name="TienKhachDua" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Ghi chú thanh toán</label>
-                        <textarea name="GhiChuThanhToan" class="form-control" rows="2"></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-primary">Xác Nhận</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Hủy Hóa Đơn -->
-<div class="modal fade" id="huyHoaDonModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form asp-action="HuyHoaDon" method="post">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="hoaDonId" value="@Model.HoaDonId" />
-                <div class="modal-header">
-                    <h5 class="modal-title">Xác Nhận Hủy Hóa Đơn</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Bạn có chắc chắn muốn hủy hóa đơn này không?</p>
-                    <p class="text-danger">Hành động này không thể hoàn tác. Số lượng sản phẩm và voucher sẽ được hoàn trả.</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không</button>
-                    <button type="submit" class="btn btn-danger">Đồng ý Hủy</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Tạo Khách Hàng Mới -->
-<div class="modal fade" id="createCustomerModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form id="createCustomerForm">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tạo Khách Hàng Mới</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="createCustomerError" class="alert alert-danger" style="display:none;"></div>
-                    <div class="mb-3">
-                        <label class="form-label">Tên khách hàng</label>
-                        <input type="text" name="TenKhachHang" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Số điện thoại</label>
-                        <input type="text" name="SDT" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="Email" class="form-control" />
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-primary">Lưu</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+<!-- Các Modal (Hủy, Thanh toán, Tạo KH) -->
+@await Html.PartialAsync("_ThanhToanModal", new { Model = Model, HinhThucThanhToanList = hinhThucThanhToanList })
+@await Html.PartialAsync("_HuyHoaDonModal", Model)
+@await Html.PartialAsync("_TaoKhachHangModal")
 
 
 @section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        $(document).ready(function () {
-            // Debounce function to delay execution
+        // IIFE để tạo một scope cục bộ, tránh xung đột biến
+        (function($) {
+            // =================================================================
+            // CONFIG & STATE
+            // =================================================================
+            const hoaDonId = '@Model.HoaDonId';
+            const isEditable = @isEditable.ToString().ToLower();
+            const antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+            let currentInvoiceState = @Html.Raw(Json.Serialize(Model));
+
+            // Cấu hình Toastr
+            toastr.options = { "positionClass": "toast-bottom-right", "timeOut": "3000", "progressBar": true };
+
+            // Hàm debounce để trì hoãn việc thực thi hàm (dùng cho tìm kiếm)
             function debounce(func, delay) {
                 let timeout;
                 return function(...args) {
@@ -294,78 +136,276 @@
                 };
             }
 
-            // Tìm kiếm sản phẩm
-            $('#productSearchInput').on('keyup', debounce(function () {
-                let keyword = $(this).val();
-                if (keyword.length > 2) {
-                    $.get('@Url.Action("TimKiemSanPham", "BanHang")', { keyword: keyword }, function (data) {
-                        $('#productSearchResults').html(data);
-                    });
-                } else {
-                     $('#productSearchResults').html('');
+            // =================================================================
+            // RENDER FUNCTIONS (Các hàm chịu trách nhiệm cập nhật giao diện)
+            // =================================================================
+
+            function renderInvoiceItems(items) {
+                const tbody = $('#invoiceItemsTableBody');
+                tbody.empty();
+                if (!items || items.length === 0) {
+                    tbody.html('<tr><td colspan="5" class="text-center text-muted p-4">Hóa đơn chưa có sản phẩm.</td></tr>');
+                    return;
                 }
-            }, 500));
+                items.forEach(item => {
+                    const editableControls = isEditable ? `
+                        <div class="input-group input-group-sm">
+                            <button class="btn btn-outline-secondary btn-decrease-qty" data-sp-id="${item.sanPhamChiTietId}" type="button">-</button>
+                            <input type="number" class="form-control text-center qty-input" value="${item.soLuong}" min="0" data-sp-id="${item.sanPhamChiTietId}" />
+                            <button class="btn btn-outline-secondary btn-increase-qty" data-sp-id="${item.sanPhamChiTietId}" type="button">+</button>
+                        </div>` : `${item.soLuong}`;
 
-            // Tìm kiếm khách hàng
-            $('#customerSearchInput').on('keyup', debounce(function () {
-                let keyword = $(this).val();
-                if (keyword.length > 2) {
-                    $.get('@Url.Action("TimKiemKhachHang", "BanHang")', { keyword: keyword }, function (data) {
-                        $('#customerSearchResults').html(data);
-                    });
-                } else {
-                     $('#customerSearchResults').html('');
-                }
-            }, 500));
+                    const deleteButton = isEditable ? `
+                        <button class="btn btn-sm btn-link text-danger btn-delete-item" data-sp-id="${item.sanPhamChiTietId}" title="Xóa sản phẩm">
+                            <i class="fas fa-times"></i>
+                        </button>` : '';
 
-            // Gán khách hàng vào hóa đơn
-            $(document).on('click', '.select-customer-btn', function(e){
-                e.preventDefault();
-                let customerId = $(this).data('id');
-                let hoaDonId = '@Model.HoaDonId';
-
-                $.ajax({
-                    url: '@Url.Action("GanKhachHang", "BanHang")',
-                    type: 'POST',
-                    headers: { "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val() },
-                    data: { hoaDonId: hoaDonId, khachHangId: customerId },
-                    success: function(response){
-                        if(response.success){
-                            window.location.reload(); // Tải lại trang để cập nhật thông tin
-                        } else {
-                            alert("Lỗi: " + response.message);
-                        }
-                    }
+                    const row = `
+                        <tr>
+                            <td>
+                                ${item.tenSanPham}
+                                <br /><small class="text-muted">(${item.mauSac}, ${item.kichCo})</small>
+                            </td>
+                            <td class="text-end">${item.gia.toLocaleString('vi-VN')}</td>
+                            <td class="text-center">${editableControls}</td>
+                            <td class="text-end">${item.thanhTien.toLocaleString('vi-VN')}</td>
+                            <td>${deleteButton}</td>
+                        </tr>`;
+                    tbody.append(row);
                 });
+            }
+
+            function renderCustomerInfo(customer) {
+                const customerDiv = $('#customerInfo');
+                if (!customer) return;
+                customerDiv.html(`
+                    <p class="mb-1"><strong>Tên:</strong> ${customer.tenKhachHang}</p>
+                    <p class="mb-1"><strong>SĐT:</strong> ${customer.sdt || 'N/A'}</p>
+                    <p class="mb-0"><strong>Điểm:</strong> ${customer.diemTichLuy}</p>
+                `);
+            }
+
+            function renderSummary(invoice) {
+                const summaryDiv = $('#summaryContainer');
+                const voucherSection = isEditable ? (invoice.voucher ? `
+                    <div class="alert alert-success p-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Voucher: <strong>${invoice.voucher.maVoucher}</strong> (-${invoice.voucher.phanTramGiam}%)</span>
+                            <button class="btn btn-sm btn-link text-danger p-0 btn-remove-voucher">Gỡ bỏ</button>
+                        </div>
+                    </div>` : `
+                    <div class="input-group">
+                        <input type="text" id="voucherCodeInput" class="form-control" placeholder="Nhập mã voucher">
+                        <button class="btn btn-outline-secondary btn-apply-voucher" type="button">Áp dụng</button>
+                    </div>`) : (invoice.voucher ? `<p class="mb-0"><strong>Voucher đã áp dụng:</strong> ${invoice.voucher.maVoucher}</p>` : '');
+
+                const actionButtons = isEditable ? `
+                    <hr />
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#thanhToanModal"
+                                ${!invoice.chiTietHoaDon || invoice.chiTietHoaDon.length === 0 ? 'disabled' : ''}>
+                            <i class="fas fa-wallet me-2"></i> THANH TOÁN
+                        </button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#huyHoaDonModal">
+                            Hủy Hóa Đơn
+                        </button>
+                    </div>` : `
+                    <div class="alert alert-info mt-3">
+                        Hóa đơn đã <strong>${invoice.trangThai.toLowerCase()}</strong>.
+                        <br />
+                        Hình thức thanh toán: <strong>${invoice.hinhThucThanhToan?.tenHinhThuc || 'N/A'}</strong>
+                    </div>`;
+
+                summaryDiv.html(`
+                    <dl class="row mb-0">
+                        <dt class="col-6">Tổng tiền hàng:</dt>
+                        <dd class="col-6 text-end">${invoice.tongTien.toLocaleString('vi-VN')} ₫</dd>
+                        <dt class="col-6">Giảm giá:</dt>
+                        <dd class="col-6 text-end text-danger">- ${invoice.tienGiam.toLocaleString('vi-VN')} ₫</dd>
+                    </dl>
+                    <hr />
+                    <dl class="row">
+                        <dt class="col-6 fs-5">THÀNH TIỀN:</dt>
+                        <dd class="col-6 text-end fs-5 fw-bold text-success">${invoice.thanhTien.toLocaleString('vi-VN')} ₫</dd>
+                    </dl>
+                    ${voucherSection}
+                    ${actionButtons}
+                `);
+            }
+
+            function updateAllUI(invoice) {
+                if(!invoice) return;
+                currentInvoiceState = invoice;
+                renderInvoiceItems(invoice.chiTietHoaDon);
+                renderCustomerInfo(invoice.khachHang);
+                renderSummary(invoice);
+                $('#thanhToanModal .modal-body h5').html(`Tổng tiền cần thanh toán: <span class="text-success">${invoice.thanhTien.toLocaleString('vi-VN')} ₫</span>`);
+            }
+
+            // =================================================================
+            // API CALLS (Hàm chung để gọi API)
+            // =================================================================
+
+            function apiCall(method, url, data) {
+                return $.ajax({
+                    method: method,
+                    url: url,
+                    contentType: 'application/json',
+                    headers: { "RequestVerificationToken": antiForgeryToken },
+                    data: data ? JSON.stringify(data) : null
+                });
+            }
+
+            function handleApiResponse(promise) {
+                promise.done(response => {
+                    if (response.success) {
+                        toastr.success('Thao tác thành công!');
+                        updateAllUI(response.data);
+                    } else {
+                        toastr.error(response.message || 'Thao tác thất bại.');
+                    }
+                }).fail((jqXHR) => {
+                    const errorMsg = jqXHR.responseJSON?.message || jqXHR.responseText || 'Lỗi hệ thống, vui lòng thử lại.';
+                    toastr.error(errorMsg);
+                });
+            }
+
+            // =================================================================
+            // EVENT HANDLERS (Gắn sự kiện cho các nút)
+            // =================================================================
+
+            // Debounced search for products
+            $('#productSearchInput').on('keyup', debounce(function () {
+                const keyword = $(this).val();
+                if (keyword && keyword.length >= 2) {
+                    $.get('@Url.Action("TimKiemSanPham", "BanHang")', { keyword: keyword })
+                        .done(data => $('#productSearchResults').html(data).show());
+                } else {
+                    $('#productSearchResults').hide().empty();
+                }
+            }, 300));
+
+            // Add product from search results
+            $(document).on('click', '.add-product-btn', function() {
+                const sanPhamChiTietId = $(this).data('id');
+                const request = { sanPhamChiTietId: sanPhamChiTietId, soLuong: 1 };
+                const promise = apiCall('POST', `/Admin/BanHang/ThemSanPhamVaoHoaDon/${hoaDonId}`, request);
+                handleApiResponse(promise);
+                $('#productSearchInput').val('').focus();
+                $('#productSearchResults').hide().empty();
             });
 
-            // Tạo khách hàng mới
-            $('#createCustomerForm').on('submit', function(e){
+            // Update quantity
+            let qtyChangeDebounce;
+            $(document).on('input', '.qty-input', function() {
+                 clearTimeout(qtyChangeDebounce);
+                 const $input = $(this);
+                 qtyChangeDebounce = setTimeout(() => {
+                    const spId = $input.data('sp-id');
+                    const newQty = parseInt($input.val());
+                    if (newQty >= 0) {
+                         const request = { soLuongMoi: newQty };
+                         const promise = apiCall('PUT', `/Admin/BanHang/CapNhatSoLuong/${hoaDonId}/${spId}`, request);
+                         handleApiResponse(promise);
+                    }
+                 }, 500); // Đợi 500ms sau khi người dùng ngừng gõ
+            });
+
+            $(document).on('click', '.btn-decrease-qty, .btn-increase-qty', function() {
+                const $input = $(this).siblings('.qty-input');
+                const spId = $input.data('sp-id');
+                let currentQty = parseInt($input.val());
+                currentQty += $(this).hasClass('btn-increase-qty') ? 1 : -1;
+                if(currentQty >= 0) {
+                    $input.val(currentQty).trigger('input');
+                }
+            });
+
+            // Delete item
+            $(document).on('click', '.btn-delete-item', function() {
+                if(confirm('Bạn chắc chắn muốn xóa sản phẩm này khỏi hóa đơn?')){
+                    const spId = $(this).data('sp-id');
+                    const promise = apiCall('DELETE', `/Admin/BanHang/XoaSanPhamKhoiHoaDon/${hoaDonId}/${spId}`);
+                    handleApiResponse(promise);
+                }
+            });
+
+            // Voucher actions
+             $(document).on('click', '.btn-apply-voucher', function() {
+                const maVoucher = $('#voucherCodeInput').val();
+                if(maVoucher){
+                    const request = { maVoucher: maVoucher };
+                    const promise = apiCall('POST', `/Admin/BanHang/ApDungVoucher/${hoaDonId}`, request);
+                    handleApiResponse(promise);
+                } else {
+                    toastr.warning('Vui lòng nhập mã voucher.');
+                }
+            });
+
+             $(document).on('click', '.btn-remove-voucher', function() {
+                const promise = apiCall('DELETE', `/Admin/BanHang/GoBoVoucher/${hoaDonId}`);
+                handleApiResponse(promise);
+            });
+
+            // Customer actions
+            $('#customerSearchInput').on('keyup', debounce(function () {
+                const keyword = $(this).val();
+                 if (keyword && keyword.length >= 2) {
+                    $.get('@Url.Action("TimKiemKhachHang", "BanHang")', { keyword: keyword })
+                        .done(data => $('#customerSearchResults').html(data).show());
+                } else {
+                    $('#customerSearchResults').hide().empty();
+                }
+            }, 300));
+
+             $(document).on('click', '.select-customer-btn', function() {
+                const khachHangId = $(this).data('id');
+                const request = { khachHangId: khachHangId };
+                const promise = apiCall('POST', `/Admin/BanHang/GanKhachHang/${hoaDonId}`, request);
+                handleApiResponse(promise);
+                $('#customerSearchInput').val('');
+                $('#customerSearchResults').hide().empty();
+            });
+
+            $('#createCustomerForm').on('submit', function(e) {
                 e.preventDefault();
-                let formData = {
-                    TenKhachHang: $(this).find('input[name="TenKhachHang"]').val(),
-                    SDT: $(this).find('input[name="SDT"]').val(),
-                    Email: $(this).find('input[name="Email"]').val()
+                const formData = {
+                    tenKhachHang: $(this).find('input[name="TenKhachHang"]').val(),
+                    sdt: $(this).find('input[name="SDT"]').val(),
+                    email: $(this).find('input[name="Email"]').val()
                 };
 
-                $.ajax({
-                    url: '@Url.Action("TaoKhachHangMoi", "BanHang")',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(formData),
-                    success: function(response){
-                        if(response.success){
-                            // Gán khách hàng vừa tạo vào hóa đơn
-                            $('.select-customer-btn[data-id="' + response.data.khachHangId + '"]').click();
+                apiCall('POST', '@Url.Action("TaoKhachHangMoi", "BanHang")', formData)
+                    .done(response => {
+                        if (response.success) {
+                            toastr.success('Tạo khách hàng mới thành công!');
                             $('#createCustomerModal').modal('hide');
-                            window.location.reload();
+                            const request = { khachHangId: response.data.khachHangId };
+                            handleApiResponse(apiCall('POST', `/Admin/BanHang/GanKhachHang/${hoaDonId}`, request));
                         } else {
                             $('#createCustomerError').text(response.message).show();
                         }
-                    }
-                });
+                    })
+                    .fail((jqXHR) => {
+                         $('#createCustomerError').text(jqXHR.responseJSON?.message || 'Lỗi hệ thống').show();
+                    });
             });
 
-        });
+            // Hide search results when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('#productSearchResults, #productSearchInput').length) {
+                    $('#productSearchResults').hide().empty();
+                }
+                 if (!$(e.target).closest('#customerSearchResults, #customerSearchInput').length) {
+                    $('#customerSearchResults').hide().empty();
+                }
+            });
+
+            // =================================================================
+            // INITIAL RENDER (Khởi tạo giao diện lần đầu)
+            // =================================================================
+            updateAllUI(currentInvoiceState);
+
+        })(jQuery);
     </script>
 }

@@ -1,6 +1,7 @@
 ﻿using FurryFriends.Web.Service;
 using FurryFriends.Web.Service.IService;
 using FurryFriends.Web.Services;
+using FurryFriends.Web.Services.Handlers;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Facebook;
@@ -14,6 +15,7 @@ builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
     client.BaseAddress = new Uri("https://localhost:7289/");
     client.Timeout = TimeSpan.FromSeconds(30);
 });
+builder.Services.AddScoped<AuthHeaderHandler>();
 
 builder.Services.AddHttpClient<IGiamGiaService, GiamGiaService>(client =>
 {
@@ -100,7 +102,8 @@ builder.Services.AddHttpClient<ISanPhamService, SanPhamService>(client =>
 builder.Services.AddHttpClient<IBanHangService, BanHangService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
-});
+})
+.AddHttpMessageHandler<AuthHeaderHandler>();
 
 // Cách đúng đã kiểm tr
 

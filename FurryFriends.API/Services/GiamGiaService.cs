@@ -92,34 +92,71 @@ namespace FurryFriends.API.Services
         }
         // File: GiamGiaService.cs (API)
 
-        public async Task<GiamGiaDTO> UpdateAsync(GiamGiaDTO dto)
+       public async Task<GiamGiaDTO> UpdateAsync(GiamGiaDTO dto)
+{
+    // 1. Tải đối tượng GiamGia cũ CÙNG VỚI các sản phẩm liên quan
+    var existingEntity = await _giamGiaRepo.GetByIdAsync(dto.GiamGiaId, includeProducts: true);
+    if (existingEntity == null)
+    {
+        throw new KeyNotFoundException("Không tìm thấy chương trình giảm giá để cập nhật.");
+    }
+
+    // 2. Validate trùng tên
+    if (await _giamGiaRepo.TenGiamGiaExistsAsync(dto.TenGiamGia, dto.GiamGiaId))
+    {
+        throw new InvalidOperationException("Tên chương trình giảm giá đã tồn tại.");
+    }
+
+    // =================================================================
+    // BƯỚC QUAN TRỌNG: CẬP NHẬT THỦ CÔNG CÁC THUỘC TÍNH CHÍNH
+    // =================================================================
+    existingEntity.TenGiamGia = dto.TenGiamGia;
+    existingEntity.PhanTramKhuyenMai = dto.PhanTramKhuyenMai;
+    existingEntity.NgayBatDau = dto.NgayBatDau;
+    existingEntity.NgayKetThuc = dto.NgayKetThuc;
+    existingEntity.TrangThai = dto.TrangThai;
+    // (Không cần cập nhật NgayCapNhat ở đây vì Repository sẽ làm)
+    
+    // Đánh dấu đối tượng GiamGia đã được sửa đổi
+    _giamGiaRepo.Update(existingEntity);
+
+    // =================================================================
+    // ĐỒNG BỘ DANH SÁCH SẢN PHẨM MỘT CÁCH TƯỜNG MINH
+    // =================================================================
+    
+    // 1. Lấy danh sách các bản ghi liên kết cũ cần xóa
+    var oldProductLinks = await _dotGiamGiaRepo.GetByGiamGiaIdAsync(dto.GiamGiaId);
+    if (oldProductLinks.Any())
+    {
+        _dotGiamGiaRepo.DeleteRange(oldProductLinks);
+    }
+    
+    // 2. Tạo danh sách các bản ghi liên kết mới để thêm vào
+    if (dto.SanPhamChiTietIds?.Any() == true)
+    {
+        var newProductLinks = new List<DotGiamGiaSanPham>();
+        foreach (var productId in dto.SanPhamChiTietIds)
         {
-            // 1. Tải đối tượng GiamGia cũ CÙNG VỚI các sản phẩm liên quan
-            var existingEntity = await _giamGiaRepo.GetByIdAsync(dto.GiamGiaId, includeProducts: true);
-            if (existingEntity == null)
+            newProductLinks.Add(new DotGiamGiaSanPham
             {
-                throw new KeyNotFoundException("Không tìm thấy chương trình giảm giá để cập nhật.");
-            }
-
-            // Validate trùng tên
-            if (await _giamGiaRepo.TenGiamGiaExistsAsync(dto.TenGiamGia, dto.GiamGiaId))
-            {
-                throw new InvalidOperationException("Tên chương trình giảm giá đã tồn tại.");
-            }
-
-            // 2. Chỉ cần gọi Mapper.Map
-            // AutoMapper sẽ tự động:
-            // - Cập nhật các thuộc tính chính (TenGiamGia, PhanTramKhuyenMai...).
-            // - Xóa các DotGiamGiaSanPhams không còn trong dto.SanPhamChiTietIds.
-            // - Thêm các DotGiamGiaSanPhams mới từ dto.SanPhamChiTietIds.
-            // - Cập nhật PhanTramGiamGia cho các DotGiamGiaSanPhams còn lại.
-            _mapper.Map(dto, existingEntity);
-
-            // 3. Lưu tất cả các thay đổi mà Mapper đã chuẩn bị
-            await _giamGiaRepo.SaveAsync();
-
-            return _mapper.Map<GiamGiaDTO>(existingEntity);
+                GiamGiaId = existingEntity.GiamGiaId,
+                SanPhamChiTietId = productId,
+                PhanTramGiamGia = existingEntity.PhanTramKhuyenMai, // Lấy % mới nhất
+                TrangThai = true
+            });
         }
+        await _dotGiamGiaRepo.AddRangeAsync(newProductLinks);
+    }
+    
+    // =================================================================
+    // 3. LƯU TẤT CẢ THAY ĐỔI TRONG MỘT GIAO DỊCH
+    // =================================================================
+    await _giamGiaRepo.SaveAsync(); // Chỉ cần gọi SaveAsync từ một repo là đủ
+
+    // Trả về DTO đã được cập nhật
+    var updatedEntity = await _giamGiaRepo.GetByIdAsync(dto.GiamGiaId, includeProducts: true);
+    return _mapper.Map<GiamGiaDTO>(updatedEntity);
+}
 
         public async Task<bool> DeleteAsync(Guid id)
         {

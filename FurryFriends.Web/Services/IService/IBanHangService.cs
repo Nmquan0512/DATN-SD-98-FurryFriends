@@ -1,8 +1,5 @@
 ﻿using FurryFriends.API.Models.DTO.BanHang;
 using FurryFriends.API.Models.DTO.BanHang.Requests;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FurryFriends.Web.Services.IService
 {
