@@ -29,7 +29,7 @@ public class SanPhamChiTiet
 
 	public DateTime? NgaySua { get; set; }
 
-	public string MoTa { get; set; }
+	public string? MoTa { get; set; }
 
 	[Required]
 	public int TrangThai { get; set; }

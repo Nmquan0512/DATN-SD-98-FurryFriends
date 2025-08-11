@@ -261,12 +261,33 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
+<<<<<<< Updated upstream
             var success = await _sanPhamService.DeleteAsync(id);
             if (success)
                 return RedirectToAction("Index");
             ModelState.AddModelError("", "Xóa sản phẩm thất bại!");
             var model = await _sanPhamService.GetByIdAsync(id);
             return View(model);
+=======
+            try
+            {
+                var result = await _sanPhamService.DeleteAsync(id);
+                if (result.Data)
+                {
+                    TempData["Success"] = "Xóa sản phẩm thành công!";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var errorMessage = result.Errors?.FirstOrDefault().Value.FirstOrDefault() ?? "Xóa sản phẩm thất bại!";
+                TempData["Error"] = errorMessage;
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Lỗi khi xóa sản phẩm: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
+>>>>>>> Stashed changes
         }
 
         [HttpGet]
@@ -521,6 +542,68 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 ModelState.AddModelError("", $"Không thể load dữ liệu dropdown: {ex.Message}");
             }
         }
+<<<<<<< Updated upstream
+=======
+
+        /// <summary>
+        /// TÁI CẤU TRÚC: Hàm chung để thêm lỗi từ ApiResult vào ModelState
+        /// </summary>
+        private void AddApiErrorsToModelState<T>(ApiResult<T> result)
+        {
+            if (result.Errors != null)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.Key, string.Join(", ", error.Value));
+                }
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi không xác định từ API.");
+            }
+        }
+
+        /// <summary>
+        /// TÁI CẤU TRÚC: Gom tất cả logic load dropdown vào một nơi.
+        /// </summary>
+        private async Task LoadDropdownData(SanPhamDTO? sanPham = null, bool isCreateMode = false)
+        {
+            // Hàm này sẽ load tất cả dữ liệu cần thiết cho các dropdown list trong View
+            // `sanPham` được dùng trong trang Edit để hiển thị các mục đã chọn dù chúng không còn hoạt động.
+            // `isCreateMode` được dùng để chỉ load các mục đang hoạt động trong trang Create.
+
+            var allThuongHieu = (await _thuongHieuService.GetAllAsync()).ToList();
+            var allChatLieu = (await _chatLieuService.GetAllAsync()).ToList();
+            var allThanhPhan = (await _thanhPhanService.GetAllAsync()).ToList();
+            var allKichCo = (await _kichCoService.GetAllAsync()).ToList();
+            var allMauSac = (await _mauSacService.GetAllAsync()).ToList();
+
+            Func<dynamic, bool> isActive = item => isCreateMode ? item.TrangThai : true;
+
+            ViewBag.ThuongHieuList = allThuongHieu
+                .Where(th => isCreateMode ? th.TrangThai : (th.TrangThai || th.ThuongHieuId == sanPham?.ThuongHieuId))
+                .Select(th => new SelectListItem { Value = th.ThuongHieuId.ToString(), Text = th.TrangThai ? th.TenThuongHieu : $"{th.TenThuongHieu} (Ngưng hoạt động)" });
+
+            ViewBag.ChatLieuList = allChatLieu
+                .Where(cl => cl.TrangThai == true)
+                .Select(cl => new SelectListItem { Value = cl.ChatLieuId.ToString(), Text = cl.TenChatLieu })
+                .ToList();
+
+            ViewBag.ThanhPhanList = allThanhPhan
+                .Where(tp => isCreateMode ? tp.TrangThai : (tp.TrangThai || (sanPham?.ThanhPhanIds?.Contains(tp.ThanhPhanId) ?? false)))
+                .Select(tp => new SelectListItem { Value = tp.ThanhPhanId.ToString(), Text = tp.TrangThai ? tp.TenThanhPhan : $"{tp.TenThanhPhan} (Ngưng hoạt động)" })
+                .ToList();
+
+            // Thêm ViewBag cho bộ lọc
+            ViewBag.DanhSachThuongHieu = allThuongHieu;
+            ViewBag.DanhSachChatLieu = allChatLieu;
+            ViewBag.DanhSachThanhPhan = allThanhPhan;
+
+            ViewBag.KichCoList = new SelectList(allKichCo.Where(k => isCreateMode ? k.TrangThai : true), "KichCoId", "TenKichCo");
+            ViewBag.MauSacList = new SelectList(allMauSac.Where(m => isCreateMode ? m.TrangThai : true), "MauSacId", "TenMau");
+            ViewBag.AnhList = await _anhService.GetAllAsync();
+        }
+>>>>>>> Stashed changes
     }
 }
 

@@ -19,6 +19,9 @@ public class AuthController : Controller
     [HttpGet]
     public IActionResult DangNhap()
     {
+        // Xóa TempData cũ để tránh hiển thị thông báo không mong muốn
+        TempData.Clear();
+        
         var taiKhoanId = HttpContext.Session.GetString("TaiKhoanId");
         if (!string.IsNullOrEmpty(taiKhoanId))
         {
@@ -35,7 +38,11 @@ public class AuthController : Controller
     [HttpPost]
     public async Task<IActionResult> DangNhap(LoginRequest model)
     {
-        if (!ModelState.IsValid) return View(model);
+        if (!ModelState.IsValid) 
+        {
+            TempData["Error"] = "Vui lòng kiểm tra lại thông tin đăng nhập!";
+            return View(model); // Return view instead of redirect
+        }
 
         _logger.LogInformation($"Đăng nhập với UserName: {model.UserName}");
 
@@ -48,12 +55,20 @@ public class AuthController : Controller
             HttpContext.Session.SetString("TaiKhoanId", result.TaiKhoanId.ToString());
             HttpContext.Session.SetString("Role", result.Role);
             HttpContext.Session.SetString("HoTen", result.HoTen ?? "");
+            
             if (result.Role != null && result.Role.ToLower().Contains("admin"))
+            {
+                TempData["Success"] = $"Đăng nhập thành công! Xin chào Admin {result.HoTen} 🎉";
                 return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            }
             if (result.Role != null && result.Role.ToLower().Contains("nhanvien"))
+            {
+                TempData["Success"] = $"Đăng nhập thành công! Xin chào {result.HoTen} 🎉";
                 return RedirectToAction("Index", "HoaDon", new { area = "Admin" });
+            }
+            
             TempData["Error"] = $"Quyền không xác định: {result.Role}";
-            return RedirectToAction("DangNhap");
+            return View(model); // Return view instead of redirect
         }
 
         // Nếu không phải admin/nhân viên, thử đăng nhập khách hàng
@@ -66,19 +81,20 @@ public class AuthController : Controller
             HttpContext.Session.SetString("TaiKhoanId", khResult.TaiKhoanId.ToString());
             HttpContext.Session.SetString("Role", khResult.Role);
             HttpContext.Session.SetString("HoTen", khResult.HoTen ?? "");
-            // Báo lỗi không có quyền vào admin
-            ViewBag.Error = "Bạn không có quyền truy cập khu vực quản trị.";
-            return View(model);
+            
+            TempData["Warning"] = "Bạn không có quyền truy cập khu vực quản trị. Vui lòng đăng nhập vào trang khách hàng.";
+            return View(model); // Return view instead of redirect
         }
 
-        ViewBag.Error = "Sai tài khoản hoặc mật khẩu.";
-        return View(model);
+        TempData["Error"] = "Sai tài khoản hoặc mật khẩu. Vui lòng kiểm tra lại!";
+        return View(model); // Return view instead of redirect
     }
 
     [HttpGet]
     public IActionResult Logout()
     {
         HttpContext.Session.Clear();
+        TempData["Success"] = "Đăng xuất thành công! Hẹn gặp lại bạn! 👋";
         return RedirectToAction("DangNhap");
     }
 }

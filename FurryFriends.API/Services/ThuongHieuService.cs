@@ -7,10 +7,119 @@ namespace FurryFriends.API.Services.IServices
 {
     public interface IThuongHieuService
     {
+<<<<<<< Updated upstream
         Task<IEnumerable<ThuongHieuDTO>> GetAllAsync();
         Task<ThuongHieuDTO> GetByIdAsync(Guid id);
         Task<ThuongHieuDTO> CreateAsync(ThuongHieuDTO dto);
         Task<bool> UpdateAsync(Guid id, ThuongHieuDTO dto);
         Task<bool> DeleteAsync(Guid id);
+=======
+        private readonly IThuongHieuRepository _repository;
+
+        public ThuongHieuService(IThuongHieuRepository repository)
+        {
+            _repository = repository;
+        }
+
+        public async Task<IEnumerable<ThuongHieuDTO>> GetAllAsync()
+        {
+            var entities = await _repository.GetAllAsync();
+            return entities.Select(x => new ThuongHieuDTO
+            {
+                ThuongHieuId = x.ThuongHieuId,
+                TenThuongHieu = x.TenThuongHieu,
+                Email = x.Email,
+                SDT = x.SDT,
+                DiaChi = x.DiaChi,
+                MoTa = x.MoTa,
+                TrangThai = x.TrangThai
+            });
+        }
+
+        public async Task<ThuongHieuDTO> GetByIdAsync(Guid id)
+        {
+            var entity = await _repository.GetByIdAsync(id);
+            if (entity == null) return null;
+
+            return new ThuongHieuDTO
+            {
+                ThuongHieuId = entity.ThuongHieuId,
+                TenThuongHieu = entity.TenThuongHieu,
+                Email = entity.Email,
+                SDT = entity.SDT,
+                DiaChi = entity.DiaChi,
+                MoTa = entity.MoTa,
+                TrangThai = entity.TrangThai
+            };
+        }
+
+        public async Task<ThuongHieuDTO> CreateAsync(ThuongHieuDTO dto)
+        {
+            // Kiểm tra trùng tên
+            var allBrands = await _repository.GetAllAsync();
+            if (allBrands != null)
+            {
+                var duplicateName = allBrands.FirstOrDefault(x => x.TenThuongHieu == dto.TenThuongHieu);
+                
+                if (duplicateName != null)
+                {
+                    throw new InvalidOperationException($"Thương hiệu với tên '{dto.TenThuongHieu}' đã tồn tại.");
+                }
+            }
+
+            var entity = new ThuongHieu
+            {
+                ThuongHieuId = Guid.NewGuid(),
+                TenThuongHieu = dto.TenThuongHieu,
+                Email = dto.Email,
+                SDT = dto.SDT,
+                DiaChi = dto.DiaChi,
+                MoTa = dto.MoTa,
+                TrangThai = dto.TrangThai
+            };
+
+            await _repository.AddAsync(entity);
+            dto.ThuongHieuId = entity.ThuongHieuId;
+            return dto;
+        }
+
+        public async Task<bool> UpdateAsync(Guid id, ThuongHieuDTO dto)
+        {
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null) return false;
+
+            // Kiểm tra trùng tên (trừ chính nó)
+            var allBrands = await _repository.GetAllAsync();
+            if (allBrands != null)
+            {
+                var duplicateName = allBrands.FirstOrDefault(x => 
+                    x.TenThuongHieu == dto.TenThuongHieu && x.ThuongHieuId != id);
+                
+                if (duplicateName != null)
+                {
+                    throw new InvalidOperationException($"Thương hiệu với tên '{dto.TenThuongHieu}' đã tồn tại.");
+                }
+            }
+
+            existing.TenThuongHieu = dto.TenThuongHieu;
+            existing.Email = dto.Email;
+            existing.SDT = dto.SDT;
+            existing.DiaChi = dto.DiaChi;
+            existing.MoTa = dto.MoTa;
+            existing.TrangThai = dto.TrangThai;
+
+            await _repository.UpdateAsync(existing);
+            return true;
+        }
+
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            var exists = await _repository.ExistsAsync(id);
+            if (!exists) return false;
+
+            await _repository.DeleteAsync(id);
+            return true;
+        }
+>>>>>>> Stashed changes
     }
 }

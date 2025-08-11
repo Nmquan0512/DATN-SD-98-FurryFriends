@@ -23,11 +23,36 @@
 </nav>
 
 <div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
+<<<<<<< Updated upstream
     <form asp-controller="SanPham" asp-action="Edit" method="post" enctype="multipart/form-data" novalidate>
         <input type="hidden" asp-for="SanPham.SanPhamId" />
         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
         
         <!-- Thông tin sản phẩm cơ bản -->
+=======
+    <form asp-controller="SanPham" asp-action="Edit" method="post" data-enable-notifications="true">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="SanPham.SanPhamId" />
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: @(ViewData.ModelState.IsValid ? "none" : "block")"></div>
+        
+        <!-- Hiển thị thông báo lỗi từ ModelState -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger" role="alert">
+                <ul class="mb-0">
+                    @foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    }
+                </ul>
+            </div>
+        }
+
+        <!-- Thông tin sản phẩm cơ bản (Giữ nguyên cấu trúc của bạn, chỉ thêm các class cho checkbox) -->
+>>>>>>> Stashed changes
         <div class="card shadow mb-4">
             <div class="card-header">
                 <h5 class="card-title mb-0">
@@ -164,6 +189,7 @@
 </div>
 
 <!-- Modal chọn ảnh -->
+<<<<<<< Updated upstream
 <div class="modal fade" id="anhModal" tabindex="-1" aria-labelledby="anhModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -190,6 +216,23 @@
                     }
                 </div>
             </div>
+=======
+<div class="modal fade" id="anhModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chọn ảnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="anhList">
+                    <!-- Ảnh sẽ được load ở đây -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+>>>>>>> Stashed changes
         </div>
     </div>
 </div>
@@ -236,6 +279,122 @@
                         label.classList.add('text-muted');
                     }
                 });
+<<<<<<< Updated upstream
+=======
+            }
+
+            window.removeRow = function(btn) {
+                Swal.fire({
+                    title: 'Xác nhận xóa',
+                    text: 'Bạn có chắc chắn muốn xóa biến thể này?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        btn.closest('tr').remove();
+                        updateRowIndexes();
+                    }
+                });
+            }
+
+            // CÁC HÀM KHÁC GIỮ NGUYÊN
+            window.openAnhModal = function(btn) { 
+                currentAnhBtn = btn; 
+                loadAnhList();
+                new bootstrap.Modal(document.getElementById('anhModal')).show(); 
+            };
+            
+            window.selectAnh = function(img) { 
+                const anhId = img.getAttribute('data-anh-id');
+                const duongDan = img.getAttribute('data-duong-dan');
+                
+                // Cập nhật hidden input
+                const row = currentAnhBtn.closest('tr');
+                const anhIdInput = row.querySelector('input[name*="AnhId"]');
+                anhIdInput.value = anhId;
+                
+                // Cập nhật preview
+                const previewDiv = row.querySelector('.anh-preview');
+                previewDiv.innerHTML = `<img src="https://localhost:7289${duongDan}" style="max-width:60px;max-height:60px;object-fit:cover;" class="rounded shadow-sm" />`;
+                
+                // Đóng modal
+                bootstrap.Modal.getInstance(document.getElementById('anhModal')).hide();
+            };
+            
+            function loadAnhList() {
+                fetch('/Admin/Anh/GetAll')
+                    .then(response => response.json())
+                    .then(data => {
+                        const anhList = document.getElementById('anhList');
+                        anhList.innerHTML = '';
+                        
+                        data.forEach(anh => {
+                            const col = document.createElement('div');
+                            col.className = 'col-md-3 mb-3';
+                            col.innerHTML = `
+                                <div class="card h-100" style="cursor: pointer;" onclick="selectAnh(this.querySelector('img'))">
+                                    <img src="https://localhost:7289${anh.duongDan}" 
+                                         class="card-img-top" 
+                                         style="height: 150px; object-fit: cover;"
+                                         data-anh-id="${anh.anhId}"
+                                         data-duong-dan="${anh.duongDan}" />
+                                    <div class="card-body p-2">
+                                        <small class="text-muted">${anh.tenAnh}</small>
+                                    </div>
+                                </div>
+                            `;
+                            anhList.appendChild(col);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error loading images:', error);
+                        showError('Không thể tải danh sách ảnh');
+                    });
+            }
+            window.toggleProperties = function () {
+                const loaiSanPham = document.querySelector('select[name="SanPham.LoaiSanPham"]').value;
+                const thanhPhanSection = document.getElementById('thanhPhanSection');
+                const chatLieuSection = document.getElementById('chatLieuSection');
+
+                // Ẩn tất cả trước
+                thanhPhanSection.style.display = 'none';
+                chatLieuSection.style.display = 'none';
+
+                // Hiển thị theo loại sản phẩm
+                if (loaiSanPham === 'DoAn') {
+                    thanhPhanSection.style.display = 'block';
+                } else if (loaiSanPham === 'DoDung') {
+                    chatLieuSection.style.display = 'block';
+                }
+            };
+
+            // HÀM ĐỂ LOAD CÁC BIẾN THỂ ĐÃ CÓ
+            function loadExistingVariants() {
+                existingChiTietData.forEach(variant => {
+                    addChiTietRow(variant);
+                });
+                // Kích hoạt lại validation sau khi đã thêm tất cả
+                $(form).removeData("validator").removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(form);
+            }
+
+            // CÁC THIẾT LẬP BAN ĐẦU
+            document.getElementById('addVariantBtn').addEventListener('click', () => addChiTietRow(null));
+            form.addEventListener('submit', (e) => {
+                if (chiTietBody.rows.length === 0) {
+                    document.getElementById('variantError').textContent = "Phải có ít nhất một biến thể.";
+                    e.preventDefault();
+                    
+                    // Hiển thị thông báo lỗi
+                    showError('Phải có ít nhất một biến thể.');
+                } else {
+                    document.getElementById('variantError').textContent = "";
+                }
+>>>>>>> Stashed changes
             });
         });
 

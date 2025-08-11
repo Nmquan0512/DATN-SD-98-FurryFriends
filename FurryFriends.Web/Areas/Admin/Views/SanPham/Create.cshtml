@@ -23,9 +23,34 @@
 </nav>
 
 <div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
+<<<<<<< Updated upstream
     <form asp-controller="SanPham" asp-action="Create" method="post" enctype="multipart/form-data" novalidate>
         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
         
+=======
+    <form asp-controller="SanPham" asp-action="Create" method="post" data-enable-notifications="true">
+        @Html.AntiForgeryToken()
+
+        <!-- Hiển thị lỗi validation từ phía server -->
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: @(ViewData.ModelState.IsValid ? "none" : "block")"></div>
+        
+        <!-- Hiển thị thông báo lỗi từ ModelState -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger" role="alert">
+                <ul class="mb-0">
+                    @foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    }
+                </ul>
+            </div>
+        }
+
+>>>>>>> Stashed changes
         <!-- Thông tin sản phẩm cơ bản -->
         <div class="card shadow mb-4">
             <div class="card-header">
@@ -266,6 +291,7 @@
                         label.classList.add('text-muted');
                     }
                 });
+<<<<<<< Updated upstream
             });
             
             // Tự động thêm một biến thể mặc định
@@ -288,6 +314,27 @@
                 {
                     <text>kichCoOptions += '<option value="@item.Value">@item.Text</option>';</text>
                 }
+=======
+            }
+
+            // 4. GẮN CÁC HÀM VÀO WINDOW ĐỂ HTML CÓ THỂ GỌI
+            window.removeRow = function(btn) {
+                Swal.fire({
+                    title: 'Xác nhận xóa',
+                    text: 'Bạn có chắc chắn muốn xóa biến thể này?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        btn.closest('tr').remove();
+                        updateRowIndexes();
+                    }
+                });
+>>>>>>> Stashed changes
             }
             
             // Tạo options cho màu sắc
@@ -299,6 +346,7 @@
                     <text>mauSacOptions += '<option value="@item.Value">@item.Text</option>';</text>
                 }
             }
+<<<<<<< Updated upstream
             
             row.innerHTML = `
                 <td>
@@ -349,6 +397,39 @@
                 input.addEventListener('blur', function() {
                     validateField(this);
                 });
+=======
+
+            window.selectAnh = function(img) {
+                const anhId = img.dataset.anhId;
+                const duongDan = img.dataset.duongdan;
+                const row = currentAnhBtn.closest('tr');
+                row.querySelector('input[name*="AnhId"]').value = anhId;
+                const preview = row.querySelector('.anh-preview');
+                preview.innerHTML = `<img src="https://localhost:7289${duongDan}" style="max-width:60px;max-height:60px;object-fit:cover;" class="rounded shadow-sm" />`;
+                bootstrap.Modal.getInstance(document.getElementById('anhModal')).hide();
+            }
+
+            window.toggleProperties = function () {
+                const loaiSanPham = document.querySelector('select[name="SanPham.LoaiSanPham"]').value;
+                document.getElementById('thanhPhanSection').style.display = (loaiSanPham === 'DoAn') ? 'block' : 'none';
+                document.getElementById('chatLieuSection').style.display = (loaiSanPham === 'DoDung') ? 'block' : 'none';
+            }
+
+            // 5. CÁC THIẾT LẬP BAN ĐẦU
+            document.getElementById('addVariantBtn').addEventListener('click', addChiTietRow);
+
+            form.addEventListener('submit', function(e){
+                 const variantErrorDiv = document.getElementById('variantError');
+                 if(chiTietBody.rows.length === 0){
+                     variantErrorDiv.textContent = "Vui lòng thêm ít nhất một biến thể sản phẩm.";
+                     e.preventDefault();
+                     
+                     // Hiển thị thông báo lỗi
+                     showError('Vui lòng thêm ít nhất một biến thể sản phẩm.');
+                 } else {
+                     variantErrorDiv.textContent = "";
+                 }
+>>>>>>> Stashed changes
             });
         }
         

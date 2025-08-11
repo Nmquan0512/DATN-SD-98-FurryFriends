@@ -1,14 +1,21 @@
 function togglePassword(inputId, iconId) {
+    console.log('togglePassword called with:', inputId, iconId);
+    
     const passwordInput = document.getElementById(inputId);
     const toggleIcon = document.getElementById(iconId);
+    
+    console.log('Found elements:', passwordInput, toggleIcon);
+    
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
-        toggleIcon.classList.add('bi-eye-slash');
         toggleIcon.classList.remove('bi-eye');
+        toggleIcon.classList.add('bi-eye-slash');
+        console.log('Password now visible');
     } else {
         passwordInput.type = 'password';
-        toggleIcon.classList.add('bi-eye');
         toggleIcon.classList.remove('bi-eye-slash');
+        toggleIcon.classList.add('bi-eye');
+        console.log('Password now hidden');
     }
 }
 function checkPasswordStrength(password) {

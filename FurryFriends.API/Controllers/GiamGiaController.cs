@@ -57,7 +57,32 @@ namespace FurryFriends.API.Controllers
             if (updated == null)
                 return NotFound("Không tìm thấy mã giảm giá để cập nhật");
 
+<<<<<<< Updated upstream
             return Ok(updated);
+=======
+            try
+            {
+                await _giamGiaService.UpdateAsync(dto);
+                return NoContent(); // HTTP 204: Yêu cầu đã được thực hiện thành công nhưng không có nội dung để trả về.
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex) // Tên bị trùng
+            {
+                return Conflict(new { message = ex.Message });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi nghiêm trọng khi cập nhật giảm giá với ID: {DiscountId}. Lỗi chi tiết: {ErrorMessage}", id, ex.Message);
+                return StatusCode(500, $"Lỗi hệ thống khi cập nhật giảm giá: {ex.Message}");
+            }
+>>>>>>> Stashed changes
         }
 
 

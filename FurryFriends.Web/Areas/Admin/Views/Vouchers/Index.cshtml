@@ -94,8 +94,11 @@
                 <table class="table table-hover align-middle" id="voucherTable">
                     <thead class="table-light">
                         <tr>
+                            <th>Mã</th>
                             <th>Tên voucher</th>
                             <th>Phần trăm giảm</th>
+                            <th>Giảm tối đa</th>
+                            <th>Đơn tối thiểu</th>
                             <th>Ngày bắt đầu</th>
                             <th>Ngày kết thúc</th>
                             <th>Số lượng</th>
@@ -109,8 +112,29 @@
                         foreach (var item in Model)
                         {
                             <tr>
+                                <td><span class="badge bg-primary">@item.MaVoucher</span></td>
                                 <td>@item.TenVoucher</td>
                                 <td>@item.PhanTramGiam%</td>
+                                <td>
+                                    @if (item.GiaTriGiamToiDa.HasValue)
+                                    {
+                                        <span class="text-success">@item.GiaTriGiamToiDa.Value.ToString("N0") VNĐ</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không giới hạn</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.SoTienApDungToiThieu.HasValue)
+                                    {
+                                        <span class="text-info">@item.SoTienApDungToiThieu.Value.ToString("N0") VNĐ</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không yêu cầu</span>
+                                    }
+                                </td>
                                 <td>@item.NgayBatDau.ToString("dd/MM/yyyy")</td>
                                 <td>@item.NgayKetThuc.ToString("dd/MM/yyyy")</td>
                                 <td>@item.SoLuong</td>

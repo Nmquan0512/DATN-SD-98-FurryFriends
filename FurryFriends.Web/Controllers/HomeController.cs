@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using FurryFriends.API.Models;
 using FurryFriends.Web.Services.IService;
+using FurryFriends.API.Models.DTO;
+using FurryFriends.Web.ViewModels;
+using FurryFriends.Web.Services;
 
 namespace FurryFriends.Web.Controllers
 {
@@ -14,19 +17,122 @@ namespace FurryFriends.Web.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IHoaDonService _hoaDonService;
+        private readonly ISanPhamService _sanPhamService;
+        private readonly IThuongHieuService _thuongHieuService;
+        private readonly IAnhService _anhService;
+        private readonly ISanPhamChiTietService _sanPhamChiTietService;
+        private readonly DiscountCalculationService _discountCalculationService;
 
-        public HomeController(ILogger<HomeController> logger, IHoaDonService hoaDonService)
+        public HomeController(
+            ILogger<HomeController> logger, 
+            IHoaDonService hoaDonService,
+            ISanPhamService sanPhamService,
+            IThuongHieuService thuongHieuService,
+            IAnhService anhService,
+            ISanPhamChiTietService sanPhamChiTietService,
+            DiscountCalculationService discountCalculationService)
         {
             _logger = logger;
             _hoaDonService = hoaDonService;
+            _sanPhamService = sanPhamService;
+            _thuongHieuService = thuongHieuService;
+            _anhService = anhService;
+            _sanPhamChiTietService = sanPhamChiTietService;
+            _discountCalculationService = discountCalculationService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
+        {
+            try
+            {
+                // Sử dụng cùng cấu trúc như SanPhamKhachHang
+                var danhSachSanPhamDTO = await _sanPhamService.GetAllAsync();
+                var viewModelList = new List<SanPhamViewModel>();
+
+                // Lấy toàn bộ danh sách chi tiết một lần để tránh gọi API nhiều lần
+                var allChiTietListDTO = await _sanPhamChiTietService.GetAllAsync();
+
+                foreach (var sp in danhSachSanPhamDTO.Take(4)) // Chỉ lấy 4 sản phẩm
+                {
+                    var chiTietListDTO = allChiTietListDTO
+                                            .Where(ct => ct.SanPhamId == sp.SanPhamId)
+                                            .ToList();
+
+                    string? anhDaiDien = chiTietListDTO
+                                            .FirstOrDefault(ct => !string.IsNullOrEmpty(ct.DuongDan))
+                                            ?.DuongDan;
+
+                    // Chuyển sang ViewModel với thông tin giảm giá
+                    var chiTietVMs = chiTietListDTO.Select(ct => new SanPhamChiTietViewModel
+                    {
+                        SanPhamChiTietId = ct.SanPhamChiTietId,
+                        MauSac = ct.TenMau ?? "",
+                        KichCo = ct.TenKichCo ?? "",
+                        SoLuongTon = ct.SoLuong,
+                        GiaBan = ct.Gia,
+                        DanhSachAnh = ct.DuongDan != null ? new List<string> { ct.DuongDan } : new List<string>(),
+                        
+                        // Thông tin giảm giá sẽ được tính toán sau
+                        CoGiamGia = false,
+                        PhanTramGiamGia = null,
+                        GiaSauGiam = null
+                    }).ToList();
+
+                    var sanPhamVM = new SanPhamViewModel
+                    {
+                        SanPhamId = sp.SanPhamId,
+                        TenSanPham = sp.TenSanPham,
+                        MoTa = sp.TenThuongHieu ?? "", // Sử dụng tên thương hiệu làm mô tả
+                        TrangThai = sp.TrangThai,
+                        AnhDaiDienUrl = anhDaiDien,
+                        GiaBan = chiTietListDTO.FirstOrDefault()?.Gia ?? 0,
+                        SoLuongTon = chiTietListDTO.FirstOrDefault()?.SoLuong ?? 0,
+                        
+                        // Thông tin thương hiệu
+                        TenThuongHieu = sp.TenThuongHieu,
+                        ThuongHieuId = sp.ThuongHieuId,
+                        
+                        ChiTietList = chiTietVMs
+                    };
+
+                    // Áp dụng logic giảm giá với % cao nhất
+                    sanPhamVM = await _discountCalculationService.UpdateProductDiscount(sanPhamVM);
+                    viewModelList.Add(sanPhamVM);
+                }
+
+                var totalProducts = await _sanPhamService.GetTotalProductsAsync();
+                var totalOrders = 0; // Placeholder for now
+                
+                ViewBag.FeaturedProducts = viewModelList;
+                ViewBag.TotalProducts = totalProducts;
+                ViewBag.TotalOrders = totalOrders;
+                
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading homepage data");
+                // Return view with empty data if there's an error
+                ViewBag.FeaturedProducts = new List<SanPhamViewModel>();
+                ViewBag.TotalProducts = 0;
+                ViewBag.TotalOrders = 0;
+            return View();
+            }
+        }
+
+        public IActionResult Privacy()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        // ✅ Trang Giới thiệu
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        // ✅ Trang Liên hệ
+        public IActionResult Contact()
         {
             return View();
         }

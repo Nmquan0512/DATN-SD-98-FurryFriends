@@ -25,6 +25,8 @@ namespace FurryFriends.API.Services
             {
                 SanPhamChiTietId = x.SanPhamChiTietId,
                 SanPhamId = x.SanPhamId,
+                // Luôn hiển thị tên sản phẩm cha
+                TenSanPham = x.SanPham?.TenSanPham,
                 
                 KichCoId = x.KichCoId,
                 TenKichCo = x.KichCo?.TenKichCo,
@@ -50,6 +52,8 @@ namespace FurryFriends.API.Services
             {
                 SanPhamChiTietId = item.SanPhamChiTietId,
                 SanPhamId = item.SanPhamId,
+                // Luôn hiển thị tên sản phẩm cha
+                TenSanPham = item.SanPham?.TenSanPham,
                
                 KichCoId = item.KichCoId,
                 TenKichCo = item.KichCo?.TenKichCo,

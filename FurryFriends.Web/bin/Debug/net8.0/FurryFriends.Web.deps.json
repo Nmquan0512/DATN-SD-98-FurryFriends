@@ -12,6 +12,10 @@
           "Microsoft.AspNetCore.Authentication.Facebook": "8.0.17",
           "Microsoft.AspNetCore.Authentication.Google": "8.0.17",
           "Microsoft.AspNetCore.Authentication.MicrosoftAccount": "8.0.17",
+<<<<<<< Updated upstream
+=======
+          "Newtonsoft.Json": "13.0.3",
+>>>>>>> Stashed changes
           "PDFsharp": "6.0.0",
           "PdfSharpCore": "1.3.67",
           "iTextSharp": "5.5.13.4"

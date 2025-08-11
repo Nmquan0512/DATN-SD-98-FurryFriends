@@ -82,6 +82,10 @@ namespace FurryFriends.API.Services
 
         public async Task UpdateAsync(Guid id, SanPhamDTO dto)
         {
+<<<<<<< Updated upstream
+=======
+            // 1. Tải đối tượng cần cập nhật từ repository
+>>>>>>> Stashed changes
             var existing = await _repository.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"Không tìm thấy sản phẩm với ID {id}");
 
@@ -89,13 +93,20 @@ namespace FurryFriends.API.Services
             existing.ThuongHieuId = dto.ThuongHieuId;
             existing.TrangThai = dto.TrangThai;
 
+<<<<<<< Updated upstream
             // Xóa quan hệ cũ
             _context.SanPhamThanhPhans.RemoveRange(existing.SanPhamThanhPhans);
             _context.SanPhamChatLieus.RemoveRange(existing.SanPhamChatLieus);
+=======
+            // 3. Xóa các quan hệ cũ một cách an toàn
+            existing.SanPhamThanhPhans?.Clear();
+            existing.SanPhamChatLieus?.Clear();
+>>>>>>> Stashed changes
 
             // Thêm quan hệ mới
             if (dto.LoaiSanPham == "DoAn" && dto.ThanhPhanIds != null)
             {
+<<<<<<< Updated upstream
                 existing.SanPhamThanhPhans = dto.ThanhPhanIds
                     .Select(tpId => new SanPhamThanhPhan
                     {
@@ -115,15 +126,64 @@ namespace FurryFriends.API.Services
 
             await _repository.UpdateAsync(existing);
             await _context.SaveChangesAsync();
+=======
+                foreach (var tpId in dto.ThanhPhanIds)
+                {
+                    existing.SanPhamThanhPhans?.Add(new SanPhamThanhPhan { ThanhPhanId = tpId });
+                }
+            }
+            else if (dto.LoaiSanPham == "DoDung" && dto.ChatLieuIds != null)
+            {
+                foreach (var clId in dto.ChatLieuIds)
+                {
+                    existing.SanPhamChatLieus?.Add(new SanPhamChatLieu { ChatLieuId = clId });
+                }
+            }
+
+            // 5. Lưu thay đổi thông qua repository
+            await _repository.UpdateAsync(existing);
+>>>>>>> Stashed changes
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            if (!await _repository.ExistsAsync(id))
-                throw new KeyNotFoundException($"Không tìm thấy sản phẩm với ID {id}");
+            try
+            {
+                if (!await _repository.ExistsAsync(id))
+                    throw new KeyNotFoundException($"Không tìm thấy sản phẩm với ID {id}");
 
-            await _repository.DeleteAsync(id);
-            await _context.SaveChangesAsync();
+                // Kiểm tra sản phẩm có đang áp dụng giảm giá không
+                var sanPhamChiTiets = await _context.SanPhamChiTiets
+                    .Where(spct => spct.SanPhamId == id)
+                    .ToListAsync();
+
+                Console.WriteLine($"Found {sanPhamChiTiets.Count} SanPhamChiTiets for product {id}");
+
+                // Kiểm tra xem có sản phẩm chi tiết nào đang áp dụng giảm giá không
+                var sanPhamChiTietIds = sanPhamChiTiets.Select(spct => spct.SanPhamChiTietId).ToList();
+                
+                if (sanPhamChiTietIds.Any())
+                {
+                    var dotGiamGiaSanPham = await _context.DotGiamGiaSanPhams
+                        .Where(dggsp => sanPhamChiTietIds.Contains(dggsp.SanPhamChiTietId))
+                        .FirstOrDefaultAsync();
+
+                    Console.WriteLine($"Found discount product: {dotGiamGiaSanPham != null}");
+
+                    if (dotGiamGiaSanPham != null)
+                    {
+                        throw new InvalidOperationException($"Không thể xóa sản phẩm vì đang được áp dụng trong chương trình giảm giá. Vui lòng xóa sản phẩm khỏi chương trình giảm giá trước.");
+                    }
+                }
+
+                await _repository.DeleteAsync(id);
+                Console.WriteLine($"Successfully deleted product {id}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting product {id}: {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<(IEnumerable<SanPhamDTO> Data, int TotalCount)> GetFilteredAsync(string? loaiSanPham, int page, int pageSize)

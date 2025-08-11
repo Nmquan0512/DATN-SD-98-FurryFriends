@@ -403,6 +403,205 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* ✅ Hệ thống thông báo đẹp */
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        /* ✅ Cải thiện thông báo popup */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            padding: 0;
+            margin: 10px 0;
+            z-index: 1000;
+            max-width: 400px;
+            transform: translateX(100%);
+            animation: slideInRight 0.5s ease forwards;
+            border-left: 4px solid;
+        }
+
+        .notification.success {
+            border-left-color: #10b981;
+        }
+
+        .notification.error {
+            border-left-color: #ef4444;
+        }
+
+        .notification.warning {
+            border-left-color: #f59e0b;
+        }
+
+        .notification.info {
+            border-left-color: #3b82f6;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            gap: 12px;
+        }
+
+        .notification-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .notification.success .notification-icon {
+            color: #10b981;
+        }
+
+        .notification.error .notification-icon {
+            color: #ef4444;
+        }
+
+        .notification.warning .notification-icon {
+            color: #f59e0b;
+        }
+
+        .notification.info .notification-icon {
+            color: #3b82f6;
+        }
+
+        .notification-message {
+            flex: 1;
+            color: #374151;
+            font-size: 14px;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .notification-close:hover {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .notification.hide {
+            animation: slideOutRight 0.5s ease forwards;
+        }
+
+        @@keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @@keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* ✅ Thông báo inline trong form */
+        .form-notification {
+            margin-bottom: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 500;
+            text-align: center;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .form-notification.success {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .form-notification.error {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+
+        .form-notification.warning {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            color: #92400e;
+            border-left: 4px solid #f59e0b;
+        }
+
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ✅ Cải thiện validation messages */
+        .field-validation-error {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        .input-validation-error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+
+        .input-validation-success {
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+        }
+
+        @@keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* ✅ Loading state cho button */
+        .login-btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .login-btn.loading .loading {
+            display: inline-block;
+        }
+
+        .login-btn.loading span:not(.loading) {
+            display: none;
+        }
     </style>
 
 </head>
@@ -412,6 +611,10 @@
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
+
+    <!-- ✅ Thông báo popup đẹp -->
+    <div id="notificationContainer"></div>
+    
     <div class="login-container">
         <div class="walking-cat">
             <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExdHBtcjdycHN5YjNrZmpqcHM3Zm1wN3hsbm84aTU3d3M4cTJsMmRxdyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/jlw3OMYrH6mb4loQJI/giphy.gif" alt="Walking Cat">
@@ -421,26 +624,39 @@
             <div class="subtitle">Cửa hàng thú cưng yêu thương</div>
         </div>
         <p style="color: #666; margin-bottom: 24px; font-size: 14px;">Đăng nhập để tiếp tục mua sắm cho người bạn lông xù của bạn</p>
-        @if (ViewBag.Error != null)
+        
+        <!-- ✅ Thông báo inline trong form -->
+        @if (TempData["Success"] != null)
         {
-            <div class="alert alert-danger">@ViewBag.Error</div>
+            <div class="form-notification success" id="successMessage">
+                <i class="bi bi-check-circle-fill"></i>
+                @Html.Raw(TempData["Success"])
+            </div>
         }
+        @if (TempData["Warning"] != null)
+        {
+            <div class="form-notification warning" id="warningMessage">
+                <i class="bi bi-exclamation-circle-fill"></i>
+                @Html.Raw(TempData["Warning"])
+            </div>
+        }
+        
         <form asp-action="DangNhap" method="post" id="loginForm">
             <div class="form-group">
                 <label for="UserName">Tên đăng nhập</label>
                 <input asp-for="UserName" class="form-control" placeholder="Nhập tên đăng nhập" required />
-                <span asp-validation-for="UserName" class="text-danger small"></span>
+                <span asp-validation-for="UserName" class="field-validation-error"></span>
             </div>
             <div class="form-group" style="position: relative;">
                 <label for="Password">Mật khẩu</label>
                 <input asp-for="Password" id="Password" type="password" class="form-control" placeholder="Nhập mật khẩu" required />
                 <i class="bi bi-eye password-toggle" onclick="togglePassword()" id="toggleIcon"></i>
-                <span asp-validation-for="Password" class="text-danger small"></span>
+                <span asp-validation-for="Password" class="field-validation-error"></span>
             </div>
             <div class="forgot-password">
                 <a href="#" onclick="showForgotPassword()">Quên mật khẩu?</a>
             </div>
-            <button type="submit" class="login-btn">
+            <button type="submit" class="login-btn" id="loginBtn">
                 <span class="loading"></span>
                 Đăng nhập
             </button>
@@ -452,13 +668,73 @@
             <a href="/DangKy/DangNhapGoogle" class="social-btn" title="Đăng nhập với Google" style="text-decoration:none; display:flex; align-items:center; justify-content:center;">
                 <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" style="height:20px;vertical-align:middle;">
             </a>
-
         </div>
         <div class="signup-link">
             Chưa có tài khoản? <a href="/DangKy">Đăng ký ngay</a>
         </div>
     </div>
+
+    <!-- ✅ Thông báo popup đẹp -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="notification success" id="popupSuccess">
+            <div class="notification-content">
+                <i class="bi bi-check-circle-fill notification-icon"></i>
+                <div class="notification-message">@Html.Raw(TempData["Success"])</div>
+                <button class="notification-close" onclick="closeNotification('popupSuccess')">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="notification error" id="popupError">
+            <div class="notification-content">
+                <i class="bi bi-exclamation-triangle-fill notification-icon"></i>
+                <div class="notification-message">@Html.Raw(TempData["Error"])</div>
+                <button class="notification-close" onclick="closeNotification('popupError')">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+        </div>
+    }
+
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    
     <script>
+        // ✅ Hàm hiển thị thông báo popup
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const icons = {
+                success: 'bi-check-circle-fill',
+                error: 'bi-exclamation-triangle-fill',
+                warning: 'bi-exclamation-circle-fill',
+                info: 'bi-info-circle-fill'
+            };
+            
+            notification.innerHTML = `
+                <i class="bi ${icons[type]} notification-icon"></i>
+                <div class="notification-message">${message}</div>
+                <button class="notification-close" onclick="this.parentElement.remove()">
+                    <i class="bi bi-x"></i>
+                </button>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Tự động ẩn sau 5 giây
+            setTimeout(() => {
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 500);
+            }, 5000);
+        }
+
         function togglePassword() {
             const passwordInput = document.getElementById('Password');
             const toggleIcon = document.getElementById('toggleIcon');
@@ -470,15 +746,78 @@
                 toggleIcon.className = 'bi bi-eye password-toggle';
             }
         }
+        
         function showForgotPassword() {
-            alert('Chức năng quên mật khẩu sẽ được triển khai sau! 🐾');
+            showNotification('Chức năng quên mật khẩu sẽ được triển khai sau! 🐾', 'info');
         }
+        
         function showSignup() {
-            alert('Chuyển đến trang đăng ký! 🎉');
+            showNotification('Chuyển đến trang đăng ký! 🎉', 'info');
         }
+        
         function socialLogin(provider) {
-            alert(`Đăng nhập với ${provider}! 🚀`);
+            showNotification(`Đăng nhập với ${provider}! 🚀`, 'info');
         }
+
+        // ✅ Cải thiện form validation
+        $(document).ready(function() {
+            // Real-time validation feedback
+            $('input').on('blur', function() {
+                if (this.checkValidity()) {
+                    $(this).removeClass('input-validation-error').addClass('input-validation-success');
+                } else {
+                    $(this).removeClass('input-validation-success').addClass('input-validation-error');
+                }
+            });
+
+            // Form submission
+            $('#loginForm').on('submit', function(e) {
+                const btn = $('#loginBtn');
+                btn.addClass('loading');
+                
+                // Kiểm tra validation
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                    btn.removeClass('loading');
+                    showNotification('Vui lòng kiểm tra lại thông tin!', 'warning');
+                    return false;
+                }
+                
+                // Nếu có thông báo lỗi từ server, hiển thị nó
+                const errorMessage = $('.form-notification.error').text();
+                if (errorMessage && errorMessage.trim()) {
+                    showNotification(errorMessage, 'error');
+                }
+            });
+        });
+
+        // ✅ Tự động ẩn thông báo inline (chỉ success và warning, không ẩn error)
+        setTimeout(function() {
+            const successNotifications = document.querySelectorAll('.form-notification.success, .form-notification.warning');
+            successNotifications.forEach(notification => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateY(-20px)';
+                setTimeout(() => notification.remove(), 300);
+            });
+        }, 5000);
+
+        // ✅ Đóng thông báo popup
+        function closeNotification(id) {
+            const notification = document.getElementById(id);
+            if (notification) {
+                notification.classList.add('hide');
+                setTimeout(() => notification.remove(), 500);
+            }
+        }
+
+        // ✅ Tự động ẩn popup (chỉ success và warning, không ẩn error)
+        setTimeout(function() {
+            const successPopups = document.querySelectorAll('.notification.success, .notification.warning, .notification.info');
+            successPopups.forEach(popup => {
+                popup.classList.add('hide');
+                setTimeout(() => popup.remove(), 500);
+            });
+        }, 8000);
     </script>
     @section Scripts { }
 </body>

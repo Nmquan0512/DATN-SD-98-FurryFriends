@@ -67,11 +67,11 @@
                             </dl>
                         </div>
                     </div>
-                    <form asp-area="Admin" asp-action="Delete" asp-controller="SanPham" method="post">
+                    <form asp-area="Admin" asp-action="Delete" asp-controller="SanPham" method="post" id="deleteForm" data-disable-loading="true">
                         <input type="hidden" asp-for="SanPhamId" />
                         <div class="d-flex justify-content-end gap-2">
                             <a asp-area="Admin" asp-action="Index" asp-controller="SanPham" class="btn btn-secondary">Hủy</a>
-                            <button type="submit" class="btn btn-danger">
+                            <button type="button" class="btn btn-danger" onclick="confirmDelete()">
                                 <i class="fas fa-trash"></i>
                                 Xác nhận xóa
                             </button>
@@ -81,4 +81,26 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete() {
+            Swal.fire({
+                title: 'Xác nhận xóa',
+                text: `Bạn có chắc chắn muốn xóa sản phẩm "${@Html.Raw(Json.Serialize(Model.TenSanPham))}"? Hành động này không thể hoàn tác.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Xóa',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit form ngay lập tức, không hiển thị loading
+                    document.getElementById('deleteForm').submit();
+                }
+            });
+        }
+    </script>
+} 

@@ -1,0 +1,224 @@
+/* ✅ Thông báo đẹp - FurryFriends */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 500;
+    z-index: 1000;
+    animation: slideInRight 0.5s ease-out;
+    max-width: 400px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    font-family: 'Arial', sans-serif;
+}
+
+.notification.success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-left: 4px solid #047857;
+}
+
+.notification.error {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border-left: 4px solid #b91c1c;
+}
+
+.notification.warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-left: 4px solid #b45309;
+}
+
+.notification.info {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-left: 4px solid #1d4ed8;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification.hide {
+    animation: slideOutRight 0.5s ease-in forwards;
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.notification-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.notification-message {
+    flex: 1;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.notification-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Thông báo inline trong form */
+.form-notification {
+    margin-bottom: 20px;
+    padding: 16px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 500;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.form-notification.success {
+    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    color: #065f46;
+    border-left: 4px solid #10b981;
+}
+
+.form-notification.error {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    color: #991b1b;
+    border-left: 4px solid #ef4444;
+}
+
+.form-notification.warning {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    border-left: 4px solid #f59e0b;
+}
+
+.form-notification.info {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #1e40af;
+    border-left: 4px solid #3b82f6;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Thông báo toast nhỏ */
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    z-index: 1000;
+    animation: slideInUp 0.5s ease-out;
+    max-width: 300px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    font-size: 14px;
+}
+
+.toast-notification.success {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.toast-notification.error {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.toast-notification.warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.toast-notification.info {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .toast-notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+/* Thông báo loading */
+.loading-notification {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    border-left: 4px solid #374151;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}

@@ -99,6 +99,10 @@ namespace FurryFriends.API.Controllers
             {
                 return NotFound(ex.Message);
             }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Lỗi khi xóa sản phẩm: {ex.Message}");

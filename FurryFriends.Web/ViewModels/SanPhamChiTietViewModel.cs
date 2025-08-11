@@ -8,6 +8,10 @@
         public int SoLuongTon { get; set; }
         public decimal GiaBan { get; set; }
         public List<string> DanhSachAnh { get; set; } = new(); // Url ảnh để hiển thị
-    }
 
+        // Thông tin giảm giá
+        public decimal? PhanTramGiamGia { get; set; }
+        public decimal? GiaSauGiam { get; set; }
+        public bool CoGiamGia { get; set; } = false;
+    }
 }

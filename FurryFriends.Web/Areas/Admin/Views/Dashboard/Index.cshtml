@@ -99,7 +99,7 @@
 <div class="dashboard-card" style="margin: 24px 40px;">
     <div class="card-header">
         <h3 class="card-title">Đơn Hàng Gần Đây</h3>
-        <a href="/Admin/HoaDon" class="btn btn-primary btn-sm">
+        <a href="/Admin/DonHang" class="btn btn-primary btn-sm">
             <i class="fas fa-external-link-alt"></i>
             Xem tất cả
         </a>
@@ -119,19 +119,19 @@
             <tbody>
                 @if (ViewBag.RecentOrders != null)
                 {
-                    foreach (var order in ViewBag.RecentOrders)
+                    foreach (dynamic order in ViewBag.RecentOrders)
                     {
                         <tr>
-                            <td><strong>#@order.MaHoaDon</strong></td>
-                            <td>@order.TenKhachHang</td>
-                            <td>@order.SoLuongSanPham sản phẩm</td>
-                            <td><strong>@order.TongTien.ToString("N0") VNĐ</strong></td>
+                            <td><strong>#@(order.HoaDonId?.ToString().Substring(0, 8).ToUpper() ?? "N/A")</strong></td>
+                            <td>@(order.CustomerName ?? "Không xác định")</td>
+                            <td>1 sản phẩm</td>
+                            <td><strong>@(order.TongTienSauKhiGiam?.ToString("N0") ?? "0") VNĐ</strong></td>
                             <td>
-                                <span class="status-badge status-@order.TrangThai.ToLower()">
-                                    @order.TrangThai
+                                <span class="status-badge status-@(GetStatusClass(order.TrangThai))">
+                                    @(order.StatusText ?? GetStatusText(order.TrangThai))
                                 </span>
                             </td>
-                            <td>@order.NgayTao.ToString("dd/MM/yyyy")</td>
+                            <td>@(order.NgayTao?.ToString("dd/MM/yyyy") ?? "N/A")</td>
                         </tr>
                     }
                 }
@@ -140,18 +140,51 @@
     </div>
 </div>
 
+@functions {
+    public string GetStatusText(int trangThai)
+    {
+        return trangThai switch
+        {
+            0 => "Chờ duyệt",
+            1 => "Đã duyệt",
+            2 => "Đang giao",
+            3 => "Đã giao",
+            4 => "Đã hủy",
+            _ => "Không xác định"
+        };
+    }
+
+    public string GetStatusClass(int trangThai)
+    {
+        return trangThai switch
+        {
+            0 => "pending",
+            1 => "approved",
+            2 => "shipping",
+            3 => "delivered",
+            4 => "cancelled",
+            _ => "pending"
+        };
+    }
+}
+
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/dashboard-test.js"></script>
     <script>
+        let revenueChart, orderStatusChart;
+
+        // Khởi tạo biểu đồ
+        function initializeCharts() {
         // Revenue Chart
         const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-        const revenueChart = new Chart(revenueCtx, {
+            revenueChart = new Chart(revenueCtx, {
             type: 'line',
             data: {
                 labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
                 datasets: [{
-                    label: 'Doanh thu (triệu VNĐ)',
-                    data: [12, 19, 3, 5, 2, 3, 15, 8, 12, 18, 22, 25],
+                        label: 'Doanh thu (VNĐ)',
+                        data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     borderColor: '#4A90E2',
                     backgroundColor: 'rgba(74, 144, 226, 0.1)',
                     tension: 0.4,
@@ -171,6 +204,11 @@
                         beginAtZero: true,
                         grid: {
                             color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('vi-VN') + ' VNĐ';
+                                }
                         }
                     },
                     x: {
@@ -184,17 +222,18 @@
 
         // Order Status Chart
         const orderStatusCtx = document.getElementById('orderStatusChart').getContext('2d');
-        const orderStatusChart = new Chart(orderStatusCtx, {
+            orderStatusChart = new Chart(orderStatusCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Hoàn thành', 'Đang giao', 'Chờ xác nhận', 'Đã hủy'],
+                    labels: ['Chờ duyệt', 'Đã duyệt', 'Đang giao', 'Đã giao', 'Đã hủy'],
                 datasets: [{
-                    data: [65, 20, 10, 5],
+                        data: [0, 0, 0, 0, 0],
                     backgroundColor: [
-                        '#219150',
-                        '#1976d2',
-                        '#ffc107',
-                        '#d32f2f'
+                            '#ffc107', // Chờ duyệt - Vàng
+                            '#1976d2', // Đã duyệt - Xanh dương
+                            '#219150', // Đang giao - Xanh lá
+                            '#4caf50', // Đã giao - Xanh đậm
+                            '#d32f2f'  // Đã hủy - Đỏ
                     ],
                     borderWidth: 0
                 }]
@@ -212,14 +251,75 @@
                     }
                 }
             }
+            });
+        }
+
+        // Lấy dữ liệu thật từ API
+        function loadChartData(period = 'month') {
+            fetch(`/Admin/Dashboard/GetChartData?period=${period}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success === false) {
+                        console.error('Error:', data.message);
+                        return;
+                    }
+                    
+                    // Cập nhật biểu đồ doanh thu
+                    if (data.revenueData && data.revenueData.length >= 2) {
+                        const revenueLabels = data.revenueData[0].labels;
+                        const revenueValues = data.revenueData[1].values;
+                        
+                        if (revenueLabels && revenueValues) {
+                            revenueChart.data.labels = revenueLabels;
+                            revenueChart.data.datasets[0].data = revenueValues;
+                            
+                            // Cập nhật label theo period
+                            if (period === 'quarter') {
+                                revenueChart.data.datasets[0].label = 'Doanh thu (VNĐ) - Theo quý';
+                            } else if (period === 'year') {
+                                revenueChart.data.datasets[0].label = 'Doanh thu (VNĐ) - Theo năm';
+                            } else {
+                                revenueChart.data.datasets[0].label = 'Doanh thu (VNĐ) - Theo tháng';
+                            }
+                            
+                            revenueChart.update();
+                        }
+                    }
+                    
+                    // Cập nhật biểu đồ trạng thái đơn hàng
+                    if (data.orderStatusData && data.orderStatusData.length >= 2) {
+                        const statusLabels = data.orderStatusData[0].labels;
+                        const statusValues = data.orderStatusData[1].values;
+                        
+                        if (statusLabels && statusValues) {
+                            orderStatusChart.data.labels = statusLabels;
+                            orderStatusChart.data.datasets[0].data = statusValues;
+                            orderStatusChart.update();
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading chart data:', error);
+                });
+        }
+
+        // Khởi tạo khi trang load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            loadChartData();
         });
 
         // Chart period buttons
         document.querySelectorAll('[data-period]').forEach(button => {
             button.addEventListener('click', function () {
+                const period = this.dataset.period;
+                
+                // Cập nhật active state
                 document.querySelectorAll('[data-period]').forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
-                // Here you would typically update the chart data based on the selected period
+                
+                // Tải dữ liệu theo period được chọn
+                loadChartData(period);
             });
         });
     </script>

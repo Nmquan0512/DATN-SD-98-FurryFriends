@@ -63,7 +63,7 @@
                         </div>
                     </div>
                     
-                    <form asp-area="Admin" asp-action="Delete" asp-controller="KichCo" method="post">
+                    <form asp-area="Admin" asp-action="Delete" asp-controller="KichCo" method="post" data-disable-loading="true">
                         <input type="hidden" asp-for="KichCoId" />
                         <div class="d-flex justify-content-end gap-2">
                             <a asp-area="Admin" asp-action="Index" asp-controller="KichCo" class="btn btn-secondary">Hủy</a>

@@ -9,6 +9,7 @@ namespace FurryFriends.API.Repository.IRepository
 		Task AddAsync(KhachHang khachHang);                    // Thêm mới
 		Task UpdateAsync(KhachHang khachHang);                 // Cập nhật
 		Task DeleteAsync(Guid id);
-
+		Task<KhachHang?> FindByEmailAsync(string email);       // Tìm theo email
+		Task<KhachHang?> FindByPhoneAsync(string phone);       // Tìm theo số điện thoại
 	}
 }

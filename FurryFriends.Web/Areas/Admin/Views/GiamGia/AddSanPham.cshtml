@@ -6,7 +6,46 @@
 
 <h2>@ViewData["Title"]</h2>
 
+<<<<<<< Updated upstream
 <h4 class="mb-4">Đợt giảm giá: <strong>@Model.GiamGia.TenGiamGia</strong></h4>
+=======
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <i class="fas fa-info-circle me-2"></i>Thông tin chương trình
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên chương trình:</label>
+                        <p class="form-control-plaintext">@Model.TenChuongTrinh</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Giảm giá:</label>
+                        <p class="form-control-plaintext">@Model.GiamGia.PhanTramKhuyenMai.ToString("F0")%</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Trạng thái:</label>
+                        <p class="form-control-plaintext">
+                            @if (Model.GiamGia.TrangThai)
+                            {
+                                <span class="badge bg-success">Đang áp dụng</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Tạm ngưng</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+>>>>>>> Stashed changes
 
 <form asp-action="AddSanPham" method="post">
     <input type="hidden" asp-for="GiamGia.GiamGiaId" />

@@ -11,7 +11,7 @@ namespace FurryFriends.API.Models
         [StringLength(100)]
         public string TenThanhPhan { get; set; }
 
-        public string MoTa { get; set; }
+        public string? MoTa { get; set; }
 
         [Required]
         public bool TrangThai { get; set; }

@@ -1,7 +1,14 @@
+<<<<<<< Updated upstream
 ﻿using FurryFriends.Web.Service.IService;
 using FurryFriends.Web.Service;
+=======
+﻿using FurryFriends.API.Repository.IRepository;
+using FurryFriends.Web.Service;
+using FurryFriends.Web.Service.IService;
+>>>>>>> Stashed changes
 using FurryFriends.Web.Services;
 using FurryFriends.Web.Services.IService;
+using FurryFriends.Web.Services.IServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Facebook;
@@ -10,6 +17,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+<<<<<<< Updated upstream
+=======
+builder.Services.AddScoped<IVnPayService, VnPayService>();
+>>>>>>> Stashed changes
 
 builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
 {
@@ -81,8 +92,14 @@ builder.Services.AddHttpClient<IThongTinCaNhanService, ThongTinCaNhanService>(cl
 {
 	client.BaseAddress = new Uri("https://localhost:7289/");
 });
-
-
+builder.Services.AddHttpClient<IGioHangService, GioHangService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
+builder.Services.AddHttpClient<IHinhThucThanhToanService, HinhThucThanhToanService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
 
 builder.Services.AddHttpClient<IAnhService, AnhService>(client =>
 {
@@ -93,6 +110,9 @@ builder.Services.AddHttpClient<ISanPhamChiTietService, SanPhamChiTietService>(cl
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
+
+// Đăng ký DiscountCalculationService
+builder.Services.AddScoped<DiscountCalculationService>();
 // Cách đúng đã kiểm tra
 
 builder.Services.AddHttpClient<ISanPhamService, SanPhamService>(client =>

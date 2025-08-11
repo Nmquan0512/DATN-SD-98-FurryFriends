@@ -46,8 +46,22 @@ namespace FurryFriends.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+<<<<<<< Updated upstream
             var created = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = created.ThuongHieuId }, created);
+=======
+            try
+            {
+                var created = await _service.CreateAsync(dto);
+                if (created == null) return BadRequest("Không thể tạo thương hiệu");
+                return CreatedAtAction(nameof(GetById), new { id = created.ThuongHieuId }, created);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return BadRequest(ModelState);
+            }
+>>>>>>> Stashed changes
         }
 
         [HttpPut("{id}")]
@@ -56,11 +70,25 @@ namespace FurryFriends.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+<<<<<<< Updated upstream
             var result = await _service.UpdateAsync(id, dto);
             if (!result)
                 return NotFound("Không tìm thấy thương hiệu!");
 
             return NoContent();
+=======
+            try
+            {
+                var result = await _service.UpdateAsync(id, dto);
+                if (!result) return NotFound("Không tìm thấy thương hiệu!");
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+                return BadRequest(ModelState);
+            }
+>>>>>>> Stashed changes
         }
 
         [HttpDelete("{id}")]

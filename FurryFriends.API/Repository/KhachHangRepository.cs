@@ -50,6 +50,20 @@ namespace FurryFriends.API.Repository
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<KhachHang?> FindByEmailAsync(string email)
+        {
+            return await _context.KhachHangs
+                                 .Include(k => k.DiaChiKhachHangs)
+                                 .FirstOrDefaultAsync(k => k.EmailCuaKhachHang == email);
+        }
+
+        public async Task<KhachHang?> FindByPhoneAsync(string phone)
+        {
+            return await _context.KhachHangs
+                                 .Include(k => k.DiaChiKhachHangs)
+                                 .FirstOrDefaultAsync(k => k.SDT == phone);
+        }
     }
 }
 

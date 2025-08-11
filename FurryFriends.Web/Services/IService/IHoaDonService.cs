@@ -10,6 +10,10 @@ namespace FurryFriends.Web.Services.IService
         Task<HoaDon> GetHoaDonByIdAsync(Guid hoaDonId);
         Task<IEnumerable<HoaDon>> SearchHoaDonAsync(string keyword);
         Task<byte[]> ExportHoaDonToPdfAsync(Guid hoaDonId);
+        Task<ApiResult> HuyDonHangAsync(Guid hoaDonId);
+        Task<ApiResult> CapNhatTrangThaiAsync(Guid hoaDonId, int trangThaiMoi);
+        Task<IEnumerable<HoaDon>> GetAllAsync();
+        Task<HoaDon> GetByIdAsync(Guid id);
         
         // Dashboard methods
         Task<int> GetTotalOrdersAsync();

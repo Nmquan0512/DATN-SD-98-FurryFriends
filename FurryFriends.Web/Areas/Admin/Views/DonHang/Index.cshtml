@@ -1,0 +1,863 @@
+@model IEnumerable<FurryFriends.API.Models.HoaDon>
+@{
+    ViewData["Title"] = "Quản lý đơn hàng - Admin";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <style>
+        .order-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #f1f5f9;
+        }
+
+        .order-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            border-color: #e2e8f0;
+        }
+
+        .order-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .order-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            pointer-events: none;
+        }
+
+        .order-id {
+            font-weight: 700;
+            font-size: 1.25rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .order-date {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .order-body {
+            padding: 2rem;
+        }
+
+        .customer-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #475569;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            color: #1e293b;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .order-details {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #cbd5e1;
+        }
+
+        .price-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .price-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #059669;
+        }
+
+        .price-label {
+            color: #64748b;
+        }
+
+        .price-value {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .total-amount {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #059669;
+            text-align: right;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badge {
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-align: center;
+            min-width: 120px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-pending { 
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); 
+            color: #92400e; 
+            border: 2px solid #f59e0b;
+        }
+        .status-approved { 
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); 
+            color: #065f46; 
+            border: 2px solid #10b981;
+        }
+        .status-shipping { 
+            background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%); 
+            color: #1e40af; 
+            border: 2px solid #3b82f6;
+        }
+        .status-delivered { 
+            background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%); 
+            color: #166534; 
+            border: 2px solid #22c55e;
+        }
+        .status-cancelled { 
+            background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%); 
+            color: #991b1b; 
+            border: 2px solid #ef4444;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 120px;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary { 
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); 
+            color: white; 
+        }
+        .btn-primary:hover { 
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-success { 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+            color: white; 
+        }
+        .btn-success:hover { 
+            background: linear-gradient(135deg, #059669 0%, #047857 100%); 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-warning { 
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+            color: white; 
+        }
+        .btn-warning:hover { 
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%); 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-info { 
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); 
+            color: white; 
+        }
+        .btn-info:hover { 
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%); 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+        }
+
+        .btn-danger { 
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
+            color: white; 
+        }
+        .btn-danger:hover { 
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+
+        .quick-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .quick-btn.increment {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .quick-btn.increment:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            transform: translateY(-1px);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success { 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+        }
+        .notification.error { 
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            border: 1px solid #cbd5e1;
+        }
+
+        .page-title {
+            color: #1e293b;
+            font-weight: 800;
+            font-size: 2rem;
+            margin: 0;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Product list styles */
+        .products-section {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .products-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .product-item:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .product-image {
+            width: 56px;
+            height: 56px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .product-image-placeholder {
+            width: 56px;
+            height: 56px;
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .product-brand {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-details {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .product-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+            font-weight: 500;
+        }
+
+        .product-price {
+            font-weight: 600;
+            color: #10b981;
+            margin-left: auto;
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 16px;
+            border: 2px dashed #cbd5e1;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-description {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        .status-filter {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 25px;
+            color: #64748b;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .filter-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .filter-btn.active:hover {
+            color: white;
+        }
+    </style>
+}
+
+<div class="container-fluid">
+    <div class="page-header">
+        <h1 class="page-title">Quản lý đơn hàng</h1>
+        <p class="text-muted mb-0">Quản lý và theo dõi tất cả đơn hàng của khách hàng</p>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Status Filter -->
+    <div class="status-filter">
+        <button class="filter-btn active" data-status="all">Tất cả</button>
+        <button class="filter-btn" data-status="0">Chờ duyệt</button>
+        <button class="filter-btn" data-status="1">Đã duyệt</button>
+        <button class="filter-btn" data-status="2">Đang giao</button>
+        <button class="filter-btn" data-status="3">Đã giao</button>
+        <button class="filter-btn" data-status="4">Đã hủy</button>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var hoaDon in Model)
+                {
+                    <div class="order-card" data-status="@hoaDon.TrangThai">
+                        <div class="order-header">
+                            <div>
+                                <div class="order-id">Đơn hàng #@hoaDon.HoaDonId.ToString().Substring(0, 8).ToUpper()</div>
+                                <div class="order-date">@hoaDon.NgayTao.ToString("dd/MM/yyyy HH:mm")</div>
+                            </div>
+                            <div class="status-badge @GetStatusClass(hoaDon.TrangThai)">
+                                @GetStatusText(hoaDon.TrangThai)
+                            </div>
+                        </div>
+
+                        <div class="order-body">
+                            <div class="customer-info">
+                                <div class="info-item">
+                                    <span class="info-label">Khách hàng</span>
+                                    <span class="info-value">@(hoaDon.TenCuaKhachHang ?? "N/A")</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Số điện thoại</span>
+                                    <span class="info-value">@(hoaDon.SdtCuaKhachHang ?? "N/A")</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Email</span>
+                                    <span class="info-value">@(hoaDon.EmailCuaKhachHang ?? "N/A")</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Địa chỉ</span>
+                                    <span class="info-value">@(hoaDon.DiaChiGiaoHangLucMua ?? hoaDon.DiaChiGiaoHang?.TenDiaChi ?? "N/A")</span>
+                                </div>
+                            </div>
+
+                            <!-- Products Section -->
+                            <div class="products-section">
+                                <div class="products-title">
+                                    <i class="fas fa-box-open me-2"></i>
+                                    Danh sách sản phẩm (@hoaDon.HoaDonChiTiets?.Count() sản phẩm)
+                                </div>
+                                @if (hoaDon.HoaDonChiTiets != null && hoaDon.HoaDonChiTiets.Any())
+                                {
+                                    @foreach (var item in hoaDon.HoaDonChiTiets)
+                                    {
+                                        <div class="product-item">
+                                            @{ 
+                                                // ✅ Sử dụng ảnh snapshot nếu có, fallback sang ảnh hiện tại
+                                                string imgLink = null; 
+                                                var snapshotImg = item.AnhSanPhamLucMua ?? string.Empty;
+                                                var currentImg = item.SanPhamChiTiet?.Anh?.DuongDan ?? string.Empty;
+                                                var dd = !string.IsNullOrWhiteSpace(snapshotImg) ? snapshotImg : currentImg;
+                                                
+                                                if (!string.IsNullOrWhiteSpace(dd)) { 
+                                                    if (dd.StartsWith("http", StringComparison.OrdinalIgnoreCase)) 
+                                                        imgLink = dd; 
+                                                    else if (dd.Contains("/")) 
+                                                        imgLink = "https://localhost:7289/" + dd.TrimStart('/'); 
+                                                    else 
+                                                        imgLink = $"https://localhost:7289/images/{System.IO.Path.GetFileName(dd)}"; 
+                                                } 
+                                            }
+                                            @if (!string.IsNullOrEmpty(imgLink)) 
+                                            {
+                                                <img src="@imgLink" alt="@(item.TenSanPhamLucMua ?? "Sản phẩm")" class="product-image">
+                                            } 
+                                            else 
+                                            {
+                                                <div class="product-image-placeholder">
+                                                    <i class="fas fa-image text-muted"></i>
+                                                </div>
+                                            }
+                                            <div class="product-info">
+                                                <div class="product-name">@(item.TenSanPhamLucMua ?? "N/A")</div>
+                                                @if (!string.IsNullOrEmpty(item.ThuongHieuLucMua))
+                                                {
+                                                    <div class="product-brand">@item.ThuongHieuLucMua</div>
+                                                }
+                                                <div class="product-details">
+                                                    <span class="product-badge">@(item.MauSacLucMua ?? "N/A")</span>
+                                                    <span class="product-badge">@(item.KichCoLucMua ?? "N/A")</span>
+                                                </div>
+                                            </div>
+                                            <div class="product-price">
+                                                @((item.GiaLucMua ?? item.Gia).ToString("N0"))đ x @item.SoLuongSanPham
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="text-center text-muted py-3">
+                                        <i class="fas fa-box-open fa-2x mb-2"></i>
+                                        <div>Không có sản phẩm nào</div>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Chi tiết giá và phí ship -->
+                            <div class="order-details">
+                                <div class="price-breakdown">
+                                    <div class="price-item">
+                                        <span class="price-label">Tổng tiền hàng:</span>
+                                        <span class="price-value">@hoaDon.TongTien.ToString("N0") VNĐ</span>
+                                    </div>
+                                    <div class="price-item">
+                                        <span class="price-label">Phí vận chuyển:</span>
+                                        <span class="price-value">30,000 VNĐ</span>
+                                    </div>
+                                    <div class="price-item">
+                                        <span class="price-label">Tổng thanh toán:</span>
+                                        <span class="price-value">@hoaDon.TongTienSauKhiGiam.ToString("N0") VNĐ</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="action-buttons">
+                                <a href="@Url.Action("Details", "DonHang", new { area = "Admin", id = hoaDon.HoaDonId })" 
+                                   class="btn btn-primary">
+                                    <i class="fas fa-eye"></i>
+                                    Xem chi tiết
+                                </a>
+
+                                @if (hoaDon.TrangThai == 0) // Chờ duyệt
+                                {
+                                    <button class="btn btn-success" onclick="duyetDon('@hoaDon.HoaDonId')">
+                                        <i class="fas fa-check"></i>
+                                        Duyệt đơn
+                                    </button>
+                                }
+
+                                @if (hoaDon.TrangThai == 1) // Đã duyệt
+                                {
+                                    <button class="btn btn-info" onclick="chuyenSangDangGiao('@hoaDon.HoaDonId')">
+                                        <i class="fas fa-shipping-fast"></i>
+                                        Chuyển sang đang giao
+                                    </button>
+                                }
+
+                                @if (hoaDon.TrangThai == 2) // Đang giao
+                                {
+                                    <button class="btn btn-success" onclick="chuyenSangDaGiao('@hoaDon.HoaDonId')">
+                                        <i class="fas fa-home"></i>
+                                        Chuyển sang đã giao
+                                    </button>
+                                }
+
+                                <!-- Chỉ cho phép hủy khi chờ duyệt hoặc đã duyệt -->
+                                @if (hoaDon.TrangThai == 0 || hoaDon.TrangThai == 1)
+                                {
+                                    <button class="btn btn-danger" onclick="huyDon('@hoaDon.HoaDonId')">
+                                        <i class="fas fa-times"></i>
+                                        Hủy đơn
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div class="empty-icon">📦</div>
+                    <h3 class="empty-title">Chưa có đơn hàng nào</h3>
+                    <p class="empty-description">Hãy chờ khách hàng đặt hàng</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Notification -->
+<div id="notification" class="notification"></div>
+
+@section Scripts {
+    <script>
+        // Duyệt đơn hàng
+        function duyetDon(hoaDonId) {
+            if (confirm('Bạn có chắc chắn muốn duyệt đơn hàng này?')) {
+                fetch(`/Admin/DonHang/DuyetDon`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: hoaDonId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showNotification(data.message, data.success ? 'success' : 'error');
+                    if (data.success) {
+                        setTimeout(() => location.reload(), 1500);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Có lỗi xảy ra khi duyệt đơn hàng', 'error');
+                });
+            }
+        }
+
+        // Hủy đơn hàng
+        function huyDon(hoaDonId) {
+            if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
+                fetch(`/Admin/DonHang/HuyDon`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: hoaDonId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showNotification(data.message, data.success ? 'success' : 'error');
+                    if (data.success) {
+                        setTimeout(() => location.reload(), 1500);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Có lỗi xảy ra khi hủy đơn hàng', 'error');
+                });
+            }
+        }
+
+        // Chuyển sang đang giao
+        function chuyenSangDangGiao(hoaDonId) {
+            if (confirm('Bạn có chắc chắn muốn chuyển đơn hàng sang trạng thái đang giao?')) {
+                fetch(`/Admin/DonHang/DoiTrangThai`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: hoaDonId, trangThaiMoi: 2 })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showNotification(data.message, data.success ? 'success' : 'error');
+                    if (data.success) {
+                        setTimeout(() => location.reload(), 1500);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Có lỗi xảy ra khi chuyển trạng thái', 'error');
+                });
+            }
+        }
+
+        // Chuyển sang đã giao
+        function chuyenSangDaGiao(hoaDonId) {
+            if (confirm('Bạn có chắc chắn muốn chuyển đơn hàng sang trạng thái đã giao?')) {
+                fetch(`/Admin/DonHang/DoiTrangThai`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ id: hoaDonId, trangThaiMoi: 3 })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    showNotification(data.message, data.success ? 'success' : 'error');
+                    if (data.success) {
+                        setTimeout(() => location.reload(), 1500);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Có lỗi xảy ra khi chuyển trạng thái', 'error');
+                });
+            }
+        }
+
+        // Hiển thị thông báo
+        function showNotification(message, type) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Filter theo trạng thái
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const orderCards = document.querySelectorAll('.order-card');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const status = this.dataset.status;
+                    
+                    // Cập nhật active state
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Filter đơn hàng
+                    orderCards.forEach(card => {
+                        if (status === 'all' || card.dataset.status === status) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+}
+
+@functions {
+    public string GetStatusText(int trangThai)
+    {
+        return trangThai switch
+        {
+            0 => "Chờ duyệt",
+            1 => "Đã duyệt",
+            2 => "Đang giao",
+            3 => "Đã giao",
+            4 => "Đã hủy",
+            _ => "Không xác định"
+        };
+    }
+
+    public string GetStatusClass(int trangThai)
+    {
+        return trangThai switch
+        {
+            0 => "status-pending",
+            1 => "status-approved",
+            2 => "status-shipping",
+            3 => "status-delivered",
+            4 => "status-cancelled",
+            _ => "status-pending"
+        };
+    }
+}

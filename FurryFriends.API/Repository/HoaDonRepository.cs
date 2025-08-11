@@ -30,6 +30,7 @@ namespace FurryFriends.API.Repository
                     .Include(h => h.TaiKhoan)
                     .Include(h => h.Voucher)
                     .Include(h => h.HinhThucThanhToan)
+                    .Include(h => h.DiaChiGiaoHang) // ✅ Include địa chỉ giao hàng
                     .AsNoTracking() // Tối ưu performance
                     .ToListAsync();
 
@@ -52,8 +53,27 @@ namespace FurryFriends.API.Repository
             }
 
             var hoaDon = await _context.Set<HoaDon>()
+                                 .Include(h => h.HinhThucThanhToan)
+                                 .Include(h => h.DiaChiGiaoHang)
+                                 .Include(h => h.KhachHang)
+                                 .Include(h => h.NhanVien)
+                                 .Include(h => h.Voucher)
                                  .Include(h => h.HoaDonChiTiets)
+<<<<<<< Updated upstream
                                  .ThenInclude(ct => ct.SanPham)
+=======
+                                    .ThenInclude(ct => ct.SanPhamChiTiet)
+                                        .ThenInclude(spc => spc.SanPham)
+                                 .Include(h => h.HoaDonChiTiets)
+                                    .ThenInclude(ct => ct.SanPhamChiTiet)
+                                        .ThenInclude(spc => spc.Anh)
+                                 .Include(h => h.HoaDonChiTiets)
+                                    .ThenInclude(ct => ct.SanPhamChiTiet)
+                                        .ThenInclude(spc => spc.MauSac)
+                                 .Include(h => h.HoaDonChiTiets)
+                                    .ThenInclude(ct => ct.SanPhamChiTiet)
+                                        .ThenInclude(spc => spc.KichCo)
+>>>>>>> Stashed changes
                                  .FirstOrDefaultAsync(h => h.HoaDonId == hoaDonId);
 
             if (hoaDon == null)
@@ -80,42 +100,6 @@ namespace FurryFriends.API.Repository
             }
 
             var hoaDon = await GetHoaDonByIdAsync(hoaDonId);
-            //if (hoaDon == null)
-            //{
-            //    throw new KeyNotFoundException($"Không tìm thấy hóa đơn với ID: {hoaDonId}");
-            //}
-
-            //if (hoaDon.HoaDonChiTiets == null || !hoaDon.HoaDonChiTiets.Any())
-            //{
-            //    throw new InvalidOperationException($"Hóa đơn {hoaDonId} không có chi tiết sản phẩm");
-            //}
-
-            //// Kiểm tra thông tin khách hàng
-            //if (string.IsNullOrWhiteSpace(hoaDon.TenCuaKhachHang))
-            //{
-            //    throw new InvalidOperationException("Hóa đơn thiếu thông tin tên khách hàng");
-            //}
-
-            //if (string.IsNullOrWhiteSpace(hoaDon.SdtCuaKhachHang))
-            //{
-            //    throw new InvalidOperationException("Hóa đơn thiếu thông tin số điện thoại khách hàng");
-            //}
-
-            //// Kiểm tra thông tin thanh toán
-            //if (hoaDon.TongTien <= 0)
-            //{
-            //    throw new InvalidOperationException("Tổng tiền hóa đơn không hợp lệ");
-            //}
-
-            //if (hoaDon.TongTienSauKhiGiam <= 0)
-            //{
-            //    throw new InvalidOperationException("Tổng tiền sau khi giảm giá không hợp lệ");
-            //}
-
-            //if (hoaDon.TongTienSauKhiGiam > hoaDon.TongTien)
-            //{
-            //    throw new InvalidOperationException("Tổng tiền sau khi giảm giá không được lớn hơn tổng tiền");
-            //}
 
             using (var memoryStream = new MemoryStream())
             {
@@ -248,6 +232,15 @@ namespace FurryFriends.API.Repository
                 AddModernInfoRow(leftInfoTable, "Số hóa đơn:", hoaDon.HoaDonId.ToString().Substring(0, 8).ToUpper(), normalFont, boldFont);
                 AddModernInfoRow(leftInfoTable, "Ngày lập:", hoaDon.NgayTao.ToString("dd/MM/yyyy HH:mm"), normalFont, boldFont);
                 AddModernInfoRow(leftInfoTable, "Nhân viên:", "Admin", normalFont, boldFont);
+                AddModernInfoRow(leftInfoTable, "Ngày nhận hàng:", hoaDon.NgayNhanHang?.ToString("dd/MM/yyyy HH:mm") ?? "Chưa cập nhật", normalFont, boldFont);
+                AddModernInfoRow(leftInfoTable, "Hình thức thanh toán:", hoaDon.HinhThucThanhToan?.TenHinhThuc ?? "Không xác định", normalFont, boldFont);
+                AddModernInfoRow(leftInfoTable, "Trạng thái:", GetTrangThaiText(hoaDon.TrangThai), normalFont, boldFont);
+                AddModernInfoRow(leftInfoTable, "Ghi chú:", hoaDon.GhiChu ?? "Hóa đơn Online", normalFont, boldFont);
+                if (!string.IsNullOrWhiteSpace(hoaDon.ThongTinVoucherLucMua))
+                {
+                    AddModernInfoRow(leftInfoTable, "Voucher áp dụng:", hoaDon.ThongTinVoucherLucMua, normalFont, boldFont);
+                }
+                AddModernInfoRow(leftInfoTable, "Người tạo hóa đơn:", hoaDon.NhanVien?.HoVaTen ?? "System", normalFont, boldFont);
 
                 var leftCell = new PdfPCell(leftInfoTable);
                 leftCell.Border = Rectangle.BOX;
@@ -270,6 +263,14 @@ namespace FurryFriends.API.Repository
                 AddModernInfoRow(rightInfoTable, "Tên khách hàng:", hoaDon.TenCuaKhachHang ?? "Khách lẻ", normalFont, boldFont);
                 AddModernInfoRow(rightInfoTable, "Số điện thoại:", hoaDon.SdtCuaKhachHang ?? "N/A", normalFont, boldFont);
                 AddModernInfoRow(rightInfoTable, "Email:", hoaDon.EmailCuaKhachHang ?? "N/A", normalFont, boldFont);
+                
+                // Thêm thông tin địa chỉ giao hàng
+                var diaChiGiaoHang = "N/A";
+                if (hoaDon.DiaChiGiaoHang != null)
+                {
+                    diaChiGiaoHang = $"{hoaDon.DiaChiGiaoHang.TenDiaChi}, {hoaDon.DiaChiGiaoHang.PhuongXa}, {hoaDon.DiaChiGiaoHang.ThanhPho}";
+                }
+                AddModernInfoRow(rightInfoTable, "Địa chỉ:", diaChiGiaoHang, normalFont, boldFont);
 
                 var rightCell = new PdfPCell(rightInfoTable);
                 rightCell.Border = Rectangle.BOX;
@@ -282,14 +283,15 @@ namespace FurryFriends.API.Repository
                 document.Add(infoMainTable);
 
                 // Product details with enhanced styling
-                var detailTable = new PdfPTable(5);
+                var detailTable = new PdfPTable(6);
                 detailTable.WidthPercentage = 100;
-                detailTable.SetWidths(new float[] { 0.8f, 3f, 1f, 1.2f, 1.5f });
+                detailTable.SetWidths(new float[] { 0.8f, 2.5f, 1.5f, 1f, 1.2f, 1.5f });
                 detailTable.SpacingAfter = 20f;
 
                 // Table header with gradient-like effect
                 AddEnhancedTableHeader(detailTable, "STT", headerFont, accentColor);
                 AddEnhancedTableHeader(detailTable, "TÊN SẢN PHẨM", headerFont, accentColor);
+                AddEnhancedTableHeader(detailTable, "LOẠI", headerFont, accentColor);
                 AddEnhancedTableHeader(detailTable, "SL", headerFont, accentColor);
                 AddEnhancedTableHeader(detailTable, "ĐƠN GIÁ", headerFont, accentColor);
                 AddEnhancedTableHeader(detailTable, "THÀNH TIỀN", headerFont, accentColor);
@@ -298,16 +300,33 @@ namespace FurryFriends.API.Repository
                 int stt = 1;
                 decimal tongTienHang = 0;
 
-                foreach (var chiTiet in hoaDon.HoaDonChiTiets)
+                foreach (var chiTiet in hoaDon.HoaDonChiTiets ?? new List<HoaDonChiTiet>())
                 {
                     var rowColor = (stt % 2 == 0) ? lightGray : whiteColor;
-                    decimal thanhTien = chiTiet.SoLuongSanPham * chiTiet.Gia;
+                    
+                    // ✅ Sử dụng snapshot data thay vì tính toán lại giá hiện tại
+                    decimal donGiaHienThi = chiTiet.GiaLucMua ?? chiTiet.Gia;
+                    decimal thanhTien = chiTiet.SoLuongSanPham * donGiaHienThi;
                     tongTienHang += thanhTien;
 
                     AddEnhancedProductRow(detailTable, stt.ToString(), normalFont, rowColor);
+<<<<<<< Updated upstream
                     AddEnhancedProductRow(detailTable, chiTiet.SanPham?.TenSanPham ?? "N/A", normalFont, rowColor);
+=======
+                    
+                    // ✅ Sử dụng tên sản phẩm lúc mua (snapshot)
+                    var tenSp = chiTiet.TenSanPhamLucMua ?? "N/A";
+                    AddEnhancedProductRow(detailTable, tenSp, normalFont, rowColor);
+                    
+                    // ✅ Sử dụng thông tin biến thể lúc mua (snapshot)
+                    var mauSac = chiTiet.MauSacLucMua ?? "N/A";
+                    var kichCo = chiTiet.KichCoLucMua ?? "N/A";
+                    var bienThe = $"{mauSac} - {kichCo}";
+                    AddEnhancedProductRow(detailTable, bienThe, normalFont, rowColor, Element.ALIGN_CENTER);
+                    
+>>>>>>> Stashed changes
                     AddEnhancedProductRow(detailTable, chiTiet.SoLuongSanPham.ToString(), normalFont, rowColor, Element.ALIGN_CENTER);
-                    AddEnhancedProductRow(detailTable, chiTiet.Gia.ToString("N0") + "đ", normalFont, rowColor, Element.ALIGN_RIGHT);
+                    AddEnhancedProductRow(detailTable, donGiaHienThi.ToString("N0") + "đ", normalFont, rowColor, Element.ALIGN_RIGHT);
                     AddEnhancedProductRow(detailTable, thanhTien.ToString("N0") + "đ", boldFont, rowColor, Element.ALIGN_RIGHT);
 
                     stt++;
@@ -334,8 +353,15 @@ namespace FurryFriends.API.Repository
                 totalsHeaderCell.Phrase = new Phrase("TỔNG KẾT THANH TOÁN", totalsHeaderFont);
                 totalSectionTable.AddCell(totalsHeaderCell);
 
-                // Calculate discount if any
+                // Calculate discount and shipping
                 decimal giam = hoaDon.TongTien - hoaDon.TongTienSauKhiGiam;
+                decimal phiVanChuyen = 0;
+                
+                // Tính phí vận chuyển (miễn phí nếu >= 500k, ngược lại 30k)
+                if (hoaDon.TongTienSauKhiGiam < 500000)
+                {
+                    phiVanChuyen = 30000;
+                }
 
                 AddEnhancedTotalRow(totalSectionTable, "Tổng tiền hàng:", hoaDon.TongTien.ToString("N0") + "đ", normalFont, boldFont);
 
@@ -343,6 +369,8 @@ namespace FurryFriends.API.Repository
                 {
                     AddEnhancedTotalRow(totalSectionTable, "Giảm giá:", "- " + giam.ToString("N0") + "đ", normalFont, new Font(baseFont, 11, Font.BOLD, new BaseColor(231, 76, 60)));
                 }
+                
+                AddEnhancedTotalRow(totalSectionTable, "Phí vận chuyển:", phiVanChuyen.ToString("N0") + "đ", normalFont, boldFont);
 
                 // Final total with emphasis
                 var finalLabelCell = new PdfPCell(new Phrase("TỔNG THANH TOÁN:", totalFont));
@@ -488,6 +516,170 @@ namespace FurryFriends.API.Repository
         private void AddTotalRow(PdfPTable table, string label, string value, Font font)
         {
             AddEnhancedTotalRow(table, label, value, font, font);
+        }
+
+        private string GetTrangThaiText(int trangThai)
+        {
+            return trangThai switch
+            {
+                0 => "Chờ duyệt",
+                1 => "Đã duyệt", 
+                2 => "Đang giao",
+                3 => "Đã giao",
+                4 => "Đã hủy",
+                _ => "Không xác định"
+            };
+        }
+
+        // ✅ Hủy đơn hàng và cộng lại số lượng sản phẩm
+        public async Task<ApiResult> HuyDonHangAsync(Guid hoaDonId)
+        {
+            try
+            {
+                // Lấy hóa đơn với chi tiết
+                var hoaDon = await _context.HoaDons
+                    .Include(h => h.HoaDonChiTiets)
+                        .ThenInclude(ct => ct.SanPhamChiTiet)
+                    .FirstOrDefaultAsync(h => h.HoaDonId == hoaDonId);
+
+                if (hoaDon == null)
+                {
+                    return new ApiResult { Success = false, Message = "Không tìm thấy đơn hàng!" };
+                }
+
+                // ✅ Kiểm tra trạng thái - chỉ cho phép hủy khi "Chờ duyệt" hoặc "Đã duyệt"
+                if (hoaDon.TrangThai != 0 && hoaDon.TrangThai != 1)
+                {
+                    return new ApiResult { Success = false, Message = "Chỉ có thể hủy đơn hàng khi đang ở trạng thái 'Chờ duyệt' hoặc 'Đã duyệt'!" };
+                }
+
+                // ✅ Cộng lại số lượng sản phẩm vào kho
+                foreach (var chiTiet in hoaDon.HoaDonChiTiets)
+                {
+                    if (chiTiet.SanPhamChiTiet != null)
+                    {
+                        // ✅ Sử dụng property SoLuong thay vì SoLuongTon
+                        chiTiet.SanPhamChiTiet.SoLuong += chiTiet.SoLuongSanPham;
+                    }
+                }
+
+                // ✅ Cập nhật trạng thái thành "Đã hủy"
+                hoaDon.TrangThai = 4;
+                // ✅ Không cần cập nhật ngày vì model không có property này
+
+                // ✅ Lưu thay đổi
+                await _context.SaveChangesAsync();
+
+                return new ApiResult { Success = true, Message = "Hủy đơn hàng thành công! Số lượng sản phẩm đã được cộng lại vào kho." };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in HuyDonHangAsync: {ex.Message}");
+                return new ApiResult { Success = false, Message = $"Lỗi khi hủy đơn hàng: {ex.Message}" };
+            }
+        }
+
+        // ✅ Cập nhật trạng thái đơn hàng
+        public async Task<ApiResult> CapNhatTrangThaiAsync(Guid hoaDonId, int trangThaiMoi)
+        {
+            try
+            {
+                // Lấy hóa đơn
+                var hoaDon = await _context.HoaDons
+                    .FirstOrDefaultAsync(h => h.HoaDonId == hoaDonId);
+
+                if (hoaDon == null)
+                {
+                    return new ApiResult { Success = false, Message = "Không tìm thấy đơn hàng!" };
+                }
+
+                // Kiểm tra tính hợp lệ của việc chuyển đổi trạng thái
+                if (!IsValidStatusTransition(hoaDon.TrangThai, trangThaiMoi))
+                {
+                    return new ApiResult { Success = false, Message = GetInvalidTransitionMessage(hoaDon.TrangThai, trangThaiMoi) };
+                }
+
+                // Cập nhật trạng thái
+                hoaDon.TrangThai = trangThaiMoi;
+
+                // Lưu thay đổi
+                await _context.SaveChangesAsync();
+
+                var trangThaiText = GetTrangThaiText(trangThaiMoi);
+                return new ApiResult { Success = true, Message = $"Cập nhật trạng thái thành công! Trạng thái mới: {trangThaiText}" };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in CapNhatTrangThaiAsync: {ex.Message}");
+                return new ApiResult { Success = false, Message = $"Lỗi khi cập nhật trạng thái: {ex.Message}" };
+            }
+        }
+
+        // Kiểm tra tính hợp lệ của việc chuyển đổi trạng thái
+        private bool IsValidStatusTransition(int trangThaiHienTai, int trangThaiMoi)
+        {
+            // Quy tắc chuyển đổi trạng thái:
+            // 0 (Chờ duyệt) → 1 (Đã duyệt) ✓
+            // 1 (Đã duyệt) → 2 (Đang giao) ✓
+            // 2 (Đang giao) → 3 (Đã giao) ✓
+            // 4 (Đã hủy) → Không thể chuyển sang trạng thái khác
+
+            if (trangThaiHienTai == 4) // Đã hủy
+            {
+                return false; // Không thể chuyển từ trạng thái đã hủy
+            }
+
+            switch (trangThaiHienTai)
+            {
+                case 0: // Chờ duyệt
+                    return trangThaiMoi == 1; // Chỉ có thể chuyển thành "Đã duyệt"
+                
+                case 1: // Đã duyệt
+                    return trangThaiMoi == 2; // Chỉ có thể chuyển thành "Đang giao"
+                
+                case 2: // Đang giao
+                    return trangThaiMoi == 3; // Chỉ có thể chuyển thành "Đã giao"
+                
+                case 3: // Đã giao
+                    return false; // Không thể chuyển từ trạng thái đã giao
+                
+                default:
+                    return false;
+            }
+        }
+
+        // Lấy thông báo lỗi khi chuyển đổi trạng thái không hợp lệ
+        private string GetInvalidTransitionMessage(int trangThaiHienTai, int trangThaiMoi)
+        {
+            var trangThaiHienTaiText = GetTrangThaiText(trangThaiHienTai);
+            var trangThaiMoiText = GetTrangThaiText(trangThaiMoi);
+
+            if (trangThaiHienTai == 4)
+            {
+                return "Không thể thay đổi trạng thái của đơn hàng đã hủy";
+            }
+
+            if (trangThaiHienTai == 3)
+            {
+                return "Không thể thay đổi trạng thái của đơn hàng đã giao thành công";
+            }
+
+            if (trangThaiHienTai == 1 && trangThaiMoi == 0)
+            {
+                return "Không thể chuyển đơn hàng từ 'Đã duyệt' về 'Chờ duyệt'";
+            }
+
+            if (trangThaiHienTai == 2 && (trangThaiMoi == 0 || trangThaiMoi == 1))
+            {
+                return "Không thể chuyển đơn hàng từ 'Đang giao' về 'Chờ duyệt' hoặc 'Đã duyệt'";
+            }
+
+            if (trangThaiHienTai == 3 && (trangThaiMoi == 0 || trangThaiMoi == 1 || trangThaiMoi == 2))
+            {
+                return "Không thể chuyển đơn hàng từ 'Đã giao' về trạng thái trước đó";
+            }
+
+            return $"Không thể chuyển đơn hàng từ '{trangThaiHienTaiText}' sang '{trangThaiMoiText}'";
         }
     }
 }

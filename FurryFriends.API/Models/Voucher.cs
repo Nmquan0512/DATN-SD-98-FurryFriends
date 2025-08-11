@@ -10,9 +10,19 @@ namespace FurryFriends.API.Models
         [Key]
         public Guid VoucherId { get; set; }
 
+<<<<<<< Updated upstream
         [Required(ErrorMessage = "Tên voucher là bắt buộc.")]
         [StringLength(100, ErrorMessage = "Tên voucher tối đa 100 ký tự.")]
         public string TenVoucher { get; set; }
+=======
+            [Required(ErrorMessage = "Mã voucher là bắt buộc.")]
+            [StringLength(50, ErrorMessage = "Mã voucher tối đa 50 ký tự.")]
+            public string MaVoucher { get; set; } = string.Empty;
+
+            [Required(ErrorMessage = "Tên voucher là bắt buộc.")]
+            [StringLength(100, ErrorMessage = "Tên voucher tối đa 100 ký tự.")]
+            public string TenVoucher { get; set; }
+>>>>>>> Stashed changes
 
         [Required]
         public DateTime NgayBatDau { get; set; }
@@ -31,7 +41,17 @@ namespace FurryFriends.API.Models
 
         [Required]
         public DateTime NgayTao { get; set; }
+<<<<<<< Updated upstream
 
+=======
+        
+        [Range(0, double.MaxValue, ErrorMessage = "Giá trị giảm tối đa phải lớn hơn hoặc bằng 0.")]
+        public decimal? GiaTriGiamToiDa { get; set; }
+        
+        [Range(0, double.MaxValue, ErrorMessage = "Số tiền áp dụng tối thiểu phải lớn hơn hoặc bằng 0.")]
+        public decimal? SoTienApDungToiThieu { get; set; }
+        
+>>>>>>> Stashed changes
         public DateTime? NgayCapNhat { get; set; }
 
         [JsonIgnore]
@@ -63,8 +83,29 @@ namespace FurryFriends.API.Models
                 if (isDuplicate)
                 {
                     yield return new ValidationResult(
+<<<<<<< Updated upstream
                         "Tên voucher đã tồn tại.",
                         new[] { nameof(TenVoucher) });
+=======
+                        "Ngày kết thúc phải lớn hơn ngày bắt đầu.",
+                        new[] { nameof(NgayKetThuc) });
+                }
+
+                if (_context != null)
+                {
+                    var normalizedCode = (MaVoucher ?? string.Empty).Trim().ToUpper();
+                    MaVoucher = normalizedCode; // Chuẩn hóa mã về UPPER
+
+                    var isDuplicateCode = _context.Vouchers
+                        .Any(v => v.MaVoucher.ToUpper() == normalizedCode && v.VoucherId != VoucherId);
+
+                    if (isDuplicateCode)
+                    {
+                        yield return new ValidationResult(
+                            "Mã voucher đã tồn tại.",
+                            new[] { nameof(MaVoucher) });
+                    }
+>>>>>>> Stashed changes
                 }
             }
         }

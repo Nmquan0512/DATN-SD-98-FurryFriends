@@ -266,11 +266,11 @@
 
         <!-- Desktop Navigation -->
         <ul class="hidden md:flex space-x-8 items-center">
-          <li><a href="index.html" class="text-gray-700 hover:text-transparent hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 hover:bg-clip-text transition-all duration-300 hover:scale-110 transform relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-purple-600 after:to-blue-600 hover:after:w-full after:transition-all after:duration-300">Trang Chủ</a></li>
+                    <li><a <a asp-action="Index" asp-controller="Home" class="text-gray-700 hover:text-transparent hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 hover:bg-clip-text transition-all duration-300 hover:scale-110 transform relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-purple-600 after:to-blue-600 hover:after:w-full after:transition-all after:duration-300">Trang Chủ</a></li>
           <li><a href="products-new.html" class="text-gray-700 hover:text-transparent hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 hover:bg-clip-text transition-all duration-300 hover:scale-110 transform relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-purple-600 after:to-blue-600 hover:after:w-full after:transition-all after:duration-300">Danh Mục</a></li>
-          <li><a href="products.html" class="text-gray-700 hover:text-transparent hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 hover:bg-clip-text transition-all duration-300 hover:scale-110 transform relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-purple-600 after:to-blue-600 hover:after:w-full after:transition-all after:duration-300">Sản Phẩm</a></li>
-          <li><a href="about.html" class="text-gray-700 hover:text-transparent hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 hover:bg-clip-text transition-all duration-300 hover:scale-110 transform relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-purple-600 after:to-blue-600 hover:after:w-full after:transition-all after:duration-300">Giới Thiệu</a></li>
-          <li><a href="contact.html" class="text-gray-700 hover:text-transparent hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 hover:bg-clip-text transition-all duration-300 hover:scale-110 transform relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-purple-600 after:to-blue-600 hover:after:w-full after:transition-all after:duration-300">Liên Hệ</a></li>
+                    <li><a asp-action="Index" asp-controller="SanPhamKhachHang" class="text-gray-700 hover:text-transparent hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 hover:bg-clip-text transition-all duration-300 hover:scale-110 transform relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-purple-600 after:to-blue-600 hover:after:w-full after:transition-all after:duration-300">Sản Phẩm</a></li>
+          <li><a asp-action="About" asp-controller="Home" class="text-gray-700 hover:text-transparent hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 hover:bg-clip-text transition-all duration-300 hover:scale-110 transform relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-purple-600 after:to-blue-600 hover:after:w-full after:transition-all after:duration-300">Giới Thiệu</a></li>
+          <li><a asp-action="Contact" asp-controller="Home" class="text-gray-700 hover:text-transparent hover:bg-gradient-to-r hover:from-purple-600 hover:to-blue-600 hover:bg-clip-text transition-all duration-300 hover:scale-110 transform relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-purple-600 after:to-blue-600 hover:after:w-full after:transition-all after:duration-300">Liên Hệ</a></li>
         </ul>
 
         <!-- Action Buttons -->
@@ -291,6 +291,9 @@
                     <div id="account-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 hidden account-dropdown">
                         <a href="/ThongTinCaNhan" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
                             <i class="fas fa-id-card"></i> Thông tin tài khoản
+                        </a>
+                        <a asp-controller="DonHang" asp-action="Index" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 flex items-center gap-2">
+                            <i class="fas fa-shopping-bag"></i> Quản lý đơn hàng
                         </a>
                         <form asp-action="Logout" asp-controller="KhachHangLogin" method="get" style="margin:0;">
                             <button type="submit" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
@@ -334,11 +337,11 @@
         <input type="text" placeholder="Tìm kiếm" class="search-input w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-white/70" />
       </div>
       <nav class="flex-1 px-4 py-6 space-y-4 overflow-y-auto">
-        <a href="index.html" class="block py-3 text-lg text-white/80 hover:text-white transition-all duration-300 hover:translate-x-2">Trang Chủ</a>
+                <a <a asp-action="Index" asp-controller="Home" class="block py-3 text-lg text-white/80 hover:text-white transition-all duration-300 hover:translate-x-2">Trang Chủ</a>
         <a href="products-new.html" class="block py-3 text-lg text-white/80 hover:text-white transition-all duration-300 hover:translate-x-2">Danh Mục</a>
-        <a href="products.html" class="block py-3 text-lg text-white/80 hover:text-white transition-all duration-300 hover:translate-x-2">Sản Phẩm</a>
-        <a href="about.html" class="block py-3 text-lg text-white/80 hover:text-white transition-all duration-300 hover:translate-x-2">Giới Thiệu</a>
-        <a href="contact.html" class="block py-3 text-lg text-white/80 hover:text-white transition-all duration-300 hover:translate-x-2">Liên Hệ</a>
+                <a asp-action="Index" asp-controller="SanPhamKhachHang" class="block py-3 text-lg text-white/80 hover:text-white transition-all duration-300 hover:translate-x-2">Sản Phẩm</a>
+        <a asp-action="About" asp-controller="Home" class="block py-3 text-lg text-white/80 hover:text-white transition-all duration-300 hover:translate-x-2">Giới Thiệu</a>
+        <a asp-action="Contact" asp-controller="Home" class="block py-3 text-lg text-white/80 hover:text-white transition-all duration-300 hover:translate-x-2">Liên Hệ</a>
       </nav>
       <div class="p-4 border-t border-white/20">
         @if (!string.IsNullOrEmpty(taiKhoanId))
@@ -349,6 +352,9 @@
                     <i class="fas fa-crown mr-1"></i> Quản trị
                 </a>
             }
+            <a asp-controller="DonHang" asp-action="Index" class="w-full py-3 mb-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-pink-500 hover:to-purple-500 transition-all duration-300 hover:scale-105 block text-center">
+                <i class="fas fa-shopping-bag mr-1"></i> Quản lý đơn hàng
+            </a>
             <form asp-action="Logout" asp-controller="KhachHangLogin" method="get" style="margin:0;">
                 <button type="submit" class="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-300 hover:scale-105">Đăng xuất (@hoTen)</button>
             </form>
@@ -445,6 +451,26 @@ function updateCartBadge() {
     });
 }
 
+// Expose helpers to update cart count from anywhere
+window.setCartCount = function (n) {
+    cartCount = Number(n) || 0;
+    updateCartBadge();
+}
+
+window.refreshCartCount = async function () {
+    try {
+        const khId = '@(HttpContextAccessor.HttpContext?.Session.GetString("KhachHangId") ?? "")';
+        if (!khId) return;
+        const res = await fetch(`https://localhost:7289/api/GioHang/${khId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        // data.gioHangChiTiets có thể là mảng; tính tổng số lượng
+        const items = data?.gioHangChiTiets || data?.chiTietGioHang || [];
+        const total = Array.isArray(items) ? items.reduce((s, it) => s + (it.soLuong || it.SoLuong || 0), 0) : 0;
+        window.setCartCount(total);
+    } catch (_) { /* ignore */ }
+}
+
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `fixed top-20 right-4 px-6 py-3 rounded-lg text-white z-50 transform translate-x-full transition-transform duration-300 ${
@@ -462,7 +488,8 @@ function showNotification(message, type = 'info') {
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     initializeMobileMenu();
-    updateCartBadge();
+    // Lấy số lượng giỏ hàng thực tế từ API
+    if (window.refreshCartCount) window.refreshCartCount();
 
     // Scroll effect for header
     window.addEventListener('scroll', () => {
@@ -529,12 +556,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn.textContent.includes('Thêm Vào Giỏ')) {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                cartCount++;
-                cartBadges.forEach(badge => {
-                    badge.textContent = cartCount;
-                    badge.classList.add('animate-pulse');
-                    setTimeout(() => badge.classList.remove('animate-pulse'), 1000);
-                });
+                // Sau khi thêm giỏ thành công ở trang cụ thể, nên gọi refreshCartCount
+                if (window.refreshCartCount) window.refreshCartCount();
                 showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
             });
         }
@@ -550,8 +573,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-        @RenderSection("Scripts", required: false)
-
   </script>
   <script>
     // Dropdown account menu click
@@ -576,5 +597,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
   </script>
+  @RenderSection("Scripts", required: false)
 </body>
 </html>

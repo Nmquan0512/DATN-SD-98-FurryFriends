@@ -1,0 +1,655 @@
+@{
+    ViewData["Title"] = "Liên hệ - FurryFriends";
+}
+
+@section Styles {
+    <style>
+        /* ✅ Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+            min-height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* ✅ Content Sections với Scroll Animation */
+        .content-section {
+            padding: 5rem 0;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .content-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #2d3748;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        /* ✅ Contact Form */
+        .contact-form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #f7fafc;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .form-submit:active {
+            transform: translateY(0);
+        }
+
+        /* ✅ Contact Info Grid */
+        .contact-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .contact-info-item {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #f7fafc;
+        }
+
+        .contact-info-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .contact-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .contact-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .contact-details {
+            font-size: 1.1rem;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .contact-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .contact-link:hover {
+            color: #764ba2;
+        }
+
+        /* ✅ Map Section */
+        .map-section {
+            background: #f7fafc;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 4rem 0;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 450px;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .map-placeholder iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+            border: none;
+        }
+
+        .map-info {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .map-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .map-description {
+            font-size: 1.1rem;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        /* ✅ FAQ Section */
+        .faq-section {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 4rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-item {
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1.5rem 0;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            font-size: 1rem;
+            color: #4a5568;
+            line-height: 1.6;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 200px;
+            margin-top: 1rem;
+        }
+
+        .faq-toggle {
+            font-size: 1.5rem;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+
+        /* ✅ Responsive Design */
+        @@media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .contact-form-container {
+                padding: 2rem;
+                margin: 0 1rem;
+            }
+            
+            .contact-info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .map-section {
+                padding: 2rem;
+                margin: 2rem 1rem;
+            }
+            
+            .map-placeholder {
+                height: 300px;
+            }
+        }
+
+        /* ✅ Loading States */
+        .form-loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .form-success {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+        }
+
+        .form-error {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+        }
+    </style>
+}
+
+<!-- ✅ Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">Liên hệ với chúng tôi</h1>
+        <p class="hero-subtitle">
+            Chúng tôi luôn sẵn sàng lắng nghe và hỗ trợ bạn. 
+            Hãy để lại tin nhắn hoặc liên hệ trực tiếp để được tư vấn tốt nhất.
+        </p>
+    </div>
+</section>
+
+<!-- ✅ Contact Form Section -->
+<section class="content-section" id="contact-form-section">
+    <div class="section-container">
+        <h2 class="section-title">Gửi tin nhắn cho chúng tôi</h2>
+        <div class="contact-form-container">
+            <form id="contactForm" class="contact-form">
+                <div class="form-group">
+                    <label for="fullName" class="form-label">Họ và tên *</label>
+                    <input type="text" id="fullName" name="fullName" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">Email *</label>
+                    <input type="email" id="email" name="email" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone" class="form-label">Số điện thoại</label>
+                    <input type="tel" id="phone" name="phone" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject" class="form-label">Chủ đề *</label>
+                    <select id="subject" name="subject" class="form-input" required>
+                        <option value="">Chọn chủ đề</option>
+                        <option value="general">Thông tin chung</option>
+                        <option value="product">Sản phẩm</option>
+                        <option value="service">Dịch vụ</option>
+                        <option value="support">Hỗ trợ kỹ thuật</option>
+                        <option value="feedback">Góp ý</option>
+                        <option value="other">Khác</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message" class="form-label">Nội dung tin nhắn *</label>
+                    <textarea id="message" name="message" class="form-input form-textarea" required 
+                              placeholder="Hãy mô tả chi tiết vấn đề hoặc yêu cầu của bạn..."></textarea>
+                </div>
+                
+                <button type="submit" class="form-submit" id="submitBtn">
+                    <span class="submit-text">Gửi tin nhắn</span>
+                    <span class="submit-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i> Đang gửi...
+                    </span>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- ✅ Contact Info Section -->
+<section class="content-section" id="contact-info-section">
+    <div class="section-container">
+        <h2 class="section-title">Thông tin liên hệ</h2>
+        <div class="contact-info-grid">
+            <div class="contact-info-item">
+                <span class="contact-icon">📍</span>
+                <h3 class="contact-title">Địa chỉ</h3>
+                <div class="contact-details">
+                    123 Đường ABC, Quận XYZ<br>
+                    Thành phố Hồ Chí Minh<br>
+                    Việt Nam
+                </div>
+            </div>
+            
+            <div class="contact-info-item">
+                <span class="contact-icon">📞</span>
+                <h3 class="contact-title">Điện thoại</h3>
+                <div class="contact-details">
+                    <a href="tel:+84123456789" class="contact-link">+84 123 456 789</a><br>
+                    <a href="tel:+84987654321" class="contact-link">+84 987 654 321</a>
+                </div>
+            </div>
+            
+            <div class="contact-info-item">
+                <span class="contact-icon">✉️</span>
+                <h3 class="contact-title">Email</h3>
+                <div class="contact-details">
+                    <a href="mailto:info@furryfriends.com" class="contact-link">info@furryfriends.com</a><br>
+                    <a href="mailto:support@furryfriends.com" class="contact-link">support@furryfriends.com</a>
+                </div>
+            </div>
+            
+            <div class="contact-info-item">
+                <span class="contact-icon">🕒</span>
+                <h3 class="contact-title">Giờ làm việc</h3>
+                <div class="contact-details">
+                    Thứ 2 - Thứ 6: 8:00 - 18:00<br>
+                    Thứ 7: 8:00 - 17:00<br>
+                    Chủ nhật: 9:00 - 16:00
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ✅ Map Section -->
+<section class="content-section" id="map-section">
+    <div class="section-container">
+        <div class="map-section">
+            <div class="map-placeholder">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3723.8639311820666!2d105.74468687559667!3d21.03812978061353!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313455e940879933%3A0xcf10b34e9f1a03df!2zVHLGsOG7nW5nIENhbyDEkeG6s25nIEZQVCBQb2x5dGVjaG5pYw!5e0!3m2!1svi!2s!4v1754886724495!5m2!1svi!2s" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            <div class="map-info">
+                <h3 class="map-title">Vị trí của chúng tôi</h3>
+                <p class="map-description">
+                    FurryFriends nằm tại trung tâm thành phố, dễ dàng tiếp cận bằng xe buýt, 
+                    taxi hoặc xe máy. Chúng tôi có bãi đỗ xe miễn phí cho khách hàng.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ✅ FAQ Section -->
+<section class="content-section" id="faq-section">
+    <div class="section-container">
+        <h2 class="section-title">Câu hỏi thường gặp</h2>
+        <div class="faq-section">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Làm thế nào để đặt hàng online?
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Bạn có thể đặt hàng dễ dàng thông qua website của chúng tôi. Chỉ cần chọn sản phẩm, 
+                    thêm vào giỏ hàng và tiến hành thanh toán. Chúng tôi hỗ trợ nhiều phương thức thanh toán 
+                    như VNPay, chuyển khoản ngân hàng và thanh toán khi nhận hàng (COD).
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Thời gian giao hàng là bao lâu?
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Thời gian giao hàng phụ thuộc vào địa chỉ của bạn. Trong nội thành TP.HCM, 
+                    chúng tôi giao hàng trong vòng 2-4 giờ. Các tỉnh lân cận mất 1-2 ngày. 
+                    Chúng tôi luôn cập nhật trạng thái giao hàng cho bạn.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Có thể đổi trả sản phẩm không?
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Chúng tôi chấp nhận đổi trả sản phẩm trong vòng 7 ngày kể từ ngày nhận hàng, 
+                    với điều kiện sản phẩm còn nguyên vẹn và đầy đủ phụ kiện. Chúng tôi sẽ hoàn tiền 
+                    hoặc đổi sản phẩm khác theo yêu cầu của bạn.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    Có dịch vụ tư vấn thú y không?
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Có! Chúng tôi có đội ngũ bác sĩ thú y chuyên nghiệp, sẵn sàng tư vấn về 
+                    chăm sóc sức khỏe, dinh dưỡng và điều trị bệnh cho thú cưng. Bạn có thể 
+                    đặt lịch tư vấn qua điện thoại hoặc đến trực tiếp cửa hàng.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // ✅ Scroll-based Loading với Intersection Observer
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // ✅ Observe tất cả content sections
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+
+        // ✅ Toggle FAQ
+        function toggleFAQ(element) {
+            const faqItem = element.parentElement;
+            const isActive = faqItem.classList.contains('active');
+            
+            // Đóng tất cả FAQ items
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Mở FAQ item được click (nếu chưa mở)
+            if (!isActive) {
+                faqItem.classList.add('active');
+            }
+        }
+
+        // ✅ Handle Contact Form
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = submitBtn.querySelector('.submit-text');
+            const submitLoading = submitBtn.querySelector('.submit-loading');
+            
+            // Hiển thị loading state
+            submitBtn.classList.add('form-loading');
+            submitText.style.display = 'none';
+            submitLoading.style.display = 'inline';
+            
+            // Simulate form submission (thay thế bằng API call thực tế)
+            setTimeout(() => {
+                // Reset form
+                this.reset();
+                
+                // Hiển thị success state
+                submitBtn.classList.remove('form-loading');
+                submitBtn.classList.add('form-success');
+                submitBtn.textContent = '✅ Gửi thành công!';
+                
+                // Reset sau 3 giây
+                setTimeout(() => {
+                    submitBtn.classList.remove('form-success');
+                    submitBtn.innerHTML = `
+                        <span class="submit-text">Gửi tin nhắn</span>
+                        <span class="submit-loading" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> Đang gửi...
+                        </span>
+                    `;
+                }, 3000);
+                
+            }, 2000);
+        });
+
+        // ✅ Form validation
+        const inputs = document.querySelectorAll('.form-input');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.hasAttribute('required') && !this.value.trim()) {
+                    this.style.borderColor = '#f56565';
+                } else {
+                    this.style.borderColor = '#e2e8f0';
+                }
+            });
+            
+            input.addEventListener('input', function() {
+                if (this.style.borderColor === 'rgb(245, 101, 101)') {
+                    this.style.borderColor = '#e2e8f0';
+                }
+            });
+        });
+
+        // ✅ Smooth scroll cho navigation
+        function smoothScrollTo(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+    </script>
+}
