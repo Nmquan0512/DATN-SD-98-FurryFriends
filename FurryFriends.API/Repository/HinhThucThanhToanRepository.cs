@@ -18,6 +18,11 @@ namespace FurryFriends.API.Repository
         {
             return await _context.HinhThucThanhToans.ToListAsync();
         }
+
+        public async Task<HinhThucThanhToan?> GetByIdAsync(Guid id)
+        {
+            return await _context.HinhThucThanhToans.FindAsync(id);
+        }
     }
 
 }

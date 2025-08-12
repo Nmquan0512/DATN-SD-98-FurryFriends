@@ -39,7 +39,7 @@ namespace FurryFriends.Web.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.Error = "Vui lòng kiểm tra lại thông tin!";
-                return View("Index", model);
+                return View("Index", model); // Return view with model instead of redirect
             }
 
             // Kiểm tra trùng username/email
@@ -47,40 +47,57 @@ namespace FurryFriends.Web.Controllers
             var existingAccount = existingAccounts.FirstOrDefault();
             if (existingAccount != null)
             {
-                ModelState.AddModelError("UserName", "Tài khoản đã tồn tại!");
-                return View("Index", model);
+                ViewBag.Error = "Tài khoản đã tồn tại! Vui lòng chọn tên đăng nhập khác.";
+                return View("Index", model); // Return view with model instead of redirect
             }
+
+            // Kiểm tra trùng số điện thoại
+            var existingPhone = await _khachHangService.FindByPhoneAsync(model.Phone);
+            if (existingPhone != null)
+            {
+                ViewBag.Error = "Số điện thoại đã được sử dụng! Vui lòng sử dụng số điện thoại khác.";
+                return View("Index", model); // Return view with model instead of redirect
+            }
+
             var existingEmail = await _khachHangService.FindByEmailAsync(model.Email);
             if (existingEmail != null)
             {
-                ModelState.AddModelError("Email", "Email đã được sử dụng!");
-                return View("Index", model);
+                ViewBag.Error = "Email đã được sử dụng! Vui lòng sử dụng email khác.";
+                return View("Index", model); // Return view with model instead of redirect
             }
 
-            // 1. Tạo mới KhachHang
-            var khachHang = new KhachHang
+            try
             {
-                TenKhachHang = model.FullName,
-                SDT = model.Phone,
-                EmailCuaKhachHang = model.Email,
-                NgayTaoTaiKhoan = DateTime.Now,
-                TrangThai = 1 // Đang hoạt động
-            };
-            await _khachHangService.AddKhachHangAsync(khachHang);
+                // 1. Tạo mới KhachHang
+                var khachHang = new KhachHang
+                {
+                    TenKhachHang = model.FullName,
+                    SDT = model.Phone,
+                    EmailCuaKhachHang = model.Email,
+                    NgayTaoTaiKhoan = DateTime.Now,
+                    TrangThai = 1 // Đang hoạt động
+                };
+                await _khachHangService.AddKhachHangAsync(khachHang);
 
-            // 2. Tạo mới TaiKhoan, liên kết với KhachHang vừa tạo
-            var taiKhoan = new TaiKhoan
+                // 2. Tạo mới TaiKhoan, liên kết với KhachHang vừa tạo
+                var taiKhoan = new TaiKhoan
+                {
+                    UserName = model.UserName,
+                    Password = model.Password, // Nên mã hóa mật khẩu thực tế
+                    NgayTaoTaiKhoan = DateTime.Now,
+                    TrangThai = true,
+                    KhachHangId = khachHang.KhachHangId
+                };
+                await _taiKhoanService.AddAsync(taiKhoan);
+
+                TempData["Success"] = "Đăng ký thành công! Chào mừng bạn đến với FurryFriends! 🎉";
+                return View("Index", model); // Return view with success message instead of redirect
+            }
+            catch (Exception ex)
             {
-                UserName = model.UserName,
-                Password = model.Password, // Nên mã hóa mật khẩu thực tế
-                NgayTaoTaiKhoan = DateTime.Now,
-                TrangThai = true,
-                KhachHangId = khachHang.KhachHangId
-            };
-            await _taiKhoanService.AddAsync(taiKhoan);
-
-            TempData["Success"] = "Đăng ký thành công! Chào mừng bạn đến với FurryFriends! ";
-            return RedirectToAction("Index");
+                ViewBag.Error = $"Đã xảy ra lỗi: {ex.Message}. Vui lòng thử lại sau.";
+                return View("Index", model); // Return view with model instead of redirect
+            }
         }
 
         // Đăng nhập/Đăng ký Google (gộp 2 chức năng)
@@ -100,7 +117,7 @@ namespace FurryFriends.Web.Controllers
                 var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 if (!authenticateResult.Succeeded)
                 {
-                    TempData["Error"] = "Đăng nhập Google thất bại!";
+                    TempData["Error"] = "Đăng nhập Google thất bại! Vui lòng thử lại.";
                     return RedirectToAction("Index");
                 }
 
@@ -111,7 +128,7 @@ namespace FurryFriends.Web.Controllers
 
                 if (string.IsNullOrEmpty(email))
                 {
-                    TempData["Error"] = "Không thể lấy thông tin email từ Google!";
+                    TempData["Error"] = "Không thể lấy thông tin email từ Google! Vui lòng thử lại.";
                     return RedirectToAction("Index");
                 }
 
@@ -166,12 +183,12 @@ namespace FurryFriends.Web.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                TempData["Error"] = "Có lỗi xảy ra trong quá trình xử lý!";
+                TempData["Error"] = "Có lỗi xảy ra trong quá trình xử lý! Vui lòng thử lại.";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["Error"] = $"Lỗi: {ex.Message}";
+                TempData["Error"] = $"Đã xảy ra lỗi: {ex.Message}. Vui lòng thử lại sau.";
                 return RedirectToAction("Index");
             }
         }
@@ -193,7 +210,7 @@ namespace FurryFriends.Web.Controllers
                 var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                 if (!authenticateResult.Succeeded)
                 {
-                    TempData["Error"] = "Đăng nhập Facebook thất bại!";
+                    TempData["Error"] = "Đăng nhập Facebook thất bại! Vui lòng thử lại.";
                     return RedirectToAction("Index");
                 }
 
@@ -204,7 +221,7 @@ namespace FurryFriends.Web.Controllers
 
                 if (string.IsNullOrEmpty(email))
                 {
-                    TempData["Error"] = "Không thể lấy thông tin email từ Facebook!";
+                    TempData["Error"] = "Không thể lấy thông tin email từ Facebook! Vui lòng thử lại.";
                     return RedirectToAction("Index");
                 }
 
@@ -261,12 +278,12 @@ namespace FurryFriends.Web.Controllers
                     return RedirectToAction("Index", "Home");
                 }
 
-                TempData["Error"] = "Có lỗi xảy ra trong quá trình xử lý!";
+                TempData["Error"] = "Có lỗi xảy ra trong quá trình xử lý! Vui lòng thử lại.";
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["Error"] = $"Lỗi: {ex.Message}";
+                TempData["Error"] = $"Đã xảy ra lỗi: {ex.Message}. Vui lòng thử lại sau.";
                 return RedirectToAction("Index");
             }
         }

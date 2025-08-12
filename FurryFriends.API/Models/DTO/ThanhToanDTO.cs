@@ -7,6 +7,7 @@
         public Guid TaiKhoanId { get; set; }
         public Guid HinhThucThanhToanId { get; set; }
         public Guid? NhanVienId { get; set; }
+        public Guid DiaChiGiaoHangId { get; set; } // Bắt buộc phải có địa chỉ giao hàng
 
         public string? TenCuaKhachHang { get; set; }
         public string? SdtCuaKhachHang { get; set; }

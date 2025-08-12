@@ -19,6 +19,9 @@ public class KhachHangLoginController : Controller
     [HttpGet]
     public IActionResult DangNhap()
     {
+        // Xóa TempData cũ để tránh hiển thị thông báo không mong muốn
+        TempData.Clear();
+        
         if (!string.IsNullOrEmpty(HttpContext.Session.GetString("TaiKhoanId")))
         {
             return RedirectToAction("Index", "Home");
@@ -29,7 +32,11 @@ public class KhachHangLoginController : Controller
     [HttpPost]
     public async Task<IActionResult> DangNhap(LoginRequest model)
     {
-        if (!ModelState.IsValid) return View(model);
+        if (!ModelState.IsValid) 
+        {
+            TempData["Error"] = "Vui lòng kiểm tra lại thông tin đăng nhập!";
+            return View(model); // Return view instead of redirect
+        }
 
         _logger.LogInformation($"Khách hàng đăng nhập với UserName: {model.UserName}");
 
@@ -38,16 +45,19 @@ public class KhachHangLoginController : Controller
 
         if (result == null)
         {
-            ViewBag.Error = "Sai tên đăng nhập hoặc mật khẩu.";
-            return View(model);
+            TempData["Error"] = "Sai tên đăng nhập hoặc mật khẩu. Vui lòng kiểm tra lại!";
+            return View(model); // Return view instead of redirect
         }
 
         // Lưu session
         HttpContext.Session.SetString("TaiKhoanId", result.TaiKhoanId.ToString());
-        HttpContext.Session.SetString("KhachHangId", result.KhachHangId.ToString()); //sửa ơ đây
+
+        HttpContext.Session.SetString("KhachHangId", result.KhachHangId.ToString());
+
         HttpContext.Session.SetString("Role", result.Role);
         HttpContext.Session.SetString("HoTen", result.HoTen ?? "");
 
+        TempData["Success"] = $"Đăng nhập thành công! Xin chào {result.HoTen} 🎉";
         return RedirectToAction("Index", "Home");
     }
 
@@ -55,7 +65,7 @@ public class KhachHangLoginController : Controller
     public IActionResult Logout()
     {
         HttpContext.Session.Clear();
-        //return RedirectToAction("DangNhap");
+        TempData["Success"] = "Đăng xuất thành công! Hẹn gặp lại bạn! 👋";
         return RedirectToAction("Index", "Home");
     }
 }

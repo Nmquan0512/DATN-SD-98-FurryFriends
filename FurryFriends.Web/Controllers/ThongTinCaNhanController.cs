@@ -108,14 +108,12 @@ namespace FurryFriends.Web.Controllers
 			var taiKhoanIdStr = HttpContext.Session.GetString("TaiKhoanId");
 			if (string.IsNullOrEmpty(taiKhoanIdStr) || !Guid.TryParse(taiKhoanIdStr, out var taiKhoanId))
 				return RedirectToAction("DangNhap", "Auth");
-
 			var taiKhoan = await _taiKhoanService.GetByIdAsync(taiKhoanId);
 			if (taiKhoan == null || taiKhoan.KhachHangId == null)
 			{
 				TempData["Error"] = "Không tìm thấy thông tin khách hàng!";
 				return RedirectToAction("DanhSachDiaChi");
 			}
-
 			var diaChi = new FurryFriends.API.Models.DiaChiKhachHang
 			{
 				DiaChiId = Guid.NewGuid(),
@@ -131,6 +129,7 @@ namespace FurryFriends.Web.Controllers
 				KhachHangId = taiKhoan.KhachHangId.Value
 			};
 			await _diaChiKhachHangService.AddAsync(diaChi);
+			// ✅ Chỉ set message khi thực sự thêm thành công
 			TempData["Message"] = "Thêm địa chỉ thành công!";
 			return RedirectToAction("DanhSachDiaChi");
 		}

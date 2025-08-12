@@ -176,6 +176,10 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
             "Microsoft.AspNetCore.Authentication.Facebook": {
               "target": "Package",
               "version": "[8.0.17, )"
@@ -188,10 +192,20 @@
               "target": "Package",
               "version": "[8.0.17, )"
             },
+<<<<<<< HEAD
             "NUnit": {
               "target": "Package",
               "version": "[4.3.2, )"
             },
+=======
+<<<<<<< Updated upstream
+=======
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
+>>>>>>> Stashed changes
+>>>>>>> main
             "PDFsharp": {
               "target": "Package",
               "version": "[6.0.0, )"
@@ -199,6 +213,10 @@
             "PdfSharpCore": {
               "target": "Package",
               "version": "[1.3.67, )"
+            },
+            "QriousSharp": {
+              "target": "Package",
+              "version": "[4.0.2, )"
             },
             "iTextSharp": {
               "target": "Package",

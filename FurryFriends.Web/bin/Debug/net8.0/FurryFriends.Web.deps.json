@@ -14,10 +14,17 @@
           "Microsoft.AspNetCore.Authentication.Google": "8.0.17",
           "Microsoft.AspNetCore.Authentication.MicrosoftAccount": "8.0.17",
 <<<<<<< HEAD
+<<<<<<< HEAD
           "NUnit": "4.3.2",
 =======
           "Newtonsoft.Json": "13.0.3",
 >>>>>>> origin/Update
+=======
+<<<<<<< Updated upstream
+=======
+          "Newtonsoft.Json": "13.0.3",
+>>>>>>> Stashed changes
+>>>>>>> main
           "PDFsharp": "6.0.0",
           "PdfSharpCore": "1.3.67",
           "QriousSharp": "4.0.2",

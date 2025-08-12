@@ -146,11 +146,11 @@
                                             var display = (cl != null && !cl.TrangThai) ? $"{ten} (Ngưng hoạt động)" : ten;
                                             chatLieuNames.Add(display);
                                         }
-                                        <span>@string.Join(", ", chatLieuNames)</span>
+                                        <span class="chat-lieu-text">@string.Join(", ", chatLieuNames)</span>
                                     }
                                     else
                                     {
-                                        <span class="text-muted">Không có</span>
+                                        <span class="text-muted chat-lieu-text">Không có</span>
                                     }
                                 </td>
                                 <td>
@@ -166,11 +166,11 @@
                                             var display = (tp != null && !tp.TrangThai) ? $"{ten} (Ngưng hoạt động)" : ten;
                                             thanhPhanNames.Add(display);
                                         }
-                                        <span>@string.Join(", ", thanhPhanNames)</span>
+                                        <span class="thanh-phan-text">@string.Join(", ", thanhPhanNames)</span>
                                     }
                                     else
                                     {
-                                        <span class="text-muted">Không có</span>
+                                        <span class="text-muted thanh-phan-text">Không có</span>
                                     }
                                 </td>
                                 <td>
@@ -181,11 +181,11 @@
                                         if (th != null)
                                         {
                                             var text = th.TrangThai ? th.TenThuongHieu : th.TenThuongHieu + " (Ngưng hoạt động)";
-                                            <span>@text</span>
+                                            <span class="thuong-hieu-text">@text</span>
                                         }
                                         else
                                         {
-                                            <span>@item.TenThuongHieu</span>
+                                            <span class="thuong-hieu-text">@item.TenThuongHieu</span>
                                         }
                                     }
                                 </td>
@@ -205,7 +205,7 @@
                                         <a asp-area="Admin" asp-controller="SanPham" asp-action="Edit" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-primary action-btn" title="Chỉnh sửa">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <a asp-area="Admin" asp-controller="SanPham" asp-action="Delete" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-danger action-btn" title="Xoá" onclick="return confirm('Bạn có chắc muốn xoá sản phẩm này?');">
+                                        <a asp-area="Admin" asp-controller="SanPham" asp-action="Delete" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-danger action-btn" title="Xoá">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                         <a asp-area="Admin" asp-controller="SanPhamChiTiet" asp-action="Index" asp-route-sanPhamId="@item.SanPhamId" class="btn btn-sm btn-outline-secondary" title="Chi tiết sản phẩm">
@@ -224,6 +224,7 @@
 </div>
 
 @section Scripts {
+    @Html.AntiForgeryToken()
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.min.css" />
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
@@ -241,8 +242,8 @@ $(document).ready(function () {
         pageLength: 10,
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]],
         order: [[1, 'asc']],
-        // Sửa lại targets: bảng có 10 cột (index 0-9), cột "Hành động" là index 9
-        columnDefs: [{ orderable: false, targets: [0, 9] }],
+        // Sửa lại targets: bảng có 9 cột (index 0-8), cột "Hành động" là index 8
+        columnDefs: [{ orderable: false, targets: [0, 8] }],
         initComplete: function () {
             if (window.adminLoading) {
                 window.adminLoading.hideTableLoading('#sanPhamTableContainer');
@@ -264,11 +265,11 @@ $(document).ready(function () {
         var chatLieu = $('#filterChatLieu').val();
         var thanhPhan = $('#filterThanhPhan').val();
 
-        var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(8) .badge').text().trim();
+        var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(7) .badge').text().trim();
         var rowLoaiGoc = $(table.row(dataIndex).node()).find('.loai-goc').text().trim();
-        var rowThuongHieu = data[6];
-        var rowChatLieu = data[4];
-        var rowThanhPhan = data[5];
+        var rowThuongHieu = $(table.row(dataIndex).node()).find('.thuong-hieu-text').text().trim();
+        var rowChatLieu = $(table.row(dataIndex).node()).find('.chat-lieu-text').text().trim();
+        var rowThanhPhan = $(table.row(dataIndex).node()).find('.thanh-phan-text').text().trim();
 
         // Debug logging
         console.log('=== FILTER DEBUG ===');
@@ -301,13 +302,13 @@ $(document).ready(function () {
             return false;
         }
 
-        // Thương hiệu - so sánh với tên thương hiệu (normalize)
+        // Thương hiệu - so sánh với tên thương hiệu
         if (thuongHieu && thuongHieu !== '' && thuongHieu !== 'Tất cả') {
             var thuongHieuText = $('#filterThuongHieu option:selected').text().trim();
             var rowThuongHieuText = rowThuongHieu.trim();
-            var norm1 = thuongHieuText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-            var norm2 = rowThuongHieuText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-            if (norm1 !== norm2) {
+            console.log('Thương hiệu filter:', thuongHieuText, 'Row data:', rowThuongHieuText);
+            if (thuongHieuText !== rowThuongHieuText) {
+                console.log('Filtered out by brand - not match');
                 return false;
             }
         }
@@ -325,10 +326,9 @@ $(document).ready(function () {
                 return item.trim();
             });
             console.log('Chất liệu array:', chatLieus);
-            // So sánh không phân biệt dấu và chữ hoa/thường
+            // So sánh đơn giản
             var found = chatLieus.some(function(item) {
-                return item.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') === 
-                       chatLieuText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                return item.trim() === chatLieuText.trim();
             });
             if (!found) {
                 console.log('Filtered out by material - not found in array');
@@ -349,10 +349,9 @@ $(document).ready(function () {
                 return item.trim();
             });
             console.log('Thành phần array:', thanhPhans);
-            // So sánh không phân biệt dấu và chữ hoa/thường
+            // So sánh đơn giản
             var found = thanhPhans.some(function(item) {
-                return item.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '') === 
-                       thanhPhanText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                return item.trim() === thanhPhanText.trim();
             });
             if (!found) {
                 console.log('Filtered out by component - not found in array');
@@ -364,11 +363,11 @@ $(document).ready(function () {
         return true;
     });
 
-    $('.action-btn').on('click', function () {
-        if (window.adminLoading) {
-            window.adminLoading.showLoadingWithMessage('Đang xử lý...');
-        }
-    });
+    // $('.action-btn').on('click', function () {
+    //     if (window.adminLoading) {
+    //         window.adminLoading.showLoadingWithMessage('Đang xử lý...');
+    //     }
+    // });
 });
 
     </script>

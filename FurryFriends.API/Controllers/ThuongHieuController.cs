@@ -71,7 +71,8 @@ namespace FurryFriends.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                ModelState.AddModelError("", ex.Message);
+                return BadRequest(ModelState);
             }
         }
 
@@ -104,7 +105,8 @@ namespace FurryFriends.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                ModelState.AddModelError("", ex.Message);
+                return BadRequest(ModelState);
             }
         }
 

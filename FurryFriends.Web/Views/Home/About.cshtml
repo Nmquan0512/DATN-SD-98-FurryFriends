@@ -1,0 +1,515 @@
+@{
+    ViewData["Title"] = "Giới thiệu - FurryFriends";
+}
+
+@section Styles {
+    <style>
+        /* ✅ Hero Section với Parallax */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* ✅ Content Sections với Scroll Animation */
+        .content-section {
+            padding: 5rem 0;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .content-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #2d3748;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        /* ✅ Mission & Vision Cards */
+        .mission-vision-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .mission-card {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #f7fafc;
+        }
+
+        .mission-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .mission-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .mission-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .mission-description {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #4a5568;
+        }
+
+        /* ✅ Values Grid */
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .value-item {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .value-item:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #edf2f7, #e2e8f0);
+        }
+
+        .value-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .value-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .value-description {
+            font-size: 1rem;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        /* ✅ Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .team-member {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .team-avatar {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+        }
+
+        .team-info {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .team-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2d3748;
+        }
+
+        .team-role {
+            font-size: 1rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .team-description {
+            font-size: 0.95rem;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        /* ✅ Stats Section */
+        .stats-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 4rem 0;
+            margin: 4rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .stat-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* ✅ Responsive Design */
+        @@media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .mission-vision-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .values-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ✅ Loading Animation */
+        .loading-placeholder {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @@keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+}
+
+<!-- ✅ Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">Về FurryFriends</h1>
+        <p class="hero-subtitle">
+            Chúng tôi là thương hiệu tiên phong trong lĩnh vực thú cưng, 
+            mang đến những sản phẩm chất lượng cao và dịch vụ tận tâm cho người bạn thân yêu của bạn.
+        </p>
+    </div>
+</section>
+
+<!-- ✅ Mission & Vision Section -->
+<section class="content-section" id="mission-section">
+    <div class="section-container">
+        <h2 class="section-title">Sứ mệnh & Tầm nhìn</h2>
+        <div class="mission-vision-grid">
+            <div class="mission-card">
+                <span class="mission-icon">🎯</span>
+                <h3 class="mission-title">Sứ mệnh</h3>
+                <p class="mission-description">
+                    Mang đến hạnh phúc và sức khỏe cho thú cưng thông qua những sản phẩm chất lượng, 
+                    dịch vụ chuyên nghiệp và tình yêu thương vô điều kiện.
+                </p>
+            </div>
+            <div class="mission-card">
+                <span class="mission-icon">🌟</span>
+                <h3 class="mission-title">Tầm nhìn</h3>
+                <p class="mission-description">
+                    Trở thành thương hiệu hàng đầu trong lĩnh vực thú cưng tại Việt Nam, 
+                    được tin tưởng và yêu mến bởi cộng đồng yêu thú cưng.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ✅ Core Values Section -->
+<section class="content-section" id="values-section">
+    <div class="section-container">
+        <h2 class="section-title">Giá trị cốt lõi</h2>
+        <div class="values-grid">
+            <div class="value-item">
+                <span class="value-icon">❤️</span>
+                <h3 class="value-title">Tình yêu thương</h3>
+                <p class="value-description">Đặt tình yêu thú cưng lên hàng đầu trong mọi quyết định</p>
+            </div>
+            <div class="value-item">
+                <span class="value-icon">🔒</span>
+                <h3 class="value-title">Chất lượng</h3>
+                <p class="value-description">Cam kết chất lượng sản phẩm và dịch vụ tốt nhất</p>
+            </div>
+            <div class="value-item">
+                <span class="value-icon">🤝</span>
+                <h3 class="value-title">Tận tâm</h3>
+                <p class="value-description">Phục vụ khách hàng với sự tận tâm và chuyên nghiệp</p>
+            </div>
+            <div class="value-item">
+                <span class="value-icon">🌱</span>
+                <h3 class="value-title">Phát triển</h3>
+                <p class="value-description">Không ngừng học hỏi và cải tiến để phục vụ tốt hơn</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ✅ Stats Section -->
+<section class="stats-section" id="stats-section">
+    <div class="section-container">
+        <div class="stats-grid">
+            <div class="stat-item" data-target="5000">
+                <span class="stat-number">0</span>
+                <div class="stat-label">Khách hàng hài lòng</div>
+            </div>
+            <div class="stat-item" data-target="1000">
+                <span class="stat-number">0</span>
+                <div class="stat-label">Sản phẩm chất lượng</div>
+            </div>
+            <div class="stat-item" data-target="50">
+                <span class="stat-number">0</span>
+                <div class="stat-label">Thương hiệu uy tín</div>
+            </div>
+            <div class="stat-item" data-target="24">
+                <span class="stat-number">0</span>
+                <div class="stat-label">Giờ hỗ trợ</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- ✅ Story Section -->
+<section class="content-section" id="story-section">
+    <div class="section-container">
+        <h2 class="section-title">Câu chuyện của chúng tôi</h2>
+        <div class="story-content" style="max-width: 800px; margin: 0 auto; text-align: center;">
+            <p style="font-size: 1.2rem; line-height: 1.8; color: #4a5568; margin-bottom: 2rem;">
+                FurryFriends được thành lập từ tình yêu thú cưng sâu sắc. Chúng tôi hiểu rằng 
+                thú cưng không chỉ là vật nuôi, mà còn là thành viên trong gia đình, 
+                mang lại niềm vui và hạnh phúc vô bờ bến.
+            </p>
+            <p style="font-size: 1.2rem; line-height: 1.8; color: #4a5568; margin-bottom: 2rem;">
+                Từ những ngày đầu với một cửa hàng nhỏ, chúng tôi đã phát triển thành 
+                hệ thống bán lẻ và dịch vụ toàn diện, luôn đặt chất lượng và sự hài lòng 
+                của khách hàng lên hàng đầu.
+            </p>
+            <p style="font-size: 1.2rem; line-height: 1.8; color: #4a5568;">
+                Hãy để chúng tôi đồng hành cùng bạn trong hành trình chăm sóc và yêu thương 
+                những người bạn thân yêu của mình.
+            </p>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // ✅ Scroll-based Loading với Intersection Observer
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    
+                    // ✅ Animate stats khi visible
+                    if (entry.target.id === 'stats-section') {
+                        animateStats();
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // ✅ Observe tất cả content sections
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+
+        // ✅ Animate số liệu thống kê
+        function animateStats() {
+            const statItems = document.querySelectorAll('.stat-item');
+            
+            statItems.forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.add('visible');
+                    
+                    const numberElement = item.querySelector('.stat-number');
+                    const target = parseInt(item.dataset.target);
+                    animateNumber(numberElement, target);
+                }, index * 200);
+            });
+        }
+
+        // ✅ Animate số từ 0 đến target
+        function animateNumber(element, target) {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current).toLocaleString();
+            }, 30);
+        }
+
+        // ✅ Smooth scroll cho navigation
+        function smoothScrollTo(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+
+        // ✅ Lazy loading cho images (nếu có)
+        if ('IntersectionObserver' in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        imageObserver.unobserve(img);
+                    }
+                });
+            });
+
+            document.querySelectorAll('img[data-src]').forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+    </script>
+}

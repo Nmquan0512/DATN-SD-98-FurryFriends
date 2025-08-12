@@ -10,6 +10,10 @@ namespace FurryFriends.API.Models
             [Key]
             public Guid VoucherId { get; set; }
 
+            [Required(ErrorMessage = "Mã voucher là bắt buộc.")]
+            [StringLength(50, ErrorMessage = "Mã voucher tối đa 50 ký tự.")]
+            public string MaVoucher { get; set; } = string.Empty;
+
             [Required(ErrorMessage = "Tên voucher là bắt buộc.")]
             [StringLength(100, ErrorMessage = "Tên voucher tối đa 100 ký tự.")]
             public string TenVoucher { get; set; }
@@ -31,7 +35,13 @@ namespace FurryFriends.API.Models
 
         [Required]
         public DateTime NgayTao { get; set; }
+        
+        [Range(0, double.MaxValue, ErrorMessage = "Giá trị giảm tối đa phải lớn hơn hoặc bằng 0.")]
         public decimal? GiaTriGiamToiDa { get; set; }
+        
+        [Range(0, double.MaxValue, ErrorMessage = "Số tiền áp dụng tối thiểu phải lớn hơn hoặc bằng 0.")]
+        public decimal? SoTienApDungToiThieu { get; set; }
+        
         public DateTime? NgayCapNhat { get; set; }
 
             [JsonIgnore]
@@ -56,15 +66,17 @@ namespace FurryFriends.API.Models
 
                 if (_context != null)
                 {
-                    var isDuplicate = _context.Vouchers
-                        .Any(v => v.TenVoucher.ToLower().Trim() == TenVoucher.ToLower().Trim()
-                               && v.VoucherId != VoucherId);
+                    var normalizedCode = (MaVoucher ?? string.Empty).Trim().ToUpper();
+                    MaVoucher = normalizedCode; // Chuẩn hóa mã về UPPER
 
-                    if (isDuplicate)
+                    var isDuplicateCode = _context.Vouchers
+                        .Any(v => v.MaVoucher.ToUpper() == normalizedCode && v.VoucherId != VoucherId);
+
+                    if (isDuplicateCode)
                     {
                         yield return new ValidationResult(
-                            "Tên voucher đã tồn tại.",
-                            new[] { nameof(TenVoucher) });
+                            "Mã voucher đã tồn tại.",
+                            new[] { nameof(MaVoucher) });
                     }
                 }
             }

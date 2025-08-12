@@ -35,25 +35,15 @@
         </div>
     </div>
 </div>
+
 <div class="container mb-4" id="filterContainer">
     <div class="card shadow-sm p-3 mb-3" style="border-radius: 12px;">
-        <div class="row align-items-center mb-2">
+        <div class="row mb-2">
             <div class="col-auto">
                 <span class="fs-5 fw-semibold"><i class="fas fa-filter me-2"></i>Bộ lọc</span>
             </div>
         </div>
         <div class="row align-items-end g-3">
-            <div class="col-md-3">
-                <label for="filterTrangThai" class="form-label mb-1">Trạng thái</label>
-                <select id="filterTrangThai" class="form-select">
-                    <option value="">Tất cả</option>
-                    <option value="Chờ xác nhận">Chờ xác nhận</option>
-                    <option value="Đã xác nhận">Đã xác nhận</option>
-                    <option value="Đang giao">Đang giao</option>
-                    <option value="Hoàn thành">Hoàn thành</option>
-                    <option value="Đã hủy">Đã hủy</option>
-                </select>
-            </div>
             <div class="col-md-3">
                 <label for="filterLoaiHoaDon" class="form-label mb-1">Loại hóa đơn</label>
                 <select id="filterLoaiHoaDon" class="form-select">
@@ -152,14 +142,14 @@
                         @(item.LoaiHoaDon == "BanTaiQuay" ? (item.NhanVien?.HoVaTen ?? "-") : "Được hệ thống tự động tạo")
                     </td>
                     <td>
-                        @(item.LoaiHoaDon == "BanTaiQuay" ? "Bán tại quầy" : item.LoaiHoaDon)
+                        @(item.LoaiHoaDon == "BanTaiQuay" ? "Bán tại quầy" : "Bán trực tiếp")
                     </td>
                     <td>
                         <div class="d-flex gap-2">
                             <a href="@Url.Action("Details", "HoaDon", new { area = "Admin", id = item.HoaDonId })" class="btn btn-info btn-sm action-btn">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <a href="@Url.Action("ExportPdf", "HoaDon", new { area = "Admin", id = item.HoaDonId })" class="btn btn-success btn-sm action-btn" target="_blank">
+                            <a href="https://localhost:7289/api/HoaDon/@item.HoaDonId/pdf" class="btn btn-success btn-sm action-btn" target="_blank">
                                 <i class="fas fa-file-pdf"></i>
                             </a>
                         </div>
@@ -171,6 +161,22 @@
 </div>
 
 <style>
+    .product-snapshots {
+        max-width: 300px;
+    }
+    
+    .product-snapshot {
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 8px;
+        background-color: #f8f9fa;
+    }
+    
+    .product-snapshot:hover {
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+    
     .pet-range-slider input[type=range] {
         -webkit-appearance: none;
         width: 100%;
@@ -551,7 +557,7 @@
                 var $empty = $('#hoaDonTable tbody td.dt-empty');
                 if ($empty.length) {
                     $empty.siblings('td').remove();
-                    $empty.attr('colspan', 8);
+                    $empty.attr('colspan', 10); // Cập nhật colspan thành 10 cột
                 }
             });
             
@@ -613,11 +619,10 @@
                 }
                 
                 // Kiểm tra dữ liệu có tồn tại không
-                if (!data || data.length < 10) {
+                if (!data || data.length < 10) { // Cập nhật thành 10 cột
                     return true;
                 }
                 
-                var trangThai = $('#filterTrangThai').val();
                 var loaiHoaDon = $('#filterLoaiHoaDon').val();
                 var ngayTu = $('#filterNgayTu').val();
                 var ngayDen = $('#filterNgayDen').val();
@@ -630,11 +635,6 @@
                 var rowLoaiHoaDon = data[8] ? data[8].trim() : '';
                 
                 try {
-                    // Lấy trạng thái từ DOM thay vì data array
-                    var $row = $(table.row(dataIndex).node());
-                    var rowTrangThai = $row.find('td:eq(6) .badge').text().trim().toLowerCase();
-                    var filterTrangThai = trangThai ? trangThai.trim().toLowerCase() : '';
-                    
                     // Xử lý ngày tạo
                     var rowNgay = '';
                     if (data[2] && data[2].includes('/')) {
@@ -647,13 +647,10 @@
                         rowTongTien = parseInt(data[3].replace(/\D/g, '')) || 0;
                     }
                     
-                    // Lọc theo trạng thái
-                    if (filterTrangThai && rowTrangThai !== filterTrangThai) return false;
-                    
-                    // Lọc theo loại hóa đơn
-                    if (loaiHoaDon && ((loaiHoaDon === 'BanTaiQuay' && rowLoaiHoaDon !== 'Bán tại quầy') || (loaiHoaDon === 'BanTrucTiep' && rowLoaiHoaDon !== 'BanTrucTiep'))) {
-                        return false;
-                    }
+                                    // Lọc theo loại hóa đơn
+                if (loaiHoaDon && ((loaiHoaDon === 'BanTaiQuay' && rowLoaiHoaDon !== 'Bán tại quầy') || (loaiHoaDon === 'BanTrucTiep' && rowLoaiHoaDon !== 'Bán trực tiếp'))) {
+                    return false;
+                }
                     
                     // Lọc theo ngày tạo
                     if (ngayTu && rowNgay && rowNgay < ngayTu) return false;
@@ -670,7 +667,7 @@
             });
             
             // Event listener cho tất cả filter
-            $('#filterTrangThai, #filterLoaiHoaDon, #filterNgayTu, #filterNgayDen').on('change input', function () {
+            $('#filterLoaiHoaDon, #filterNgayTu, #filterNgayDen').on('change input', function () {
                 setTimeout(function() {
                     table.draw();
                 }, 100);

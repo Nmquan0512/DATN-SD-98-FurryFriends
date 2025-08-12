@@ -75,11 +75,17 @@ builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 builder.Services.AddScoped<ISanPhamChiTietRepository, SanPhamChiTietRepository>();
 builder.Services.AddScoped<ISanPhamChiTietService, SanPhamChiTietService>();
 builder.Services.AddScoped<IThongTinCaNhanService, ThongTinCaNhanService>();
+
 builder.Services.AddScoped<IDotGiamGiaSanPhamRepository, DotGiamGiaSanPhamRepository>();
 builder.Services.AddScoped<IGiamGiaService, GiamGiaService>();
 builder.Services.AddScoped<IBanHangRepository, BanHangRepository>();
 builder.Services.AddScoped<IBanHangService, BanHangService>();
-;
+builder.Services.AddScoped<IGioHangRepository, GioHangRepository>();
+// Đăng ký thiếu cho Hình Thức Thanh Toán
+builder.Services.AddScoped<IHinhThucThanhToanRepository, HinhThucThanhToanRepository>();
+// Đăng ký Voucher Calculation Service
+builder.Services.AddScoped<VoucherCalculationService>();
+
 // Add CORS policy cho phép web admin truy cập API
 builder.Services.AddCors(options =>
 {

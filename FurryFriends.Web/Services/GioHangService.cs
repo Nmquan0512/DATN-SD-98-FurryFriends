@@ -78,17 +78,46 @@ namespace FurryFriends.Web.Services
 
             if (!response.IsSuccessStatusCode)
             {
+                // Nếu voucher không đạt điều kiện tối thiểu, xem như không áp dụng và trả về tổng cũ
                 var error = await response.Content.ReadAsStringAsync();
-                throw new Exception("API trả về lỗi khi áp dụng voucher: " + error);
+                Console.WriteLine("⚠️ Không áp dụng voucher: " + error);
+                return 0; // Signal để controller không hiển thị dòng Giảm giá
             }
 
             var responseBody = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"➡️ Response từ API ap-dung-voucher: {responseBody}");
 
             dynamic result = JsonConvert.DeserializeObject(responseBody);
-            decimal tienSauGiam = result.tienSauGiam ?? 0; //đoạn này lỗi tien sau giam = 0
+            decimal tienSauGiam = result.tienSauGiam ?? 0;
 
             return tienSauGiam;
+        }
+
+        public async Task<VoucherPreviewResult?> PreviewVoucherAsync(Guid khachHangId, Guid voucherId)
+        {
+            var dto = new GioHangVoucherDTO { KhachHangId = khachHangId, VoucherId = voucherId };
+            var response = await _httpClient.PostAsJsonAsync("/api/GioHang/ap-dung-voucher", dto);
+            if (!response.IsSuccessStatusCode)
+            {
+                return null;
+            }
+            
+            var responseBody = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"➡️ Response từ API ap-dung-voucher: {responseBody}");
+            
+            dynamic result = JsonConvert.DeserializeObject(responseBody);
+            
+            return new VoucherPreviewResult
+            {
+                TongTienHang = result.tongTienHang ?? 0,
+                PhiVanChuyen = result.phiVanChuyen ?? 0,
+                TongDonHang = result.tongDonHang ?? 0,
+                GiamGia = result.giamGia ?? 0,
+                TienSauGiam = result.tienSauGiam ?? 0,
+                PhanTramGiam = result.phanTramGiam ?? 0,
+                TenVoucher = result.tenVoucher ?? "",
+                MaVoucher = result.maVoucher ?? ""
+            };
         }
 
         public async Task<ThanhToanResultViewModel> ThanhToanAsync(ThanhToanDTO dto)

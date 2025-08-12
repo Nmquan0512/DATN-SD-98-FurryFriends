@@ -15,5 +15,8 @@ namespace FurryFriends.API.Repository.IRepository
         Task<bool> ExistsAsync(Guid id);
         Task<bool> TenGiamGiaExistsAsync(string tenGiamGia, Guid? excludeId = null);
         Task SaveAsync(); // Phương thức quan trọng để lưu tất cả thay đổi
+        Task RemoveProductsFromDiscount(Guid discountId, List<Guid> productIds);
+        Task AddProductsToDiscount(Guid discountId, List<Guid> productIds, decimal discountPercentage);
+
     }
 }

@@ -1,6 +1,14 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "hHFS0P/B+74=",
+=======
+<<<<<<< Updated upstream
+  "dgSpecHash": "yWGU0Ef7LXQ=",
+=======
+  "dgSpecHash": "YF8OIKYXXf4=",
+>>>>>>> Stashed changes
+>>>>>>> main
   "success": true,
   "projectFilePath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
   "expectedPackageFiles": [
@@ -66,6 +74,12 @@
     "C:\\Users\\x\\.nuget\\packages\\microsoft.aspnetcore.authentication.facebook\\8.0.17\\microsoft.aspnetcore.authentication.facebook.8.0.17.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\microsoft.aspnetcore.authentication.google\\8.0.17\\microsoft.aspnetcore.authentication.google.8.0.17.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\microsoft.aspnetcore.authentication.microsoftaccount\\8.0.17\\microsoft.aspnetcore.authentication.microsoftaccount.8.0.17.nupkg.sha512",
+    "C:\\Users\\x\\.nuget\\packages\\microsoft.aspnetcore.authorization\\8.0.7\\microsoft.aspnetcore.authorization.8.0.7.nupkg.sha512",
+    "C:\\Users\\x\\.nuget\\packages\\microsoft.aspnetcore.components\\8.0.7\\microsoft.aspnetcore.components.8.0.7.nupkg.sha512",
+    "C:\\Users\\x\\.nuget\\packages\\microsoft.aspnetcore.components.analyzers\\8.0.7\\microsoft.aspnetcore.components.analyzers.8.0.7.nupkg.sha512",
+    "C:\\Users\\x\\.nuget\\packages\\microsoft.aspnetcore.components.forms\\8.0.7\\microsoft.aspnetcore.components.forms.8.0.7.nupkg.sha512",
+    "C:\\Users\\x\\.nuget\\packages\\microsoft.aspnetcore.components.web\\8.0.7\\microsoft.aspnetcore.components.web.8.0.7.nupkg.sha512",
+    "C:\\Users\\x\\.nuget\\packages\\microsoft.aspnetcore.metadata\\8.0.7\\microsoft.aspnetcore.metadata.8.0.7.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\microsoft.aspnetcore.razor.language\\6.0.24\\microsoft.aspnetcore.razor.language.6.0.24.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\7.0.0\\microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\microsoft.build\\17.8.3\\microsoft.build.17.8.3.nupkg.sha512",
@@ -116,6 +130,7 @@
     "C:\\Users\\x\\.nuget\\packages\\microsoft.identitymodel.protocols\\6.35.0\\microsoft.identitymodel.protocols.6.35.0.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\6.35.0\\microsoft.identitymodel.protocols.openidconnect.6.35.0.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\microsoft.identitymodel.tokens\\6.35.0\\microsoft.identitymodel.tokens.6.35.0.nupkg.sha512",
+    "C:\\Users\\x\\.nuget\\packages\\microsoft.jsinterop\\8.0.7\\microsoft.jsinterop.8.0.7.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\microsoft.net.stringtools\\17.8.3\\microsoft.net.stringtools.17.8.3.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.1\\microsoft.netcore.platforms.1.1.1.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\microsoft.netcore.targets\\1.1.3\\microsoft.netcore.targets.1.1.3.nupkg.sha512",
@@ -145,6 +160,7 @@
     "C:\\Users\\x\\.nuget\\packages\\nunit\\4.3.2\\nunit.4.3.2.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\pdfsharp\\6.0.0\\pdfsharp.6.0.0.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\pdfsharpcore\\1.3.67\\pdfsharpcore.1.3.67.nupkg.sha512",
+    "C:\\Users\\x\\.nuget\\packages\\qrioussharp\\4.0.2\\qrioussharp.4.0.2.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.debian.8-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.fedora.23-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\x\\.nuget\\packages\\runtime.fedora.24-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.fedora.24-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",

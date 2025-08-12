@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="~/css/admin-loading.css" />
     <link rel="stylesheet" href="~/css/admin.css" />
+    <link rel="stylesheet" href="~/css/admin-notification-fix.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @RenderSection("Styles", required: false)
 </head>
@@ -159,17 +160,20 @@
                             </a>
                         </li>
                         <li>
+
+                            <a href="@Url.Action("Index", "DonHang", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DonHang" ? "active" : "")">
+                                <i class="nav-icon fas fa-boxes"></i>
+                                <span>Quản lý đơn hàng</span>
+                            </a>
+                        </li>
+                        <li>
                             <a href="@Url.Action("Index", "GiamGia", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "GiamGias" ? "active" : "")">
+
                                 <i class="nav-icon fas fa-percent"></i>
                                 <span>Giảm giá</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="@Url.Action("Index", "DotGiamGias", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DotGiamGias" ? "active" : "")">
-                                <i class="nav-icon fas fa-calendar-alt"></i>
-                                <span>Đợt giảm giá</span>
-                            </a>
-                        </li>
+                       
                     </ul>
                 </div>
 
@@ -212,8 +216,8 @@
         <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebarAndOverlay()"></div>
     </div>
 
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+    <!-- Loading Overlay - TẠM THỜI ẨN -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none !important;">
         <div class="loading-container">
             <div class="loader">
                 <div class="dog">
@@ -260,6 +264,9 @@
     <script src="~/js/admin-loading.js"></script>
     <script src="~/js/siteadmin.js"></script>
     <script src="~/js/notification.js"></script>
+    <script src="~/js/form-notifications.js"></script>
+    <script src="~/js/admin-notification-fix.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         // Sidebar toggle for mobile
@@ -303,6 +310,33 @@
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof window.adminLoading !== 'undefined') {
                 window.adminLoading.init();
+            }
+            
+            // Hiển thị thông báo thành công/thất bại chung
+            @if (TempData["Success"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: '@Html.Raw(TempData["Success"])',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+                </text>
+            }
+            
+            @if (TempData["Error"] != null)
+            {
+                <text>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: '@Html.Raw(TempData["Error"])',
+                    timer: 5000,
+                    showConfirmButton: true
+                });
+                </text>
             }
         });
     </script>

@@ -54,5 +54,21 @@ namespace FurryFriends.API.Controllers
             await _repository.DeleteAsync(id);
             return NoContent();
         }
+
+        [HttpGet("email/{email}")]
+        public async Task<ActionResult<KhachHang>> GetByEmail(string email)
+        {
+            var khachHang = await _repository.FindByEmailAsync(email);
+            if (khachHang == null) return NotFound();
+            return Ok(khachHang);
+        }
+
+        [HttpGet("phone/{phone}")]
+        public async Task<ActionResult<KhachHang>> GetByPhone(string phone)
+        {
+            var khachHang = await _repository.FindByPhoneAsync(phone);
+            if (khachHang == null) return NotFound();
+            return Ok(khachHang);
+        }
     }
 }

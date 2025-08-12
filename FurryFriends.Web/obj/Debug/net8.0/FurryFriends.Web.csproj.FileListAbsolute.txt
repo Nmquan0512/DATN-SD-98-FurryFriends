@@ -613,5 +613,22 @@ C:\Users\Lenovo\OneDrive\Desktop\New folder (2)\DATN-SD-98-FurryFriends\FurryFri
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.pdb
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\FurryFriends.Web.genruntimeconfig.cache
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\obj\Debug\net8.0\ref\FurryFriends.Web.dll
+<<<<<<< HEAD
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\nunit.framework.dll
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\nunit.framework.legacy.dll
+=======
+<<<<<<< Updated upstream
+=======
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\nunit.framework.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\nunit.framework.legacy.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\AutoMapper.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\Microsoft.AspNetCore.Authorization.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\Microsoft.AspNetCore.Components.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\Microsoft.AspNetCore.Components.Forms.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\Microsoft.AspNetCore.Components.Web.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\Microsoft.AspNetCore.Metadata.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\Microsoft.JSInterop.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.Web\bin\Debug\net8.0\QriousSharp.dll
+>>>>>>> Stashed changes
+>>>>>>> main

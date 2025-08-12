@@ -1,4 +1,9 @@
-﻿using FurryFriends.API.Models;
+There was an issue with the provided code, as it appears to have merge conflicts. The `<<<<<<< HEAD`, `=======`, and `>>>>>>> main` markers indicate that changes were made in multiple places that couldn't be automatically reconciled.
+
+To get the **main** branch, I will use the code that follows the `>>>>>>> main` marker.
+
+```csharp
+using FurryFriends.API.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FurryFriends.API.Data
@@ -92,6 +97,22 @@ namespace FurryFriends.API.Data
                 NgayTao = DateTime.UtcNow,
                 NgayCapNhat = DateTime.UtcNow
             });
+
+            // Seed HinhThucThanhToan mặc định
+            modelBuilder.Entity<HinhThucThanhToan>().HasData(
+                new HinhThucThanhToan
+                {
+                    HinhThucThanhToanId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                    TenHinhThuc = "Thanh toán khi nhận hàng",
+                    MoTa = "COD - Thanh toán tiền mặt khi nhận hàng"
+                },
+                new HinhThucThanhToan
+                {
+                    HinhThucThanhToanId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                    TenHinhThuc = "Thanh toán VNPay",
+                    MoTa = "Thanh toán trực tuyến qua cổng thanh toán VNPay"
+                }
+            );
         }
 
         private void ConfigureTaiKhoan(ModelBuilder modelBuilder)
@@ -215,3 +236,4 @@ namespace FurryFriends.API.Data
         }
     }
 }
+```

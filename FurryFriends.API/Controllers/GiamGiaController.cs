@@ -109,6 +109,7 @@ namespace FurryFriends.API.Controllers
 
             // ModelState.IsValid đã được xử lý tự động bởi [ApiController]
 
+
             try
             {
                 await _giamGiaService.UpdateAsync(dto);
@@ -128,9 +129,10 @@ namespace FurryFriends.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Lỗi nghiêm trọng khi cập nhật giảm giá với ID: {DiscountId}", id);
-                return StatusCode(500, "Lỗi hệ thống khi cập nhật giảm giá. Vui lòng thử lại sau.");
+                _logger.LogError(ex, "Lỗi nghiêm trọng khi cập nhật giảm giá với ID: {DiscountId}. Lỗi chi tiết: {ErrorMessage}", id, ex.Message);
+                return StatusCode(500, $"Lỗi hệ thống khi cập nhật giảm giá: {ex.Message}");
             }
+
         }
 
         // DELETE: api/GiamGia/{id}

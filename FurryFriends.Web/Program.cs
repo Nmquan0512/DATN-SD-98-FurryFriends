@@ -1,14 +1,18 @@
-﻿using FurryFriends.Web.Service;
+using FurryFriends.Web.Service;
 using FurryFriends.Web.Service.IService;
 using FurryFriends.Web.Services;
 using FurryFriends.Web.Services.IService;
+using FurryFriends.Web.Services.IServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.Facebook;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IVnPayService, VnPayService>();
+
 builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
@@ -77,10 +81,16 @@ builder.Services.AddHttpClient<IKichCoService, KichCoService>(client =>
 });
 builder.Services.AddHttpClient<IThongTinCaNhanService, ThongTinCaNhanService>(client =>
 {
-	client.BaseAddress = new Uri("https://localhost:7289/");
+    client.BaseAddress = new Uri("https://localhost:7289/");
 });
-
-
+builder.Services.AddHttpClient<IGioHangService, GioHangService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
+builder.Services.AddHttpClient<IHinhThucThanhToanService, HinhThucThanhToanService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+});
 
 builder.Services.AddHttpClient<IAnhService, AnhService>(client =>
 {
@@ -91,6 +101,9 @@ builder.Services.AddHttpClient<ISanPhamChiTietService, SanPhamChiTietService>(cl
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
+
+// Đăng ký DiscountCalculationService
+builder.Services.AddScoped<DiscountCalculationService>();
 // Cách đúng đã kiểm tra
 
 builder.Services.AddHttpClient<ISanPhamService, SanPhamService>(client =>
@@ -101,8 +114,6 @@ builder.Services.AddHttpClient<IBanHangService, BanHangService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
-
-// Cách đúng đã kiểm tr
 
 // Thêm cấu hình xác thực Google và Facebook
 builder.Services.AddAuthentication(options =>

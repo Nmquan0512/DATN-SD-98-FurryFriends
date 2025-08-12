@@ -91,5 +91,49 @@ namespace FurryFriends.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        // POST: api/HoaDon/{id}/huy-don
+        [HttpPost("{id}/huy-don")]
+        public async Task<IActionResult> HuyDonHang(Guid id)
+        {
+            try
+            {
+                var result = await _hoaDonRepository.HuyDonHangAsync(id);
+                if (result.Success)
+                {
+                    return Ok(new { success = true, message = "Hủy đơn hàng thành công!" });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = result.Message });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = $"Lỗi server: {ex.Message}" });
+            }
+        }
+
+        // PUT: api/HoaDon/{id}/trang-thai/{trangThai}
+        [HttpPut("{id}/trang-thai/{trangThai}")]
+        public async Task<IActionResult> CapNhatTrangThai(Guid id, int trangThai)
+        {
+            try
+            {
+                var result = await _hoaDonRepository.CapNhatTrangThaiAsync(id, trangThai);
+                if (result.Success)
+                {
+                    return Ok(new { success = true, message = "Cập nhật trạng thái thành công!" });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, message = result.Message });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = $"Lỗi server: {ex.Message}" });
+            }
+        }
     }
 } 

@@ -1,7 +1,8 @@
-﻿using FurryFriends.API.Data;
+using FurryFriends.API.Data;
 using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Repository.IRepository;
+using FurryFriends.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace FurryFriends.API.Repository
@@ -9,87 +10,159 @@ namespace FurryFriends.API.Repository
     public class GioHangRepository : IGioHangRepository
     {
         private readonly AppDbContext _context;
+        private readonly VoucherCalculationService _voucherService;
+        private static decimal TinhDonGiaSauGiam(decimal giaGoc, decimal phanTram)
+        {
+            if (phanTram <= 0) return giaGoc;
+            var giaSau = giaGoc * (100 - phanTram) / 100m;
+            return Math.Round(giaSau, 0, MidpointRounding.AwayFromZero);
+        }
 
-        public GioHangRepository(AppDbContext context)
+        private async Task<decimal> LayPhanTramGiamToiDaAsync(Guid sanPhamChiTietId)
+        {
+            var now = DateTime.Now; // Changed from DateTime.UtcNow
+            var percents = await _context.DotGiamGiaSanPhams
+                .AsNoTracking()
+                .Include(d => d.GiamGia)
+                .Where(d => d.SanPhamChiTietId == sanPhamChiTietId
+                            && d.TrangThai
+                            && d.GiamGia != null
+                            && d.GiamGia.TrangThai
+                            && d.GiamGia.NgayBatDau <= now
+                            && d.GiamGia.NgayKetThuc >= now)
+                .Select(d => d.PhanTramGiamGia)
+                .ToListAsync();
+            return percents.Any() ? percents.Max() : 0m;
+        }
+
+        private async Task<Dictionary<Guid, decimal>> LayPhanTramGiamToiDaChoNhieuAsync(List<Guid> sanPhamChiTietIds)
+        {
+            if (sanPhamChiTietIds == null || sanPhamChiTietIds.Count == 0)
+                return new Dictionary<Guid, decimal>();
+
+            var now = DateTime.Now; // Changed from DateTime.UtcNow
+            var rows = await _context.DotGiamGiaSanPhams
+                .AsNoTracking()
+                .Include(d => d.GiamGia)
+                .Where(d => sanPhamChiTietIds.Contains(d.SanPhamChiTietId)
+                            && d.TrangThai
+                            && d.GiamGia != null
+                            && d.GiamGia.TrangThai
+                            && d.GiamGia.NgayBatDau <= now
+                            && d.GiamGia.NgayKetThuc >= now)
+                .Select(d => new { d.SanPhamChiTietId, d.PhanTramGiamGia })
+                .ToListAsync();
+
+            return rows
+                .GroupBy(x => x.SanPhamChiTietId)
+                .ToDictionary(g => g.Key, g => g.Max(x => x.PhanTramGiamGia));
+        }
+
+        public GioHangRepository(AppDbContext context, VoucherCalculationService voucherService)
         {
             _context = context;
-        }
-
-        public async Task<GioHangChiTietDTO> ConvertToDTOAsync(GioHangChiTiet entity)
-        {
-            var sanPhamChiTiet = await _context.SanPhamChiTiets
-                .Include(s => s.SanPham)
-                .FirstOrDefaultAsync(s => s.SanPhamChiTietId == entity.SanPhamChiTietId);
-
-            return new GioHangChiTietDTO
-            {
-                GioHangChiTietId = entity.GioHangChiTietId,
-                SanPhamChiTietId = entity.SanPhamChiTietId,
-                SanPhamId = entity.SanPhamId,
-                SoLuong = entity.SoLuong,
-                DonGia = entity.DonGia,
-                ThanhTien = entity.ThanhTien,
-                HinhAnh = "",
-                TenSanPham = sanPhamChiTiet?.SanPham?.TenSanPham ?? "Không rõ"
-            };
-        }
-
-
-        public async Task<SanPhamChiTiet> GetSanPhamChiTietByIdAsync(Guid id)
-        {
-            return await _context.SanPhamChiTiets
-                .Include(sp => sp.SanPham) // 👈 BẮT BUỘC để lấy tên sản phẩm
-                .FirstOrDefaultAsync(sp => sp.SanPhamChiTietId == id);
+            _voucherService = voucherService;
         }
 
         public async Task<GioHangDTO> GetGioHangByKhachHangIdAsync(Guid khachHangId)
         {
             var gioHang = await _context.GioHangs
                 .Include(g => g.GioHangChiTiets)
-                    .ThenInclude(ct => ct.SanPhamChiTiet)
-                        .ThenInclude(spct => spct.SanPham)
+                    .ThenInclude(gc => gc.SanPhamChiTiet)
+                        .ThenInclude(spc => spc.MauSac)
                 .Include(g => g.GioHangChiTiets)
-                    .ThenInclude(ct => ct.SanPhamChiTiet)
-                        .ThenInclude(spct => spct.MauSac)
+                    .ThenInclude(gc => gc.SanPhamChiTiet)
+                        .ThenInclude(spc => spc.KichCo)
                 .Include(g => g.GioHangChiTiets)
-                    .ThenInclude(ct => ct.SanPhamChiTiet)
-                        .ThenInclude(spct => spct.KichCo)
+                    .ThenInclude(gc => gc.SanPhamChiTiet)
+                        .ThenInclude(spc => spc.Anh)
                 .Include(g => g.GioHangChiTiets)
-                    .ThenInclude(ct => ct.SanPhamChiTiet)
-                        .ThenInclude(spct => spct.Anh)
+                    .ThenInclude(gc => gc.SanPhamChiTiet)
+                        .ThenInclude(spc => spc.SanPham)
                 .FirstOrDefaultAsync(g => g.KhachHangId == khachHangId);
 
-            if (gioHang == null) return null;
-            var tongTien = gioHang.GioHangChiTiets.Sum(ct => ct.ThanhTien);
+            if (gioHang == null)
+                return null;
 
-            var dto = new GioHangDTO
+            var gioHangDTO = new GioHangDTO
             {
                 GioHangId = gioHang.GioHangId,
                 KhachHangId = gioHang.KhachHangId,
-                NgayTao = gioHang.NgayTao,
-                TrangThai = gioHang.TrangThai ? 1 : 0,
-                GioHangChiTiets = gioHang.GioHangChiTiets.Select(ct => new GioHangChiTietDTO
-                {
-                    GioHangChiTietId = ct.GioHangChiTietId,
-                    SanPhamChiTietId = ct.SanPhamChiTietId,
-                    SanPhamId = ct.SanPhamId,
-                    TenSanPham = ct.SanPhamChiTiet?.SanPham?.TenSanPham ?? "Không rõ",
-                    SoLuong = ct.SoLuong,
-                    DonGia = ct.DonGia,
-                    ThanhTien = ct.ThanhTien,
-                    MauSac = ct.SanPhamChiTiet?.MauSac?.TenMau ?? "",
-                    KichCo = ct.SanPhamChiTiet?.KichCo?.TenKichCo ?? "",
-                    AnhSanPham = ct.SanPhamChiTiet?.Anh?.DuongDan ?? ""
-                }).ToList(),
-                TongTienSauGiam = tongTien
+                GioHangChiTiets = new List<GioHangChiTietDTO>()
             };
 
-            return dto;
-        }
+            try
+            {
+                var ids = (gioHang.GioHangChiTiets ?? new List<GioHangChiTiet>())
+                    .Where(x => x.SanPhamChiTietId.HasValue)
+                    .Select(x => x.SanPhamChiTietId!.Value)
+                    .Distinct()
+                    .ToList();
 
+                var idToMaxDiscount = await LayPhanTramGiamToiDaChoNhieuAsync(ids);
+
+                foreach (var gc in gioHang.GioHangChiTiets ?? new List<GioHangChiTiet>())
+                {
+                    var giaGoc = gc.SanPhamChiTiet?.Gia ?? 0m;
+                    var giamMax = (gc.SanPhamChiTietId.HasValue && idToMaxDiscount.TryGetValue(gc.SanPhamChiTietId.Value, out var p)) ? p : 0m;
+                    var donGiaSau = TinhDonGiaSauGiam(giaGoc, giamMax);
+                    var thanhTienTinhLai = donGiaSau * gc.SoLuong;
+                    
+                    Console.WriteLine($"🔍 [Repository] GetGioHangByKhachHangIdAsync - Sản phẩm: {gc.SanPhamChiTiet?.SanPham?.TenSanPham}");
+                    Console.WriteLine($"  - Giá gốc: {giaGoc:N0}");
+                    Console.WriteLine($"  - Giảm tối đa: {giamMax}%");
+                    Console.WriteLine($"  - Đơn giá sau giảm: {donGiaSau:N0}");
+                    Console.WriteLine($"  - Số lượng: {gc.SoLuong}");
+                    Console.WriteLine($"  - Thành tiền từ DB: {gc.ThanhTien:N0}");
+                    Console.WriteLine($"  - Thành tiền tính lại: {thanhTienTinhLai:N0}");
+                    Console.WriteLine($"  - Kiểm tra: {donGiaSau:N0} × {gc.SoLuong} = {thanhTienTinhLai:N0}");
+                    Console.WriteLine($"  - Chênh lệch: {gc.ThanhTien - thanhTienTinhLai:N0}");
+                    
+                    gioHangDTO.GioHangChiTiets.Add(new GioHangChiTietDTO
+                    {
+                        GioHangChiTietId = gc.GioHangChiTietId,
+                        SanPhamId = gc.SanPhamChiTiet != null ? gc.SanPhamChiTiet.SanPhamId : Guid.Empty,
+                        SanPhamChiTietId = gc.SanPhamChiTietId ?? Guid.Empty,
+                        SoLuong = gc.SoLuong,
+                        TenSanPham = gc.SanPhamChiTiet?.SanPham?.TenSanPham ?? "Không xác định",
+                        DonGia = donGiaSau,
+                        ThanhTien = thanhTienTinhLai, // Sử dụng giá trị tính lại thay vì từ DB
+                        AnhSanPham = gc.SanPhamChiTiet?.Anh?.DuongDan ?? "",
+                        MauSac = gc.SanPhamChiTiet?.MauSac?.TenMau ?? "Không xác định",
+                        KichCo = gc.SanPhamChiTiet?.KichCo?.TenKichCo ?? "Không xác định",
+                        GiaGoc = giaGoc,
+                        PhanTramGiam = giamMax
+                    });
+                }
+            }
+            catch
+            {
+                // Fallback: nếu có lỗi bất ngờ ở phần giảm giá, vẫn trả về giỏ hàng với giá gốc để tránh 500
+                foreach (var gc in gioHang.GioHangChiTiets ?? new List<GioHangChiTiet>())
+                {
+                    var giaGoc = gc.SanPhamChiTiet?.Gia ?? 0m;
+                    gioHangDTO.GioHangChiTiets.Add(new GioHangChiTietDTO
+                    {
+                        GioHangChiTietId = gc.GioHangChiTietId,
+                        SanPhamId = gc.SanPhamChiTiet != null ? gc.SanPhamChiTiet.SanPhamId : Guid.Empty,
+                        SanPhamChiTietId = gc.SanPhamChiTietId ?? Guid.Empty,
+                        SoLuong = gc.SoLuong,
+                        TenSanPham = gc.SanPhamChiTiet?.SanPham?.TenSanPham ?? "Không xác định",
+                        DonGia = giaGoc,
+                        ThanhTien = giaGoc * gc.SoLuong,
+                        AnhSanPham = gc.SanPhamChiTiet?.Anh?.DuongDan ?? "",
+                        MauSac = gc.SanPhamChiTiet?.MauSac?.TenMau ?? "Không xác định",
+                        KichCo = gc.SanPhamChiTiet?.KichCo?.TenKichCo ?? "Không xác định"
+                    });
+                }
+            }
+
+            return gioHangDTO;
+        }
 
         public async Task<GioHangChiTiet> AddSanPhamVaoGioAsync(Guid khachHangId, Guid sanPhamChiTietId, int soLuong)
         {
+            // Lấy giỏ hàng hiện tại (không cần Include để tránh track các entity cũ gây xung đột)
             var gioHang = await _context.GioHangs
                 .FirstOrDefaultAsync(g => g.KhachHangId == khachHangId);
 
@@ -99,190 +172,352 @@ namespace FurryFriends.API.Repository
                 {
                     GioHangId = Guid.NewGuid(),
                     KhachHangId = khachHangId,
-                    NgayTao = DateTime.UtcNow,
-                    TrangThai = true
-                };
-                await _context.GioHangs.AddAsync(gioHang);
-                await _context.SaveChangesAsync(); // ❗ Thêm dòng này
-            }
-
-            // ❗️Tìm theo SanPhamChiTietId
-            var chiTiet = await _context.GioHangChiTiets
-                .FirstOrDefaultAsync(ct => ct.GioHangId == gioHang.GioHangId && ct.SanPhamChiTietId == sanPhamChiTietId);
-
-            if (chiTiet != null)
-            {
-                chiTiet.SoLuong += soLuong;
-                chiTiet.ThanhTien = chiTiet.SoLuong * chiTiet.DonGia;
-                chiTiet.NgayCapNhat = DateTime.UtcNow;
-            }
-            else
-            {
-                var spct = await _context.SanPhamChiTiets
-                    .FirstOrDefaultAsync(sp => sp.SanPhamChiTietId == sanPhamChiTietId);
-
-                if (spct == null)
-                    throw new Exception("Không tìm thấy sản phẩm chi tiết.");
-
-                chiTiet = new GioHangChiTiet
-                {
-                    GioHangChiTietId = Guid.NewGuid(),
-                    GioHangId = gioHang.GioHangId,
-                    SanPhamChiTietId = sanPhamChiTietId,
-                    SanPhamId = spct.SanPhamId, // ✅ Sửa ở đây
-                    SoLuong = soLuong,
-                    DonGia = spct.Gia,
-                    ThanhTien = spct.Gia * soLuong,
+                    NgayTao = DateTime.Now,
                     TrangThai = true,
-                    NgayTao = DateTime.UtcNow
+                    GioHangChiTiets = new List<GioHangChiTiet>()
                 };
-                await _context.GioHangChiTiets.AddAsync(chiTiet);
+                _context.GioHangs.Add(gioHang);
+                await _context.SaveChangesAsync(); // Lưu giỏ hàng trước để đảm bảo có ID trong DB
             }
 
-            await _context.SaveChangesAsync();
-            return chiTiet;
-        }
+            // Lấy trực tiếp chi tiết giỏ hàng từ DB để tránh xung đột tracking
+            var existingItem = await _context.GioHangChiTiets
+                .FirstOrDefaultAsync(x => x.GioHangId == gioHang.GioHangId && x.SanPhamChiTietId == sanPhamChiTietId);
 
+            if (existingItem != null)
+            {
+                Console.WriteLine("🔍 [Repository] AddSanPhamVaoGioAsync - Tăng số lượng sản phẩm đã có trong giỏ hàng");
+                existingItem.SoLuong += soLuong;
+                existingItem.ThanhTien = existingItem.DonGia * existingItem.SoLuong;
+                existingItem.NgayCapNhat = DateTime.Now;
+                await _context.SaveChangesAsync();
+                return existingItem;
+            }
+
+            // Thêm sản phẩm mới vào giỏ
+            var sanPhamChiTiet = await _context.SanPhamChiTiets.FirstOrDefaultAsync(spc => spc.SanPhamChiTietId == sanPhamChiTietId);
+            if (sanPhamChiTiet == null) return null;
+
+            var giaGoc = sanPhamChiTiet.Gia;
+            var giamMax = await LayPhanTramGiamToiDaAsync(sanPhamChiTietId);
+            var donGiaSau = TinhDonGiaSauGiam(giaGoc, giamMax);
+            var thanhTien = donGiaSau * soLuong;
+
+            var createdItem = new GioHangChiTiet
+            {
+                GioHangChiTietId = Guid.NewGuid(),
+                GioHangId = gioHang.GioHangId,
+                SanPhamChiTietId = sanPhamChiTietId,
+                SoLuong = soLuong,
+                DonGia = donGiaSau,
+                ThanhTien = thanhTien,
+                TrangThai = true,
+                NgayTao = DateTime.Now
+            };
+
+            await _context.GioHangChiTiets.AddAsync(createdItem);
+            await _context.SaveChangesAsync();
+
+            // Load thêm thông tin sản phẩm để trả về đầy đủ
+            await _context.Entry(createdItem).Reference(x => x.SanPhamChiTiet).LoadAsync();
+            return createdItem;
+        }
 
         public async Task<GioHangChiTiet> UpdateSoLuongAsync(Guid gioHangChiTietId, int soLuong)
         {
-            var ct = await _context.GioHangChiTiets.FindAsync(gioHangChiTietId);
-            if (ct == null) return null;
+            var gioHangChiTiet = await _context.GioHangChiTiets
+                .Include(gc => gc.SanPhamChiTiet)
+                .FirstOrDefaultAsync(gc => gc.GioHangChiTietId == gioHangChiTietId);
 
-            ct.SoLuong = soLuong;
-            ct.ThanhTien = ct.DonGia * soLuong;
-            ct.NgayCapNhat = DateTime.UtcNow;
+            if (gioHangChiTiet == null)
+                return null;
+
+            Console.WriteLine($"🔍 [Repository] UpdateSoLuongAsync - Trước khi cập nhật:");
+            Console.WriteLine($"  - Số lượng cũ: {gioHangChiTiet.SoLuong}");
+            Console.WriteLine($"  - Đơn giá cũ: {gioHangChiTiet.DonGia:N0}");
+            Console.WriteLine($"  - Thành tiền cũ: {gioHangChiTiet.ThanhTien:N0}");
+
+            gioHangChiTiet.SoLuong = soLuong;
+
+            // Đảm bảo DonGia và ThanhTien luôn đúng khi đổi số lượng
+            var donGiaHienTai = gioHangChiTiet.DonGia;
+            if (donGiaHienTai <= 0)
+            {
+                var giaGoc = gioHangChiTiet.SanPhamChiTiet?.Gia ?? 0m;
+                var giamMax = gioHangChiTiet.SanPhamChiTietId.HasValue
+                    ? await LayPhanTramGiamToiDaAsync(gioHangChiTiet.SanPhamChiTietId.Value)
+                    : 0m;
+                donGiaHienTai = TinhDonGiaSauGiam(giaGoc, giamMax);
+                gioHangChiTiet.DonGia = donGiaHienTai;
+                
+                Console.WriteLine($"🔍 [Repository] Cập nhật đơn giá: {giaGoc:N0} -> {donGiaHienTai:N0} (giảm {giamMax}%)");
+            }
+            
+            var thanhTienMoi = donGiaHienTai * soLuong;
+            gioHangChiTiet.ThanhTien = thanhTienMoi;
+            gioHangChiTiet.NgayCapNhat = DateTime.Now;
+
+            Console.WriteLine($"🔍 [Repository] Sau khi cập nhật:");
+            Console.WriteLine($"  - Số lượng mới: {gioHangChiTiet.SoLuong}");
+            Console.WriteLine($"  - Đơn giá mới: {gioHangChiTiet.DonGia:N0}");
+            Console.WriteLine($"  - Thành tiền mới: {gioHangChiTiet.ThanhTien:N0}");
+            Console.WriteLine($"  - Kiểm tra: {donGiaHienTai:N0} × {soLuong} = {thanhTienMoi:N0}");
+            Console.WriteLine($"  - Chênh lệch với giá trị cũ: {gioHangChiTiet.ThanhTien - thanhTienMoi:N0}");
 
             await _context.SaveChangesAsync();
-            return ct;
+            return gioHangChiTiet;
         }
 
         public async Task<bool> RemoveSanPhamKhoiGioAsync(Guid gioHangChiTietId)
         {
-            var ct = await _context.GioHangChiTiets.FindAsync(gioHangChiTietId);
-            if (ct == null) return false;
+            var gioHangChiTiet = await _context.GioHangChiTiets
+                .FirstOrDefaultAsync(gc => gc.GioHangChiTietId == gioHangChiTietId);
 
-            _context.GioHangChiTiets.Remove(ct);
+            if (gioHangChiTiet == null)
+                return false;
+
+            _context.GioHangChiTiets.Remove(gioHangChiTiet);
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<SanPhamChiTiet> GetSanPhamChiTietByIdAsync(Guid id)
+        {
+            return await _context.SanPhamChiTiets
+                .Include(spc => spc.SanPham)
+                .Include(spc => spc.MauSac)
+                .Include(spc => spc.KichCo)
+                .Include(spc => spc.Anh)
+                .FirstOrDefaultAsync(spc => spc.SanPhamChiTietId == id);
+        }
+
+        public async Task<GioHangChiTietDTO> ConvertToDTOAsync(GioHangChiTiet gioHangChiTiet)
+        {
+            var sanPhamChiTiet = await _context.SanPhamChiTiets
+                .Include(spc => spc.SanPham)
+                .Include(spc => spc.MauSac)
+                .Include(spc => spc.KichCo)
+                .Include(spc => spc.Anh)
+                .FirstOrDefaultAsync(spc => spc.SanPhamChiTietId == gioHangChiTiet.SanPhamChiTietId);
+
+            var giaGoc = sanPhamChiTiet?.Gia ?? 0m;
+            var giamMax = gioHangChiTiet.SanPhamChiTietId.HasValue
+                ? await LayPhanTramGiamToiDaAsync(gioHangChiTiet.SanPhamChiTietId.Value)
+                : 0m;
+            var donGiaSau = TinhDonGiaSauGiam(giaGoc, giamMax);
+            var thanhTienTinhLai = donGiaSau * gioHangChiTiet.SoLuong;
+
+            Console.WriteLine($"🔍 [Repository] ConvertToDTOAsync:");
+            Console.WriteLine($"  - Giá gốc: {giaGoc:N0}");
+            Console.WriteLine($"  - Giảm tối đa: {giamMax}%");
+            Console.WriteLine($"  - Đơn giá sau giảm: {donGiaSau:N0}");
+            Console.WriteLine($"  - Số lượng: {gioHangChiTiet.SoLuong}");
+            Console.WriteLine($"  - Thành tiền từ DB: {gioHangChiTiet.ThanhTien:N0}");
+            Console.WriteLine($"  - Thành tiền tính lại: {thanhTienTinhLai:N0}");
+            Console.WriteLine($"  - Kiểm tra: {donGiaSau:N0} × {gioHangChiTiet.SoLuong} = {thanhTienTinhLai:N0}");
+            Console.WriteLine($"  - Chênh lệch: {gioHangChiTiet.ThanhTien - thanhTienTinhLai:N0}");
+
+            return new GioHangChiTietDTO
+            {
+                GioHangChiTietId = gioHangChiTiet.GioHangChiTietId,
+                SanPhamId = sanPhamChiTiet != null ? sanPhamChiTiet.SanPhamId : Guid.Empty,
+                SanPhamChiTietId = gioHangChiTiet.SanPhamChiTietId ?? Guid.Empty,
+                SoLuong = gioHangChiTiet.SoLuong,
+                TenSanPham = sanPhamChiTiet?.SanPham?.TenSanPham ?? "Không xác định",
+                DonGia = donGiaSau,
+                ThanhTien = thanhTienTinhLai, // Sử dụng giá trị tính lại thay vì từ DB
+                AnhSanPham = sanPhamChiTiet?.Anh?.DuongDan ?? "",
+                MauSac = sanPhamChiTiet?.MauSac?.TenMau ?? "Không xác định",
+                KichCo = sanPhamChiTiet?.KichCo?.TenKichCo ?? "Không xác định",
+                GiaGoc = giaGoc,
+                PhanTramGiam = giamMax
+            };
+        }
+
         public async Task<GioHang> GetGioHangEntityByKhachHangIdAsync(Guid khachHangId)
         {
             return await _context.GioHangs
                 .Include(g => g.GioHangChiTiets)
-                    .ThenInclude(ct => ct.SanPhamChiTiet)
+                .ThenInclude(gc => gc.SanPhamChiTiet)
+                .ThenInclude(spc => spc.SanPham)
                 .FirstOrDefaultAsync(g => g.KhachHangId == khachHangId);
         }
 
         public async Task<object> ThanhToanAsync(ThanhToanDTO dto)
         {
-            var gioHang = await _context.GioHangs
-                .Include(g => g.GioHangChiTiets)
-                .FirstOrDefaultAsync(g => g.KhachHangId == dto.KhachHangId);
-
-            if (gioHang == null || !gioHang.GioHangChiTiets.Any())
-                return new { Success = false, Message = "Giỏ hàng trống." };
-
-            decimal tongTienGoc = gioHang.GioHangChiTiets.Sum(ct => ct.ThanhTien);
-            decimal? soTienGiam = null;
-            decimal tongThanhToan = tongTienGoc;
-
-            if (dto.VoucherId.HasValue)
-            {
-                var voucher = await _context.Vouchers.FirstOrDefaultAsync(v =>
-                    v.VoucherId == dto.VoucherId.Value &&
-                    v.TrangThai == 1 &&
-                    v.NgayBatDau <= DateTime.Now &&
-                    v.NgayKetThuc >= DateTime.Now &&
-                    v.SoLuong > 0);
-
-                if (voucher != null)
-                {
-                    soTienGiam = tongTienGoc * (voucher.PhanTramGiam / 100m);
-                    tongThanhToan -= soTienGiam ?? 0;
-                    voucher.SoLuong -= 1;
-                }
-            }
-
-            var taiKhoan = await _context.TaiKhoans.FirstOrDefaultAsync(tk => tk.TaiKhoanId == dto.TaiKhoanId);
-            if (taiKhoan == null)
-            {
-                Console.WriteLine("❌ Không tìm thấy tài khoản với ID: " + dto.TaiKhoanId);
-                return new { Success = false, Message = "Tài khoản không tồn tại." };
-            }
-            else
-            {
-                Console.WriteLine("✅ Đã tìm thấy tài khoản: " + taiKhoan.UserName);
-            }
-
-
-            var hoaDonId = Guid.NewGuid();
-
-            var hoaDon = new HoaDon
-            {
-                HoaDonId = hoaDonId,
-                KhachHangId = dto.KhachHangId,
-                TaiKhoanId = dto.TaiKhoanId,
-                NhanVienId = dto.NhanVienId,
-                HinhThucThanhToanId = dto.HinhThucThanhToanId,
-                NgayTao = DateTime.UtcNow,
-                TongTien = tongThanhToan,
-                VoucherId = dto.VoucherId,
-                TrangThai = 1,
-                TenCuaKhachHang = dto.TenCuaKhachHang,
-                SdtCuaKhachHang = dto.SdtCuaKhachHang,
-                EmailCuaKhachHang = dto.EmailCuaKhachHang,
-                LoaiHoaDon = dto.LoaiHoaDon,
-                GhiChu = dto.GhiChu
-            };
-
-            // ✅ Gán chi tiết hóa đơn sau khi đã có biến `hoaDonId`
-            hoaDon.HoaDonChiTiets = gioHang.GioHangChiTiets.Select(ct => new HoaDonChiTiet
-            {
-                HoaDonChiTietId = Guid.NewGuid(),
-                HoaDonId = hoaDonId,
-                SanPhamId = ct.SanPhamId,
-                SoLuongSanPham = ct.SoLuong,
-                Gia = ct.DonGia
-            }).ToList();
-
-            await _context.HoaDons.AddAsync(hoaDon);
-
-            // Nếu cần đảm bảo tracking từng item (tuỳ cấu hình cascade):
-            foreach (var item in hoaDon.HoaDonChiTiets)
-            {
-                _context.HoaDonChiTiets.Add(item);
-            }
-
-            _context.GioHangChiTiets.RemoveRange(gioHang.GioHangChiTiets);
+            await using var tran = await _context.Database.BeginTransactionAsync();
             try
             {
-                var result = await _context.SaveChangesAsync();
-                Console.WriteLine($"[LOG] SaveChanges thành công: {result}");
+                // Lấy giỏ hàng
+                var gioHang = await _context.GioHangs
+                    .Include(g => g.GioHangChiTiets)
+                    .ThenInclude(gc => gc.SanPhamChiTiet)
+                    .ThenInclude(spc => spc.SanPham)
+                    .FirstOrDefaultAsync(g => g.KhachHangId == dto.KhachHangId);
+
+                if (gioHang == null || !gioHang.GioHangChiTiets.Any())
+                    throw new Exception("Giỏ hàng trống");
+
+                // Kiểm tra tồn kho đủ
+                foreach (var item in gioHang.GioHangChiTiets)
+                {
+                    if (item.SanPhamChiTiet == null)
+                        throw new Exception("Thiếu thông tin sản phẩm");
+                    if (item.SanPhamChiTiet.SoLuong < item.SoLuong)
+                        throw new Exception($"Sản phẩm {item.SanPhamChiTiet.SanPham?.TenSanPham} không đủ tồn kho");
+                }
+
+                // ✅ Xác định trạng thái dựa trên hình thức thanh toán
+                int trangThai;
+                var hinhThucThanhToan = await _context.HinhThucThanhToans
+                    .FirstOrDefaultAsync(h => h.HinhThucThanhToanId == dto.HinhThucThanhToanId);
+                
+                if (hinhThucThanhToan != null && 
+                    (hinhThucThanhToan.TenHinhThuc.Contains("VNPay", StringComparison.OrdinalIgnoreCase) ||
+                     hinhThucThanhToan.TenHinhThuc.Contains("VNPAY", StringComparison.OrdinalIgnoreCase)))
+                {
+                    // ✅ VNPay → Đã duyệt (1) - Vì đã thanh toán online thành công
+                    trangThai = 1;
+                }
+                else
+                {
+                    // ✅ Thanh toán thường (COD, chuyển khoản) → Chờ duyệt (0) - Cần admin xác nhận
+                    trangThai = 0;
+                }
+
+                // Tạo hóa đơn
+                var hoaDon = new HoaDon
+                {
+                    HoaDonId = Guid.NewGuid(),
+                    KhachHangId = dto.KhachHangId,
+                    NgayTao = DateTime.Now,
+                    TrangThai = trangThai, // ✅ Sử dụng trạng thái đã xác định
+                    TongTien = 0, // sẽ tính sau theo giá đã giảm
+                    TongTienSauKhiGiam = 0,
+                    HinhThucThanhToanId = dto.HinhThucThanhToanId,
+                    TenCuaKhachHang = dto.TenCuaKhachHang ?? "",
+                    SdtCuaKhachHang = dto.SdtCuaKhachHang ?? "",
+                    EmailCuaKhachHang = dto.EmailCuaKhachHang ?? "",
+                    LoaiHoaDon = dto.LoaiHoaDon ?? "BanTaiQuay",
+                    GhiChu = dto.GhiChu ?? "",
+                    DiaChiGiaoHangId = dto.DiaChiGiaoHangId,
+                    HoaDonChiTiets = new List<HoaDonChiTiet>()
+                };
+
+                // ✅ Lưu snapshot địa chỉ giao hàng lúc mua
+                var diaChi = await _context.DiaChiKhachHangs.FindAsync(dto.DiaChiGiaoHangId);
+                    if (diaChi != null)
+                    {
+                        hoaDon.DiaChiGiaoHangLucMua = $"{diaChi.TenDiaChi}, {diaChi.PhuongXa}, {diaChi.ThanhPho}";
+                }
+
+                decimal tongSauDotGiam = 0m;
+                foreach (var gioHangChiTiet in gioHang.GioHangChiTiets)
+                {
+                    // Trừ tồn kho và lấy đầy đủ thông tin sản phẩm
+                    var spct = await _context.SanPhamChiTiets
+                        .Include(x => x.SanPham)
+                            .ThenInclude(sp => sp.ThuongHieu)
+                        .Include(x => x.MauSac)
+                        .Include(x => x.KichCo)
+                        .Include(x => x.Anh)
+                        .FirstOrDefaultAsync(x => x.SanPhamChiTietId == gioHangChiTiet.SanPhamChiTietId);
+                    
+                    if (spct == null) throw new Exception("Không tìm thấy chi tiết sản phẩm");
+                    if (spct.SoLuong < gioHangChiTiet.SoLuong)
+                        throw new Exception("Số lượng tồn không đủ");
+                    spct.SoLuong -= gioHangChiTiet.SoLuong;
+
+                    // Tính giá sau giảm theo đợt giảm giá (nếu có)
+                    decimal giaGoc = spct.Gia;
+                    decimal giamMax = await LayPhanTramGiamToiDaAsync(spct.SanPhamChiTietId);
+                    decimal donGiaSau = TinhDonGiaSauGiam(giaGoc, giamMax);
+                    tongSauDotGiam += donGiaSau * gioHangChiTiet.SoLuong;
+
+                    // Thêm chi tiết hóa đơn với đơn giá đã giảm và snapshot data
+                    var hoaDonChiTiet = new HoaDonChiTiet
+                    {
+                        HoaDonChiTietId = Guid.NewGuid(),
+                        HoaDonId = hoaDon.HoaDonId,
+                        SanPhamChiTietId = gioHangChiTiet.SanPhamChiTietId ?? Guid.Empty,
+                        SoLuongSanPham = gioHangChiTiet.SoLuong,
+                        Gia = donGiaSau,
+                        
+                        // ✅ Snapshot data - lưu thông tin tại thời điểm mua
+                        GiaLucMua = donGiaSau,
+                        TenSanPhamLucMua = spct.SanPham?.TenSanPham ?? "N/A",
+                        MoTaSanPhamLucMua = spct.MoTa ?? "",
+                        ThuongHieuLucMua = spct.SanPham?.ThuongHieu?.TenThuongHieu ?? "N/A",
+                        KichCoLucMua = spct.KichCo?.TenKichCo ?? "N/A",
+                        MauSacLucMua = spct.MauSac?.TenMau ?? "N/A",
+                        AnhSanPhamLucMua = spct.Anh?.DuongDan ?? "",
+                        ChatLieuLucMua = "", // Để trống vì model không có trường này
+                        ThanhPhanLucMua = "" // Để trống vì model không có trường này
+                    };
+                    hoaDon.HoaDonChiTiets.Add(hoaDonChiTiet);
+                }
+
+                _context.HoaDons.Add(hoaDon);
+
+                // Cập nhật tổng tiền theo giá đã giảm
+                hoaDon.TongTien = tongSauDotGiam; // tổng tiền hàng sau giảm giá sản phẩm
+
+                // Xử lý voucher (nếu có)
+                decimal tienGiamVoucher = 0m;
+                if (dto.VoucherId.HasValue)
+                {
+                    var voucher = await _context.Vouchers
+                        .FirstOrDefaultAsync(v => v.VoucherId == dto.VoucherId.Value);
+                    
+                    if (voucher != null)
+                    {
+                        // Tính phí ship dùng cho điều kiện voucher (giống phần preview)
+                        var phiShipForEligibility = _voucherService.CalculateShippingFee(tongSauDotGiam, 30000, 500000);
+                        var voucherResult = _voucherService.GetVoucherApplication(voucher, tongSauDotGiam, phiShipForEligibility);
+                        if (voucherResult.IsValid)
+                        {
+                            tienGiamVoucher = voucherResult.SoTienGiam;
+                            hoaDon.VoucherId = dto.VoucherId;
+                            
+                            // ✅ Snapshot thông tin voucher lúc mua
+                            hoaDon.ThongTinVoucherLucMua = $"{voucher.TenVoucher} - Giảm {voucher.PhanTramGiam}%" +
+                                (voucher.GiaTriGiamToiDa.HasValue ? $" (tối đa {voucher.GiaTriGiamToiDa.Value:N0} VNĐ)" : "") +
+                                (voucher.SoTienApDungToiThieu.HasValue ? $" - Đơn tối thiểu {voucher.SoTienApDungToiThieu.Value:N0} VNĐ" : "") +
+                                $" - Tiết kiệm: {tienGiamVoucher:N0} VNĐ";
+                            
+                            // Giảm số lượng voucher
+                            voucher.SoLuong -= 1;
+                            _context.Vouchers.Update(voucher);
+                        }
+                    }
+                }
+
+                // Tính phí ship (miễn phí nếu đơn >= 500k sau khi giảm voucher, ngược lại 30k)
+                var tongSauVoucher = tongSauDotGiam - tienGiamVoucher;
+                var phiShip = tongSauVoucher >= 500000m ? 0m : 30000m;
+                
+                hoaDon.TongTienSauKhiGiam = tongSauVoucher + phiShip; // tổng thanh toán cuối cùng
+
+                // Xóa giỏ hàng
+                _context.GioHangChiTiets.RemoveRange(gioHang.GioHangChiTiets);
+                _context.GioHangs.Remove(gioHang);
+
+                await _context.SaveChangesAsync();
+                await tran.CommitAsync();
+
+                return new
+                {
+                    success = true,
+                    hoaDonId = hoaDon.HoaDonId,
+                    tongTien = hoaDon.TongTien,
+                    tongTienSauKhiGiam = hoaDon.TongTienSauKhiGiam
+                };
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine($"❌ SaveChanges lỗi: {ex.Message}");
-                return new { Success = false, Message = "Lỗi khi lưu hóa đơn.", Error = ex.Message };
+                await tran.RollbackAsync();
+                throw;
             }
-
-            Console.WriteLine($"👉 HoaDonId trả về: {hoaDon.HoaDonId}");
-            Console.WriteLine($"HinhThucThanhToanId: {dto.HinhThucThanhToanId}");
-            Console.WriteLine($"[LOG] ✅ Hóa đơn tạo: Id = {hoaDon.HoaDonId}, Tổng tiền = {hoaDon.TongTien}");
-
-
-            return new
-            {
-                Success = true,
-                Message = "Thanh toán thành công.",
-                HoaDonId = hoaDon.HoaDonId,
-                TongTien = tongThanhToan,       // ✅ Trả về tiền thực tế sau giảm
-                GiamGia = soTienGiam,
-                TongTienGoc = tongTienGoc       // ✅ Trả về tiền gốc để tiện hiển thị nếu cần
-            };
         }
-
-
     }
-
 }

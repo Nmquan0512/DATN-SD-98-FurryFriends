@@ -10,7 +10,7 @@
         <strong>@Model.HoVaTen</strong> - @Model.Email
     </div>
 
-    <form asp-action="DeleteConfirmed" method="post">
+    <form asp-action="DeleteConfirmed" method="post" data-disable-loading="true">
         <input type="hidden" asp-for="NhanVienId" />
         <button type="submit" class="btn btn-danger">Xoá</button>
         <a asp-action="Index" class="btn btn-secondary">Huỷ</a>

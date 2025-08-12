@@ -30,8 +30,24 @@
                     <h5 class="card-title mb-0">Thông tin thương hiệu</h5>
                 </div>
                 <div class="card-body">
-                    <form asp-area="Admin" asp-action="Create" asp-controller="ThuongHieu" method="post">
+                    <form asp-area="Admin" asp-action="Create" asp-controller="ThuongHieu" method="post" id="createForm" data-enable-notifications="true">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <!-- Hiển thị thông báo lỗi từ ModelState -->
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                <ul class="mb-0">
+                                    @foreach (var modelState in ViewData.ModelState.Values)
+                                    {
+                                        foreach (var error in modelState.Errors)
+                                        {
+                                            <li>@error.ErrorMessage</li>
+                                        }
+                                    }
+                                </ul>
+                            </div>
+                        }
 
                         <div class="mb-3">
                             <label asp-for="TenThuongHieu" class="form-label">Tên thương hiệu <span class="text-danger">*</span></label>
@@ -96,4 +112,6 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    
+
 }

@@ -32,6 +32,16 @@
                 <div class="row g-4">
                     <div class="col-md-6">
                         <div class="form-group">
+                            <label asp-for="MaVoucher" class="form-label fw-semibold">
+                                <i class="fas fa-barcode me-2 text-primary"></i>Mã voucher
+                            </label>
+                            <input asp-for="MaVoucher" class="form-control form-control-lg" placeholder="Ví dụ: WELCOME20" />
+                            <small class="text-muted">Mã sẽ được chuẩn hóa thành chữ in hoa</small>
+                            <span asp-validation-for="MaVoucher" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
                             <label asp-for="TenVoucher" class="form-label fw-semibold">
                                 <i class="fas fa-ticket-alt me-2 text-primary"></i>Tên voucher
                             </label>
@@ -46,6 +56,26 @@
                             </label>
                             <input asp-for="PhanTramGiam" class="form-control form-control-lg" placeholder="Nhập phần trăm giảm giá" />
                             <span asp-validation-for="PhanTramGiam" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="GiaTriGiamToiDa" class="form-label fw-semibold">
+                                <i class="fas fa-money-bill-wave me-2 text-primary"></i>Giá trị giảm tối đa (VNĐ)
+                            </label>
+                            <input asp-for="GiaTriGiamToiDa" class="form-control form-control-lg" placeholder="Để trống = không giới hạn" />
+                            <span asp-validation-for="GiaTriGiamToiDa" class="text-danger small"></span>
+                            <small class="form-text text-muted">Số tiền giảm tối đa có thể áp dụng</small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="SoTienApDungToiThieu" class="form-label fw-semibold">
+                                <i class="fas fa-shopping-cart me-2 text-primary"></i>Số tiền áp dụng tối thiểu (VNĐ)
+                            </label>
+                            <input asp-for="SoTienApDungToiThieu" class="form-control form-control-lg" placeholder="Để trống = không yêu cầu" />
+                            <span asp-validation-for="SoTienApDungToiThieu" class="text-danger small"></span>
+                            <small class="form-text text-muted">Giá trị đơn hàng tối thiểu để áp dụng voucher</small>
                         </div>
                     </div>
                     <div class="col-md-6">

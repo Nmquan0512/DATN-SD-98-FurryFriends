@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using LoginRequest = FurryFriends.API.Models.LoginRequest;
 using LoginResponse = FurryFriends.API.Models.LoginResponse;
+using System.Text.Json;
 
 namespace FurryFriends.Web.Services
 {
@@ -51,7 +52,39 @@ namespace FurryFriends.Web.Services
                 if (response.StatusCode == System.Net.HttpStatusCode.BadRequest &&
                     response.Content?.Headers.ContentType?.MediaType == "application/problem+json")
                 {
-                    throw new ValidationException(content);
+                    // Trích xuất thông báo lỗi từ JSON response
+                    try
+                    {
+                        var errorResponse = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(content);
+                        if (errorResponse.TryGetProperty("errors", out var errors))
+                        {
+                            var errorMessages = new List<string>();
+                            foreach (var error in errors.EnumerateObject())
+                            {
+                                if (error.Value.ValueKind == JsonValueKind.Array)
+                                {
+                                    foreach (var errorMsg in error.Value.EnumerateArray())
+                                    {
+                                        errorMessages.Add(errorMsg.GetString() ?? "");
+                                    }
+                                }
+                            }
+                            if (errorMessages.Any())
+                            {
+                                throw new ValidationException(string.Join("; ", errorMessages));
+                            }
+                        }
+                        // Nếu không thể trích xuất, sử dụng title
+                        if (errorResponse.TryGetProperty("title", out var title))
+                        {
+                            throw new ValidationException(title.GetString() ?? "Dữ liệu không hợp lệ");
+                        }
+                    }
+                    catch (JsonException)
+                    {
+                        // Nếu không parse được JSON, sử dụng content gốc
+                        throw new ValidationException("Dữ liệu không hợp lệ");
+                    }
                 }
 
                 throw new HttpRequestException(content);

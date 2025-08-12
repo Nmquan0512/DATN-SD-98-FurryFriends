@@ -76,8 +76,26 @@ namespace FurryFriends.Web.Services
 
         public async Task<KhachHang?> FindByEmailAsync(string email)
         {
-            var all = await GetAllAsync();
-            return all.FirstOrDefault(kh => kh.EmailCuaKhachHang == email);
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<KhachHang>($"api/KhachHang/email/{email}");
+            }
+            catch
+            {
+                return null; // Return null if not found or error
+            }
+        }
+
+        public async Task<KhachHang?> FindByPhoneAsync(string phone)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<KhachHang>($"api/KhachHang/phone/{phone}");
+            }
+            catch
+            {
+                return null; // Return null if not found or error
+            }
         }
 
         public async Task<int> GetTotalCustomersAsync()

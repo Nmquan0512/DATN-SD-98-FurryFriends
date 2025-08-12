@@ -1,16 +1,17 @@
-// Admin Loading Handler
+// Admin Loading Handler - TẠM THỜI TẮT ĐỂ TRÁNH CONFLICT
 class AdminLoadingHandler {
     constructor() {
         this.isLoading = false;
         this.loadingTimeout = null;
-        this.init();
+        // this.init(); // Tắt init
     }
 
     init() {
-        this.setupNavigationLoading();
-        this.setupFormLoading();
-        this.setupTableLoading();
-        this.setupAjaxLoading();
+        // Tắt tất cả loading để tránh conflict
+        // this.setupNavigationLoading();
+        // this.setupFormLoading();
+        // this.setupTableLoading();
+        // this.setupAjaxLoading();
         // this.setupInitialLoading(); // Tắt loading tự động khi load trang
     }
 
@@ -53,6 +54,21 @@ class AdminLoadingHandler {
             const forms = document.querySelectorAll('form');
             forms.forEach(form => {
                 form.addEventListener('submit', (e) => {
+                    // Bỏ qua form có data-disable-loading="true"
+                    if (form.hasAttribute('data-disable-loading')) {
+                        return;
+                    }
+                    
+                    // Bỏ qua form delete (có action chứa "Delete")
+                    if (form.action && form.action.includes('Delete')) {
+                        return;
+                    }
+                    
+                    // Bỏ qua tất cả form POST (để tránh conflict với SweetAlert2)
+                    if (form.method && form.method.toLowerCase() === 'post') {
+                        return;
+                    }
+                    
                     // Kiểm tra nếu form có validation errors thì không hiển thị loading
                     if (!form.checkValidity()) {
                         return;

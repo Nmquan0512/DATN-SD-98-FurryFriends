@@ -58,7 +58,7 @@ namespace FurryFriends.API.Repositories
         public void Update(GiamGia entity)
         {
             entity.NgayCapNhat = DateTime.UtcNow;
-            // Đánh dấu đối tượng là đã bị thay đổi, không cần Save
+            // Đánh dấu đối tượng là đã bị thay đổi
             _context.Entry(entity).State = EntityState.Modified;
         }
 
@@ -85,7 +85,41 @@ namespace FurryFriends.API.Repositories
         // Phương thức Commit duy nhất
         public async Task SaveAsync()
         {
-            await _context.SaveChangesAsync();
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
+        // Phương thức xóa sản phẩm khỏi chương trình giảm giá
+        public async Task RemoveProductsFromDiscount(Guid discountId, List<Guid> productIds)
+        {
+            var productsToRemove = await _context.DotGiamGiaSanPhams
+                .Where(dggsp => dggsp.GiamGiaId == discountId && productIds.Contains(dggsp.SanPhamChiTietId))
+                .ToListAsync();
+
+            _context.DotGiamGiaSanPhams.RemoveRange(productsToRemove);
+        }
+
+        // Phương thức thêm sản phẩm vào chương trình giảm giá
+        public async Task AddProductsToDiscount(Guid discountId, List<Guid> productIds, decimal discountPercentage)
+        {
+            var productsToAdd = productIds.Select(productId => new DotGiamGiaSanPham
+            {
+                GiamGiaId = discountId,
+                SanPhamChiTietId = productId,
+                PhanTramGiaGia = discountPercentage,
+                TrangThai = true
+            }).ToList();
+
+            await _context.DotGiamGiaSanPhams.AddRangeAsync(productsToAdd);
         }
     }
 }

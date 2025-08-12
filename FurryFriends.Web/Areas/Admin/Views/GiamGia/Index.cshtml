@@ -92,7 +92,7 @@
                                 <tr>
                                     <td class="text-center">@(stt++)</td>
                                     <td class="fw-semibold">@item.TenGiamGia</td>
-                                    <td class="text-center text-danger fw-bold">@item.PhanTramKhuyenMai%</td>
+                                    <td class="text-center text-danger fw-bold">@item.PhanTramKhuyenMai.ToString("F0")%</td>
                                     <td>
                                         @item.NgayBatDau.ToLocalTime().ToString("dd/MM/yy HH:mm")
                                         <i class="fas fa-arrow-right mx-1 text-muted small"></i>
@@ -147,9 +147,9 @@
                                                     </div>
                                                     <div class="modal-footer border-0">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                                        <form asp-action="Delete" asp-route-id="@item.GiamGiaId" method="post">
+                                                        <form id="deleteForm-@item.GiamGiaId" action="/Admin/GiamGia/Delete/@item.GiamGiaId" method="post" data-disable-loading="true">
                                                             @Html.AntiForgeryToken()
-                                                            <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+                                                            <button type="button" class="btn btn-danger" onclick="submitDeleteForm('@item.GiamGiaId')">Xác nhận xóa</button>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -187,5 +187,14 @@
                 });
             }
         });
+
+        function submitDeleteForm(giamGiaId) {
+            var form = document.getElementById('deleteForm-' + giamGiaId);
+            if (form) {
+                form.submit();
+            } else {
+                console.error('Không tìm thấy form với ID: deleteForm-' + giamGiaId);
+            }
+        }
     </script>
 }

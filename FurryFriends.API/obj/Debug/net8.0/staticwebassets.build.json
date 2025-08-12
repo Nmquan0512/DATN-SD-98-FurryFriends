@@ -1,6 +1,14 @@
 {
   "Version": 1,
+<<<<<<< HEAD
   "Hash": "hwRlGCPN1YGvHaafcy0+kye2M2ylZRtJqLKjP1mDcI8=",
+=======
+<<<<<<< Updated upstream
+  "Hash": "XYwVlF3Qj4ajbnK8heiKhG5KDYpVKzlvJCjczoY9MR8=",
+=======
+  "Hash": "4Mv5sWMLQ7yM2UJN7+YO8Z/39v5HVnfPNXFqs01vrzg=",
+>>>>>>> Stashed changes
+>>>>>>> main
   "Source": "FurryFriends.API",
   "BasePath": "_content/FurryFriends.API",
   "Mode": "Default",
@@ -17,10 +25,157 @@
   ],
   "Assets": [
     {
+<<<<<<< HEAD
       "Identity": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\63eb32ca-4f4d-4fad-8f0c-70f053c15293.jpg",
       "SourceId": "FurryFriends.API",
       "SourceType": "Discovered",
       "ContentRoot": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+=======
+<<<<<<< Updated upstream
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\2f6b7afe-20d2-4bd7-a375-487a5e4590f3.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+=======
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\059de63d-2b84-470a-9c35-45cc44b69364.webp",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/059de63d-2b84-470a-9c35-45cc44b69364.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\059de63d-2b84-470a-9c35-45cc44b69364.webp"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\08a2323a-1152-444a-8108-03035d956302.jpeg",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/08a2323a-1152-444a-8108-03035d956302.jpeg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\08a2323a-1152-444a-8108-03035d956302.jpeg"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\0caae28d-113e-4a11-acba-dde6b48b240e.jpg",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/0caae28d-113e-4a11-acba-dde6b48b240e.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\0caae28d-113e-4a11-acba-dde6b48b240e.jpg"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\2ab1d30e-6e85-4d81-8abe-0f04b65217cc.webp",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/2ab1d30e-6e85-4d81-8abe-0f04b65217cc.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\2ab1d30e-6e85-4d81-8abe-0f04b65217cc.webp"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\332e9d59-7a13-449c-8aed-0d4835c9225b.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/332e9d59-7a13-449c-8aed-0d4835c9225b.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\332e9d59-7a13-449c-8aed-0d4835c9225b.png"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\44e0fc35-4667-4331-b6e1-d32d9f3a2b77.jpeg",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/44e0fc35-4667-4331-b6e1-d32d9f3a2b77.jpeg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\44e0fc35-4667-4331-b6e1-d32d9f3a2b77.jpeg"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\62d120f7-be61-4a8c-b21a-1e667dfa1d77.jpg",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/62d120f7-be61-4a8c-b21a-1e667dfa1d77.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\62d120f7-be61-4a8c-b21a-1e667dfa1d77.jpg"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\63eb32ca-4f4d-4fad-8f0c-70f053c15293.jpg",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+>>>>>>> Stashed changes
+>>>>>>> main
       "BasePath": "_content/FurryFriends.API",
       "RelativePath": "images/63eb32ca-4f4d-4fad-8f0c-70f053c15293.jpg",
       "AssetKind": "All",
@@ -36,10 +191,100 @@
       "OriginalItemSpec": "wwwroot\\images\\63eb32ca-4f4d-4fad-8f0c-70f053c15293.jpg"
     },
     {
+<<<<<<< HEAD
       "Identity": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\9480c2ed-8f73-4ebd-aa9b-90685f64b244.png",
       "SourceId": "FurryFriends.API",
       "SourceType": "Discovered",
       "ContentRoot": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+=======
+<<<<<<< Updated upstream
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\42aa4a1d-9f2c-4937-a2b3-57fc2f28f242.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+=======
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\71f64da2-ae0f-4f74-b1e7-4a0fae74c5d2.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/71f64da2-ae0f-4f74-b1e7-4a0fae74c5d2.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\71f64da2-ae0f-4f74-b1e7-4a0fae74c5d2.png"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\74c8b5e7-16b7-4ba2-b27e-9ebaf5588d5b.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/74c8b5e7-16b7-4ba2-b27e-9ebaf5588d5b.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\74c8b5e7-16b7-4ba2-b27e-9ebaf5588d5b.png"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\79150dd0-e4ac-4442-a767-1e5ab700f42e.webp",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/79150dd0-e4ac-4442-a767-1e5ab700f42e.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\79150dd0-e4ac-4442-a767-1e5ab700f42e.webp"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\85326872-10b0-4d7d-98db-68375675764c.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/85326872-10b0-4d7d-98db-68375675764c.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\85326872-10b0-4d7d-98db-68375675764c.png"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\9480c2ed-8f73-4ebd-aa9b-90685f64b244.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+>>>>>>> Stashed changes
+>>>>>>> main
       "BasePath": "_content/FurryFriends.API",
       "RelativePath": "images/9480c2ed-8f73-4ebd-aa9b-90685f64b244.png",
       "AssetKind": "All",
@@ -55,10 +300,100 @@
       "OriginalItemSpec": "wwwroot\\images\\9480c2ed-8f73-4ebd-aa9b-90685f64b244.png"
     },
     {
+<<<<<<< HEAD
       "Identity": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\d5ddbf16-75b0-443c-9d33-1d8973f8fc5e.png",
       "SourceId": "FurryFriends.API",
       "SourceType": "Discovered",
       "ContentRoot": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+=======
+<<<<<<< Updated upstream
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\55736693-caaa-4424-8d50-e1b55959d009.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+=======
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\a22de584-4c58-4751-9d9d-51a2073077cc.webp",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/a22de584-4c58-4751-9d9d-51a2073077cc.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\a22de584-4c58-4751-9d9d-51a2073077cc.webp"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\ad297a64-83c9-4e31-8ea0-58d85c9eb605.jpg",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/ad297a64-83c9-4e31-8ea0-58d85c9eb605.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\ad297a64-83c9-4e31-8ea0-58d85c9eb605.jpg"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\ae7d309f-852e-4c5a-89ef-06b77e75b6a9.jpeg",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/ae7d309f-852e-4c5a-89ef-06b77e75b6a9.jpeg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\ae7d309f-852e-4c5a-89ef-06b77e75b6a9.jpeg"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\c3e9639b-1854-4f05-a689-8edebf992663.jpeg",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "images/c3e9639b-1854-4f05-a689-8edebf992663.jpeg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\c3e9639b-1854-4f05-a689-8edebf992663.jpeg"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\d5ddbf16-75b0-443c-9d33-1d8973f8fc5e.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+>>>>>>> Stashed changes
+>>>>>>> main
       "BasePath": "_content/FurryFriends.API",
       "RelativePath": "images/d5ddbf16-75b0-443c-9d33-1d8973f8fc5e.png",
       "AssetKind": "All",
@@ -74,7 +409,15 @@
       "OriginalItemSpec": "wwwroot\\images\\d5ddbf16-75b0-443c-9d33-1d8973f8fc5e.png"
     },
     {
+<<<<<<< HEAD
       "Identity": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\d621fa5c-1b6a-49c6-a3a4-5034f10de27c.png",
+=======
+<<<<<<< Updated upstream
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\6cf0806e-e2e2-4a25-adeb-0fe671e490f4.png",
+=======
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\d621fa5c-1b6a-49c6-a3a4-5034f10de27c.png",
+>>>>>>> Stashed changes
+>>>>>>> main
       "SourceId": "FurryFriends.API",
       "SourceType": "Discovered",
       "ContentRoot": "\\\\mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
@@ -90,7 +433,121 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
+<<<<<<< HEAD
       "OriginalItemSpec": "wwwroot\\images\\d621fa5c-1b6a-49c6-a3a4-5034f10de27c.png"
+=======
+<<<<<<< Updated upstream
+      "OriginalItemSpec": "wwwroot\\Uploads\\6cf0806e-e2e2-4a25-adeb-0fe671e490f4.png"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\73a9db69-f861-4daf-8dff-95e55e57a19b.png",
+=======
+      "OriginalItemSpec": "wwwroot\\images\\d621fa5c-1b6a-49c6-a3a4-5034f10de27c.png"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\images\\e3f69627-422a-4d99-912e-be79ad1a1016.webp",
+>>>>>>> Stashed changes
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+<<<<<<< Updated upstream
+      "RelativePath": "Uploads/73a9db69-f861-4daf-8dff-95e55e57a19b.png",
+=======
+      "RelativePath": "images/e3f69627-422a-4d99-912e-be79ad1a1016.webp",
+>>>>>>> Stashed changes
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+<<<<<<< Updated upstream
+      "OriginalItemSpec": "wwwroot\\Uploads\\73a9db69-f861-4daf-8dff-95e55e57a19b.png"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\941c4a0c-01d9-49d5-b5d3-7c75d890b9a9.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "Uploads/941c4a0c-01d9-49d5-b5d3-7c75d890b9a9.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\941c4a0c-01d9-49d5-b5d3-7c75d890b9a9.png"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\b71b79f1-9df7-4feb-8447-97d51003d3bd.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "Uploads/b71b79f1-9df7-4feb-8447-97d51003d3bd.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\b71b79f1-9df7-4feb-8447-97d51003d3bd.png"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\d2cbeda3-5b13-4f53-9db4-8edd54db0a63.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "Uploads/d2cbeda3-5b13-4f53-9db4-8edd54db0a63.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\d2cbeda3-5b13-4f53-9db4-8edd54db0a63.png"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\Uploads\\d3c4877f-37b8-415c-8672-a055014e50c9.png",
+      "SourceId": "FurryFriends.API",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.API",
+      "RelativePath": "Uploads/d3c4877f-37b8-415c-8672-a055014e50c9.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Uploads\\d3c4877f-37b8-415c-8672-a055014e50c9.png"
+=======
+      "OriginalItemSpec": "wwwroot\\images\\e3f69627-422a-4d99-912e-be79ad1a1016.webp"
+>>>>>>> Stashed changes
+>>>>>>> main
     }
   ]
 }

@@ -22,7 +22,7 @@
                 Thông tin hóa đơn
             </div>
             <div>
-                <a href="@Url.Action("ExportPdf", "HoaDon", new { area = "Admin", id = Model.HoaDonId })" class="btn btn-success action-btn me-2" target="_blank">
+                <a href="https://localhost:7289/api/HoaDon/@Model.HoaDonId/pdf" class="btn btn-success action-btn me-2" target="_blank">
                     <i class="fas fa-file-pdf"></i> Xuất PDF
                 </a>
                 <a href="@Url.Action("Index", "HoaDon", new { area = "Admin" })" class="btn btn-secondary action-btn">
@@ -58,11 +58,10 @@
                                 <th class="bg-light">Địa chỉ</th>
                                 <td>
                                     @{
-                                        // Giữ nguyên logic này, nó đã đúng
-                                        var diaChi = Model.DiaChiGiaoHang; // Sử dụng địa chỉ giao hàng của hóa đơn
+                                        var diaChi = Model.DiaChiGiaoHang; // Sử dụng địa chỉ giao hàng đã lưu trên hóa đơn
                                         if (diaChi != null)
                                         {
-                                            <text>@diaChi.TenDiaChi, @diaChi.PhuongXa, @diaChi.ThanhPho</text>
+                                            <text>@diaChi.TenDiaChi @if(!string.IsNullOrWhiteSpace(diaChi.MoTa)){<text>- @diaChi.MoTa</text>} , @diaChi.PhuongXa, @diaChi.ThanhPho</text>
                                         }
                                         else
                                         {
@@ -142,7 +141,8 @@
                 <table class="table table-bordered align-middle bg-white" style="border-radius: 8px; overflow: hidden;">
                     <thead class="table-light">
                         <tr>
-                            <th style="min-width:180px;">Sản phẩm</th>
+                            <th style="min-width:220px;">Sản phẩm</th>
+                            <th class="text-center" style="min-width:140px;">Loại</th>
                             <th class="text-center">Đơn giá</th>
                             <th class="text-center">Số lượng</th>
                             <th class="text-center">Thành tiền</th>
@@ -154,48 +154,75 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <!-- SỬA LỖI -->
-                                        @if (item.SanPhamChiTiet?.Anh != null)
-                                        {
-                                            <img src="@item.SanPhamChiTiet.Anh.DuongDan" alt="@item.SanPhamChiTiet.SanPham?.TenSanPham" class="me-2" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">
+                                        @{
+                                            // ✅ Sử dụng ảnh snapshot nếu có, fallback sang ảnh hiện tại
+                                            string imgLink = null;
+                                            var snapshotImg = item.AnhSanPhamLucMua ?? string.Empty;
+                                            var currentImg = item.SanPhamChiTiet?.Anh?.DuongDan ?? string.Empty;
+                                            var dd = !string.IsNullOrWhiteSpace(snapshotImg) ? snapshotImg : currentImg;
+
+                                            if (!string.IsNullOrWhiteSpace(dd)) {
+                                                if (dd.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                                                    imgLink = dd;
+                                                else if (dd.Contains("/"))
+                                                    imgLink = "https://localhost:7289/" + dd.TrimStart('/');
+                                                else
+                                                    imgLink = $"https://localhost:7289/images/{System.IO.Path.GetFileName(dd)}";
+                                            }
                                         }
-                                        else
-                                        {
-                                            <div class="me-2" style="width: 48px; height: 48px; background-color: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
-                                                <i class="fas fa-image text-muted"></i>
-                                            </div>
-                                        }
+                                        @if (!string.IsNullOrEmpty(imgLink)) {<img src="@imgLink" alt="@(item.TenSanPhamLucMua ?? "Sản phẩm")" class="me-2" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">} else {<div class="me-2" style="width: 48px; height: 48px; background-color: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-image text-muted"></i></div>}
                                         <div>
-                                            <!-- SỬA LỖI -->
-                                            <div class="fw-semibold">@item.SanPhamChiTiet?.SanPham?.TenSanPham</div>
-                                            <small class="text-muted">@item.SanPhamChiTiet?.MauSac?.TenMau, @item.SanPhamChiTiet?.KichCo?.TenKichCo</small>
+                                            <div class="fw-semibold">@(item.TenSanPhamLucMua ?? "N/A")</div>
+                                            @if (!string.IsNullOrEmpty(item.ThuongHieuLucMua))
+                                            {
+                                                <small class="text-muted">@item.ThuongHieuLucMua</small>
+                                            }
                                         </div>
                                     </div>
                                 </td>
-                                <td class="text-center">@item.Gia.ToString("N0")đ</td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border">@(item.MauSacLucMua ?? "N/A")</span>
+                                    <span class="badge bg-light text-dark border">@(item.KichCoLucMua ?? "N/A")</span>
+                                </td>
+                                <td class="text-center">@((item.GiaLucMua ?? item.Gia).ToString("N0"))đ</td>
                                 <td class="text-center">@item.SoLuongSanPham</td>
-                                <td class="text-center fw-bold">@((item.Gia * item.SoLuongSanPham).ToString("N0"))đ</td>
+                                <td class="text-center fw-bold">@(((item.GiaLucMua ?? item.Gia) * item.SoLuongSanPham).ToString("N0"))đ</td>
                             </tr>
                         }
                     </tbody>
                     <tfoot class="table-light">
                         <tr>
-                            <td colspan="3" class="text-end fw-semibold">Tổng tiền:</td>
+                            <td colspan="4" class="text-end fw-semibold">Tổng tiền hàng:</td>
                             <td class="fw-bold">@Model.TongTien.ToString("N0")đ</td>
                         </tr>
-                        @if (Model.Voucher != null)
+                        @{ var voucherDiscount = Math.Max(0m, (Model.TongTien + 30000m) - Model.TongTienSauKhiGiam); var ship = Model.TongTienSauKhiGiam - (Model.TongTien - voucherDiscount); }
+                        <tr>
+                            <td colspan="4" class="text-end fw-semibold">Phí vận chuyển:</td>
+                            <td class="fw-bold">@ship.ToString("N0")đ</td>
+                        </tr>
+                        @if (!string.IsNullOrEmpty(Model.ThongTinVoucherLucMua))
                         {
                             <tr>
-                                <td colspan="3" class="text-end fw-semibold text-danger">
-                                    Giảm giá (@Model.Voucher.TenVoucher):
+                                <td colspan="4" class="text-end fw-semibold text-success">
+                                    <div>Voucher áp dụng:</div>
+                                    <small class="text-muted">@Model.ThongTinVoucherLucMua</small>
                                 </td>
-                                <td class="fw-bold text-danger">
-                                    -@((Model.TongTien - Model.TongTienSauKhiGiam).ToString("N0"))đ
+                                <td class="fw-bold text-success">
+                                    -@voucherDiscount.ToString("N0")đ
                                 </td>
                             </tr>
                         }
+                        else if (Model.Voucher != null)
+                        {
+                            <tr>
+                                <td colspan="4" class="text-end fw-semibold text-danger">
+                                    Giảm giá (@Model.Voucher.TenVoucher):
+                                </td>
+                                <td class="fw-bold text-danger">-@voucherDiscount.ToString("N0")đ</td>
+                            </tr>
+                        }
                         <tr>
-                            <td colspan="3" class="text-end fs-5 fw-bold text-primary">Thành tiền:</td>
+                            <td colspan="4" class="text-end fs-5 fw-bold text-primary">Thành tiền:</td>
                             <td class="fs-5 fw-bold text-primary">@Model.TongTienSauKhiGiam.ToString("N0")đ</td>
                         </tr>
                     </tfoot>
@@ -212,11 +239,11 @@
                 var $btn = $(this);
                 var originalText = $btn.html();
                 var href = $btn.attr('href');
-                
+
 
 
                 // Nếu là link PDF, mở trong tab mới
-                if (href.includes('ExportPdf')) {
+                if (href.includes('/pdf')) {
                     window.open(href, '_blank');
                     setTimeout(function() {
                         $btn.html(originalText);
@@ -229,4 +256,4 @@
             });
         });
     </script>
-} 
+}

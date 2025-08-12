@@ -26,6 +26,21 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             return View(list);
         }
 
+        // GET: /Admin/Anh/GetAll (AJAX)
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            try
+            {
+                var list = await _anhService.GetAllAsync();
+                return Json(list);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = ex.Message });
+            }
+        }
+
         // POST: /Admin/Anh/Upload (AJAX)
         [HttpPost]
         public async Task<IActionResult> Upload(IFormFile file)

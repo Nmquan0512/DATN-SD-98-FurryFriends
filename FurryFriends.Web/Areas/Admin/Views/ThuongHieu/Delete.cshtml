@@ -72,7 +72,7 @@
                         </div>
                     </div>
                     
-                    <form asp-area="Admin" asp-action="Delete" asp-controller="ThuongHieu" method="post">
+                    <form asp-area="Admin" asp-action="Delete" asp-controller="ThuongHieu" method="post" data-disable-loading="true">
                         <input type="hidden" asp-for="ThuongHieuId" />
                         <div class="d-flex justify-content-end gap-2">
                             <a asp-area="Admin" asp-action="Index" asp-controller="ThuongHieu" class="btn btn-secondary">Hủy</a>

@@ -1,5 +1,5 @@
 ﻿@model FurryFriends.Web.ViewModels.SanPhamFullCreateViewModel
-@using Newtonsoft.Json; 
+@using Newtonsoft.Json;
 @{
     ViewData["Title"] = "Tạo sản phẩm mới";
 
@@ -28,11 +28,27 @@
 </nav>
 
 <div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
-    <form asp-controller="SanPham" asp-action="Create" method="post">
+    <form asp-controller="SanPham" asp-action="Create" method="post" data-enable-notifications="true">
         @Html.AntiForgeryToken()
 
         <!-- Hiển thị lỗi validation từ phía server -->
         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: @(ViewData.ModelState.IsValid ? "none" : "block")"></div>
+
+        <!-- Hiển thị thông báo lỗi từ ModelState -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger" role="alert">
+                <ul class="mb-0">
+                    @foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    }
+                </ul>
+            </div>
+        }
 
         <!-- Thông tin sản phẩm cơ bản -->
         <div class="card shadow mb-4">
@@ -252,10 +268,21 @@
 
             // 4. GẮN CÁC HÀM VÀO WINDOW ĐỂ HTML CÓ THỂ GỌI
             window.removeRow = function(btn) {
-                if (confirm('Bạn có chắc chắn muốn xóa biến thể này?')) {
-                    btn.closest('tr').remove();
-                    updateRowIndexes();
-                }
+                Swal.fire({
+                    title: 'Xác nhận xóa',
+                    text: 'Bạn có chắc chắn muốn xóa biến thể này?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        btn.closest('tr').remove();
+                        updateRowIndexes();
+                    }
+                });
             }
 
             window.openAnhModal = function(btn) {
@@ -287,11 +314,17 @@
                  if(chiTietBody.rows.length === 0){
                      variantErrorDiv.textContent = "Vui lòng thêm ít nhất một biến thể sản phẩm.";
                      e.preventDefault();
+
+                     // Hiển thị thông báo lỗi
+                     Swal.fire({
+                         icon: 'error',
+                         title: 'Lỗi',
+                         text: 'Vui lòng thêm ít nhất một biến thể sản phẩm.'
+                     });
                  } else {
                      variantErrorDiv.textContent = "";
                  }
             });
-
             // Khởi tạo trạng thái ban đầu
             toggleProperties();
             if (chiTietBody.rows.length === 0) {

@@ -11,7 +11,7 @@ namespace FurryFriends.Web.Filter
             if (string.IsNullOrEmpty(role) || role.ToLower() != "admin")
             {
                 var controller = (Controller)context.Controller;
-                controller.TempData["Error"] = "Bạn không có quyền truy cập khu vực quản trị.";
+                controller.TempData["Error"] = "Bạn không có quyền truy cập khu vực quản trị. Vui lòng đăng nhập với tài khoản có quyền admin.";
                 context.Result = new RedirectToActionResult("DangNhap", "Auth", new { area = "" });
                 return;
             }

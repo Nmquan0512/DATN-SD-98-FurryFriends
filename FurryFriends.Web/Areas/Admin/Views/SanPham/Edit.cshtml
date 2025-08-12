@@ -25,10 +25,26 @@
 </nav>
 
 <div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
-    <form asp-controller="SanPham" asp-action="Edit" method="post">
+    <form asp-controller="SanPham" asp-action="Edit" method="post" data-enable-notifications="true">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="SanPham.SanPhamId" />
         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: @(ViewData.ModelState.IsValid ? "none" : "block")"></div>
+        
+        <!-- Hiển thị thông báo lỗi từ ModelState -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger" role="alert">
+                <ul class="mb-0">
+                    @foreach (var modelState in ViewData.ModelState.Values)
+                    {
+                        foreach (var error in modelState.Errors)
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    }
+                </ul>
+            </div>
+        }
 
         <!-- Thông tin sản phẩm cơ bản (Giữ nguyên cấu trúc của bạn, chỉ thêm các class cho checkbox) -->
         <div class="card shadow mb-4">
@@ -102,11 +118,34 @@
     </form>
 </div>
 
-<!-- Modal chọn ảnh (giữ nguyên) -->
-<div class="modal fade" id="anhModal" tabindex="-1"><div class="modal-dialog modal-lg"><!-- ... --></div></div>
+<!-- Modal chọn ảnh -->
+<div class="modal fade" id="anhModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chọn ảnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="anhList">
+                    @foreach (var anh in (IEnumerable<FurryFriends.API.Models.DTO.AnhDTO>)ViewBag.AnhList)
+                    {
+                        <div class="col-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <img src="https://localhost:7289@(anh.DuongDan)" class="card-img-top" style="cursor:pointer;height:120px;object-fit:cover;"
+                                     data-anh-id="@anh.AnhId" data-duongdan="@anh.DuongDan" onclick="selectAnh(this)" />
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const chiTietBody = document.getElementById('chiTietBody');
@@ -146,10 +185,10 @@
 
                 newRow.innerHTML = `
                     <input type="hidden" name="ChiTietList[${currentIndex}].SanPhamChiTietId" value="${sanPhamChiTietId}" />
-                    <td><select name="ChiTietList[${currentIndex}].KichCoId" class="form-select form-select-sm" required>${kichCoOptions}</select></td>
-                    <td><select name="ChiTietList[${currentIndex}].MauSacId" class="form-select form-select-sm" required>${mauSacOptions}</select></td>
-                    <td><div class="input-group input-group-sm"><input name="ChiTietList[${currentIndex}].GiaBan" type="number" class="form-control" value="${giaBan}" min="0" required /><span class="input-group-text">VNĐ</span></div></td>
-                    <td><input name="ChiTietList[${currentIndex}].SoLuongTon" type="number" class="form-control form-control-sm" value="${soLuong}" min="0" required /></td>
+                    <td><select name="ChiTietList[${currentIndex}].KichCoId" class="form-select form-select-sm" data-val="true" data-val-required="Vui lòng chọn kích cỡ.">${kichCoOptions}</select><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].KichCoId"></span></td>
+                    <td><select name="ChiTietList[${currentIndex}].MauSacId" class="form-select form-select-sm" data-val="true" data-val-required="Vui lòng chọn màu sắc.">${mauSacOptions}</select><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].MauSacId"></span></td>
+                    <td><div class="input-group input-group-sm"><input name="ChiTietList[${currentIndex}].GiaBan" type="number" class="form-control" value="${giaBan}" min="0" data-val="true" data-val-required="Giá bán là bắt buộc." data-val-range="Giá bán phải lớn hơn hoặc bằng 0." data-val-range-min="0" /><span class="input-group-text">VNĐ</span></div><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].GiaBan"></span></td>
+                    <td><input name="ChiTietList[${currentIndex}].SoLuongTon" type="number" class="form-control form-control-sm" value="${soLuong}" min="0" data-val="true" data-val-required="Số lượng là bắt buộc." data-val-range="Số lượng phải lớn hơn hoặc bằng 0." data-val-range-min="0" /><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].SoLuongTon"></span></td>
                     <td><input name="ChiTietList[${currentIndex}].MoTa" class="form-control form-control-sm" value="${moTa}" /></td>
                     <td>
                         <button type="button" class="btn btn-outline-primary btn-sm" onclick="openAnhModal(this)"><i class="fas fa-image"></i></button>
@@ -158,50 +197,91 @@
                     </td>
                     <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)" title="Xóa biến thể"><i class="fas fa-trash"></i></button></td>
                 `;
+
+                // KÍCH HOẠT LẠI VALIDATION CHO FORM
+                $(form).removeData("validator").removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(form);
             }
 
             function updateRowIndexes() {
                 const rows = chiTietBody.querySelectorAll('tr');
                 rows.forEach((row, newIndex) => {
-                    row.querySelectorAll('input, select').forEach(input => {
-                        const oldName = input.getAttribute('name');
+                    row.querySelectorAll('input, select, span').forEach(element => {
+                        const oldName = element.getAttribute('name');
                         if (oldName) {
-                            input.setAttribute('name', oldName.replace(/\[\d+\]/, `[${newIndex}]`));
+                            element.setAttribute('name', oldName.replace(/\[\d+\]/, `[${newIndex}]`));
+                        }
+                        const oldFor = element.getAttribute('data-valmsg-for');
+                        if (oldFor) {
+                            element.setAttribute('data-valmsg-for', oldFor.replace(/\[\d+\]/, `[${newIndex}]`));
                         }
                     });
                 });
             }
 
             window.removeRow = function(btn) {
-                if (confirm('Bạn có chắc chắn muốn xóa biến thể này?')) {
-                    btn.closest('tr').remove();
-                    updateRowIndexes();
-                }
+                Swal.fire({
+                    title: 'Xác nhận xóa',
+                    text: 'Bạn có chắc chắn muốn xóa biến thể này?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        btn.closest('tr').remove();
+                        updateRowIndexes();
+                    }
+                });
+            }
+            
+            window.openAnhModal = function(btn) {
+                currentAnhBtn = btn;
+                new bootstrap.Modal(document.getElementById('anhModal')).show();
             }
 
-            // CÁC HÀM KHÁC GIỮ NGUYÊN
-            window.openAnhModal = function(btn) { currentAnhBtn = btn; new bootstrap.Modal(document.getElementById('anhModal')).show(); };
-            window.selectAnh = function(img) { /* ... code của bạn ... */ };
-            window.toggleProperties = function () { /* ... code của bạn ... */ };
+            window.selectAnh = function(img) {
+                const anhId = img.dataset.anhId;
+                const duongDan = img.dataset.duongdan;
+                const row = currentAnhBtn.closest('tr');
+                row.querySelector('input[name*="AnhId"]').value = anhId;
+                const preview = row.querySelector('.anh-preview');
+                preview.innerHTML = `<img src="https://localhost:7289${duongDan}" style="max-width:60px;max-height:60px;object-fit:cover;" class="rounded shadow-sm" />`;
+                bootstrap.Modal.getInstance(document.getElementById('anhModal')).hide();
+            }
+
+            window.toggleProperties = function () {
+                const loaiSanPham = document.querySelector('select[name="SanPham.LoaiSanPham"]').value;
+                document.getElementById('thanhPhanSection').style.display = (loaiSanPham === 'DoAn') ? 'block' : 'none';
+                document.getElementById('chatLieuSection').style.display = (loaiSanPham === 'DoDung') ? 'block' : 'none';
+            }
 
             // HÀM ĐỂ LOAD CÁC BIẾN THỂ ĐÃ CÓ
             function loadExistingVariants() {
-                existingChiTietData.forEach(variant => {
-                    addChiTietRow(variant);
-                });
-                // Kích hoạt lại validation sau khi đã thêm tất cả
-                $(form).removeData("validator").removeData("unobtrusiveValidation");
-                $.validator.unobtrusive.parse(form);
+                if (existingChiTietData && existingChiTietData.length > 0) {
+                    existingChiTietData.forEach(variant => {
+                        addChiTietRow(variant);
+                    });
+                }
             }
 
             // CÁC THIẾT LẬP BAN ĐẦU
             document.getElementById('addVariantBtn').addEventListener('click', () => addChiTietRow(null));
+
             form.addEventListener('submit', (e) => {
+                const variantErrorDiv = document.getElementById('variantError');
                 if (chiTietBody.rows.length === 0) {
-                    document.getElementById('variantError').textContent = "Phải có ít nhất một biến thể.";
+                    variantErrorDiv.textContent = "Phải có ít nhất một biến thể.";
                     e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Vui lòng thêm ít nhất một biến thể sản phẩm.'
+                    });
                 } else {
-                    document.getElementById('variantError').textContent = "";
+                    variantErrorDiv.textContent = "";
                 }
             });
 

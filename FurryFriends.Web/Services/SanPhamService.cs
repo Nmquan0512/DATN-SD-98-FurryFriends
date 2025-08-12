@@ -95,19 +95,38 @@ namespace FurryFriends.Web.Services
         // SỬA LẠI PHƯƠNG THỨC DELETE
         public async Task<ApiResult<bool>> DeleteAsync(Guid id)
         {
-            var response = await _httpClient.DeleteAsync($"{BaseUrl}/{id}");
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return new ApiResult<bool> { Data = true };
-            }
+                var url = $"{BaseUrl}/{id}";
+                var response = await _httpClient.DeleteAsync(url);
 
-            if (response.StatusCode == HttpStatusCode.NotFound)
+                if (response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.NoContent)
+                {
+                    return new ApiResult<bool> { Data = true };
+                }
+
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return new ApiResult<bool> { Data = false, Errors = new() { { "", new[] { "Không tìm thấy sản phẩm để xóa." } } } };
+                }
+
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                    return new ApiResult<bool> { Data = false, Errors = new() { { "", new[] { errorResponse?.Message ?? "Lỗi khi xóa sản phẩm!" } } } };
+                }
+
+                return new ApiResult<bool> { Data = false, Errors = new() { { "", new[] { $"Lỗi không xác định khi xóa! Status: {response.StatusCode}" } } } };
+            }
+            catch (Exception ex)
             {
-                return new ApiResult<bool> { Data = false, Errors = new() { { "", new[] { "Không tìm thấy sản phẩm để xóa." } } } };
+                return new ApiResult<bool> { Data = false, Errors = new() { { "", new[] { $"Lỗi kết nối: {ex.Message}" } } } };
             }
+        }
 
-            return new ApiResult<bool> { Data = false, Errors = new() { { "", new[] { "Lỗi không xác định khi xóa!" } } } };
+        private class ErrorResponse
+        {
+            public string Message { get; set; }
         }
 
         // Các phương thức lọc và thống kê đã tốt, giữ nguyên.

@@ -580,3 +580,5 @@ C:\Users\Lenovo\OneDrive\Desktop\New folder (2)\DATN-SD-98-FurryFriends\FurryFri
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\FurryFriends.API.pdb
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\FurryFriends.API.genruntimeconfig.cache
 \\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\obj\Debug\net8.0\ref\FurryFriends.API.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\bin\Debug\net8.0\AutoMapper.dll
+\\Mac\Home\Downloads\DATN-SD-98-FurryFriends\FurryFriends.API\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

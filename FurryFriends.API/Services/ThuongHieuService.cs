@@ -1,5 +1,4 @@
-﻿
-using FurryFriends.API.Models;
+﻿using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Repository.IRepository;
 using FurryFriends.API.Services.IServices;
@@ -53,6 +52,18 @@ namespace FurryFriends.API.Services
 
         public async Task<ThuongHieuDTO> CreateAsync(ThuongHieuDTO dto)
         {
+            // Kiểm tra trùng tên
+            var allBrands = await _repository.GetAllAsync();
+            if (allBrands != null)
+            {
+                var duplicateName = allBrands.FirstOrDefault(x => x.TenThuongHieu == dto.TenThuongHieu);
+                
+                if (duplicateName != null)
+                {
+                    throw new InvalidOperationException($"Thương hiệu với tên '{dto.TenThuongHieu}' đã tồn tại.");
+                }
+            }
+
             var entity = new ThuongHieu
             {
                 ThuongHieuId = Guid.NewGuid(),
@@ -73,6 +84,19 @@ namespace FurryFriends.API.Services
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null) return false;
+
+            // Kiểm tra trùng tên (trừ chính nó)
+            var allBrands = await _repository.GetAllAsync();
+            if (allBrands != null)
+            {
+                var duplicateName = allBrands.FirstOrDefault(x => 
+                    x.TenThuongHieu == dto.TenThuongHieu && x.ThuongHieuId != id);
+                
+                if (duplicateName != null)
+                {
+                    throw new InvalidOperationException($"Thương hiệu với tên '{dto.TenThuongHieu}' đã tồn tại.");
+                }
+            }
 
             existing.TenThuongHieu = dto.TenThuongHieu;
             existing.Email = dto.Email;

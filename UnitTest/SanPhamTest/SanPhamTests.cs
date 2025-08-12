@@ -10,7 +10,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
 
@@ -579,10 +585,12 @@ namespace UnitTest.SanPhamTest
                     ThuongHieuId = Guid.NewGuid()
                 };
 
-                _mockRepository.Setup(x => x.AddAsync(It.IsAny<SanPham>()))
-                              .Returns(Task.CompletedTask);
                 _mockContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
                            .ReturnsAsync(1);
+                _mockRepository.Setup(x => x.AddAsync(It.IsAny<SanPham>()))
+                              .Returns(Task.CompletedTask);
+                _mockRepository.Setup(x => x.SaveAsync())
+                              .Returns(Task.CompletedTask);
 
                 // Act
                 var result = await _service.CreateAsync(dto);
@@ -604,14 +612,18 @@ namespace UnitTest.SanPhamTest
                     ThuongHieuId = Guid.NewGuid()
                 };
 
-                var existingProduct = new SanPham { SanPhamId = id, TenSanPham = "Old Name" };
+                var existingProduct = new SanPham 
+                { 
+                    SanPhamId = id, 
+                    TenSanPham = "Old Name",
+                    SanPhamThanhPhans = new List<SanPhamThanhPhan>(),
+                    SanPhamChatLieus = new List<SanPhamChatLieu>()
+                };
 
                 _mockRepository.Setup(x => x.GetByIdAsync(id))
                               .ReturnsAsync(existingProduct);
                 _mockRepository.Setup(x => x.UpdateAsync(It.IsAny<SanPham>()))
                               .Returns(Task.CompletedTask);
-                _mockContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
-                           .ReturnsAsync(1);
 
                 // Act
                 await _service.UpdateAsync(id, dto);
@@ -626,12 +638,12 @@ namespace UnitTest.SanPhamTest
                 // Arrange
                 var id = Guid.NewGuid();
 
+                _mockContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                           .ReturnsAsync(1);
                 _mockRepository.Setup(x => x.ExistsAsync(id))
                               .ReturnsAsync(true);
                 _mockRepository.Setup(x => x.DeleteAsync(id))
                               .Returns(Task.CompletedTask);
-                _mockContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
-                           .ReturnsAsync(1);
 
                 // Act
                 await _service.DeleteAsync(id);
