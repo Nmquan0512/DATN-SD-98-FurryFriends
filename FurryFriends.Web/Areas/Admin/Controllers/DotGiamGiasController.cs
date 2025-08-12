@@ -86,7 +86,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 // Gửi thông báo
                 var thongBao = new {
                     TieuDe = "Thêm đợt giảm giá mới",
-                    NoiDung = $"Đợt giảm giá cho sản phẩm ID {dot.SanPhamId} vừa được thêm.",
+                    NoiDung = $"Đợt giảm giá cho sản phẩm ID {dot.SanPhamChiTietId} vừa được thêm.",
                     Loai = "DotGiamGia",
                     UserName = User.Identity?.Name ?? "admin"
                 };
@@ -138,7 +138,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 var danhSachSanPham = await GetDanhSachSanPhamAsync();
 
                 ViewBag.GiamGiaList = new SelectList(danhSachGiamGia, "GiamGiaId", "TenGiamGia", dot.GiamGiaId);
-                ViewBag.SanPhamList = new SelectList(danhSachSanPham, "SanPhamId", "TenSanPham", dot.SanPhamId);
+                ViewBag.SanPhamList = new SelectList(danhSachSanPham, "SanPhamId", "TenSanPham", dot.SanPhamChiTietId);
 
                 return View(dot);
             }
@@ -152,7 +152,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             var danhSachSanPham2 = await GetDanhSachSanPhamAsync();
 
             ViewBag.GiamGiaList = new SelectList(danhSachGiamGia2, "GiamGiaId", "TenGiamGia", dot.GiamGiaId);
-            ViewBag.SanPhamList = new SelectList(danhSachSanPham2, "SanPhamId", "TenSanPham", dot.SanPhamId);
+            ViewBag.SanPhamList = new SelectList(danhSachSanPham2, "SanPhamId", "TenSanPham", dot.SanPhamChiTietId);
 
             return View(dot);
         }

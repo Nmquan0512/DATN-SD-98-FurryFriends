@@ -56,5 +56,21 @@ namespace FurryFriends.API.Repositories
         {
             await _context.SaveChangesAsync();
         }
+
+        public async Task AddAsync(DotGiamGiaSanPham entity)
+        {
+            await _context.DotGiamGiaSanPhams.AddAsync(entity);
+        }
+
+        public void Update(DotGiamGiaSanPham entity)
+        {
+            _context.DotGiamGiaSanPhams.Update(entity);
+        }
+
+        public void Delete(DotGiamGiaSanPham entity)
+        {
+            _context.DotGiamGiaSanPhams.Remove(entity);
+        }
+
     }
 }

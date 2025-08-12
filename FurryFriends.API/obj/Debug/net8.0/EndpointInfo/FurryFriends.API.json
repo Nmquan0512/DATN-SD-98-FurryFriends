@@ -5,6 +5,1061 @@
     "version": "1.0"
   },
   "paths": {
+    "/api/Anh": {
+      "get": {
+        "tags": [
+          "Anh"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Anh/{id}": {
+      "get": {
+        "tags": [
+          "Anh"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Anh"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnhDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnhDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnhDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Anh"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Anh/upload": {
+      "post": {
+        "tags": [
+          "Anh"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ContentType": {
+                    "type": "string"
+                  },
+                  "ContentDisposition": {
+                    "type": "string"
+                  },
+                  "Headers": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "Length": {
+                    "type": "integer",
+                    "format": "int64"
+                  },
+                  "Name": {
+                    "type": "string"
+                  },
+                  "FileName": {
+                    "type": "string"
+                  },
+                  "sanPhamChiTietId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                }
+              },
+              "encoding": {
+                "ContentType": {
+                  "style": "form"
+                },
+                "ContentDisposition": {
+                  "style": "form"
+                },
+                "Headers": {
+                  "style": "form"
+                },
+                "Length": {
+                  "style": "form"
+                },
+                "Name": {
+                  "style": "form"
+                },
+                "FileName": {
+                  "style": "form"
+                },
+                "sanPhamChiTietId": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/BanHang/hoa-don": {
+      "get": {
+        "tags": [
+          "BanHang"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonBanHangDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonBanHangDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonBanHangDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "BanHang"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaoHoaDonRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaoHoaDonRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaoHoaDonRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BanHang/hoa-don/{hoaDonId}": {
+      "get": {
+        "tags": [
+          "BanHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoaDonId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BanHang/hoa-don/{hoaDonId}/huy": {
+      "post": {
+        "tags": [
+          "BanHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoaDonId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BanHang/hoa-don/{hoaDonId}/items": {
+      "post": {
+        "tags": [
+          "BanHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoaDonId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThemSanPhamRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThemSanPhamRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThemSanPhamRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BanHang/hoa-don/{hoaDonId}/items/{sanPhamChiTietId}": {
+      "put": {
+        "tags": [
+          "BanHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoaDonId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sanPhamChiTietId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CapNhatSoLuongRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CapNhatSoLuongRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CapNhatSoLuongRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "BanHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoaDonId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sanPhamChiTietId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BanHang/hoa-don/{hoaDonId}/khach-hang": {
+      "put": {
+        "tags": [
+          "BanHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoaDonId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GanKhachHangRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GanKhachHangRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GanKhachHangRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BanHang/hoa-don/{hoaDonId}/voucher": {
+      "post": {
+        "tags": [
+          "BanHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoaDonId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApDungVoucherRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApDungVoucherRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApDungVoucherRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "BanHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoaDonId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BanHang/hoa-don/{hoaDonId}/thanh-toan": {
+      "post": {
+        "tags": [
+          "BanHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoaDonId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThanhToanRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThanhToanRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThanhToanRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HoaDonBanHangDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BanHang/tim-kiem/san-pham": {
+      "get": {
+        "tags": [
+          "BanHang"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SanPhamBanHangDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SanPhamBanHangDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SanPhamBanHangDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BanHang/tim-kiem/khach-hang": {
+      "get": {
+        "tags": [
+          "BanHang"
+        ],
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KhachHangDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KhachHangDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KhachHangDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BanHang/hoa-don/{hoaDonId}/vouchers-hop-le": {
+      "get": {
+        "tags": [
+          "BanHang"
+        ],
+        "parameters": [
+          {
+            "name": "hoaDonId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VoucherDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VoucherDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VoucherDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/BanHang/khach-hang": {
+      "post": {
+        "tags": [
+          "BanHang"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaoKhachHangRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaoKhachHangRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaoKhachHangRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/KhachHangDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KhachHangDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KhachHangDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/ChatLieu": {
       "get": {
         "tags": [
@@ -556,7 +1611,36 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GiamGiaDTO"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GiamGiaDTO"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GiamGiaDTO"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
           }
         }
       },
@@ -568,24 +1652,84 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GiamGia"
+                "$ref": "#/components/schemas/GiamGiaDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/GiamGia"
+                "$ref": "#/components/schemas/GiamGiaDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/GiamGia"
+                "$ref": "#/components/schemas/GiamGiaDTO"
               }
             }
           }
         },
         "responses": {
-          "200": {
-            "description": "Success"
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GiamGiaDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GiamGiaDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GiamGiaDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
           }
         }
       }
@@ -608,7 +1752,47 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/GiamGiaDTO"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GiamGiaDTO"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GiamGiaDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
           }
         }
       },
@@ -631,17 +1815,178 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/GiamGia"
+                "$ref": "#/components/schemas/GiamGiaDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/GiamGia"
+                "$ref": "#/components/schemas/GiamGiaDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/GiamGia"
+                "$ref": "#/components/schemas/GiamGiaDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "GiamGia"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    },
+    "/api/GioHang/{khachHangId}": {
+      "get": {
+        "tags": [
+          "GioHang"
+        ],
+        "parameters": [
+          {
+            "name": "khachHangId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/GioHang/add": {
+      "post": {
+        "tags": [
+          "GioHang"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToCartDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToCartDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddToCartDTO"
               }
             }
           }
@@ -651,10 +1996,154 @@
             "description": "Success"
           }
         }
-      },
+      }
+    },
+    "/api/GioHang/update/{gioHangChiTietId}": {
+      "put": {
+        "tags": [
+          "GioHang"
+        ],
+        "parameters": [
+          {
+            "name": "gioHangChiTietId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/GioHang/delete/{gioHangChiTietId}": {
       "delete": {
         "tags": [
-          "GiamGia"
+          "GioHang"
+        ],
+        "parameters": [
+          {
+            "name": "gioHangChiTietId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/GioHang/ap-dung-voucher": {
+      "post": {
+        "tags": [
+          "GioHang"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GioHangVoucherDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GioHangVoucherDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GioHangVoucherDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/GioHang/thanh-toan": {
+      "post": {
+        "tags": [
+          "GioHang"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThanhToanDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThanhToanDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ThanhToanDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/HinhThucThanhToan": {
+      "get": {
+        "tags": [
+          "HinhThucThanhToan"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/HinhThucThanhToan/{id}": {
+      "get": {
+        "tags": [
+          "HinhThucThanhToan"
         ],
         "parameters": [
           {
@@ -752,6 +2241,55 @@
         }
       }
     },
+    "/api/HoaDon/{id}/chi-tiet": {
+      "get": {
+        "tags": [
+          "HoaDon"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonChiTiet"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonChiTiet"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/HoaDonChiTiet"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/HoaDon/search": {
       "get": {
         "tags": [
@@ -812,6 +2350,61 @@
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/HoaDon/{id}/huy-don": {
+      "post": {
+        "tags": [
+          "HoaDon"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/HoaDon/{id}/trang-thai/{trangThai}": {
+      "put": {
+        "tags": [
+          "HoaDon"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "trangThai",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         ],
@@ -986,6 +2579,84 @@
         "responses": {
           "200": {
             "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/KhachHang/email/{email}": {
+      "get": {
+        "tags": [
+          "KhachHang"
+        ],
+        "parameters": [
+          {
+            "name": "email",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/KhachHang"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KhachHang"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KhachHang"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/KhachHang/phone/{phone}": {
+      "get": {
+        "tags": [
+          "KhachHang"
+        ],
+        "parameters": [
+          {
+            "name": "phone",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/KhachHang"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KhachHang"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KhachHang"
+                }
+              }
+            }
           }
         }
       }
@@ -1386,6 +3057,131 @@
         }
       }
     },
+    "/api/SanPhamChiTiet": {
+      "get": {
+        "tags": [
+          "SanPhamChiTiet"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "SanPhamChiTiet"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SanPhamChiTietDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SanPhamChiTietDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SanPhamChiTietDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/SanPhamChiTiet/{id}": {
+      "get": {
+        "tags": [
+          "SanPhamChiTiet"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SanPhamChiTiet"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SanPhamChiTietDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SanPhamChiTietDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SanPhamChiTietDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "SanPhamChiTiet"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/SanPhams": {
       "get": {
         "tags": [
@@ -1501,6 +3297,80 @@
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/SanPhams/filter": {
+      "get": {
+        "tags": [
+          "SanPhams"
+        ],
+        "parameters": [
+          {
+            "name": "loai",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/SanPhams/total": {
+      "get": {
+        "tags": [
+          "SanPhams"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/SanPhams/top-selling": {
+      "get": {
+        "tags": [
+          "SanPhams"
+        ],
+        "parameters": [
+          {
+            "name": "top",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 5
             }
           }
         ],
@@ -2347,6 +4217,69 @@
         }
       }
     },
+    "/api/VoucherValidation/validate": {
+      "post": {
+        "tags": [
+          "VoucherValidation"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateVoucherRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateVoucherRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateVoucherRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/VoucherValidation/available/{khachHangId}": {
+      "get": {
+        "tags": [
+          "VoucherValidation"
+        ],
+        "parameters": [
+          {
+            "name": "khachHangId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tongTienHang",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double",
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/WeatherForecast": {
       "get": {
         "tags": [
@@ -2389,10 +4322,37 @@
   },
   "components": {
     "schemas": {
+      "AddToCartDTO": {
+        "type": "object",
+        "properties": {
+          "khachHangId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sanPhamChiTietId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "soLuong": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "voucherId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Anh": {
         "type": "object",
         "properties": {
           "anhId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sanPhamChiTietId": {
             "type": "string",
             "format": "uuid"
           },
@@ -2413,6 +4373,57 @@
               "$ref": "#/components/schemas/SanPhamChiTiet"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AnhDTO": {
+        "type": "object",
+        "properties": {
+          "anhId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sanPhamChiTietId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duongDan": {
+            "type": "string",
+            "nullable": true
+          },
+          "tenAnh": {
+            "type": "string",
+            "nullable": true
+          },
+          "trangThai": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApDungVoucherRequest": {
+        "type": "object",
+        "properties": {
+          "hoaDonId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "maVoucher": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CapNhatSoLuongRequest": {
+        "type": "object",
+        "properties": {
+          "soLuongMoi": {
+            "maximum": 1000,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -2503,6 +4514,40 @@
           },
           "trangThai": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ChiTietHoaDonDto": {
+        "type": "object",
+        "properties": {
+          "sanPhamChiTietId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenSanPham": {
+            "type": "string",
+            "nullable": true
+          },
+          "mauSac": {
+            "type": "string",
+            "nullable": true
+          },
+          "kichCo": {
+            "type": "string",
+            "nullable": true
+          },
+          "gia": {
+            "type": "number",
+            "format": "double"
+          },
+          "soLuong": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "thanhTien": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -2600,7 +4645,10 @@
         "required": [
           "khachHangId",
           "ngayCapNhat",
-          "ngayTao"
+          "ngayTao",
+          "phuongXa",
+          "tenDiaChi",
+          "thanhPho"
         ],
         "type": "object",
         "properties": {
@@ -2610,25 +4658,28 @@
           },
           "tenDiaChi": {
             "maxLength": 200,
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "thanhPho": {
             "maxLength": 50,
-            "type": "string",
-            "nullable": true
-          },
-          "quanHuyen": {
-            "maxLength": 50,
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "phuongXa": {
             "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          "moTa": {
             "type": "string",
             "nullable": true
           },
-          "moTa": {
+          "ghiChu": {
+            "type": "string",
+            "nullable": true
+          },
+          "soDienThoai": {
             "type": "string",
             "nullable": true
           },
@@ -2654,6 +4705,32 @@
         },
         "additionalProperties": false
       },
+      "DiaChiMoiDto": {
+        "type": "object",
+        "properties": {
+          "tenNguoiNhan": {
+            "type": "string",
+            "nullable": true
+          },
+          "soDienThoai": {
+            "type": "string",
+            "nullable": true
+          },
+          "thanhPho": {
+            "type": "string",
+            "nullable": true
+          },
+          "phuongXa": {
+            "type": "string",
+            "nullable": true
+          },
+          "tenDiaChi": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DoiMatKhauRequest": {
         "type": "object",
         "properties": {
@@ -2674,7 +4751,7 @@
           "ngayCapNhat",
           "ngayTao",
           "phanTramGiamGia",
-          "sanPhamId",
+          "sanPhamChiTietId",
           "trangThai"
         ],
         "type": "object",
@@ -2687,7 +4764,7 @@
             "type": "string",
             "format": "uuid"
           },
-          "sanPhamId": {
+          "sanPhamChiTietId": {
             "type": "string",
             "format": "uuid"
           },
@@ -2709,8 +4786,21 @@
           "giamGia": {
             "$ref": "#/components/schemas/GiamGia"
           },
-          "sanPham": {
-            "$ref": "#/components/schemas/SanPham"
+          "sanPhamChiTiet": {
+            "$ref": "#/components/schemas/SanPhamChiTiet"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GanKhachHangRequest": {
+        "required": [
+          "khachHangId"
+        ],
+        "type": "object",
+        "properties": {
+          "khachHangId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
@@ -2771,6 +4861,66 @@
         },
         "additionalProperties": false
       },
+      "GiamGiaDTO": {
+        "required": [
+          "ngayBatDau",
+          "ngayKetThuc",
+          "phanTramKhuyenMai",
+          "tenGiamGia"
+        ],
+        "type": "object",
+        "properties": {
+          "giamGiaId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenGiamGia": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "phanTramKhuyenMai": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number",
+            "format": "double"
+          },
+          "ngayBatDau": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ngayKetThuc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "trangThai": {
+            "type": "boolean"
+          },
+          "sanPhamChiTietIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "trangThaiDisplay": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "conHieuLuc": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "soLuongSanPhamApDung": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
       "GioHang": {
         "required": [
           "khachHangId",
@@ -2817,7 +4967,6 @@
           "donGia",
           "gioHangId",
           "ngayTao",
-          "sanPhamId",
           "soLuong",
           "thanhTien",
           "trangThai"
@@ -2832,19 +4981,24 @@
             "type": "string",
             "format": "uuid"
           },
-          "sanPhamId": {
+          "sanPhamChiTietId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
           },
           "soLuong": {
+            "maximum": 2147483647,
+            "minimum": 1,
             "type": "integer",
             "format": "int32"
           },
           "donGia": {
+            "minimum": 0,
             "type": "number",
             "format": "double"
           },
           "thanhTien": {
+            "minimum": 0,
             "type": "number",
             "format": "double"
           },
@@ -2863,13 +5017,30 @@
           "gioHang": {
             "$ref": "#/components/schemas/GioHang"
           },
-          "sanPham": {
-            "$ref": "#/components/schemas/SanPham"
+          "sanPhamChiTiet": {
+            "$ref": "#/components/schemas/SanPhamChiTiet"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GioHangVoucherDTO": {
+        "type": "object",
+        "properties": {
+          "khachHangId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "voucherId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
       },
       "HinhThucThanhToan": {
+        "required": [
+          "tenHinhThuc"
+        ],
         "type": "object",
         "properties": {
           "hinhThucThanhToanId": {
@@ -2877,8 +5048,9 @@
             "format": "uuid"
           },
           "tenHinhThuc": {
-            "type": "string",
-            "nullable": true
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
           },
           "moTa": {
             "type": "string",
@@ -2894,22 +5066,72 @@
         },
         "additionalProperties": false
       },
+      "HinhThucThanhToanDto": {
+        "required": [
+          "loaiHinhThuc",
+          "tenHinhThuc"
+        ],
+        "type": "object",
+        "properties": {
+          "hinhThucThanhToanId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenHinhThuc": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "moTa": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string",
+            "nullable": true
+          },
+          "loaiHinhThuc": {
+            "maximum": 4,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "trangThai": {
+            "type": "boolean"
+          },
+          "thongTinBoSung": {
+            "type": "string",
+            "nullable": true
+          },
+          "phiGiaoDich": {
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number",
+            "format": "double"
+          },
+          "icon": {
+            "type": "string",
+            "nullable": true
+          },
+          "tenLoaiHinhThuc": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
       "HoaDon": {
         "required": [
+          "diaChiGiaoHangId",
           "hinhThucThanhToanId",
           "khachHangId",
           "ngayTao",
-          "taiKhoanId",
+          "tongTien",
           "tongTienSauKhiGiam",
           "trangThai"
         ],
         "type": "object",
         "properties": {
           "hoaDonId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "taiKhoanId": {
             "type": "string",
             "format": "uuid"
           },
@@ -2936,6 +5158,7 @@
           },
           "emailCuaKhachHang": {
             "type": "string",
+            "format": "email",
             "nullable": true
           },
           "ngayTao": {
@@ -2948,10 +5171,12 @@
             "nullable": true
           },
           "tongTien": {
+            "minimum": 0,
             "type": "number",
             "format": "double"
           },
           "tongTienSauKhiGiam": {
+            "minimum": 0,
             "type": "number",
             "format": "double"
           },
@@ -2966,14 +5191,38 @@
           "voucher": {
             "$ref": "#/components/schemas/Voucher"
           },
-          "taiKhoan": {
-            "$ref": "#/components/schemas/TaiKhoan"
-          },
           "khachHang": {
             "$ref": "#/components/schemas/KhachHang"
           },
           "hinhThucThanhToan": {
             "$ref": "#/components/schemas/HinhThucThanhToan"
+          },
+          "diaChiGiaoHangId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "diaChiGiaoHang": {
+            "$ref": "#/components/schemas/DiaChiKhachHang"
+          },
+          "nhanVienId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "nhanVien": {
+            "$ref": "#/components/schemas/NhanVien"
+          },
+          "loaiHoaDon": {
+            "type": "string",
+            "nullable": true
+          },
+          "thongTinVoucherLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "diaChiGiaoHangLucMua": {
+            "type": "string",
+            "nullable": true
           },
           "hoaDonChiTiets": {
             "type": "array",
@@ -2985,12 +5234,64 @@
         },
         "additionalProperties": false
       },
+      "HoaDonBanHangDto": {
+        "type": "object",
+        "properties": {
+          "hoaDonId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "maHoaDon": {
+            "type": "string",
+            "nullable": true
+          },
+          "ngayTao": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "khachHang": {
+            "$ref": "#/components/schemas/KhachHangDto"
+          },
+          "chiTietHoaDon": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChiTietHoaDonDto"
+            },
+            "nullable": true
+          },
+          "tongTien": {
+            "type": "number",
+            "format": "double"
+          },
+          "tienGiam": {
+            "type": "number",
+            "format": "double"
+          },
+          "thanhTien": {
+            "type": "number",
+            "format": "double"
+          },
+          "voucher": {
+            "$ref": "#/components/schemas/VoucherDto"
+          },
+          "hinhThucThanhToan": {
+            "$ref": "#/components/schemas/HinhThucThanhToanDto"
+          },
+          "trangThai": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "HoaDonChiTiet": {
         "required": [
           "gia",
+          "giaLucMua",
           "hoaDonId",
-          "sanPhamId",
-          "soLuongSanPham"
+          "sanPhamChiTietId",
+          "soLuongSanPham",
+          "tenSanPhamLucMua"
         ],
         "type": "object",
         "properties": {
@@ -2998,7 +5299,7 @@
             "type": "string",
             "format": "uuid"
           },
-          "sanPhamId": {
+          "sanPhamChiTietId": {
             "type": "string",
             "format": "uuid"
           },
@@ -3007,18 +5308,58 @@
             "format": "uuid"
           },
           "soLuongSanPham": {
+            "maximum": 2147483647,
+            "minimum": 1,
             "type": "integer",
             "format": "int32"
           },
           "gia": {
+            "minimum": 0,
             "type": "number",
             "format": "double"
+          },
+          "giaLucMua": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double"
+          },
+          "tenSanPhamLucMua": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "moTaSanPhamLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "thuongHieuLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "kichCoLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "mauSacLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "anhSanPhamLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "chatLieuLucMua": {
+            "type": "string",
+            "nullable": true
+          },
+          "thanhPhanLucMua": {
+            "type": "string",
+            "nullable": true
           },
           "hoaDon": {
             "$ref": "#/components/schemas/HoaDon"
           },
-          "sanPham": {
-            "$ref": "#/components/schemas/SanPham"
+          "sanPhamChiTiet": {
+            "$ref": "#/components/schemas/SanPhamChiTiet"
           }
         },
         "additionalProperties": false
@@ -3042,10 +5383,13 @@
           },
           "sdt": {
             "maxLength": 20,
+            "pattern": "^0\\d{8,10}$",
             "type": "string",
             "nullable": true
           },
           "diemKhachHang": {
+            "maximum": 2147483647,
+            "minimum": 0,
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -3053,6 +5397,7 @@
           "emailCuaKhachHang": {
             "maxLength": 100,
             "type": "string",
+            "format": "email",
             "nullable": true
           },
           "ngayTaoTaiKhoan": {
@@ -3104,6 +5449,35 @@
         },
         "additionalProperties": false
       },
+      "KhachHangDto": {
+        "type": "object",
+        "properties": {
+          "khachHangId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenKhachHang": {
+            "type": "string",
+            "nullable": true
+          },
+          "sdt": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "diemTichLuy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "laKhachLe": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "KichCo": {
         "required": [
           "tenKichCo"
@@ -3139,7 +5513,8 @@
       },
       "KichCoDTO": {
         "required": [
-          "tenKichCo"
+          "tenKichCo",
+          "trangThai"
         ],
         "type": "object",
         "properties": {
@@ -3150,10 +5525,11 @@
           "tenKichCo": {
             "maxLength": 50,
             "minLength": 0,
-            "pattern": "^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯàáâãèéêìíòóôõùúăđĩũơưẠ-ỹ\\s0-9]+$",
             "type": "string"
           },
           "moTa": {
+            "maxLength": 500,
+            "minLength": 0,
             "type": "string",
             "nullable": true
           },
@@ -3216,6 +5592,7 @@
       },
       "MauSacDTO": {
         "required": [
+          "maMau",
           "tenMau"
         ],
         "type": "object",
@@ -3230,8 +5607,8 @@
             "type": "string"
           },
           "maMau": {
-            "type": "string",
-            "nullable": true
+            "minLength": 1,
+            "type": "string"
           },
           "moTa": {
             "type": "string",
@@ -3285,8 +5662,8 @@
             "type": "string"
           },
           "sdt": {
-            "maxLength": 20,
-            "minLength": 0,
+            "minLength": 1,
+            "pattern": "^0\\d{9,10}$",
             "type": "string"
           },
           "email": {
@@ -3321,6 +5698,33 @@
         },
         "additionalProperties": false
       },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
       "SanPham": {
         "required": [
           "tenSanPham",
@@ -3336,11 +5740,6 @@
             "minLength": 1,
             "type": "string"
           },
-          "taiKhoanId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
           "thuongHieuId": {
             "type": "string",
             "format": "uuid",
@@ -3349,18 +5748,8 @@
           "trangThai": {
             "type": "boolean"
           },
-          "taiKhoan": {
-            "$ref": "#/components/schemas/TaiKhoan"
-          },
           "thuongHieu": {
             "$ref": "#/components/schemas/ThuongHieu"
-          },
-          "sanPhamChiTiets": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SanPhamChiTiet"
-            },
-            "nullable": true
           },
           "sanPhamThanhPhans": {
             "type": "array",
@@ -3375,20 +5764,40 @@
               "$ref": "#/components/schemas/SanPhamChatLieu"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SanPhamBanHangDto": {
+        "type": "object",
+        "properties": {
+          "sanPhamChiTietId": {
+            "type": "string",
+            "format": "uuid"
           },
-          "gioHangChiTiets": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/GioHangChiTiet"
-            },
+          "tenSanPham": {
+            "type": "string",
             "nullable": true
           },
-          "hoaDonChiTiets": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/HoaDonChiTiet"
-            },
+          "tenMauSac": {
+            "type": "string",
             "nullable": true
+          },
+          "tenKichCo": {
+            "type": "string",
+            "nullable": true
+          },
+          "soLuong": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "gia": {
+            "type": "number",
+            "format": "double"
+          },
+          "soLuongTon": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -3482,7 +5891,7 @@
           "sanPham": {
             "$ref": "#/components/schemas/SanPham"
           },
-          "bangKichCo": {
+          "kichCo": {
             "$ref": "#/components/schemas/KichCo"
           },
           "mauSac": {
@@ -3491,11 +5900,106 @@
           "anh": {
             "$ref": "#/components/schemas/Anh"
           },
+          "hoaDonChiTiets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HoaDonChiTiet"
+            },
+            "nullable": true
+          },
           "gioHangChiTiets": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/GioHangChiTiet"
             },
+            "nullable": true
+          },
+          "dotGiamGiaSanPhams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DotGiamGiaSanPham"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SanPhamChiTietDTO": {
+        "type": "object",
+        "properties": {
+          "sanPhamChiTietId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sanPhamId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mauSacId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenSanPham": {
+            "type": "string",
+            "nullable": true
+          },
+          "tenMau": {
+            "type": "string",
+            "nullable": true
+          },
+          "kichCoId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenKichCo": {
+            "type": "string",
+            "nullable": true
+          },
+          "gia": {
+            "minimum": 0.01,
+            "type": "number",
+            "format": "double"
+          },
+          "soLuong": {
+            "maximum": 2147483647,
+            "minimum": 0,
+            "type": "integer",
+            "format": "int32"
+          },
+          "moTa": {
+            "type": "string",
+            "nullable": true
+          },
+          "anhSanPham": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "binary"
+            },
+            "nullable": true
+          },
+          "anhId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "duongDan": {
+            "type": "string",
+            "nullable": true
+          },
+          "ngayTao": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ngaySua": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "trangThai": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           }
         },
@@ -3503,10 +6007,9 @@
       },
       "SanPhamDTO": {
         "required": [
-          "taiKhoanId",
+          "loaiSanPham",
           "tenSanPham",
-          "thuongHieuId",
-          "trangThai"
+          "thuongHieuId"
         ],
         "type": "object",
         "properties": {
@@ -3515,19 +6018,71 @@
             "format": "uuid"
           },
           "tenSanPham": {
-            "minLength": 1,
+            "maxLength": 255,
+            "minLength": 0,
             "type": "string"
           },
-          "taiKhoanId": {
-            "type": "string",
-            "format": "uuid"
+          "loaiSanPham": {
+            "minLength": 1,
+            "pattern": "DoAn|DoDung",
+            "type": "string"
+          },
+          "thanhPhanIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          },
+          "chatLieuIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
           },
           "thuongHieuId": {
             "type": "string",
             "format": "uuid"
           },
+          "tenThuongHieu": {
+            "type": "string",
+            "nullable": true
+          },
+          "tenChatLieus": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "tenThanhPhans": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "ngayTao": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ngaySua": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "trangThai": {
             "type": "boolean"
+          },
+          "sanPhamChiTiets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SanPhamChiTietDTO"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -3603,19 +6158,66 @@
           },
           "nhanVien": {
             "$ref": "#/components/schemas/NhanVien"
-          },
-          "sanPhams": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SanPham"
-            },
+          }
+        },
+        "additionalProperties": false
+      },
+      "TaoHoaDonRequest": {
+        "type": "object",
+        "properties": {
+          "khachHangId": {
+            "type": "string",
+            "format": "uuid",
             "nullable": true
           },
-          "hoaDons": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/HoaDon"
-            },
+          "laKhachLe": {
+            "type": "boolean"
+          },
+          "ghiChu": {
+            "type": "string",
+            "nullable": true
+          },
+          "giaoHang": {
+            "type": "boolean"
+          },
+          "diaChiGiaoHangId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "trangThai": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "diaChiMoi": {
+            "$ref": "#/components/schemas/DiaChiMoiDto"
+          },
+          "nhanVienId": {
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TaoKhachHangRequest": {
+        "type": "object",
+        "properties": {
+          "tenKhachHang": {
+            "type": "string",
+            "nullable": true
+          },
+          "sdt": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "diaChi": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -3666,16 +6268,116 @@
             "format": "uuid"
           },
           "tenThanhPhan": {
-            "maxLength": 100,
+            "maxLength": 255,
             "minLength": 0,
             "type": "string"
           },
           "moTa": {
+            "maxLength": 1000,
+            "minLength": 0,
             "type": "string",
             "nullable": true
           },
           "trangThai": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ThanhToanDTO": {
+        "type": "object",
+        "properties": {
+          "khachHangId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "voucherId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "taiKhoanId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "hinhThucThanhToanId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nhanVienId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "diaChiGiaoHangId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenCuaKhachHang": {
+            "type": "string",
+            "nullable": true
+          },
+          "sdtCuaKhachHang": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailCuaKhachHang": {
+            "type": "string",
+            "nullable": true
+          },
+          "loaiHoaDon": {
+            "type": "string",
+            "nullable": true
+          },
+          "ghiChu": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ThanhToanRequest": {
+        "type": "object",
+        "properties": {
+          "hoaDonId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "hinhThucThanhToanId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "voucherId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "tienKhachDua": {
+            "type": "number",
+            "format": "double"
+          },
+          "ghiChuThanhToan": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ThemSanPhamRequest": {
+        "required": [
+          "sanPhamChiTietId"
+        ],
+        "type": "object",
+        "properties": {
+          "sanPhamChiTietId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "soLuong": {
+            "maximum": 1000,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -3761,6 +6463,8 @@
       },
       "ThuongHieuDTO": {
         "required": [
+          "email",
+          "sdt",
           "tenThuongHieu",
           "trangThai"
         ],
@@ -3777,14 +6481,14 @@
             "type": "string"
           },
           "email": {
+            "minLength": 1,
             "type": "string",
-            "format": "email",
-            "nullable": true
+            "format": "email"
           },
           "sdt": {
-            "type": "string",
-            "format": "tel",
-            "nullable": true
+            "minLength": 1,
+            "pattern": "^0\\d{9,10}$",
+            "type": "string"
           },
           "diaChi": {
             "type": "string",
@@ -3800,8 +6504,60 @@
         },
         "additionalProperties": false
       },
+      "ValidateVoucherRequest": {
+        "type": "object",
+        "properties": {
+          "voucherCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "tongTienHang": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidationProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
       "Voucher": {
         "required": [
+          "maVoucher",
           "ngayBatDau",
           "ngayKetThuc",
           "ngayTao",
@@ -3815,8 +6571,14 @@
             "type": "string",
             "format": "uuid"
           },
+          "maVoucher": {
+            "maxLength": 50,
+            "minLength": 0,
+            "type": "string"
+          },
           "tenVoucher": {
-            "minLength": 1,
+            "maxLength": 100,
+            "minLength": 0,
             "type": "string"
           },
           "ngayBatDau": {
@@ -3838,6 +6600,8 @@
             "format": "int32"
           },
           "soLuong": {
+            "maximum": 2147483647,
+            "minimum": 1,
             "type": "integer",
             "format": "int32"
           },
@@ -3845,9 +6609,64 @@
             "type": "string",
             "format": "date-time"
           },
+          "giaTriGiamToiDa": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "soTienApDungToiThieu": {
+            "minimum": 0,
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "ngayCapNhat": {
             "type": "string",
             "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoucherDto": {
+        "type": "object",
+        "properties": {
+          "voucherId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "maVoucher": {
+            "type": "string",
+            "nullable": true
+          },
+          "tenVoucher": {
+            "type": "string",
+            "nullable": true
+          },
+          "phanTramGiam": {
+            "type": "number",
+            "format": "double"
+          },
+          "giaTriGiamToiDa": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "soTienApDungToiThieu": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ngayHetHan": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "apDung": {
+            "type": "boolean"
+          },
+          "moTa": {
+            "type": "string",
             "nullable": true
           }
         },

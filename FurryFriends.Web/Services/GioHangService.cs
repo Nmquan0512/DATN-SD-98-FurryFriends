@@ -51,10 +51,18 @@ namespace FurryFriends.Web.Services
 
 
 
-        public async Task UpdateSoLuongAsync(Guid chiTietId, int soLuong)
+        public async Task<(bool Success, string Message)> UpdateSoLuongAsync(Guid chiTietId, int soLuong)
         {
             var response = await _httpClient.PutAsJsonAsync($"/api/GioHang/update/{chiTietId}", soLuong);
-            response.EnsureSuccessStatusCode();
+            if (response.IsSuccessStatusCode)
+            {
+                return (true, "Cập nhật số lượng thành công");
+            }
+
+            // Đọc lỗi từ API
+            var errorJson = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+            var errorMessage = errorJson?.Message ?? "Có lỗi xảy ra khi cập nhật số lượng";
+            return (false, errorMessage);
         }
 
         public async Task RemoveAsync(Guid chiTietId)
@@ -134,6 +142,9 @@ namespace FurryFriends.Web.Services
 
             return await response.Content.ReadFromJsonAsync<ThanhToanResultViewModel>();
         }
-
+        public class ApiErrorResponse
+        {
+            public string Message { get; set; }
+        }
     }
 }

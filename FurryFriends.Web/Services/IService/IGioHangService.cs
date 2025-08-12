@@ -19,7 +19,7 @@ namespace FurryFriends.Web.Services.IService
     {
         Task<GioHangDTO> GetGioHangAsync(Guid khachHangId);
         Task AddToCartAsync(AddToCartDTO dto);
-        Task UpdateSoLuongAsync(Guid chiTietId, int soLuong);
+        Task<(bool Success, string Message)> UpdateSoLuongAsync(Guid chiTietId, int soLuong);
         Task RemoveAsync(Guid chiTietId);
         Task<decimal> TinhTongTienSauVoucher(Guid khachHangId, Guid voucherId);
         Task<ThanhToanResultViewModel> ThanhToanAsync(ThanhToanDTO dto);

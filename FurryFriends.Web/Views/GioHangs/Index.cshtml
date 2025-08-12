@@ -17,6 +17,26 @@
     // Sử dụng thông tin từ ViewBag nếu có, nếu không thì tính mặc định
     decimal shipping = phiVanChuyen ?? (subTotal >= 500000 ? 0 : 30000);
     decimal grandTotal = tienSauGiam.HasValue ? tienSauGiam.Value : (subTotal + shipping);
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i> @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["Loi"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Loi"]
+        </div>
+    }
+
 }
 
 @section Styles {

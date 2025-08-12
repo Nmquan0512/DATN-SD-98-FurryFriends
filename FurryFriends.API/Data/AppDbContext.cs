@@ -13,7 +13,7 @@ namespace FurryFriends.API.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DELL\\SQLEXPRESS;Database=DATN1;Trusted_Connection=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Data Source=PHUNGHUYTRUONG\\SQLEXPRESS01;Initial Catalog=MuaHangHoanThien;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
             }
         }
 
@@ -182,7 +182,7 @@ namespace FurryFriends.API.Data
                 .HasOne(hd => hd.KhachHang)
                 .WithMany(kh => kh.HoaDons)
                 .HasForeignKey(hd => hd.KhachHangId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<HoaDon>()
                 .HasOne(hd => hd.Voucher)

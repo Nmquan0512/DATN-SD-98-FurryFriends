@@ -1,10 +1,11 @@
 ﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
+using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Net.Http;
 using System.Text;
-using Newtonsoft.Json;
-using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -49,8 +50,18 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid) return View(giamGia);
 
-            var success = await _giamGiaService.CreateAsync(giamGia);
-            if (success)
+            var dto = new GiamGiaDTO
+            {
+                GiamGiaId = giamGia.GiamGiaId,
+                TenGiamGia = giamGia.TenGiamGia,
+                PhanTramKhuyenMai = giamGia.PhanTramKhuyenMai,
+                NgayBatDau = giamGia.NgayBatDau,
+                NgayKetThuc = giamGia.NgayKetThuc,
+                TrangThai = giamGia.TrangThai
+            };
+
+            var success = await _giamGiaService.CreateAsync(dto);
+            if (success != null)
             {
                 // Gửi thông báo
                 var thongBao = new {
@@ -87,7 +98,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             if (id != giamGia.GiamGiaId) return BadRequest();
             if (!ModelState.IsValid) return View(giamGia);
 
-            var success = await _giamGiaService.UpdateAsync(id, giamGia);
+            var dto = new GiamGiaDTO
+            {
+                GiamGiaId = giamGia.GiamGiaId,
+                TenGiamGia = giamGia.TenGiamGia,
+                PhanTramKhuyenMai = giamGia.PhanTramKhuyenMai,
+                NgayBatDau = giamGia.NgayBatDau,
+                NgayKetThuc = giamGia.NgayKetThuc,
+                TrangThai = giamGia.TrangThai
+            };
+
+            var success = await _giamGiaService.UpdateAsync(id, dto);
             if (success) return RedirectToAction(nameof(Index));
 
             ModelState.AddModelError("", "Cập nhật thất bại.");

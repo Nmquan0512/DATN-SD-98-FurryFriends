@@ -232,6 +232,16 @@ namespace FurryFriends.API.Repository
             if (gioHangChiTiet == null)
                 return null;
 
+            var soLuongTonKho = gioHangChiTiet.SanPhamChiTiet?.SoLuong ?? 0;
+
+            // ✅ Kiểm tra số lượng yêu cầu có vượt quá tồn kho hay không
+            if (soLuong > soLuongTonKho)
+            {
+                throw new InvalidOperationException(
+                    $"Số lượng sản phẩm trong kho không đủ. Hiện chỉ còn {soLuongTonKho} sản phẩm."
+                );
+            }
+
             Console.WriteLine($"🔍 [Repository] UpdateSoLuongAsync - Trước khi cập nhật:");
             Console.WriteLine($"  - Số lượng cũ: {gioHangChiTiet.SoLuong}");
             Console.WriteLine($"  - Đơn giá cũ: {gioHangChiTiet.DonGia:N0}");

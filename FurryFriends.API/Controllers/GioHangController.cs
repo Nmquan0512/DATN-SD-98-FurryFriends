@@ -72,8 +72,15 @@ namespace FurryFriends.API.Controllers
         [HttpPut("update/{gioHangChiTietId}")]
         public async Task<IActionResult> UpdateSoLuong(Guid gioHangChiTietId, [FromBody] int soLuong)
         {
-            var result = await _repo.UpdateSoLuongAsync(gioHangChiTietId, soLuong);
-            return Ok(result);
+            try
+            {
+                var result = await _repo.UpdateSoLuongAsync(gioHangChiTietId, soLuong);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpDelete("delete/{gioHangChiTietId}")]

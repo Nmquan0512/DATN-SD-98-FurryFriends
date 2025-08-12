@@ -159,8 +159,16 @@ namespace FurryFriends.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateQuantity(Guid chiTietId, int soLuong, Guid? voucherId)
         {
-            await _gioHangService.UpdateSoLuongAsync(chiTietId, soLuong);
-            return RedirectToAction("Index", new { voucherId });
+            var result = await _gioHangService.UpdateSoLuongAsync(chiTietId, soLuong);
+
+    if (!result.Success)
+    {
+        TempData["ErrorMessage"] = result.Message;
+        return RedirectToAction("Index", new { voucherId });
+    }
+
+    TempData["SuccessMessage"] = result.Message;
+    return RedirectToAction("Index", new { voucherId });
         }
 
         [HttpPost]
@@ -222,6 +230,42 @@ namespace FurryFriends.Web.Controllers
                 ModelState.AddModelError("HinhThucThanhToanId", "Vui lòng chọn hình thức thanh toán.");
                 return View(dto);
             }
+            // 🔍 Kiểm tra voucher nếu có
+            if (dto.VoucherId.HasValue && dto.VoucherId != Guid.Empty)
+            {
+                try
+                {
+                    var voucher = await _voucherService.GetByIdAsync(dto.VoucherId.Value);
+                    if (voucher == null)
+                    {
+                        TempData["Loi"] = "Voucher không tồn tại hoặc đã bị xóa.";
+                        return RedirectToAction("Index", "GioHangs");
+                    }
+
+                    if (voucher.TrangThai == 0)
+                    {
+                        TempData["Loi"] = "Voucher đang ở trạng thái không hoạt động.";
+                        return RedirectToAction("Index", "GioHangs");
+                    }
+                    if (voucher.NgayKetThuc < DateTime.Now)
+                    {
+                        TempData["Loi"] = "Voucher đã hết hạn sử dụng.";
+                        return RedirectToAction("Index", "GioHangs");
+                    }
+                    if (voucher.SoLuong <= 0)
+                    {
+                        TempData["Loi"] = "Voucher đã hết số lượng.";
+                        return RedirectToAction("Index", "GioHangs");
+                    }
+                }
+                catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    TempData["Loi"] = "Voucher không tồn tại hoặc đã bị xóa.";
+                    return RedirectToAction("Index", "GioHangs");
+                }
+            }
+
+
 
             // Bổ sung: nếu VoucherId không bind được từ form, thử lấy từ form/query thủ công
             if (!dto.VoucherId.HasValue)

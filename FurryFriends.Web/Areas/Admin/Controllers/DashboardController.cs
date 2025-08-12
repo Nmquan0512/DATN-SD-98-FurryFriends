@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
+using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AuthorizeAdminOnly]
     public class DashboardController : Controller
     {
         private readonly IHoaDonService _hoaDonService;

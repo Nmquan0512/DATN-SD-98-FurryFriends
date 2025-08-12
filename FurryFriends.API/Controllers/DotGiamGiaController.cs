@@ -49,7 +49,7 @@ namespace FurryFriends.API.Controllers
             if (existing == null) return NotFound();
 
             existing.GiamGiaId = updated.GiamGiaId;
-            existing.SanPhamId = updated.SanPhamId;
+            existing.SanPhamChiTietId = updated.SanPhamChiTietId;
             existing.PhanTramGiamGia = updated.PhanTramGiamGia;
             existing.TrangThai = updated.TrangThai;
             existing.NgayCapNhat = DateTime.UtcNow;
