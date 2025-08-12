@@ -277,6 +277,7 @@ namespace FurryFriends.API.Controllers
                 var response = new LoginResponse
                 {
                     TaiKhoanId = taiKhoan.TaiKhoanId,
+                    KhachHangId = taiKhoan.KhachHang?.KhachHangId ?? Guid.Empty, //sửa cho thêm dòng này
                     Role = actualRole,
                     HoTen = hoTen
                 };

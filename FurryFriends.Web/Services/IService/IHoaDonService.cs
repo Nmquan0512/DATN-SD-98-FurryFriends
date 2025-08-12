@@ -14,6 +14,7 @@ namespace FurryFriends.Web.Services.IService
         Task<ApiResult> CapNhatTrangThaiAsync(Guid hoaDonId, int trangThaiMoi);
         Task<IEnumerable<HoaDon>> GetAllAsync();
         Task<HoaDon> GetByIdAsync(Guid id);
+        Task<IEnumerable<HoaDonChiTiet>> GetChiTietHoaDonAsync(Guid hoaDonId);
         
         // Dashboard methods
         Task<int> GetTotalOrdersAsync();

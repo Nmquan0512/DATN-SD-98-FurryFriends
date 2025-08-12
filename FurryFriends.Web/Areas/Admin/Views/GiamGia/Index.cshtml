@@ -1,54 +1,28 @@
-﻿@model IEnumerable<FurryFriends.API.Models.DTO.GiamGiaDTO>
+﻿@using FurryFriends.API.Models.DTO
+@model IEnumerable<GiamGiaDTO>
+
 @{
-    ViewData["Title"] = "Danh sách chương trình giảm giá";
+    ViewData["Title"] = "Quản lý chương trình giảm giá";
+    var now = DateTime.UtcNow;
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="container-fluid py-4">
+    <!-- Thông báo -->
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i> @TempData["error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-<<<<<<< Updated upstream
-<div class="mb-3">
-    <a asp-action="Create" class="btn btn-primary">+ Tạo mới chương trình</a>
-</div>
-
-<table class="table table-bordered table-striped align-middle">
-    <thead class="table-dark">
-        <tr>
-            <th>Tên</th>
-            <th>Phần trăm (%)</th>
-            <th>Ngày bắt đầu</th>
-            <th>Ngày kết thúc</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.TenGiamGia</td>
-                <td>@item.PhanTramKhuyenMai %</td>
-                <td>@item.NgayBatDau?.ToString("dd/MM/yyyy")</td>
-                <td>@item.NgayKetThuc?.ToString("dd/MM/yyyy")</td>
-                <td>
-                    @if (item.TrangThai)
-                    {
-                        <span class="badge bg-success">Đang áp dụng</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-secondary">Ngừng áp dụng</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.GiamGiaId" class="btn btn-sm btn-info">Chi tiết</a>
-                    <a asp-action="Edit" asp-route-id="@item.GiamGiaId" class="btn btn-sm btn-warning">Sửa</a>
-                    <a asp-action="AddSanPham" asp-route-id="@item.GiamGiaId" class="btn btn-sm btn-primary">Gán sản phẩm</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-=======
     <!-- Tiêu đề và nút thêm mới -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><i class="fas fa-tags me-2 text-primary"></i>@ViewData["Title"]</h2>
@@ -224,4 +198,3 @@
         }
     </script>
 }
->>>>>>> Stashed changes

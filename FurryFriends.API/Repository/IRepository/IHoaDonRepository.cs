@@ -10,5 +10,6 @@ namespace FurryFriends.API.Repository.IRepository
         Task<byte[]> ExportHoaDonToPdfAsync(Guid hoaDonId);
         Task<ApiResult> HuyDonHangAsync(Guid hoaDonId);
         Task<ApiResult> CapNhatTrangThaiAsync(Guid hoaDonId, int trangThaiMoi);
+        Task<IEnumerable<HoaDonChiTiet>> GetChiTietHoaDonAsync(Guid hoaDonId);
     }
 }

@@ -105,6 +105,12 @@
                                 <span>Quản lý ảnh</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="@Url.Action("Index", "BanHang", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "BanHang" ? "active" : "")">
+                                <i class="nav-icon fas fa-image"></i>
+                                <span>BanHang</span>
+                            </a>
+                        </li>
 @*                         <li>
                             <a href="@Url.Action("Index", "DanhMuc", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DanhMuc" ? "active" : "")">
                                 <i class="nav-icon fas fa-tags"></i>
@@ -154,9 +160,7 @@
                             </a>
                         </li>
                         <li>
-<<<<<<< Updated upstream
-                            <a href="@Url.Action("Index", "GiamGias", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "GiamGias" ? "active" : "")">
-=======
+
                             <a href="@Url.Action("Index", "DonHang", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DonHang" ? "active" : "")">
                                 <i class="nav-icon fas fa-boxes"></i>
                                 <span>Quản lý đơn hàng</span>
@@ -164,7 +168,7 @@
                         </li>
                         <li>
                             <a href="@Url.Action("Index", "GiamGia", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "GiamGias" ? "active" : "")">
->>>>>>> Stashed changes
+
                                 <i class="nav-icon fas fa-percent"></i>
                                 <span>Giảm giá</span>
                             </a>

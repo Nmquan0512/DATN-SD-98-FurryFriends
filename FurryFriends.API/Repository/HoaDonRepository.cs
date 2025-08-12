@@ -25,9 +25,8 @@ namespace FurryFriends.API.Repository
             {
                 var hoaDons = await _context.HoaDons
                     .Include(h => h.HoaDonChiTiets)
-                        .ThenInclude(ct => ct.SanPham)
+                        .ThenInclude(ct => ct.SanPhamChiTiet)
                     .Include(h => h.KhachHang)
-                    .Include(h => h.TaiKhoan)
                     .Include(h => h.Voucher)
                     .Include(h => h.HinhThucThanhToan)
                     .Include(h => h.DiaChiGiaoHang) // ✅ Include địa chỉ giao hàng
@@ -59,9 +58,6 @@ namespace FurryFriends.API.Repository
                                  .Include(h => h.NhanVien)
                                  .Include(h => h.Voucher)
                                  .Include(h => h.HoaDonChiTiets)
-<<<<<<< Updated upstream
-                                 .ThenInclude(ct => ct.SanPham)
-=======
                                     .ThenInclude(ct => ct.SanPhamChiTiet)
                                         .ThenInclude(spc => spc.SanPham)
                                  .Include(h => h.HoaDonChiTiets)
@@ -73,7 +69,6 @@ namespace FurryFriends.API.Repository
                                  .Include(h => h.HoaDonChiTiets)
                                     .ThenInclude(ct => ct.SanPhamChiTiet)
                                         .ThenInclude(spc => spc.KichCo)
->>>>>>> Stashed changes
                                  .FirstOrDefaultAsync(h => h.HoaDonId == hoaDonId);
 
             if (hoaDon == null)
@@ -310,9 +305,6 @@ namespace FurryFriends.API.Repository
                     tongTienHang += thanhTien;
 
                     AddEnhancedProductRow(detailTable, stt.ToString(), normalFont, rowColor);
-<<<<<<< Updated upstream
-                    AddEnhancedProductRow(detailTable, chiTiet.SanPham?.TenSanPham ?? "N/A", normalFont, rowColor);
-=======
                     
                     // ✅ Sử dụng tên sản phẩm lúc mua (snapshot)
                     var tenSp = chiTiet.TenSanPhamLucMua ?? "N/A";
@@ -324,7 +316,6 @@ namespace FurryFriends.API.Repository
                     var bienThe = $"{mauSac} - {kichCo}";
                     AddEnhancedProductRow(detailTable, bienThe, normalFont, rowColor, Element.ALIGN_CENTER);
                     
->>>>>>> Stashed changes
                     AddEnhancedProductRow(detailTable, chiTiet.SoLuongSanPham.ToString(), normalFont, rowColor, Element.ALIGN_CENTER);
                     AddEnhancedProductRow(detailTable, donGiaHienThi.ToString("N0") + "đ", normalFont, rowColor, Element.ALIGN_RIGHT);
                     AddEnhancedProductRow(detailTable, thanhTien.ToString("N0") + "đ", boldFont, rowColor, Element.ALIGN_RIGHT);
@@ -680,6 +671,30 @@ namespace FurryFriends.API.Repository
             }
 
             return $"Không thể chuyển đơn hàng từ '{trangThaiHienTaiText}' sang '{trangThaiMoiText}'";
+        }
+
+        // Lấy chi tiết hóa đơn
+        public async Task<IEnumerable<HoaDonChiTiet>> GetChiTietHoaDonAsync(Guid hoaDonId)
+        {
+            try
+            {
+                if (hoaDonId == Guid.Empty)
+                {
+                    throw new ArgumentException("ID hóa đơn không hợp lệ");
+                }
+
+                var chiTietHoaDon = await _context.HoaDonChiTiets
+                    .Where(ct => ct.HoaDonId == hoaDonId)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                return chiTietHoaDon ?? new List<HoaDonChiTiet>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetChiTietHoaDonAsync: {ex.Message}");
+                return new List<HoaDonChiTiet>();
+            }
         }
     }
 }

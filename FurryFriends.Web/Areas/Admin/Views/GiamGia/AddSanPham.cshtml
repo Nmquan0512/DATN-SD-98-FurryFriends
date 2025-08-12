@@ -1,14 +1,18 @@
-﻿@model FurryFriends.Web.ViewModels.GiamGiaCreateViewModel
-
+﻿@model FurryFriends.Web.ViewModels.GiamGiaAssignProductsViewModel
 @{
-    ViewData["Title"] = "Thêm sản phẩm vào đợt giảm giá";
+    ViewData["Title"] = "Gán sản phẩm cho chương trình giảm giá";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mt-4">
+            <i class="fas fa-tags me-2"></i>@ViewData["Title"]
+        </h1>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Quay lại
+        </a>
+    </div>
 
-<<<<<<< Updated upstream
-<h4 class="mb-4">Đợt giảm giá: <strong>@Model.GiamGia.TenGiamGia</strong></h4>
-=======
     <div class="card mb-4">
         <div class="card-header bg-primary text-white">
             <i class="fas fa-info-circle me-2"></i>Thông tin chương trình
@@ -24,7 +28,7 @@
                 <div class="col-md-3">
                     <div class="mb-3">
                         <label class="form-label fw-bold">Giảm giá:</label>
-                        <p class="form-control-plaintext">@Model.GiamGia.PhanTramKhuyenMai.ToString("F0")%</p>
+                        <p class="form-control-plaintext">@Model.GiamGia.PhanTramKhuyenMai%</p>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -45,70 +49,177 @@
             </div>
         </div>
     </div>
->>>>>>> Stashed changes
 
-<form asp-action="AddSanPham" method="post">
-    <input type="hidden" asp-for="GiamGia.GiamGiaId" />
+    @if (Model.SanPhamChiTiets == null || !Model.SanPhamChiTiets.Any())
+    {
+        <div class="alert alert-info">Không có sản phẩm nào để gán.</div>
+    }
+    else
+    {
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas fa-boxes me-2"></i>Danh sách sản phẩm
+                    </div>
+                    <div>
+                        <span class="badge bg-light text-dark fs-6">
+                            Đã chọn: <span id="selectedCount">@Model.SanPhamChiTietIds.Count</span> sản phẩm
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="productFilter" class="form-control" placeholder="Tìm kiếm sản phẩm..." />
+                    </div>
+                </div>
 
-    <table class="table table-bordered table-striped mt-3 align-middle">
-        <thead class="table-dark text-center">
-            <tr>
-                <th>Chọn</th>
-                <th>Ảnh</th>
-                <th>Tên sản phẩm</th>
-                <th>Màu sắc</th>
-                <th>Kích cỡ</th>
-                <th>Giá bán</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.SanPhamChiTietList.Count; i++)
-            {
-                var sp = Model.SanPhamChiTietList[i];
-                <tr>
-                    <td class="text-center">
-                        <input type="checkbox"
-                               name="SanPhamChiTietList[@i].DuocChon"
-                               value="true"
-                               @(sp.DuocChon ? "checked" : "") />
-                        <input type="hidden" name="SanPhamChiTietList[@i].DuocChon" value="false" />
-                        <input type="hidden" name="SanPhamChiTietList[@i].SanPhamChiTietId" value="@sp.SanPhamChiTietId" />
-                        <input type="hidden" name="SanPhamChiTietList[@i].TenSanPham" value="@sp.TenSanPham" />
-                        <input type="hidden" name="SanPhamChiTietList[@i].TenMau" value="@sp.TenMau" />
-                        <input type="hidden" name="SanPhamChiTietList[@i].TenKichCo" value="@sp.TenKichCo" />
-                        <input type="hidden" name="SanPhamChiTietList[@i].Gia" value="@sp.Gia" />
-                        <input type="hidden" name="SanPhamChiTietList[@i].DuongDan" value="@sp.DuongDan" />
-                    </td>
-                    <td class="text-center">
-                        @if (!string.IsNullOrEmpty(sp.DuongDan))
+                <form asp-action="AssignProducts" method="post" id="assignProductsForm">
+                    <input type="hidden" asp-for="GiamGia.GiamGiaId" />
+
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="productGrid">
+                        @foreach (var product in Model.SanPhamChiTiets)
                         {
-                            <img src="@sp.DuongDan" alt="Ảnh" style="max-width: 70px; max-height: 70px;" />
+                            <div class="col product-item" data-search="@($"{product.TenSanPham} {product.TenMau} {product.TenKichCo}".ToLower())">
+                                <div class="card h-100 shadow-sm @(product.DuocChon ? "border-success" : "")">
+                                    <div class="card-img-top position-relative">
+                                        <img src="@product.AnhSanPham" class="img-fluid" style="height: 200px; width: 100%; object-fit: cover;" alt="@product.TenSanPham">
+                                        <div class="position-absolute top-0 end-0 p-2">
+                                            <input type="checkbox"
+                                                   name="SanPhamChiTietIds"
+                                                   value="@product.SanPhamChiTietId"
+                                                   class="form-check-input product-checkbox"
+                                                   style="width: 1.2rem; height: 1.2rem;"
+                                                   @(product.DuocChon ? "checked" : "") />
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title text-truncate" title="@product.TenSanPham">@product.TenSanPham</h5>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-info text-dark">@product.GiaDisplay</span>
+                                        </div>
+                                        <div class="mb-1">
+                                            <i class="fas fa-palette me-1"></i> <strong>Màu:</strong> @product.TenMau
+                                        </div>
+                                        <div class="mb-1">
+                                            <i class="fas fa-ruler-combined me-1"></i> <strong>Size:</strong> @product.TenKichCo
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         }
-                        else
-                        {
-                            <span class="text-muted">Không có ảnh</span>
-                        }
-                    </td>
-                    <td>@sp.TenSanPham</td>
-                    <td>@sp.TenMau</td>
-                    <td>@sp.TenKichCo</td>
-                    <td>@sp.Gia.ToString("N0") đ</td>
-                </tr>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="fas fa-save me-2"></i>Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .product-item .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+            .product-item .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             }
-        </tbody>
-    </table>
 
-    <div class="mt-3">
-        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-        <a asp-action="Details" asp-route-id="@Model.GiamGia.GiamGiaId" class="btn btn-secondary ms-2">Quay lại</a>
-    </div>
-</form>
+            .product-item .card.border-success {
+                border-width: 2px;
+                box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.1);
+            }
+
+        .product-checkbox {
+            cursor: pointer;
+        }
+
+        .card-title.text-truncate {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Update selected count and card styling
+            function updateSelection() {
+                const selectedCount = $('.product-checkbox:checked').length;
+                $('#selectedCount').text(selectedCount);
+
+                $('.product-item .card').each(function() {
+                    const $checkbox = $(this).find('.product-checkbox');
+                    $(this).toggleClass('border-success', $checkbox.is(':checked'));
+                });
+            }
+
+            // Product filtering
+            $('#productFilter').on('input', function() {
+                const searchTerm = $(this).val().toLowerCase();
+                $('.product-item').each(function() {
+                    const searchText = $(this).attr('data-search');
+                    $(this).toggle(searchText.includes(searchTerm));
+                });
+            });
+
+            // Toggle selection when clicking on card
+            $('.product-item .card').click(function(e) {
+                if (!$(e.target).is('input')) {
+                    const $checkbox = $(this).find('.product-checkbox');
+                    $checkbox.prop('checked', !$checkbox.prop('checked'));
+                    updateSelection();
+                }
+            });
+
+            // Update selection when checkbox changes
+            $('.product-checkbox').change(updateSelection);
+
+            // Initialize selection count
+            updateSelection();
+        });
+    </script>
+}
 
 @if (TempData["success"] != null)
 {
-    <div class="alert alert-success mt-3">@TempData["success"]</div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <strong class="me-auto">Thành công</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                @TempData["success"]
+            </div>
+        </div>
+    </div>
 }
+
 @if (TempData["error"] != null)
 {
-    <div class="alert alert-danger mt-3">@TempData["error"]</div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-danger text-white">
+                <strong class="me-auto">Lỗi</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toaast-body">
+                @TempData["error"]
+            </div>
+        </div>
+    </div>
 }

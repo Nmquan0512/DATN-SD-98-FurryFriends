@@ -9,13 +9,13 @@ namespace FurryFriends.API.Models
 
         [Required]
         [StringLength(100)]
-        public string TenChatLieu { get; set; }
+        public string TenChatLieu { get; set; } = string.Empty;
 
-        public string MoTa { get; set; }
+        public string? MoTa { get; set; }
 
         [Required]
         public bool TrangThai { get; set; }
 
-        public virtual ICollection<SanPhamChatLieu> SanPhamChatLieus { get; set; }
+        public virtual ICollection<SanPhamChatLieu> SanPhamChatLieus { get; set; } = new List<SanPhamChatLieu>();
     }
 }

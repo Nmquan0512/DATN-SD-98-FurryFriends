@@ -1,0 +1,16 @@
+﻿@model IEnumerable<FurryFriends.API.Models.DTO.BanHang.KhachHangDto>
+
+@if (Model.Any())
+{
+    @foreach (var kh in Model)
+    {
+        <a href="#" class="list-group-item list-group-item-action select-customer-btn" data-id="@kh.KhachHangId">
+            <h6 class="mb-1">@kh.TenKhachHang</h6>
+            <small>@kh.SDT</small>
+        </a>
+    }
+}
+else
+{
+    <div class="list-group-item">Không tìm thấy khách hàng.</div>
+}

@@ -58,11 +58,7 @@
                                 <th class="bg-light">Địa chỉ</th>
                                 <td>
                                     @{
-<<<<<<< Updated upstream
-                                        var diaChi = Model.KhachHang?.DiaChiKhachHangs?.FirstOrDefault();
-=======
                                         var diaChi = Model.DiaChiGiaoHang; // Sử dụng địa chỉ giao hàng đã lưu trên hóa đơn
->>>>>>> Stashed changes
                                         if (diaChi != null)
                                         {
                                             <text>@diaChi.TenDiaChi @if(!string.IsNullOrWhiteSpace(diaChi.MoTa)){<text>- @diaChi.MoTa</text>} , @diaChi.PhuongXa, @diaChi.ThanhPho</text>
@@ -104,22 +100,27 @@
                                     {
                                         case 0:
                                             <span class="badge bg-warning text-dark">Chờ xác nhận</span>
-                                            break;
+                                            ; break;
                                         case 1:
+
                                             <span class="badge bg-info text-white">Đã xác nhận</span>
-                                            break;
+                                            ; break;
                                         case 2:
+
                                             <span class="badge bg-primary">Đang giao</span>
-                                            break;
+                                            ; break;
                                         case 3:
+
                                             <span class="badge bg-success">Hoàn thành</span>
-                                            break;
+                                            ; break;
                                         case 4:
+
                                             <span class="badge bg-danger">Đã hủy</span>
-                                            break;
+                                            ; break;
                                         default:
+
                                             <span class="badge bg-secondary">Không xác định</span>
-                                            break;
+                                            ; break;
                                     }
                                 </td>
                             </tr>
@@ -129,20 +130,7 @@
                             </tr>
                             <tr>
                                 <th class="bg-light">Người tạo hóa đơn</th>
-                                <td>
-                                    @if (Model.LoaiHoaDon == "BanTaiQuay")
-                                    {
-                                        @Model.NhanVien?.HoVaTen
-                                    }
-                                    else if (Model.LoaiHoaDon == "BanTrucTiep")
-                                    {
-                                        <span>Được tạo bởi hệ thống</span>
-                                    }
-                                    else
-                                    {
-                                        <span>-</span>
-                                    }
-                                </td>
+                                <td>@Model.NhanVien?.HoVaTen</td>
                             </tr>
                         </table>
                     </div>
@@ -166,40 +154,29 @@
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-<<<<<<< Updated upstream
-                                        @if (item.SanPham?.SanPhamChiTiets?.FirstOrDefault()?.Anh != null)
-                                        {
-                                            <img src="@item.SanPham.SanPhamChiTiets.FirstOrDefault().Anh.DuongDan" alt="@item.SanPham.TenSanPham" class="me-2" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">
-=======
-                                        @{ 
+                                        @{
                                             // ✅ Sử dụng ảnh snapshot nếu có, fallback sang ảnh hiện tại
-                                            string imgLink = null; 
+                                            string imgLink = null;
                                             var snapshotImg = item.AnhSanPhamLucMua ?? string.Empty;
                                             var currentImg = item.SanPhamChiTiet?.Anh?.DuongDan ?? string.Empty;
                                             var dd = !string.IsNullOrWhiteSpace(snapshotImg) ? snapshotImg : currentImg;
-                                            
-                                            if (!string.IsNullOrWhiteSpace(dd)) { 
-                                                if (dd.StartsWith("http", StringComparison.OrdinalIgnoreCase)) 
-                                                    imgLink = dd; 
-                                                else if (dd.Contains("/")) 
-                                                    imgLink = "https://localhost:7289/" + dd.TrimStart('/'); 
-                                                else 
-                                                    imgLink = $"https://localhost:7289/images/{System.IO.Path.GetFileName(dd)}"; 
-                                            } 
->>>>>>> Stashed changes
+
+                                            if (!string.IsNullOrWhiteSpace(dd)) {
+                                                if (dd.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                                                    imgLink = dd;
+                                                else if (dd.Contains("/"))
+                                                    imgLink = "https://localhost:7289/" + dd.TrimStart('/');
+                                                else
+                                                    imgLink = $"https://localhost:7289/images/{System.IO.Path.GetFileName(dd)}";
+                                            }
                                         }
                                         @if (!string.IsNullOrEmpty(imgLink)) {<img src="@imgLink" alt="@(item.TenSanPhamLucMua ?? "Sản phẩm")" class="me-2" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">} else {<div class="me-2" style="width: 48px; height: 48px; background-color: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-image text-muted"></i></div>}
                                         <div>
-<<<<<<< Updated upstream
-                                            <div class="fw-semibold">@item.SanPham.TenSanPham</div>
-                                            <small class="text-muted">@item.SanPham.SanPhamId.ToString().Substring(0, 8).ToUpper()</small>
-=======
                                             <div class="fw-semibold">@(item.TenSanPhamLucMua ?? "N/A")</div>
                                             @if (!string.IsNullOrEmpty(item.ThuongHieuLucMua))
                                             {
                                                 <small class="text-muted">@item.ThuongHieuLucMua</small>
                                             }
->>>>>>> Stashed changes
                                         </div>
                                     </div>
                                 </td>
@@ -262,7 +239,7 @@
                 var $btn = $(this);
                 var originalText = $btn.html();
                 var href = $btn.attr('href');
-                
+
 
 
                 // Nếu là link PDF, mở trong tab mới
@@ -279,4 +256,4 @@
             });
         });
     </script>
-} 
+}

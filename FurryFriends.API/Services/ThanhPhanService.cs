@@ -46,6 +46,13 @@ namespace FurryFriends.API.Services
 
         public async Task<ThanhPhanDTO> CreateAsync(ThanhPhanDTO dto)
         {
+            // Kiểm tra trùng tên
+            var existing = await _repository.GetAllAsync();
+            if (existing.Any(x => x.TenThanhPhan.ToLower().Trim() == dto.TenThanhPhan.ToLower().Trim()))
+            {
+                throw new InvalidOperationException("Tên thành phần đã tồn tại.");
+            }
+
             var entity = new ThanhPhan
             {
                 ThanhPhanId = Guid.NewGuid(),
@@ -63,6 +70,13 @@ namespace FurryFriends.API.Services
         {
             var entity = await _repository.GetByIdAsync(id);
             if (entity == null) return false;
+
+            // Kiểm tra trùng tên (trừ chính nó)
+            var allExisting = await _repository.GetAllAsync();
+            if (allExisting.Any(x => x.ThanhPhanId != id && x.TenThanhPhan.ToLower().Trim() == dto.TenThanhPhan.ToLower().Trim()))
+            {
+                throw new InvalidOperationException("Tên thành phần đã tồn tại.");
+            }
 
             entity.TenThanhPhan = dto.TenThanhPhan;
             entity.MoTa = dto.MoTa;

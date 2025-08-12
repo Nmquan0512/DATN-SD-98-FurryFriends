@@ -486,5 +486,46 @@ namespace FurryFriends.Web.Services
                 throw new Exception($"Lỗi khi lấy thông tin hóa đơn: {ex.Message}");
             }
         }
+
+        // ✅ Lấy chi tiết hóa đơn
+        public async Task<IEnumerable<HoaDonChiTiet>> GetChiTietHoaDonAsync(Guid hoaDonId)
+        {
+            try
+            {
+                if (hoaDonId == Guid.Empty)
+                {
+                    throw new ArgumentException("ID hóa đơn không hợp lệ");
+                }
+
+                var response = await _httpClient.GetAsync($"{BaseUrl}/{hoaDonId}/chi-tiet");
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<IEnumerable<HoaDonChiTiet>>();
+                    return result ?? new List<HoaDonChiTiet>();
+                }
+                
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return new List<HoaDonChiTiet>();
+                }
+                
+                throw new Exception($"Lỗi khi lấy chi tiết hóa đơn: {response.StatusCode}");
+            }
+            catch (TaskCanceledException ex)
+            {
+                Console.WriteLine($"Timeout error: {ex.Message}");
+                throw new Exception("Yêu cầu bị timeout. Vui lòng thử lại sau.");
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"HTTP request error: {ex.Message}");
+                throw new Exception("Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"General error: {ex.Message}");
+                throw new Exception($"Lỗi khi lấy chi tiết hóa đơn: {ex.Message}");
+            }
+        }
     }
 } 

@@ -8,19 +8,37 @@ namespace FurryFriends.API.Models.DTO
     {
         public Guid ThanhPhanId { get; set; }
 
-        [Required(ErrorMessage = "Tên thành phần là bắt buộc.")]
-        [StringLength(100, ErrorMessage = "Tên tối đa 100 ký tự.")]
+        [Required(ErrorMessage = "Tên thành phần không được để trống")]
+        [StringLength(255, ErrorMessage = "Tên thành phần không được vượt quá 255 ký tự")]
         public string TenThanhPhan { get; set; }
 
+        [StringLength(1000, ErrorMessage = "Mô tả không được vượt quá 1000 ký tự")]
         public string MoTa { get; set; }
 
-        [Required(ErrorMessage = "Trạng thái là bắt buộc.")]
+        [Required(ErrorMessage = "Trạng thái là bắt buộc")]
         public bool TrangThai { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            var _context = (AppDbContext)validationContext.GetService(typeof(AppDbContext));
+            var results = new List<ValidationResult>();
 
+            // Kiểm tra tên không được null hoặc rỗng
+            if (string.IsNullOrWhiteSpace(TenThanhPhan))
+            {
+                results.Add(new ValidationResult("Tên thành phần không được để trống", new[] { nameof(TenThanhPhan) }));
+                return results;
+            }
+
+            // Kiểm tra ký tự đặc biệt - chỉ từ chối một số ký tự đặc biệt nhất định
+            if (TenThanhPhan.Contains("%") || TenThanhPhan.Contains("@") || TenThanhPhan.Contains("#") || 
+                TenThanhPhan.Contains("$") || TenThanhPhan.Contains("!") || TenThanhPhan.Contains("_"))
+            {
+                results.Add(new ValidationResult("Tên thành phần không được chứa ký tự đặc biệt", new[] { nameof(TenThanhPhan) }));
+                return results;
+            }
+
+            // Kiểm tra trùng tên (nếu có context)
+            var _context = (AppDbContext)validationContext.GetService(typeof(AppDbContext));
             if (_context != null)
             {
                 var isDuplicate = _context.ThanhPhans
@@ -29,9 +47,11 @@ namespace FurryFriends.API.Models.DTO
 
                 if (isDuplicate)
                 {
-                    yield return new ValidationResult("Tên thành phần đã tồn tại.", new[] { nameof(TenThanhPhan) });
+                    results.Add(new ValidationResult("Tên thành phần đã tồn tại", new[] { nameof(TenThanhPhan) }));
                 }
             }
+
+            return results;
         }
     }
 }

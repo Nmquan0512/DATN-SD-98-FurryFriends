@@ -45,5 +45,15 @@ namespace FurryFriends.API.Repository
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<bool> CheckVoucherValidAsync(Guid voucherId) //thêm cái này đề checkvoucher (sửa ở đây)
+        {
+            var voucher = await _context.Vouchers.FirstOrDefaultAsync(v => v.VoucherId == voucherId);
+            if (voucher == null || voucher.TrangThai != 1 || voucher.SoLuong <= 0)
+                return false;
+
+            var now = DateTime.Now;
+            return voucher.NgayBatDau <= now && voucher.NgayKetThuc >= now;
+        }
     }
 }

@@ -1,16 +1,18 @@
-﻿@model FurryFriends.Web.ViewModels.SanPhamFullCreateViewModel;
+﻿@model FurryFriends.Web.ViewModels.SanPhamFullCreateViewModel
+@using Newtonsoft.Json;
 
 @{
     ViewData["Title"] = "Chỉnh sửa sản phẩm";
+    // Chuyển đổi dữ liệu sang JSON để JavaScript sử dụng một cách an toàn
+    var kichCoJson = JsonConvert.SerializeObject((ViewBag.KichCoList as SelectList) ?? new SelectList(Enumerable.Empty<SelectListItem>()));
+    var mauSacJson = JsonConvert.SerializeObject((ViewBag.MauSacList as SelectList) ?? new SelectList(Enumerable.Empty<SelectListItem>()));
+    var chiTietListJson = JsonConvert.SerializeObject(Model.ChiTietList);
 }
 
 <div class="top-bar" style="padding-left: 50px;">
     <h1>@ViewData["Title"]</h1>
     <div class="top-bar-actions">
-        <a asp-area="Admin" asp-action="Index" asp-controller="SanPham" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i>
-            Quay lại
-        </a>
+        <a asp-area="Admin" asp-action="Index" asp-controller="SanPham" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Quay lại</a>
     </div>
 </div>
 
@@ -23,13 +25,6 @@
 </nav>
 
 <div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
-<<<<<<< Updated upstream
-    <form asp-controller="SanPham" asp-action="Edit" method="post" enctype="multipart/form-data" novalidate>
-        <input type="hidden" asp-for="SanPham.SanPhamId" />
-        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-        
-        <!-- Thông tin sản phẩm cơ bản -->
-=======
     <form asp-controller="SanPham" asp-action="Edit" method="post" data-enable-notifications="true">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="SanPham.SanPhamId" />
@@ -52,171 +47,78 @@
         }
 
         <!-- Thông tin sản phẩm cơ bản (Giữ nguyên cấu trúc của bạn, chỉ thêm các class cho checkbox) -->
->>>>>>> Stashed changes
         <div class="card shadow mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-box me-2"></i>Thông tin sản phẩm
-                </h5>
-            </div>
+            <div class="card-header"><h5 class="card-title mb-0"><i class="fas fa-box me-2"></i>Thông tin sản phẩm</h5></div>
             <div class="card-body">
                 <div class="row g-3">
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label asp-for="SanPham.TenSanPham" class="form-label">
-                                <i class="fas fa-tag me-2"></i>Tên sản phẩm <span class="text-danger">*</span>
-                            </label>
-                            <input asp-for="SanPham.TenSanPham" class="form-control" placeholder="Nhập tên sản phẩm..." required />
-                            <span asp-validation-for="SanPham.TenSanPham" class="text-danger small"></span>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label asp-for="SanPham.LoaiSanPham" class="form-label">
-                                <i class="fas fa-list me-2"></i>Loại sản phẩm <span class="text-danger">*</span>
-                            </label>
-                            <select asp-for="SanPham.LoaiSanPham" class="form-select" required onchange="toggleProperties()">
-                                <option value="">-- Chọn loại --</option>
-                                <option value="DoAn">Đồ Ăn</option>
-                                <option value="DoDung">Đồ Dùng</option>
-                            </select>
-                            <span asp-validation-for="SanPham.LoaiSanPham" class="text-danger small"></span>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <label asp-for="SanPham.ThuongHieuId" class="form-label">
-                                <i class="fas fa-crown me-2"></i>Thương hiệu <span class="text-danger">*</span>
-                            </label>
-                            <select asp-for="SanPham.ThuongHieuId" class="form-select" required asp-items="ViewBag.ThuongHieuList">
-                                <option value="">-- Chọn thương hiệu --</option>
-                            </select>
-                            <span asp-validation-for="SanPham.ThuongHieuId" class="text-danger small"></span>
-                        </div>
-                    </div>
-                    <div class="col-lg-6">
-                        <div class="mb-3">
-                            <div class="form-check form-switch">
-                                <input asp-for="SanPham.TrangThai" class="form-check-input" type="checkbox" id="trangThai" />
-                                <label class="form-check-label fw-semibold" for="trangThai">
-                                    <i class="fas fa-toggle-on me-2"></i>Đang hoạt động
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="col-lg-6 mb-3"><label asp-for="SanPham.TenSanPham" class="form-label"><i class="fas fa-tag me-2"></i>Tên sản phẩm <span class="text-danger">*</span></label><input asp-for="SanPham.TenSanPham" class="form-control" /><span asp-validation-for="SanPham.TenSanPham" class="text-danger small"></span></div>
+                    <div class="col-lg-6 mb-3"><label asp-for="SanPham.LoaiSanPham" class="form-label"><i class="fas fa-list me-2"></i>Loại sản phẩm <span class="text-danger">*</span></label><select asp-for="SanPham.LoaiSanPham" class="form-select" onchange="toggleProperties()"><option value="">-- Chọn loại --</option><option value="DoAn">🍽️ Đồ Ăn</option><option value="DoDung">🛠️ Đồ Dùng</option></select><span asp-validation-for="SanPham.LoaiSanPham" class="text-danger small"></span></div>
+                    <div class="col-lg-6 mb-3"><label asp-for="SanPham.ThuongHieuId" class="form-label"><i class="fas fa-crown me-2"></i>Thương hiệu <span class="text-danger">*</span></label><select asp-for="SanPham.ThuongHieuId" class="form-select" asp-items="ViewBag.ThuongHieuList"><option value="">-- Chọn thương hiệu --</option></select><span asp-validation-for="SanPham.ThuongHieuId" class="text-danger small"></span></div>
+                    <div class="col-lg-6 mb-3 d-flex align-items-center"><div class="form-check form-switch mt-3"><input asp-for="SanPham.TrangThai" class="form-check-input" type="checkbox" /><label class="form-check-label fw-semibold" asp-for="SanPham.TrangThai"><i class="fas fa-toggle-on me-2"></i>Đang hoạt động</label></div></div>
                 </div>
-                
-                <!-- Thành phần (cho đồ ăn) -->
-                <div id="thanhPhanSection" style="display: none;" class="mt-4">
-                    <div class="card border-0 bg-light">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="bg-success bg-opacity-10 p-2 rounded me-3">
-                                    <i class="fas fa-leaf text-success"></i>
-                                </div>
-                                <h6 class="mb-0 fw-semibold">Thành phần</h6>
-                            </div>
-                            <div class="row g-3" style="max-height: 200px; overflow-y: auto;">
-                                @foreach (var thanhPhan in ViewBag.ThanhPhanList)
-                                {
-                                    var thanhPhanGuid = Guid.Parse(thanhPhan.Value);
-                                    var isSelected = Model.SanPham.ThanhPhanIds != null && Model.SanPham.ThanhPhanIds.Contains(thanhPhanGuid);
-                                    <div class="col-md-6 col-lg-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="SanPham.ThanhPhanIds" 
-                                                   value="@thanhPhan.Value" id="thanhPhan_@thanhPhan.Value" 
-                                                   @(isSelected ? "checked" : "") />
-                                            <label class="form-check-label @(isSelected ? "fw-bold text-success" : "text-muted")" for="thanhPhan_@thanhPhan.Value">
-                                                <i class="fas fa-check-circle me-2"></i>@thanhPhan.Text
-                                            </label>
-                                        </div>
+
+                <div id="thanhPhanSection" class="mt-4">
+                    <div class="card border-0 bg-light p-3">
+                        <h6 class="mb-3 fw-semibold"><i class="fas fa-leaf text-success me-2"></i>Thành phần</h6><div class="row g-3" style="max-height: 200px; overflow-y: auto;">
+                            @foreach (var thanhPhan in ViewBag.ThanhPhanList as List<SelectListItem> ?? new List<SelectListItem>())
+                            {
+                                var isSelected = Model.SanPham.ThanhPhanIds?.Contains(Guid.Parse(thanhPhan.Value)) ?? false;
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input check-thanhphan" type="checkbox" name="SanPham.ThanhPhanIds" value="@thanhPhan.Value" id="thanhPhan_@thanhPhan.Value" @(isSelected ? "checked" : "") />
+                                        <label class="form-check-label" for="thanhPhan_@thanhPhan.Value">@thanhPhan.Text</label>
                                     </div>
-                                }
-                            </div>
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle me-1"></i>Tích chọn các thành phần có trong sản phẩm
-                            </small>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Chất liệu (cho đồ dùng) -->
-                <div id="chatLieuSection" style="display: none;" class="mt-4">
-                    <div class="card border-0 bg-light">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="bg-warning bg-opacity-10 p-2 rounded me-3">
-                                    <i class="fas fa-cube text-warning"></i>
                                 </div>
-                                <h6 class="mb-0 fw-semibold">Chất liệu</h6>
-                            </div>
-                            <div class="row g-3" style="max-height: 200px; overflow-y: auto;">
-                                @foreach (var chatLieu in ViewBag.ChatLieuList)
-                                {
-                                    var chatLieuGuid = Guid.Parse(chatLieu.Value);
-                                    var isSelected = Model.SanPham.ChatLieuIds != null && Model.SanPham.ChatLieuIds.Contains(chatLieuGuid);
-                                    <div class="col-md-6 col-lg-4">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="SanPham.ChatLieuIds" 
-                                                   value="@chatLieu.Value" id="chatLieu_@chatLieu.Value" 
-                                                   @(isSelected ? "checked" : "") />
-                                            <label class="form-check-label @(isSelected ? "fw-bold text-warning" : "text-muted")" for="chatLieu_@chatLieu.Value">
-                                                <i class="fas fa-check-circle me-2"></i>@chatLieu.Text
-                                            </label>
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle me-1"></i>Tích chọn các chất liệu có trong sản phẩm
-                            </small>
+                            }
                         </div>
                     </div>
                 </div>
+
+                <div id="chatLieuSection" class="mt-4">
+                    <div class="card border-0 bg-light p-3">
+                        <h6 class="mb-3 fw-semibold"><i class="fas fa-cube text-warning me-2"></i>Chất liệu</h6><div class="row g-3" style="max-height: 200px; overflow-y: auto;">
+                            @foreach (var chatLieu in ViewBag.ChatLieuList as List<SelectListItem> ?? new List<SelectListItem>())
+                            {
+                                var isSelected = Model.SanPham.ChatLieuIds?.Contains(Guid.Parse(chatLieu.Value)) ?? false;
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input check-chatlieu" type="checkbox" name="SanPham.ChatLieuIds" value="@chatLieu.Value" id="chatLieu_@chatLieu.Value" @(isSelected ? "checked" : "") />
+                                        <label class="form-check-label" for="chatLieu_@chatLieu.Value">@chatLieu.Text</label>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biến thể sản phẩm -->
+        <div class="card shadow mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0"><i class="fas fa-layer-group me-2"></i>Biến thể sản phẩm</h5>
+                <button type="button" class="btn btn-success btn-sm" id="addVariantBtn"><i class="fas fa-plus me-2"></i>Thêm biến thể</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light"><tr><th>Kích cỡ <span class="text-danger">*</span></th><th>Màu sắc <span class="text-danger">*</span></th><th>Giá bán <span class="text-danger">*</span></th><th>Số lượng <span class="text-danger">*</span></th><th>Mô tả</th><th>Ảnh</th><th></th></tr></thead>
+                        <tbody id="chiTietBody"></tbody>
+                    </table>
+                </div>
+                <div id="variantError" class="text-danger small mt-2"></div>
             </div>
         </div>
 
         <!-- Action Buttons -->
         <div class="d-flex justify-content-end gap-2">
-            <a asp-area="Admin" asp-action="Index" asp-controller="SanPham" class="btn btn-secondary">
-                <i class="fas fa-times me-2"></i>Hủy
-            </a>
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save me-2"></i>Lưu thay đổi
-            </button>
+            <a asp-area="Admin" asp-action="Index" asp-controller="SanPham" class="btn btn-secondary"><i class="fas fa-times me-2"></i>Hủy</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Lưu thay đổi</button>
         </div>
     </form>
 </div>
 
 <!-- Modal chọn ảnh -->
-<<<<<<< Updated upstream
-<div class="modal fade" id="anhModal" tabindex="-1" aria-labelledby="anhModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="anhModalLabel">
-                    <i class="fas fa-images me-2"></i>Chọn ảnh cho biến thể
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row g-3">
-                    @foreach (var anh in (IEnumerable<FurryFriends.API.Models.DTO.AnhDTO>)ViewBag.AnhList)
-                    {
-                        <div class="col-3">
-                            <div class="card border-0 shadow-sm h-100">
-                                <img src="https://localhost:7289@(anh.DuongDan)" 
-                                     class="card-img-top anh-modal-img" 
-                                     style="cursor:pointer;height:120px;object-fit:cover;" 
-                                     data-anh-id="@anh.AnhId" 
-                                     data-duongdan="@anh.DuongDan" 
-                                     onclick="selectAnh(this)" />
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-=======
 <div class="modal fade" id="anhModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -226,61 +128,95 @@
             </div>
             <div class="modal-body">
                 <div class="row" id="anhList">
-                    <!-- Ảnh sẽ được load ở đây -->
+                    @foreach (var anh in (IEnumerable<FurryFriends.API.Models.DTO.AnhDTO>)ViewBag.AnhList)
+                    {
+                        <div class="col-3">
+                            <div class="card border-0 shadow-sm h-100">
+                                <img src="https://localhost:7289@(anh.DuongDan)" class="card-img-top" style="cursor:pointer;height:120px;object-fit:cover;"
+                                     data-anh-id="@anh.AnhId" data-duongdan="@anh.DuongDan" onclick="selectAnh(this)" />
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-            </div>
->>>>>>> Stashed changes
         </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        function toggleProperties() {
-            const loaiSanPham = document.querySelector('select[name="SanPham.LoaiSanPham"]').value;
-            const thanhPhanSection = document.getElementById('thanhPhanSection');
-            const chatLieuSection = document.getElementById('chatLieuSection');
-            
-            if (loaiSanPham === 'DoAn') {
-                thanhPhanSection.style.display = 'block';
-                chatLieuSection.style.display = 'none';
-            } else if (loaiSanPham === 'DoDung') {
-                thanhPhanSection.style.display = 'none';
-                chatLieuSection.style.display = 'block';
-            } else {
-                thanhPhanSection.style.display = 'none';
-                chatLieuSection.style.display = 'none';
-            }
-        }
-        
-        document.addEventListener("DOMContentLoaded", toggleProperties);
+        document.addEventListener('DOMContentLoaded', function () {
+            const chiTietBody = document.getElementById('chiTietBody');
+            const form = document.querySelector('form');
+            let currentAnhBtn = null;
 
-        // Highlight checkbox labels when clicked
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"][name*="ThanhPhanIds"], input[type="checkbox"][name*="ChatLieuIds"]');
-            checkboxes.forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
-                    const label = this.nextElementSibling;
-                    if (this.checked) {
-                        label.classList.add('fw-bold');
-                        if (this.name.includes('ThanhPhanIds')) {
-                            label.classList.add('text-success');
-                            label.classList.remove('text-warning');
-                        } else {
-                            label.classList.add('text-warning');
-                            label.classList.remove('text-success');
-                        }
-                    } else {
-                        label.classList.remove('fw-bold', 'text-success', 'text-warning');
-                        label.classList.add('text-muted');
-                    }
+            const kichCoOptionsData = @Html.Raw(kichCoJson);
+            const mauSacOptionsData = @Html.Raw(mauSacJson);
+            const existingChiTietData = @Html.Raw(chiTietListJson);
+
+            function generateOptions(data, placeholder, selectedValue = '') {
+                let optionsHtml = `<option value="">-- ${placeholder} --</option>`;
+                data.forEach(item => {
+                    const isSelected = item.Value === selectedValue.toString() ? 'selected' : '';
+                    optionsHtml += `<option value="${item.Value}" ${isSelected}>${item.Text}</option>`;
                 });
-<<<<<<< Updated upstream
-=======
+                return optionsHtml;
+            }
+
+            function addChiTietRow(chiTietData = null) {
+                const currentIndex = chiTietBody.rows.length;
+                const newRow = chiTietBody.insertRow();
+
+                // Dùng dữ liệu có sẵn (khi edit) hoặc giá trị mặc định (khi thêm mới)
+                const sanPhamChiTietId = chiTietData?.SanPhamChiTietId || '';
+                const kichCoId = chiTietData?.KichCoId || '';
+                const mauSacId = chiTietData?.MauSacId || '';
+                const giaBan = chiTietData?.GiaBan || 0;
+                const soLuong = chiTietData?.SoLuongTon || 0;
+                const moTa = chiTietData?.MoTa || '';
+                const anhId = chiTietData?.AnhId || '';
+                const duongDan = chiTietData?.DuongDan || '';
+
+                const kichCoOptions = generateOptions(kichCoOptionsData, 'Chọn kích cỡ', kichCoId);
+                const mauSacOptions = generateOptions(mauSacOptionsData, 'Chọn màu sắc', mauSacId);
+                const anhPreview = duongDan ? `<img src="https://localhost:7289${duongDan}" style="max-width:60px;max-height:60px;object-fit:cover;" class="rounded shadow-sm" />` : '';
+
+                newRow.innerHTML = `
+                    <input type="hidden" name="ChiTietList[${currentIndex}].SanPhamChiTietId" value="${sanPhamChiTietId}" />
+                    <td><select name="ChiTietList[${currentIndex}].KichCoId" class="form-select form-select-sm" data-val="true" data-val-required="Vui lòng chọn kích cỡ.">${kichCoOptions}</select><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].KichCoId"></span></td>
+                    <td><select name="ChiTietList[${currentIndex}].MauSacId" class="form-select form-select-sm" data-val="true" data-val-required="Vui lòng chọn màu sắc.">${mauSacOptions}</select><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].MauSacId"></span></td>
+                    <td><div class="input-group input-group-sm"><input name="ChiTietList[${currentIndex}].GiaBan" type="number" class="form-control" value="${giaBan}" min="0" data-val="true" data-val-required="Giá bán là bắt buộc." data-val-range="Giá bán phải lớn hơn hoặc bằng 0." data-val-range-min="0" /><span class="input-group-text">VNĐ</span></div><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].GiaBan"></span></td>
+                    <td><input name="ChiTietList[${currentIndex}].SoLuongTon" type="number" class="form-control form-control-sm" value="${soLuong}" min="0" data-val="true" data-val-required="Số lượng là bắt buộc." data-val-range="Số lượng phải lớn hơn hoặc bằng 0." data-val-range-min="0" /><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].SoLuongTon"></span></td>
+                    <td><input name="ChiTietList[${currentIndex}].MoTa" class="form-control form-control-sm" value="${moTa}" /></td>
+                    <td>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="openAnhModal(this)"><i class="fas fa-image"></i></button>
+                        <input type="hidden" name="ChiTietList[${currentIndex}].AnhId" value="${anhId}" />
+                        <div class="anh-preview mt-1">${anhPreview}</div>
+                    </td>
+                    <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)" title="Xóa biến thể"><i class="fas fa-trash"></i></button></td>
+                `;
+
+                // KÍCH HOẠT LẠI VALIDATION CHO FORM
+                $(form).removeData("validator").removeData("unobtrusiveValidation");
+                $.validator.unobtrusive.parse(form);
+            }
+
+            function updateRowIndexes() {
+                const rows = chiTietBody.querySelectorAll('tr');
+                rows.forEach((row, newIndex) => {
+                    row.querySelectorAll('input, select, span').forEach(element => {
+                        const oldName = element.getAttribute('name');
+                        if (oldName) {
+                            element.setAttribute('name', oldName.replace(/\[\d+\]/, `[${newIndex}]`));
+                        }
+                        const oldFor = element.getAttribute('data-valmsg-for');
+                        if (oldFor) {
+                            element.setAttribute('data-valmsg-for', oldFor.replace(/\[\d+\]/, `[${newIndex}]`));
+                        }
+                    });
+                });
             }
 
             window.removeRow = function(btn) {
@@ -300,119 +236,58 @@
                     }
                 });
             }
-
-            // CÁC HÀM KHÁC GIỮ NGUYÊN
-            window.openAnhModal = function(btn) { 
-                currentAnhBtn = btn; 
-                loadAnhList();
-                new bootstrap.Modal(document.getElementById('anhModal')).show(); 
-            };
             
-            window.selectAnh = function(img) { 
-                const anhId = img.getAttribute('data-anh-id');
-                const duongDan = img.getAttribute('data-duong-dan');
-                
-                // Cập nhật hidden input
-                const row = currentAnhBtn.closest('tr');
-                const anhIdInput = row.querySelector('input[name*="AnhId"]');
-                anhIdInput.value = anhId;
-                
-                // Cập nhật preview
-                const previewDiv = row.querySelector('.anh-preview');
-                previewDiv.innerHTML = `<img src="https://localhost:7289${duongDan}" style="max-width:60px;max-height:60px;object-fit:cover;" class="rounded shadow-sm" />`;
-                
-                // Đóng modal
-                bootstrap.Modal.getInstance(document.getElementById('anhModal')).hide();
-            };
-            
-            function loadAnhList() {
-                fetch('/Admin/Anh/GetAll')
-                    .then(response => response.json())
-                    .then(data => {
-                        const anhList = document.getElementById('anhList');
-                        anhList.innerHTML = '';
-                        
-                        data.forEach(anh => {
-                            const col = document.createElement('div');
-                            col.className = 'col-md-3 mb-3';
-                            col.innerHTML = `
-                                <div class="card h-100" style="cursor: pointer;" onclick="selectAnh(this.querySelector('img'))">
-                                    <img src="https://localhost:7289${anh.duongDan}" 
-                                         class="card-img-top" 
-                                         style="height: 150px; object-fit: cover;"
-                                         data-anh-id="${anh.anhId}"
-                                         data-duong-dan="${anh.duongDan}" />
-                                    <div class="card-body p-2">
-                                        <small class="text-muted">${anh.tenAnh}</small>
-                                    </div>
-                                </div>
-                            `;
-                            anhList.appendChild(col);
-                        });
-                    })
-                    .catch(error => {
-                        console.error('Error loading images:', error);
-                        showError('Không thể tải danh sách ảnh');
-                    });
+            window.openAnhModal = function(btn) {
+                currentAnhBtn = btn;
+                new bootstrap.Modal(document.getElementById('anhModal')).show();
             }
+
+            window.selectAnh = function(img) {
+                const anhId = img.dataset.anhId;
+                const duongDan = img.dataset.duongdan;
+                const row = currentAnhBtn.closest('tr');
+                row.querySelector('input[name*="AnhId"]').value = anhId;
+                const preview = row.querySelector('.anh-preview');
+                preview.innerHTML = `<img src="https://localhost:7289${duongDan}" style="max-width:60px;max-height:60px;object-fit:cover;" class="rounded shadow-sm" />`;
+                bootstrap.Modal.getInstance(document.getElementById('anhModal')).hide();
+            }
+
             window.toggleProperties = function () {
                 const loaiSanPham = document.querySelector('select[name="SanPham.LoaiSanPham"]').value;
-                const thanhPhanSection = document.getElementById('thanhPhanSection');
-                const chatLieuSection = document.getElementById('chatLieuSection');
-
-                // Ẩn tất cả trước
-                thanhPhanSection.style.display = 'none';
-                chatLieuSection.style.display = 'none';
-
-                // Hiển thị theo loại sản phẩm
-                if (loaiSanPham === 'DoAn') {
-                    thanhPhanSection.style.display = 'block';
-                } else if (loaiSanPham === 'DoDung') {
-                    chatLieuSection.style.display = 'block';
-                }
-            };
+                document.getElementById('thanhPhanSection').style.display = (loaiSanPham === 'DoAn') ? 'block' : 'none';
+                document.getElementById('chatLieuSection').style.display = (loaiSanPham === 'DoDung') ? 'block' : 'none';
+            }
 
             // HÀM ĐỂ LOAD CÁC BIẾN THỂ ĐÃ CÓ
             function loadExistingVariants() {
-                existingChiTietData.forEach(variant => {
-                    addChiTietRow(variant);
-                });
-                // Kích hoạt lại validation sau khi đã thêm tất cả
-                $(form).removeData("validator").removeData("unobtrusiveValidation");
-                $.validator.unobtrusive.parse(form);
+                if (existingChiTietData && existingChiTietData.length > 0) {
+                    existingChiTietData.forEach(variant => {
+                        addChiTietRow(variant);
+                    });
+                }
             }
 
             // CÁC THIẾT LẬP BAN ĐẦU
             document.getElementById('addVariantBtn').addEventListener('click', () => addChiTietRow(null));
-            form.addEventListener('submit', (e) => {
-                if (chiTietBody.rows.length === 0) {
-                    document.getElementById('variantError').textContent = "Phải có ít nhất một biến thể.";
-                    e.preventDefault();
-                    
-                    // Hiển thị thông báo lỗi
-                    showError('Phải có ít nhất một biến thể.');
-                } else {
-                    document.getElementById('variantError').textContent = "";
-                }
->>>>>>> Stashed changes
-            });
-        });
 
-        function openAnhModal(btn) {
-            window.currentAnhBtn = btn;
-            var modal = new bootstrap.Modal(document.getElementById('anhModal'));
-            modal.show();
-        }
-        
-        function selectAnh(img) {
-            var anhId = img.getAttribute('data-anh-id');
-            var duongDan = img.getAttribute('data-duongdan');
-            var row = window.currentAnhBtn.closest('tr');
-            row.querySelector('input[type="hidden"][name*="AnhId"]').value = anhId;
-            var preview = row.querySelector('.anh-preview');
-            preview.innerHTML = `<img src="https://localhost:7289${duongDan}" style="max-width:80px;max-height:80px;object-fit:cover;" class="rounded shadow-sm" />`;
-            var modal = bootstrap.Modal.getInstance(document.getElementById('anhModal'));
-            modal.hide();
-        }
+            form.addEventListener('submit', (e) => {
+                const variantErrorDiv = document.getElementById('variantError');
+                if (chiTietBody.rows.length === 0) {
+                    variantErrorDiv.textContent = "Phải có ít nhất một biến thể.";
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Vui lòng thêm ít nhất một biến thể sản phẩm.'
+                    });
+                } else {
+                    variantErrorDiv.textContent = "";
+                }
+            });
+
+            // Khởi tạo trạng thái và dữ liệu ban đầu
+            toggleProperties();
+            loadExistingVariants();
+        });
     </script>
 }

@@ -1,7 +1,11 @@
 ﻿using FurryFriends.API.Models.DTO;
+using FurryFriends.Web.Services; // Nơi định nghĩa lớp ApiException
 using FurryFriends.Web.Services.IService;
-using FurryFriends.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -11,138 +15,110 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         private readonly IGiamGiaService _giamGiaService;
         private readonly ISanPhamChiTietService _sanPhamChiTietService;
 
-        public GiamGiaController(IGiamGiaService giamGiaService, ISanPhamChiTietService sanPhamChiTietService)
+        public GiamGiaController(
+            IGiamGiaService giamGiaService,
+            ISanPhamChiTietService sanPhamChiTietService)
         {
             _giamGiaService = giamGiaService;
             _sanPhamChiTietService = sanPhamChiTietService;
         }
 
+        // GET: /Admin/GiamGia
         public async Task<IActionResult> Index()
         {
-            var list = await _giamGiaService.GetAllAsync();
-            ViewBag.TotalCount = list.Count();
-            ViewBag.ActiveCount = list.Count(x => x.TrangThai);
-            ViewBag.InactiveCount = list.Count(x => !x.TrangThai);
-            return View(list);
+            try
+            {
+                var discounts = await _giamGiaService.GetAllAsync();
+                return View(discounts);
+            }
+            catch (ApiException ex)
+            {
+                TempData["error"] = $"Không thể tải danh sách giảm giá. Lỗi từ API: {ex.Message}";
+                return View(new List<GiamGiaDTO>());
+            }
         }
 
-        // ✅ GET: Admin/GiamGia/Create
+        // GET: /Admin/GiamGia/Create
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var sanPhams = await _sanPhamChiTietService.GetAllAsync();
+            // Lấy các sản phẩm đang hoạt động để người dùng chọn
+            var allProducts = await _sanPhamChiTietService.GetAllAsync();
+            ViewBag.Products = allProducts.Where(p => p.TrangThai == 1).ToList();
 
-            var viewModel = new GiamGiaCreateViewModel
+            // Tạo một DTO mới với các giá trị mặc định
+            return View(new GiamGiaDTO
             {
-                SanPhamChiTietList = sanPhams.Select(sp => new SanPhamChiTietGiamGiaItemViewModel
-                {
-                    SanPhamChiTietId = sp.SanPhamChiTietId,
-                    TenSanPham = sp.TenSanPham ?? "",
-                    TenMau = sp.TenMau ?? "",
-                    TenKichCo = sp.TenKichCo ?? "",
-                    Gia = sp.Gia,
-                    DuongDan = sp.DuongDan,
-                    DuocChon = false
-                }).ToList()
-            };
-
-            return View(viewModel);
+                NgayBatDau = DateTime.Now,
+                NgayKetThuc = DateTime.Now.AddDays(7),
+                TrangThai = true
+            });
         }
 
-        // ✅ POST: Admin/GiamGia/Create
+        // POST: /Admin/GiamGia/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(GiamGiaCreateViewModel model)
+        public async Task<IActionResult> Create(GiamGiaDTO dto, List<Guid> selectedProducts)
         {
-            model.GiamGia.SanPhamChiTietIds = model.SanPhamChiTietList
-                .Where(x => x.DuocChon)
-                .Select(x => x.SanPhamChiTietId)
-                .ToList();
+            dto.SanPhamChiTietIds = selectedProducts ?? new List<Guid>();
 
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                var sanPhams = await _sanPhamChiTietService.GetAllAsync();
-                model.SanPhamChiTietList = sanPhams.Select(sp => new SanPhamChiTietGiamGiaItemViewModel
+                try
                 {
-                    SanPhamChiTietId = sp.SanPhamChiTietId,
-                    TenSanPham = sp.TenSanPham ?? "",
-                    TenMau = sp.TenMau ?? "",
-                    TenKichCo = sp.TenKichCo ?? "",
-                    Gia = sp.Gia,
-                    DuongDan = sp.DuongDan,
-                    DuocChon = model.GiamGia.SanPhamChiTietIds.Contains(sp.SanPhamChiTietId)
-                }).ToList();
-
-                return View(model);
-            }
-
-            var result = await _giamGiaService.CreateAsync(model.GiamGia);
-            if (result.Success)
-            {
-                TempData["success"] = "Tạo chương trình giảm giá thành công!";
-                return RedirectToAction("Index");
-            }
-
-            if (result.Errors != null)
-            {
-                foreach (var err in result.Errors)
+                    var result = await _giamGiaService.CreateAsync(dto);
+                    TempData["success"] = "Tạo chương trình giảm giá thành công!";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (ApiException ex)
                 {
-                    foreach (var msg in err.Value)
-                    {
-                        ModelState.AddModelError(err.Key, msg);
-                    }
+                    // Bắt các lỗi cụ thể từ API và hiển thị cho người dùng
+                    HandleApiException(ex);
+                }
+                catch (Exception ex)
+                {
+                    // Lỗi không mong muốn khác
+                    ModelState.AddModelError(string.Empty, "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại. " + ex.Message);
                 }
             }
 
-            return View(model);
+            // Nếu có lỗi, tải lại danh sách sản phẩm và hiển thị lại form
+            var allProducts = await _sanPhamChiTietService.GetAllAsync();
+            ViewBag.Products = allProducts.Where(p => p.TrangThai == 1).ToList();
+            return View(dto);
         }
 
+        // GET: /Admin/GiamGia/Edit/{id}
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var item = await _giamGiaService.GetByIdAsync(id);
-            if (item == null) return NotFound();
-            return View(item);
+            // 1. Lấy thông tin chương trình giảm giá cần sửa
+            var discount = await _giamGiaService.GetByIdAsync(id);
+            if (discount == null)
+            {
+                TempData["error"] = "Không tìm thấy chương trình giảm giá.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // 2. Lấy TẤT CẢ các sản phẩm đang hoạt động để hiển thị
+            var allProducts = await _sanPhamChiTietService.GetAllAsync();
+            ViewBag.Products = allProducts.Where(p => p.TrangThai == 1).ToList();
+
+            // 3. Truyền DTO của chương trình giảm giá vào View
+            // DTO này đã chứa SanPhamChiTietIds, View sẽ dựa vào đó để biết sản phẩm nào đã được chọn
+            return View(discount);
         }
 
+
+        // POST: /Admin/GiamGia/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, GiamGiaDTO dto)
+        public async Task<IActionResult> Edit(Guid id, GiamGiaDTO dto, List<Guid> selectedProducts)
         {
-            if (id != dto.GiamGiaId) return BadRequest();
-            if (!ModelState.IsValid) return View(dto);
+            if (id != dto.GiamGiaId) return NotFound();
 
-<<<<<<< Updated upstream
-            var result = await _giamGiaService.UpdateAsync(id, dto);
-            if (result.Data)
-            {
-                TempData["success"] = "Cập nhật chương trình giảm giá thành công!";
-                return RedirectToAction("Index");
-=======
             // Gán danh sách ID sản phẩm mới được chọn từ View vào DTO
             dto.SanPhamChiTietIds = selectedProducts ?? new List<Guid>();
-            
-            // Đảm bảo dữ liệu hợp lệ
-            if (dto.SanPhamChiTietIds == null)
-            {
-                dto.SanPhamChiTietIds = new List<Guid>();
-            }
-
-            // Debug: Log thông tin để kiểm tra
-            System.Diagnostics.Debug.WriteLine($"Selected Products Count: {selectedProducts?.Count ?? 0}");
-            System.Diagnostics.Debug.WriteLine($"DTO SanPhamChiTietIds Count: {dto.SanPhamChiTietIds?.Count ?? 0}");
-            if (selectedProducts != null)
-            {
-                foreach (var productId in selectedProducts)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Selected Product ID: {productId}");
-                }
-            }
-            if (dto.SanPhamChiTietIds != null)
-            {
-                foreach (var productId in dto.SanPhamChiTietIds)
-                {
-                    System.Diagnostics.Debug.WriteLine($"DTO Product ID: {productId}");
-                }
-            }
 
             if (ModelState.IsValid)
             {
@@ -156,80 +132,44 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 {
                     HandleApiException(ex); // Dùng lại hàm xử lý lỗi của bạn
                 }
-                catch (Exception ex)
-                {
-                    // Log lỗi chi tiết
-                    ModelState.AddModelError(string.Empty, $"Lỗi không mong muốn: {ex.Message}");
-                }
->>>>>>> Stashed changes
             }
 
-            if (result.Errors != null)
-                foreach (var err in result.Errors)
-                    foreach (var msg in err.Value)
-                        ModelState.AddModelError(err.Key, msg);
-            else
-                ModelState.AddModelError("", "Lỗi khi cập nhật!");
-
+            // Nếu có lỗi, tải lại danh sách sản phẩm và hiển thị lại form
+            var allProducts = await _sanPhamChiTietService.GetAllAsync();
+            ViewBag.Products = allProducts.Where(p => p.TrangThai == 1).ToList();
             return View(dto);
         }
 
-        public async Task<IActionResult> Details(Guid id)
-        {
-            var item = await _giamGiaService.GetByIdAsync(id);
-            if (item == null) return NotFound();
-            return View(item);
-        }
-
-        // ✅ GET: Admin/GiamGia/AddSanPham/{id}
-        public async Task<IActionResult> AddSanPham(Guid id)
-        {
-            var giamGia = await _giamGiaService.GetByIdAsync(id);
-            if (giamGia == null) return NotFound();
-
-            var sanPhams = await _sanPhamChiTietService.GetAllAsync();
-
-            var viewModel = new GiamGiaCreateViewModel
-            {
-                GiamGia = giamGia,
-                SanPhamChiTietList = sanPhams.Select(sp => new SanPhamChiTietGiamGiaItemViewModel
-                {
-                    SanPhamChiTietId = sp.SanPhamChiTietId,
-                    TenSanPham = sp.TenSanPham ?? "",
-                    TenMau = sp.TenMau ?? "",
-                    TenKichCo = sp.TenKichCo ?? "",
-                    Gia = sp.Gia,
-                    DuongDan = sp.DuongDan,
-                    DuocChon = giamGia.SanPhamChiTietIds?.Contains(sp.SanPhamChiTietId) ?? false
-                }).ToList()
-            };
-
-            return View(viewModel);
-        }
-
-        // ✅ POST: Admin/GiamGia/AddSanPham/{id}
+        // POST: /Admin/GiamGia/Delete/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddSanPham(GiamGiaCreateViewModel model)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var selectedIds = model.SanPhamChiTietList
-                                   .Where(x => x.DuocChon)
-                                   .Select(x => x.SanPhamChiTietId)
-                                   .ToList();
-
-            if (selectedIds.Count == 0)
+            try
             {
-                TempData["error"] = "Vui lòng chọn ít nhất một sản phẩm.";
-                return RedirectToAction("AddSanPham", new { id = model.GiamGia.GiamGiaId });
+                var success = await _giamGiaService.DeleteAsync(id);
+                if (success)
+                {
+                    TempData["success"] = "Xóa chương trình giảm giá thành công.";
+                }
+                else
+                {
+                    TempData["error"] = "Không tìm thấy chương trình giảm giá để xóa.";
+                }
+            }
+            catch (ApiException ex)
+            {
+                TempData["error"] = $"Lỗi khi xóa: {ex.Message}";
             }
 
-            var success = await _giamGiaService.AddSanPhamChiTietToGiamGiaAsync(model.GiamGia.GiamGiaId, selectedIds);
-            if (success)
+            return RedirectToAction(nameof(Index));
+        }
+        // Hàm hỗ trợ chung để xử lý lỗi từ API và thêm vào ModelState
+        private void HandleApiException(ApiException ex)
+        {
+            // Lỗi nghiệp vụ có thông điệp rõ ràng (ví dụ: tên trùng, ngày sai)
+            if (ex.StatusCode == HttpStatusCode.BadRequest || ex.StatusCode == HttpStatusCode.Conflict)
             {
-<<<<<<< Updated upstream
-                TempData["success"] = "Gán sản phẩm chi tiết vào giảm giá thành công!";
-                return RedirectToAction("Details", new { id = model.GiamGia.GiamGiaId });
-=======
                 try
                 {
                     // Cố gắng parse lỗi có cấu trúc { "message": "..." }
@@ -252,12 +192,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             else
             {
                 // Các lỗi khác (500, 404...)
-                ModelState.AddModelError(string.Empty, $"Đã xảy ra lỗi từ hệ thống. Lỗi từ API: {ex.Message}");
->>>>>>> Stashed changes
+                ModelState.AddModelError(string.Empty, $"Đã xảy ra lỗi từ hệ thống. {ex.Message}");
             }
-
-            TempData["error"] = "Gán sản phẩm thất bại.";
-            return RedirectToAction("AddSanPham", new { id = model.GiamGia.GiamGiaId });
         }
     }
 }

@@ -11,9 +11,7 @@ namespace FurryFriends.API.Models
         [Required]
         public Guid GioHangId { get; set; }
 
-        [Required]
-        public Guid SanPhamId { get; set; }
-
+        public Guid? SanPhamChiTietId { get; set; }
         [Required(ErrorMessage = "Số lượng không được để trống")]
         [Range(1, int.MaxValue, ErrorMessage = "Số lượng phải >= 1")]
         public int SoLuong { get; set; }
@@ -36,8 +34,7 @@ namespace FurryFriends.API.Models
 
         [ForeignKey("GioHangId")]
         public virtual GioHang GioHang { get; set; }
-
-        [ForeignKey("SanPhamId")]
-        public virtual SanPham SanPham { get; set; }
+        [ForeignKey("SanPhamChiTietId")]
+        public virtual SanPhamChiTiet? SanPhamChiTiet { get; set; }
     }
 }

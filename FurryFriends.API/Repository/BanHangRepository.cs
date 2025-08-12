@@ -94,9 +94,6 @@ namespace FurryFriends.API.Repository
 
                     await _context.DiaChiKhachHangs.AddAsync(newDiaChi);
                     hoaDon.DiaChiGiaoHangId = newDiaChi.DiaChiId;
-                    
-                    // ✅ Lưu snapshot địa chỉ giao hàng lúc mua
-                    hoaDon.DiaChiGiaoHangLucMua = $"{newDiaChi.TenDiaChi}, {newDiaChi.PhuongXa}, {newDiaChi.ThanhPho}";
                 }
                 else
                 {

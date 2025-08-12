@@ -3,6 +3,8 @@ using FurryFriends.API.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace FurryFriends.API.Controllers
 {
@@ -43,13 +45,24 @@ namespace FurryFriends.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ThuongHieuDTO dto)
         {
+            // Explicitly validate the model
+            var validationContext = new ValidationContext(dto);
+            var validationResults = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(dto, validationContext, validationResults, true))
+            {
+                foreach (var validationResult in validationResults)
+                {
+                    foreach (var memberName in validationResult.MemberNames)
+                    {
+                        ModelState.AddModelError(memberName, validationResult.ErrorMessage ?? "");
+                    }
+                }
+                return BadRequest(ModelState);
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-<<<<<<< Updated upstream
-            var created = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.ThuongHieuId }, created);
-=======
             try
             {
                 var created = await _service.CreateAsync(dto);
@@ -61,22 +74,29 @@ namespace FurryFriends.API.Controllers
                 ModelState.AddModelError("", ex.Message);
                 return BadRequest(ModelState);
             }
->>>>>>> Stashed changes
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] ThuongHieuDTO dto)
         {
+            // Explicitly validate the model
+            var validationContext = new ValidationContext(dto);
+            var validationResults = new List<ValidationResult>();
+            if (!Validator.TryValidateObject(dto, validationContext, validationResults, true))
+            {
+                foreach (var validationResult in validationResults)
+                {
+                    foreach (var memberName in validationResult.MemberNames)
+                    {
+                        ModelState.AddModelError(memberName, validationResult.ErrorMessage ?? "");
+                    }
+                }
+                return BadRequest(ModelState);
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-<<<<<<< Updated upstream
-            var result = await _service.UpdateAsync(id, dto);
-            if (!result)
-                return NotFound("Không tìm thấy thương hiệu!");
-
-            return NoContent();
-=======
             try
             {
                 var result = await _service.UpdateAsync(id, dto);
@@ -88,7 +108,6 @@ namespace FurryFriends.API.Controllers
                 ModelState.AddModelError("", ex.Message);
                 return BadRequest(ModelState);
             }
->>>>>>> Stashed changes
         }
 
         [HttpDelete("{id}")]

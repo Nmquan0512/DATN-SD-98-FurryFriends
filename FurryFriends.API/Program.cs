@@ -1,13 +1,17 @@
 using FurryFriends.API.Data;
 using FurryFriends.API.Models;
-
+using FurryFriends.API.Repositories;
 using FurryFriends.API.Repository;
 using FurryFriends.API.Repository.IRepository;
-using FurryFriends.API.Services.IServices;
 using FurryFriends.API.Services;
+using FurryFriends.API.Services.IServices;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using System.Text.Json.Serialization;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +22,13 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.WriteIndented = true;
     });
+
+// Add validation services
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = false;
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -54,7 +65,7 @@ builder.Services.AddScoped<IKichCoService, KichCoService>();
 builder.Services.AddScoped<
     ISanPhamService,
     SanPhamService>();
-
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 // Trong FurryFriends.API.Program.cs
 builder.Services.AddScoped<IKichCoRepository, KichCoRepository>();
 builder.Services.AddScoped<IAnhService, AnhService>();
@@ -65,8 +76,7 @@ builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 builder.Services.AddScoped<ISanPhamChiTietRepository, SanPhamChiTietRepository>();
 builder.Services.AddScoped<ISanPhamChiTietService, SanPhamChiTietService>();
 builder.Services.AddScoped<IThongTinCaNhanService, ThongTinCaNhanService>();
-<<<<<<< Updated upstream
-=======
+
 builder.Services.AddScoped<IDotGiamGiaSanPhamRepository, DotGiamGiaSanPhamRepository>();
 builder.Services.AddScoped<IGiamGiaService, GiamGiaService>();
 builder.Services.AddScoped<IBanHangRepository, BanHangRepository>();
@@ -76,7 +86,7 @@ builder.Services.AddScoped<IGioHangRepository, GioHangRepository>();
 builder.Services.AddScoped<IHinhThucThanhToanRepository, HinhThucThanhToanRepository>();
 // Đăng ký Voucher Calculation Service
 builder.Services.AddScoped<VoucherCalculationService>();
->>>>>>> Stashed changes
+
 // Add CORS policy cho phép web admin truy cập API
 builder.Services.AddCors(options =>
 {
@@ -116,3 +126,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+   

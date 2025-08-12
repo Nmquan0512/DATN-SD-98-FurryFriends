@@ -1,0 +1,30 @@
+﻿@model IEnumerable<FurryFriends.API.Models.DTO.BanHang.SanPhamBanHangDto>
+
+@if (Model.Any())
+{
+    @foreach (var sp in Model)
+    {
+        <form asp-action="ThemSanPham" method="post" class="list-group-item list-group-item-action">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="hoaDonId" value="@Context.Request.RouteValues["id"]" />
+            <input type="hidden" name="sanPhamChiTietId" value="@sp.SanPhamChiTietId" />
+
+            <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">@sp.TenSanPham</h6>
+                <small class="text-success fw-bold">@sp.Gia.ToString("N0") đ</small>
+            </div>
+            <p class="mb-1">
+                <small>Biến thể: @sp.TenMauSac, @sp.TenKichCo | Tồn kho: @sp.SoLuong</small>
+            </p>
+            <div class="d-flex align-items-center">
+                <label class="me-2">Số lượng:</label>
+                <input type="number" name="soLuong" class="form-control form-control-sm" value="1" min="1" max="@sp.SoLuong" style="width: 70px;" />
+                <button type="submit" class="btn btn-primary btn-sm ms-auto">Thêm</button>
+            </div>
+        </form>
+    }
+}
+else
+{
+    <div class="list-group-item">Không tìm thấy sản phẩm nào.</div>
+}

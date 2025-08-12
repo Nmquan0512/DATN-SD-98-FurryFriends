@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace FurryFriends.API.Controllers
 {
@@ -47,6 +48,25 @@ namespace FurryFriends.API.Controllers
                     return NotFound($"Không tìm thấy hóa đơn với ID: {id}");
                 }
                 return Ok(hoaDon);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // GET: api/HoaDon/{id}/chi-tiet
+        [HttpGet("{id}/chi-tiet")]
+        public async Task<ActionResult<IEnumerable<HoaDonChiTiet>>> GetChiTietHoaDon(Guid id)
+        {
+            try
+            {
+                var chiTietHoaDon = await _hoaDonRepository.GetChiTietHoaDonAsync(id);
+                if (chiTietHoaDon == null || !chiTietHoaDon.Any())
+                {
+                    return NotFound($"Không tìm thấy chi tiết hóa đơn với ID: {id}");
+                }
+                return Ok(chiTietHoaDon);
             }
             catch (Exception ex)
             {

@@ -1,19 +1,16 @@
-﻿using FurryFriends.API.Models.DTO;
+﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
+using FurryFriends.API.Repository.IRepository;
+using FurryFriends.API.Services.IServices;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace FurryFriends.API.Services.IServices
+namespace FurryFriends.API.Services
 {
-    public interface IThuongHieuService
+    public class ThuongHieuService : IThuongHieuService
     {
-<<<<<<< Updated upstream
-        Task<IEnumerable<ThuongHieuDTO>> GetAllAsync();
-        Task<ThuongHieuDTO> GetByIdAsync(Guid id);
-        Task<ThuongHieuDTO> CreateAsync(ThuongHieuDTO dto);
-        Task<bool> UpdateAsync(Guid id, ThuongHieuDTO dto);
-        Task<bool> DeleteAsync(Guid id);
-=======
         private readonly IThuongHieuRepository _repository;
 
         public ThuongHieuService(IThuongHieuRepository repository)
@@ -120,6 +117,5 @@ namespace FurryFriends.API.Services.IServices
             await _repository.DeleteAsync(id);
             return true;
         }
->>>>>>> Stashed changes
     }
 }

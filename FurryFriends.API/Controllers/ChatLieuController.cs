@@ -3,6 +3,8 @@ using FurryFriends.API.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace FurryFriends.API.Controllers
 {
@@ -43,34 +45,105 @@ namespace FurryFriends.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ChatLieuDTO dto)
         {
+            // Explicit validation
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(dto);
+
+            if (!Validator.TryValidateObject(dto, validationContext, validationResults, true))
+            {
+                foreach (var validationResult in validationResults)
+                {
+                    foreach (var memberName in validationResult.MemberNames)
+                    {
+                        ModelState.AddModelError(memberName, validationResult.ErrorMessage ?? string.Empty);
+                    }
+                }
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var created = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = created.ChatLieuId }, created);
+            try
+            {
+                var created = await _service.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = created.ChatLieuId }, created);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("TenChatLieu", ex.Message);
+                return new BadRequestObjectResult(ModelState);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError("TenChatLieu", ex.Message);
+                return new BadRequestObjectResult(ModelState);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi khi tạo chất liệu: {ex.Message}");
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] ChatLieuDTO dto)
         {
+            // Explicit validation
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(dto);
+
+            if (!Validator.TryValidateObject(dto, validationContext, validationResults, true))
+            {
+                foreach (var validationResult in validationResults)
+                {
+                    foreach (var memberName in validationResult.MemberNames)
+                    {
+                        ModelState.AddModelError(memberName, validationResult.ErrorMessage ?? string.Empty);
+                    }
+                }
+            }
+
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _service.UpdateAsync(id, dto);
-            if (!result)
-                return NotFound("Không tìm thấy chất liệu!");
+            try
+            {
+                var result = await _service.UpdateAsync(id, dto);
+                if (!result)
+                    return NotFound("Không tìm thấy chất liệu!");
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (InvalidOperationException ex)
+            {
+                ModelState.AddModelError("TenChatLieu", ex.Message);
+                return new BadRequestObjectResult(ModelState);
+            }
+            catch (ArgumentException ex)
+            {
+                ModelState.AddModelError("TenChatLieu", ex.Message);
+                return new BadRequestObjectResult(ModelState);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi khi cập nhật chất liệu: {ex.Message}");
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var result = await _service.DeleteAsync(id);
-            if (!result)
-                return NotFound("Không tìm thấy chất liệu!");
+            try
+            {
+                var result = await _service.DeleteAsync(id);
+                if (!result)
+                    return NotFound("Không tìm thấy chất liệu!");
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi khi xóa chất liệu: {ex.Message}");
+            }
         }
     }
 }

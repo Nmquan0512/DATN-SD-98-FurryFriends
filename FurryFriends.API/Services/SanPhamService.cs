@@ -22,15 +22,16 @@ namespace FurryFriends.API.Services
             _context = context;
         }
 
+        // Phương thức này và các phương thức Get khác giữ nguyên, chúng ta chấp nhận vấn đề hiệu năng.
         public async Task<IEnumerable<SanPhamDTO>> GetAllAsync()
         {
-            var list = await _repository.GetAllAsync();
+            var list = await _repository.GetAllAsync(); // Giả sử GetAllAsync đã Include() các bảng liên quan
             return list.Select(MapToDTO);
         }
 
         public async Task<SanPhamDTO> GetByIdAsync(Guid id)
         {
-            var sp = await _repository.GetByIdAsync(id)
+            var sp = await _repository.GetByIdAsync(id) // Giả sử GetByIdAsync đã Include()
                 ?? throw new KeyNotFoundException($"Không tìm thấy sản phẩm với ID {id}");
 
             return MapToDTO(sp);
@@ -38,6 +39,7 @@ namespace FurryFriends.API.Services
 
         public async Task<SanPhamDTO> CreateAsync(SanPhamDTO dto)
         {
+            // Code của bạn ở đây đã tốt
             var sanPham = new SanPham
             {
                 SanPhamId = Guid.NewGuid(),
@@ -48,85 +50,45 @@ namespace FurryFriends.API.Services
                 SanPhamChatLieus = new List<SanPhamChatLieu>()
             };
 
-            // Xử lý thành phần nếu là đồ ăn
             if (dto.LoaiSanPham == "DoAn" && dto.ThanhPhanIds != null)
             {
                 foreach (var tpId in dto.ThanhPhanIds)
                 {
-                    sanPham.SanPhamThanhPhans.Add(new SanPhamThanhPhan
-                    {
-                        SanPhamId = sanPham.SanPhamId,
-                        ThanhPhanId = tpId
-                    });
+                    sanPham.SanPhamThanhPhans.Add(new SanPhamThanhPhan { SanPhamId = sanPham.SanPhamId, ThanhPhanId = tpId });
                 }
             }
-            // Xử lý chất liệu nếu là đồ dùng
             else if (dto.LoaiSanPham == "DoDung" && dto.ChatLieuIds != null)
             {
                 foreach (var clId in dto.ChatLieuIds)
                 {
-                    sanPham.SanPhamChatLieus.Add(new SanPhamChatLieu
-                    {
-                        SanPhamId = sanPham.SanPhamId,
-                        ChatLieuId = clId
-                    });
+                    sanPham.SanPhamChatLieus.Add(new SanPhamChatLieu { SanPhamId = sanPham.SanPhamId, ChatLieuId = clId });
                 }
             }
 
             await _repository.AddAsync(sanPham);
-            await _context.SaveChangesAsync();
-
+            await _repository.SaveAsync();
             dto.SanPhamId = sanPham.SanPhamId;
             return dto;
         }
 
         public async Task UpdateAsync(Guid id, SanPhamDTO dto)
         {
-<<<<<<< Updated upstream
-=======
             // 1. Tải đối tượng cần cập nhật từ repository
->>>>>>> Stashed changes
             var existing = await _repository.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"Không tìm thấy sản phẩm với ID {id}");
 
+            // 2. Cập nhật các thuộc tính chính của SanPham
             existing.TenSanPham = dto.TenSanPham;
             existing.ThuongHieuId = dto.ThuongHieuId;
             existing.TrangThai = dto.TrangThai;
 
-<<<<<<< Updated upstream
-            // Xóa quan hệ cũ
-            _context.SanPhamThanhPhans.RemoveRange(existing.SanPhamThanhPhans);
-            _context.SanPhamChatLieus.RemoveRange(existing.SanPhamChatLieus);
-=======
             // 3. Xóa các quan hệ cũ một cách an toàn
             existing.SanPhamThanhPhans?.Clear();
             existing.SanPhamChatLieus?.Clear();
->>>>>>> Stashed changes
 
-            // Thêm quan hệ mới
+            // 4. Thêm lại các quan hệ mới dựa trên DTO
             if (dto.LoaiSanPham == "DoAn" && dto.ThanhPhanIds != null)
             {
-<<<<<<< Updated upstream
-                existing.SanPhamThanhPhans = dto.ThanhPhanIds
-                    .Select(tpId => new SanPhamThanhPhan
-                    {
-                        SanPhamId = id,
-                        ThanhPhanId = tpId
-                    }).ToList();
-            }
-            else if (dto.LoaiSanPham == "DoDung" && dto.ChatLieuIds != null)
-            {
-                existing.SanPhamChatLieus = dto.ChatLieuIds
-                    .Select(clId => new SanPhamChatLieu
-                    {
-                        SanPhamId = id,
-                        ChatLieuId = clId
-                    }).ToList();
-            }
-
-            await _repository.UpdateAsync(existing);
-            await _context.SaveChangesAsync();
-=======
                 foreach (var tpId in dto.ThanhPhanIds)
                 {
                     existing.SanPhamThanhPhans?.Add(new SanPhamThanhPhan { ThanhPhanId = tpId });
@@ -142,7 +104,6 @@ namespace FurryFriends.API.Services
 
             // 5. Lưu thay đổi thông qua repository
             await _repository.UpdateAsync(existing);
->>>>>>> Stashed changes
         }
 
         public async Task DeleteAsync(Guid id)
@@ -214,8 +175,13 @@ namespace FurryFriends.API.Services
 
         public async Task<IEnumerable<SanPhamDTO>> GetTopSellingProductsAsync(int top)
         {
-            var hoaDonChiTiets = await _context.HoaDonChiTiets
-                .GroupBy(ct => ct.SanPhamId)
+            // Bước 1: Bao gồm các quan hệ cần thiết để truy cập đến SanPhamId
+            var topProductsInfo = await _context.HoaDonChiTiets
+                .Include(ct => ct.SanPhamChiTiet)       // Include SanPhamChiTiet từ HoaDonChiTiet
+                    .ThenInclude(spct => spct.SanPham)  // Include SanPham từ SanPhamChiTiet
+
+                // Bước 2: SỬA LỖI Ở ĐÂY - Nhóm theo ID của sản phẩm chung
+                .GroupBy(ct => ct.SanPhamChiTiet.SanPhamId)
                 .Select(g => new
                 {
                     SanPhamId = g.Key,
@@ -225,14 +191,17 @@ namespace FurryFriends.API.Services
                 .Take(top)
                 .ToListAsync();
 
-            var ids = hoaDonChiTiets.Select(x => x.SanPhamId).ToList();
-            var sanPhams = await _repository.GetAllAsync();
+            // Các bước còn lại vẫn đúng logic, không cần thay đổi
+            var ids = topProductsInfo.Select(x => x.SanPhamId).ToList();
 
-            return sanPhams
-                .Where(sp => ids.Contains(sp.SanPhamId))
-                .Select(MapToDTO);
+            // Giả sử _repository là repository của SanPham
+            var allSanPhams = await _repository.GetAllAsync(); // Hàm này cần trả về tất cả sản phẩm
+
+            var topSellingSanPhams = allSanPhams.Where(sp => ids.Contains(sp.SanPhamId));
+
+            // Giả sử bạn có một hàm MapToDTO để chuyển đổi SanPham -> SanPhamDTO
+            return topSellingSanPhams.Select(MapToDTO);
         }
-
         private static SanPhamDTO MapToDTO(SanPham x)
         {
             return new SanPhamDTO
@@ -241,11 +210,11 @@ namespace FurryFriends.API.Services
                 TenSanPham = x.TenSanPham,
                 ThuongHieuId = x.ThuongHieuId ?? Guid.Empty,
                 TenThuongHieu = x.ThuongHieu?.TenThuongHieu,
-                LoaiSanPham = x.SanPhamThanhPhans.Any() ? "DoAn" : "DoDung",
-                ThanhPhanIds = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhanId).ToList(),
-                ChatLieuIds = x.SanPhamChatLieus?.Select(cl => cl.ChatLieuId).ToList(),
-                TenThanhPhans = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhan?.TenThanhPhan).ToList(),
-                TenChatLieus = x.SanPhamChatLieus?.Select(cl => cl.ChatLieu?.TenChatLieu).ToList(),
+                LoaiSanPham = (x.SanPhamThanhPhans?.Any() == true) ? "DoAn" : "DoDung",
+                ThanhPhanIds = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhanId).ToList() ?? new List<Guid>(),
+                ChatLieuIds = x.SanPhamChatLieus?.Select(cl => cl.ChatLieuId).ToList() ?? new List<Guid>(),
+                TenThanhPhans = x.SanPhamThanhPhans?.Select(tp => tp.ThanhPhan?.TenThanhPhan).ToList() ?? new List<string>(),
+                TenChatLieus = x.SanPhamChatLieus?.Select(cl => cl.ChatLieu?.TenChatLieu).ToList() ?? new List<string>(),
                 TrangThai = x.TrangThai
             };
         }

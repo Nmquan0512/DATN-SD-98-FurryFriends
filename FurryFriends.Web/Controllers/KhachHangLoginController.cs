@@ -51,10 +51,9 @@ public class KhachHangLoginController : Controller
 
         // Lưu session
         HttpContext.Session.SetString("TaiKhoanId", result.TaiKhoanId.ToString());
-<<<<<<< Updated upstream
-=======
+
         HttpContext.Session.SetString("KhachHangId", result.KhachHangId.ToString());
->>>>>>> Stashed changes
+
         HttpContext.Session.SetString("Role", result.Role);
         HttpContext.Session.SetString("HoTen", result.HoTen ?? "");
 
