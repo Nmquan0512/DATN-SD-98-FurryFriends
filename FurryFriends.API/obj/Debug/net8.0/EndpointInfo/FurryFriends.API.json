@@ -2128,6 +2128,29 @@
         }
       }
     },
+    "/api/GioHang/cho-duyet-count/{khachHangId}": {
+      "get": {
+        "tags": [
+          "GioHang"
+        ],
+        "parameters": [
+          {
+            "name": "khachHangId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/HinhThucThanhToan": {
       "get": {
         "tags": [

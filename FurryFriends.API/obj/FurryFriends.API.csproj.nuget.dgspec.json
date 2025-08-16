@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Lenovo\\OneDrive\\Desktop\\duphong2\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {}
+    "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Lenovo\\OneDrive\\Desktop\\duphong2\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {
+    "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\duphong2\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
+        "projectUniqueName": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
         "projectName": "FurryFriends.API",
-        "projectPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\duphong2\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
+        "projectPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
         "packagesPath": "C:\\Users\\Lenovo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\duphong2\\DATN-SD-98-FurryFriends\\FurryFriends.API\\obj\\",
+        "outputPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -131,7 +131,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

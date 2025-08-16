@@ -24,5 +24,7 @@ namespace FurryFriends.Web.Services.IService
         Task<decimal> TinhTongTienSauVoucher(Guid khachHangId, Guid voucherId);
         Task<ThanhToanResultViewModel> ThanhToanAsync(ThanhToanDTO dto);
         Task<VoucherPreviewResult?> PreviewVoucherAsync(Guid khachHangId, Guid voucherId);
+
+        Task<int> GetDonChoDuyetCountAsync(Guid khachHangId);
     }
 }

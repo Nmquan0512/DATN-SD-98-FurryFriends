@@ -84,6 +84,22 @@ namespace FurryFriends.API.Repository
             if (gioHang == null)
                 return null;
 
+            //var invalidItems = gioHang.GioHangChiTiets
+            //    .Where(gc =>
+            //        gc.SanPhamChiTiet == null ||
+            //        gc.SanPhamChiTiet.TrangThai == 0 ||
+            //        gc.SanPhamChiTiet.SoLuong <= 0 ||
+            //        (gc.SanPhamChiTiet.SanPham != null && gc.SanPhamChiTiet.SanPham.TrangThai == false)
+            //    ).ToList();
+
+            //// Nếu có item không hợp lệ → xóa khỏi DB
+            //if (invalidItems.Any())
+            //{
+            //    _context.GioHangChiTiets.RemoveRange(invalidItems);
+            //    await _context.SaveChangesAsync();
+            //    gioHang.GioHangChiTiets = gioHang.GioHangChiTiets.Except(invalidItems).ToList();
+            //}
+
             var gioHangDTO = new GioHangDTO
             {
                 GioHangId = gioHang.GioHangId,
@@ -107,7 +123,7 @@ namespace FurryFriends.API.Repository
                     var giamMax = (gc.SanPhamChiTietId.HasValue && idToMaxDiscount.TryGetValue(gc.SanPhamChiTietId.Value, out var p)) ? p : 0m;
                     var donGiaSau = TinhDonGiaSauGiam(giaGoc, giamMax);
                     var thanhTienTinhLai = donGiaSau * gc.SoLuong;
-                    
+
                     Console.WriteLine($"🔍 [Repository] GetGioHangByKhachHangIdAsync - Sản phẩm: {gc.SanPhamChiTiet?.SanPham?.TenSanPham}");
                     Console.WriteLine($"  - Giá gốc: {giaGoc:N0}");
                     Console.WriteLine($"  - Giảm tối đa: {giamMax}%");
@@ -117,7 +133,7 @@ namespace FurryFriends.API.Repository
                     Console.WriteLine($"  - Thành tiền tính lại: {thanhTienTinhLai:N0}");
                     Console.WriteLine($"  - Kiểm tra: {donGiaSau:N0} × {gc.SoLuong} = {thanhTienTinhLai:N0}");
                     Console.WriteLine($"  - Chênh lệch: {gc.ThanhTien - thanhTienTinhLai:N0}");
-                    
+
                     gioHangDTO.GioHangChiTiets.Add(new GioHangChiTietDTO
                     {
                         GioHangChiTietId = gc.GioHangChiTietId,
@@ -163,6 +179,12 @@ namespace FurryFriends.API.Repository
         public async Task<GioHangChiTiet> AddSanPhamVaoGioAsync(Guid khachHangId, Guid sanPhamChiTietId, int soLuong)
         {
             // Lấy giỏ hàng hiện tại (không cần Include để tránh track các entity cũ gây xung đột)
+            if (soLuong <= 0)
+            {
+                throw new Exception("Số lượng phải lớn hơn 0.");
+            }
+
+
             var gioHang = await _context.GioHangs
                 .FirstOrDefaultAsync(g => g.KhachHangId == khachHangId);
 
@@ -179,7 +201,27 @@ namespace FurryFriends.API.Repository
                 _context.GioHangs.Add(gioHang);
                 await _context.SaveChangesAsync(); // Lưu giỏ hàng trước để đảm bảo có ID trong DB
             }
+            var sanPhamChiTiet = await _context.SanPhamChiTiets.FirstOrDefaultAsync(spc => spc.SanPhamChiTietId == sanPhamChiTietId);
+            if (sanPhamChiTiet == null) return null;
 
+
+            if (sanPhamChiTiet == null || sanPhamChiTiet.SanPham == null)
+            {
+                throw new Exception("Sản phẩm không tồn tại.");
+            }
+
+            // 🔹 Kiểm tra trạng thái hoạt động
+            if (sanPhamChiTiet.TrangThai == 0 || sanPhamChiTiet.SanPham.TrangThai == false)
+            {
+                throw new Exception("Sản phẩm đã tạm dừng hoạt động.");
+            }
+
+
+            // 🔹 Check số lượng tồn kho
+            if (soLuong > sanPhamChiTiet.SoLuong)
+            {
+                throw new Exception($"Số lượng sản phẩm trong kho không đủ. Chỉ còn {sanPhamChiTiet.SoLuong} sản phẩm.");
+            }
             // Lấy trực tiếp chi tiết giỏ hàng từ DB để tránh xung đột tracking
             var existingItem = await _context.GioHangChiTiets
                 .FirstOrDefaultAsync(x => x.GioHangId == gioHang.GioHangId && x.SanPhamChiTietId == sanPhamChiTietId);
@@ -195,8 +237,27 @@ namespace FurryFriends.API.Repository
             }
 
             // Thêm sản phẩm mới vào giỏ
-            var sanPhamChiTiet = await _context.SanPhamChiTiets.FirstOrDefaultAsync(spc => spc.SanPhamChiTietId == sanPhamChiTietId);
-            if (sanPhamChiTiet == null) return null;
+            //var sanPhamChiTiet = await _context.SanPhamChiTiets.FirstOrDefaultAsync(spc => spc.SanPhamChiTietId == sanPhamChiTietId);
+            //if (sanPhamChiTiet == null) return null;
+
+
+            //if (sanPhamChiTiet == null || sanPhamChiTiet.SanPham == null)
+            //{
+            //    throw new Exception("Sản phẩm không tồn tại.");
+            //}
+
+            //// 🔹 Kiểm tra trạng thái hoạt động
+            //if (sanPhamChiTiet.TrangThai == 0 || sanPhamChiTiet.SanPham.TrangThai == false)
+            //{
+            //    throw new Exception("Sản phẩm đã tạm dừng hoạt động.");
+            //}
+
+
+            //// 🔹 Check số lượng tồn kho
+            //if (soLuong > sanPhamChiTiet.SoLuong)
+            //{
+            //    throw new Exception($"Số lượng sản phẩm trong kho không đủ. Chỉ còn {sanPhamChiTiet.SoLuong} sản phẩm.");
+            //}
 
             var giaGoc = sanPhamChiTiet.Gia;
             var giamMax = await LayPhanTramGiamToiDaAsync(sanPhamChiTietId);
@@ -227,12 +288,26 @@ namespace FurryFriends.API.Repository
         {
             var gioHangChiTiet = await _context.GioHangChiTiets
                 .Include(gc => gc.SanPhamChiTiet)
+                    .ThenInclude(spc => spc.SanPham)
                 .FirstOrDefaultAsync(gc => gc.GioHangChiTietId == gioHangChiTietId);
+
 
             if (gioHangChiTiet == null)
                 return null;
 
             var soLuongTonKho = gioHangChiTiet.SanPhamChiTiet?.SoLuong ?? 0;
+
+            var spc = gioHangChiTiet.SanPhamChiTiet;
+
+            if (spc == null || spc.SanPham == null)
+            {
+                throw new InvalidOperationException("Sản phẩm không tồn tại hoặc đã bị xóa.");
+            }
+
+            if (spc.TrangThai == 0 || spc.SanPham.TrangThai == false)
+            {
+                throw new InvalidOperationException("Sản phẩm này đã tạm ngừng hoạt động, không thể cập nhật số lượng.");
+            }
 
             // ✅ Kiểm tra số lượng yêu cầu có vượt quá tồn kho hay không
             if (soLuong > soLuongTonKho)
@@ -241,6 +316,12 @@ namespace FurryFriends.API.Repository
                     $"Số lượng sản phẩm trong kho không đủ. Hiện chỉ còn {soLuongTonKho} sản phẩm."
                 );
             }
+
+            if (soLuong <= 0)
+            {
+                throw new InvalidOperationException("Số lượng phải lớn hơn 0.");
+            }
+
 
             Console.WriteLine($"🔍 [Repository] UpdateSoLuongAsync - Trước khi cập nhật:");
             Console.WriteLine($"  - Số lượng cũ: {gioHangChiTiet.SoLuong}");
@@ -259,10 +340,10 @@ namespace FurryFriends.API.Repository
                     : 0m;
                 donGiaHienTai = TinhDonGiaSauGiam(giaGoc, giamMax);
                 gioHangChiTiet.DonGia = donGiaHienTai;
-                
+
                 Console.WriteLine($"🔍 [Repository] Cập nhật đơn giá: {giaGoc:N0} -> {donGiaHienTai:N0} (giảm {giamMax}%)");
             }
-            
+
             var thanhTienMoi = donGiaHienTai * soLuong;
             gioHangChiTiet.ThanhTien = thanhTienMoi;
             gioHangChiTiet.NgayCapNhat = DateTime.Now;
@@ -369,20 +450,38 @@ namespace FurryFriends.API.Repository
                     throw new Exception("Giỏ hàng trống");
 
                 // Kiểm tra tồn kho đủ
+                // Kiểm tra tồn kho, trạng thái và null
                 foreach (var item in gioHang.GioHangChiTiets)
                 {
-                    if (item.SanPhamChiTiet == null)
-                        throw new Exception("Thiếu thông tin sản phẩm");
-                    if (item.SanPhamChiTiet.SoLuong < item.SoLuong)
-                        throw new Exception($"Sản phẩm {item.SanPhamChiTiet.SanPham?.TenSanPham} không đủ tồn kho");
+                    var spct = await _context.SanPhamChiTiets
+                        .Include(x => x.SanPham)
+                        .FirstOrDefaultAsync(x => x.SanPhamChiTietId == item.SanPhamChiTietId);
+
+                    if (spct == null || spct.SanPham == null)
+                        throw new Exception("Sản phẩm không tồn tại.");
+
+                    // ✅ Kiểm tra trạng thái hoạt động
+                    if (spct.TrangThai == 0 || spct.SanPham.TrangThai == false)
+                        throw new Exception($"Sản phẩm {spct.SanPham?.TenSanPham ?? "N/A"} hiện không còn hoạt động.");
+
+                    // ✅ Kiểm tra tồn kho
+                    if (spct.SoLuong < item.SoLuong)
+                        throw new Exception($"Sản phẩm {spct.SanPham?.TenSanPham ?? "N/A"} trong kho không đủ. Hiện tại còn {spct.SoLuong} sản phẩm.");
                 }
 
+                var soDonChoDuyet = await _context.HoaDons
+                    .CountAsync(h => h.KhachHangId == dto.KhachHangId && h.TrangThai == 0);
+
+                if (soDonChoDuyet >= 5)
+                {
+                    throw new Exception("Bạn đã có 5 đơn hàng đang chờ duyệt, không thể có nhiều hơn 5 đơn cùng lúc.");
+                }
                 // ✅ Xác định trạng thái dựa trên hình thức thanh toán
                 int trangThai;
                 var hinhThucThanhToan = await _context.HinhThucThanhToans
                     .FirstOrDefaultAsync(h => h.HinhThucThanhToanId == dto.HinhThucThanhToanId);
-                
-                if (hinhThucThanhToan != null && 
+
+                if (hinhThucThanhToan != null &&
                     (hinhThucThanhToan.TenHinhThuc.Contains("VNPay", StringComparison.OrdinalIgnoreCase) ||
                      hinhThucThanhToan.TenHinhThuc.Contains("VNPAY", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -416,9 +515,9 @@ namespace FurryFriends.API.Repository
 
                 // ✅ Lưu snapshot địa chỉ giao hàng lúc mua
                 var diaChi = await _context.DiaChiKhachHangs.FindAsync(dto.DiaChiGiaoHangId);
-                    if (diaChi != null)
-                    {
-                        hoaDon.DiaChiGiaoHangLucMua = $"{diaChi.TenDiaChi}, {diaChi.PhuongXa}, {diaChi.ThanhPho}";
+                if (diaChi != null)
+                {
+                    hoaDon.DiaChiGiaoHangLucMua = $"{diaChi.TenDiaChi}, {diaChi.PhuongXa}, {diaChi.ThanhPho}";
                 }
 
                 decimal tongSauDotGiam = 0m;
@@ -432,7 +531,7 @@ namespace FurryFriends.API.Repository
                         .Include(x => x.KichCo)
                         .Include(x => x.Anh)
                         .FirstOrDefaultAsync(x => x.SanPhamChiTietId == gioHangChiTiet.SanPhamChiTietId);
-                    
+
                     if (spct == null) throw new Exception("Không tìm thấy chi tiết sản phẩm");
                     if (spct.SoLuong < gioHangChiTiet.SoLuong)
                         throw new Exception("Số lượng tồn không đủ");
@@ -452,7 +551,7 @@ namespace FurryFriends.API.Repository
                         SanPhamChiTietId = gioHangChiTiet.SanPhamChiTietId ?? Guid.Empty,
                         SoLuongSanPham = gioHangChiTiet.SoLuong,
                         Gia = donGiaSau,
-                        
+
                         // ✅ Snapshot data - lưu thông tin tại thời điểm mua
                         GiaLucMua = donGiaSau,
                         TenSanPhamLucMua = spct.SanPham?.TenSanPham ?? "N/A",
@@ -478,7 +577,7 @@ namespace FurryFriends.API.Repository
                 {
                     var voucher = await _context.Vouchers
                         .FirstOrDefaultAsync(v => v.VoucherId == dto.VoucherId.Value);
-                    
+
                     if (voucher != null)
                     {
                         // Tính phí ship dùng cho điều kiện voucher (giống phần preview)
@@ -488,13 +587,13 @@ namespace FurryFriends.API.Repository
                         {
                             tienGiamVoucher = voucherResult.SoTienGiam;
                             hoaDon.VoucherId = dto.VoucherId;
-                            
+
                             // ✅ Snapshot thông tin voucher lúc mua
                             hoaDon.ThongTinVoucherLucMua = $"{voucher.TenVoucher} - Giảm {voucher.PhanTramGiam}%" +
                                 (voucher.GiaTriGiamToiDa.HasValue ? $" (tối đa {voucher.GiaTriGiamToiDa.Value:N0} VNĐ)" : "") +
                                 (voucher.SoTienApDungToiThieu.HasValue ? $" - Đơn tối thiểu {voucher.SoTienApDungToiThieu.Value:N0} VNĐ" : "") +
                                 $" - Tiết kiệm: {tienGiamVoucher:N0} VNĐ";
-                            
+
                             // Giảm số lượng voucher
                             voucher.SoLuong -= 1;
                             _context.Vouchers.Update(voucher);
@@ -505,7 +604,7 @@ namespace FurryFriends.API.Repository
                 // Tính phí ship (miễn phí nếu đơn >= 500k sau khi giảm voucher, ngược lại 30k)
                 var tongSauVoucher = tongSauDotGiam - tienGiamVoucher;
                 var phiShip = tongSauVoucher >= 500000m ? 0m : 30000m;
-                
+
                 hoaDon.TongTienSauKhiGiam = tongSauVoucher + phiShip; // tổng thanh toán cuối cùng
 
                 // Xóa giỏ hàng

@@ -23,6 +23,8 @@ namespace FurryFriends.Web.Controllers
         private readonly IDiaChiKhachHangService _diaChiKhachHangService;
         private readonly IVnPayService _vnPayService;
         private readonly ILogger<GioHangsController> _logger;
+        private readonly ISanPhamChiTietService _sanPhamChiTietService;
+        private readonly ISanPhamService _sanPhamService;
 
         private Guid GetKhachHangId()
         {
@@ -35,13 +37,15 @@ namespace FurryFriends.Web.Controllers
         }
 
         public GioHangsController(
-            IGioHangService gioHangService, 
-            IVoucherService voucherService, 
-            IKhachHangService khachHangService, 
-            IHinhThucThanhToanService hinhThucThanhToanService, 
+            IGioHangService gioHangService,
+            IVoucherService voucherService,
+            IKhachHangService khachHangService,
+            IHinhThucThanhToanService hinhThucThanhToanService,
             IDiaChiKhachHangService diaChiKhachHangService,
             IVnPayService vnPayService,
-            ILogger<GioHangsController> logger)
+            ILogger<GioHangsController> logger,
+            ISanPhamChiTietService sanPhamChiTietService,
+            ISanPhamService sanPhamService)
         {
             _gioHangService = gioHangService;
             _voucherService = voucherService;
@@ -50,10 +54,13 @@ namespace FurryFriends.Web.Controllers
             _diaChiKhachHangService = diaChiKhachHangService;
             _vnPayService = vnPayService;
             _logger = logger;
+            _sanPhamChiTietService = sanPhamChiTietService;
+            _sanPhamService = sanPhamService;
         }
 
         public async Task<IActionResult> Index(Guid? voucherId = null)
         {
+
             Guid khachHangId;
             try
             {
@@ -82,7 +89,7 @@ namespace FurryFriends.Web.Controllers
                     ViewBag.TongDonHang = preview.TongDonHang;
                     ViewBag.TenVoucher = preview.TenVoucher;
                     ViewBag.MaVoucher = preview.MaVoucher;
-                    
+
                     if (preview.GiamGia <= 0)
                     {
                         TempData["Warning"] = "Voucher không đủ điều kiện hoặc không áp dụng được.";
@@ -149,8 +156,9 @@ namespace FurryFriends.Web.Controllers
                 Console.WriteLine($"❌ Lỗi khi thêm vào giỏ hàng: {ex.Message}");
                 if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
                 {
-                    return StatusCode(500, new { success = false, message = ex.Message });
+                    return StatusCode(500, new { success = false, message = ex.Message }); // ✅
                 }
+                ViewBag.ErrorMessage = ex.Message;
                 return RedirectToAction("Index", "SanPhamKhachHang");
             }
         }
@@ -161,14 +169,14 @@ namespace FurryFriends.Web.Controllers
         {
             var result = await _gioHangService.UpdateSoLuongAsync(chiTietId, soLuong);
 
-    if (!result.Success)
-    {
-        TempData["ErrorMessage"] = result.Message;
-        return RedirectToAction("Index", new { voucherId });
-    }
+            if (!result.Success)
+            {
+                TempData["ErrorMessage"] = result.Message;
+                return RedirectToAction("Index", new { voucherId });
+            }
 
-    TempData["SuccessMessage"] = result.Message;
-    return RedirectToAction("Index", new { voucherId });
+            TempData["SuccessMessage"] = result.Message;
+            return RedirectToAction("Index", new { voucherId });
         }
 
         [HttpPost]
@@ -265,6 +273,42 @@ namespace FurryFriends.Web.Controllers
                 }
             }
 
+            var gioHang = await _gioHangService.GetGioHangAsync(dto.KhachHangId);
+
+            if (gioHang == null || !gioHang.GioHangChiTiets.Any())
+            {
+                TempData["Loi"] = "Giỏ hàng của bạn đang trống.";
+                return RedirectToAction("Index", "GioHangs");
+            }
+
+            foreach (var item in gioHang.GioHangChiTiets)
+            {
+                var spct = await _sanPhamChiTietService.GetByIdAsync(item.SanPhamChiTietId);
+                if (spct == null)
+                {
+                    TempData["Loi"] = "Sản phẩm không tồn tại hoặc đã bị xóa.";
+                    return RedirectToAction("Index", "GioHangs");
+                }
+
+                var sanPham = await _sanPhamService.GetByIdAsync(spct.SanPhamId);
+                if (sanPham == null)
+                {
+                    TempData["Loi"] = "Sản phẩm không tồn tại hoặc đã bị xóa.";
+                    return RedirectToAction("Index", "GioHangs");
+                }
+
+                if (spct.TrangThai == 0 || sanPham.TrangThai == false)
+                {
+                    TempData["Loi"] = $"Sản phẩm {sanPham.TenSanPham ?? "N/A"} hiện không còn hoạt động.";
+                    return RedirectToAction("Index", "GioHangs");
+                }
+
+                if (spct.SoLuong < item.SoLuong)
+                {
+                    TempData["Loi"] = $"Sản phẩm {sanPham.TenSanPham ?? "N/A"} trong kho không đủ. Hiện tại còn {spct.SoLuong} sản phẩm.";
+                    return RedirectToAction("Index", "GioHangs");
+                }
+            }
 
 
             // Bổ sung: nếu VoucherId không bind được từ form, thử lấy từ form/query thủ công
@@ -312,7 +356,7 @@ namespace FurryFriends.Web.Controllers
             var hinhThuc = await _hinhThucThanhToanService.GetByIdAsync(dto.HinhThucThanhToanId);
             _logger.LogInformation($"HinhThuc: {hinhThuc?.TenHinhThuc ?? "NULL"}");
             _logger.LogInformation($"HinhThuc ID: {hinhThuc?.HinhThucThanhToanId}");
-            
+
             // Kiểm tra nhiều cách gọi tên VNPay
             var isVnPay = hinhThuc != null && (
                 hinhThuc.TenHinhThuc.Equals("Thanh toán VNPay", StringComparison.OrdinalIgnoreCase) ||
@@ -320,11 +364,10 @@ namespace FurryFriends.Web.Controllers
                 hinhThuc.TenHinhThuc.Equals("VNPAY", StringComparison.OrdinalIgnoreCase) ||
                 hinhThuc.TenHinhThuc.Contains("VNPay", StringComparison.OrdinalIgnoreCase)
             );
-            
+
             _logger.LogInformation($"Is VNPay: {isVnPay}");
-            
+
             // Lấy tổng tiền từ giỏ hàng để kiểm tra validation
-            var gioHang = await _gioHangService.GetGioHangAsync(dto.KhachHangId);
             decimal tongTien = 0;
             if (dto.VoucherId.HasValue && dto.VoucherId != Guid.Empty)
             {
@@ -334,18 +377,18 @@ namespace FurryFriends.Web.Controllers
             {
                 tongTien = gioHang.GioHangChiTiets.Sum(x => x.ThanhTien);
             }
-            
+
             _logger.LogInformation($"Tổng tiền: {tongTien}");
-            
+
             // Validation: Không cho phép đặt hàng quá 5 triệu
             const decimal MAX_ORDER_AMOUNT = 5000000; // 5 triệu VNĐ
             if (tongTien > MAX_ORDER_AMOUNT)
             {
                 ViewBag.HinhThucThanhToanList = await _hinhThucThanhToanService.GetAllAsync();
-                ModelState.AddModelError("", $"Không thể đặt hàng với tổng tiền vượt quá {MAX_ORDER_AMOUNT:N0} VNĐ. Tổng tiền hiện tại: {tongTien:N0} VNĐ");
-                return View(dto);
+                TempData["Loi"] = $"Không thể đặt hàng vì tổng tiền vượt quá {MAX_ORDER_AMOUNT:N0} VNĐ. Tổng tiền hiện tại: {tongTien:N0} VNĐ.";
+                return RedirectToAction("Index", "GioHangs");
             }
-            
+
             if (isVnPay)
             {
                 _logger.LogInformation("Đang xử lý thanh toán VNPay...");
@@ -363,9 +406,9 @@ namespace FurryFriends.Web.Controllers
                 _logger.LogInformation("Đang tạo URL thanh toán VNPay...");
                 try
                 {
-                var url = _vnPayService.CreatePaymentUrl(paymentModel, HttpContext);
+                    var url = _vnPayService.CreatePaymentUrl(paymentModel, HttpContext);
                     _logger.LogInformation($"URL VNPay: {url}");
-                return Redirect(url);
+                    return Redirect(url);
                 }
                 catch (Exception ex)
                 {
@@ -377,6 +420,17 @@ namespace FurryFriends.Web.Controllers
             else
             {
                 _logger.LogInformation($"Không phải VNPay. HinhThuc: {hinhThuc?.TenHinhThuc ?? "NULL"}, ID: {hinhThuc?.HinhThucThanhToanId}");
+            }
+
+            if (!isVnPay)
+            {
+                var soDonChoDuyet = await _gioHangService.GetDonChoDuyetCountAsync(dto.KhachHangId);
+                if (soDonChoDuyet >= 5)
+                {
+                    ViewBag.HinhThucThanhToanList = await _hinhThucThanhToanService.GetAllAsync();
+                    TempData["Loi"] = "Bạn đã có 5 đơn hàng ở trạng thái 'Chờ duyệt', vui lòng chờ xử lý xong trước khi đặt thêm!";
+                    return RedirectToAction("Index", "GioHangs"); // ✅ Giống voucher/sp
+                }
             }
 
             // Nếu không phải VNPay, xử lý thanh toán thông thường

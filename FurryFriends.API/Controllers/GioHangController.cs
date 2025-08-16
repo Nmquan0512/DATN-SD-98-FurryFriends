@@ -62,8 +62,9 @@ namespace FurryFriends.API.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine("❌ Lỗi khi thêm vào giỏ hàng: " + ex);
-                return StatusCode(500, new { message = ex.Message, detail = ex.InnerException?.Message });
+                //Console.WriteLine("❌ Lỗi khi thêm vào giỏ hàng: " + ex);
+                //return StatusCode(500, new { message = ex.Message, detail = ex.InnerException?.Message });
+                return BadRequest(ex.Message);
             }
         }
 
@@ -208,8 +209,22 @@ namespace FurryFriends.API.Controllers
 
             var result = await _repo.ThanhToanAsync(dto);
             Console.WriteLine($"[Controller] Kết quả thanh toán: {System.Text.Json.JsonSerializer.Serialize(result)}");
+
             return Ok(result);
         }
+
+        [HttpGet("cho-duyet-count/{khachHangId}")]
+        public async Task<IActionResult> GetChoDuyetCount(Guid khachHangId)
+        {
+            // NOTE: Nếu bạn lưu trạng thái dạng int/enum,
+            // hãy đổi điều kiện tương ứng (vd: hd.TrangThai == (int)TrangThaiHoaDon.ChoDuyet)
+            var count = await _context.HoaDons
+                .Where(hd => hd.KhachHangId == khachHangId && hd.TrangThai == 0)
+                .CountAsync();
+
+            return Ok(new { count });
+        }
+
 
     }
 
