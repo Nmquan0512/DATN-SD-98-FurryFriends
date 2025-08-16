@@ -92,7 +92,7 @@ namespace FurryFriends.API.Services.IServices
         /// </summary>
         Task<IEnumerable<VoucherDto>> TimKiemVoucherHopLeAsync(Guid hoaDonId);
         #endregion
-
+        Task<IEnumerable<SanPhamBanHangDto>> GetSuggestedProductsAsync(int count);
         #region Khách hàng
         /// <summary>
         /// Tạo nhanh một khách hàng mới.

@@ -57,7 +57,6 @@ builder.Services.AddScoped<IGiamGiaRepository, GiamGiaRepository>();
 builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 builder.Services.AddScoped<IChucVuRepository, ChucVuRepository>();
 builder.Services.AddScoped<IDiaChiKhachHangRepository, DiaChiKhachHangRepository>();
-builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
 builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
 builder.Services.AddScoped<INhanVienRepository, NhanVIenRepository>();
@@ -93,7 +92,6 @@ builder.Services.AddScoped<IDotGiamGiaSanPhamRepository, DotGiamGiaSanPhamReposi
 builder.Services.AddScoped<IGiamGiaService, GiamGiaService>();
 builder.Services.AddScoped<IBanHangRepository, BanHangRepository>();
 builder.Services.AddScoped<IBanHangService, BanHangService>();
-;
 // Add CORS policy cho phép web admin truy cập API
 builder.Services.AddCors(options =>
 {

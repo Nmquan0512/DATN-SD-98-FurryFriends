@@ -82,7 +82,7 @@ namespace FurryFriends.Web.Services
             return await ProcessResponse<HoaDonBanHangDto>(response);
         }
         #endregion
-
+         
         #region Thanh toán
         public async Task<HoaDonBanHangDto> ThanhToanHoaDonAsync(Guid hoaDonId, ThanhToanRequest request)
         {
@@ -162,6 +162,13 @@ namespace FurryFriends.Web.Services
 
             throw new ApiException(errorMessage, response.StatusCode, errorContent);
         }
+        public async Task<IEnumerable<SanPhamBanHangDto>> GetSuggestedProductsAsync()
+        {
+            // Gọi đến endpoint mới bạn vừa tạo trong API Controller
+            var response = await _httpClient.GetAsync($"{BasePath}/tim-kiem/san-pham-goi-y");
+            return await ProcessResponse<IEnumerable<SanPhamBanHangDto>>(response);
+        }
+
         #endregion
     }
 }

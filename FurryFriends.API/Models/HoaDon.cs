@@ -39,7 +39,7 @@ namespace FurryFriends.API.Models
         [Required]
         public int TrangThai { get; set; }
 
-        public string GhiChu { get; set; }
+        public string ? GhiChu { get; set; }
 
         [ForeignKey("VoucherId")]
         public virtual Voucher Voucher { get; set; }
@@ -53,12 +53,8 @@ namespace FurryFriends.API.Models
 
         [ForeignKey("DiaChiGiaoHangId")]
         public virtual DiaChiKhachHang? DiaChiGiaoHang { get; set; }
-
-        [Required]
-        public Guid NhanVienId { get; set; } // Nhân viên tạo hóa đơn
-
-        [ForeignKey("NhanVienId")]
-        public virtual NhanVien NhanVien { get; set; }
+        public Guid ? NhanVienId { get; set; } // Nhân viên tạo hóa đơn
+        public virtual NhanVien ? NhanVien { get; set; }
 
         public string LoaiHoaDon { get; set; } // Loại hóa đơn (ví dụ: "BanTaiQuay", ...)
 

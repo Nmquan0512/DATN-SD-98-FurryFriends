@@ -184,8 +184,14 @@ namespace FurryFriends.API.Data
                 .HasOne(hdct => hdct.HoaDon)
                 .WithMany(hd => hd.HoaDonChiTiets)
                 .HasForeignKey(hdct => hdct.HoaDonId)
-                .OnDelete(DeleteBehavior.Cascade);
 
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<HoaDon>()
+      .HasOne<NhanVien>() // Mỗi Hóa đơn có thể có MỘT Nhân viên
+      .WithMany()        // Một Nhân viên có thể có NHIỀU Hóa đơn
+      .HasForeignKey(hd => hd.NhanVienId) // Khóa ngoại là NhanVienId
+      .IsRequired(false)
+      .OnDelete(DeleteBehavior.SetNull);
         }
 
         private void ConfigureDotGiamGiaSanPham(ModelBuilder modelBuilder)

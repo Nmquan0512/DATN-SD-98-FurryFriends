@@ -24,8 +24,12 @@ namespace FurryFriends.API.Models.DTO.BanHang
         public string TenSanPham { get; set; }
         public string MauSac { get; set; }
         public string KichCo { get; set; }
-        public decimal Gia { get; set; }
+
+        public decimal Gia { get; set; }      // Giá gốc của sản phẩm tại thời điểm thêm
+        public decimal GiaBan { get; set; }
         public int SoLuong { get; set; }
         public decimal ThanhTien { get; set; }
+        public int SoLuongTon { get; set; }
+        public string HinhAnh { get; set; }
     }
 }

@@ -28,8 +28,9 @@ namespace FurryFriends.Web.Services.IService
         Task<IEnumerable<SanPhamBanHangDto>> TimKiemSanPhamAsync(string keyword);
         Task<IEnumerable<KhachHangDto>> TimKiemKhachHangAsync(string keyword);
         Task<IEnumerable<VoucherDto>> TimKiemVoucherHopLeAsync(Guid hoaDonId);
-
+        Task<IEnumerable<SanPhamBanHangDto>> GetSuggestedProductsAsync();
         // Khách hàng
+
         Task<KhachHangDto> TaoKhachHangMoiAsync(TaoKhachHangRequest request);
     }
 }

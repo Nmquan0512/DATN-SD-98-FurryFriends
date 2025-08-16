@@ -30,51 +30,120 @@ namespace FurryFriends.API.Repository
 
         public async Task<IEnumerable<HoaDonBanHangDto>> GetAllHoaDonsAsync()
         {
-            return await _context.HoaDons
+            // 1. Tải các đối tượng HoaDon và các dữ liệu liên quan cần thiết
+            var hoaDons = await _context.HoaDons
+                .AsNoTracking() // Dùng AsNoTracking để tăng hiệu năng cho truy vấn chỉ đọc
+                .Include(h => h.KhachHang)
+                .Include(h => h.Voucher)
                 .OrderByDescending(h => h.NgayTao)
-                .ProjectTo<HoaDonBanHangDto>(_mapper.ConfigurationProvider) // Dùng ProjectTo để tối ưu query
                 .ToListAsync();
+
+            // 2. Dùng _mapper.Map() để ánh xạ trong bộ nhớ. 
+            //    Cách này sẽ sử dụng cấu hình đầy đủ của BanHangMappingProfile mà không bị lỗi.
+            return _mapper.Map<IEnumerable<HoaDonBanHangDto>>(hoaDons);
+        }
+           public async Task<HoaDonBanHangDto> GanKhachLeAsync(Guid hoaDonId)
+        {
+            var hoaDon = await GetEditableHoaDon(hoaDonId);
+            await GanKhachLeNoSave(hoaDon);
+            await _context.SaveChangesAsync();
+            return await GetHoaDonByIdAsync(hoaDonId);
         }
 
         public async Task<HoaDonBanHangDto> GetHoaDonByIdAsync(Guid id)
         {
-            var hoaDon = await GetFullHoaDonQuery()
-                                 .FirstOrDefaultAsync(h => h.HoaDonId == id);
-
+            var hoaDon = await GetFullHoaDonQuery().FirstOrDefaultAsync(h => h.HoaDonId == id);
             if (hoaDon == null) throw new KeyNotFoundException("Hóa đơn không tồn tại.");
 
-            return await MapToHoaDonDto(hoaDon);
+            // 1. Dùng AutoMapper để map các thuộc tính cơ bản
+            var dto = _mapper.Map<HoaDonBanHangDto>(hoaDon);
+
+            // 2. Map chi tiết hóa đơn
+            dto.ChiTietHoaDon = hoaDon.HoaDonChiTiets.Select(hct => new ChiTietHoaDonDto
+            {
+                SanPhamChiTietId = hct.SanPhamChiTietId,
+                TenSanPham = hct.SanPhamChiTiet.SanPham.TenSanPham,
+                MauSac = hct.SanPhamChiTiet.MauSac.TenMau,
+                KichCo = hct.SanPhamChiTiet.KichCo.TenKichCo,
+                Gia = hct.SanPhamChiTiet.Gia, // Giá gốc từ sản phẩm để hiển thị
+                GiaBan = hct.Gia,             // Giá bán thực tế tại thời điểm mua
+                SoLuong = hct.SoLuongSanPham,
+                ThanhTien = hct.Gia * hct.SoLuongSanPham, // Thành tiền của dòng này
+                HinhAnh = hct.SanPhamChiTiet.Anh?.DuongDan,
+                SoLuongTon = hct.SanPhamChiTiet.SoLuong
+            }).ToList();
+
+            // 3. Lấy trực tiếp các giá trị đã được tính toán và lưu trong DB
+            //    Không cần tính toán lại ở đây!
+            dto.TongTien = hoaDon.TongTien;
+            dto.ThanhTien = hoaDon.TongTienSauKhiGiam;
+            dto.TienGiam = hoaDon.TongTien - hoaDon.TongTienSauKhiGiam;
+
+            return dto;
         }
+        // Bạn có thể xóa phương thức MapToHoaDonDto đi
+        // File: BanHangRepository.cs (API)
 
         public async Task<HoaDonBanHangDto> TaoHoaDonAsync(TaoHoaDonRequest request)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // Lấy một HinhThucThanhToan mặc định (ví dụ: "Chưa xác định")
-                // Điều này đảm bảo khóa ngoại luôn hợp lệ.
+                var oldPendingInvoices = await _context.HoaDons
+            .Where(h => h.TrangThai == (int)TrangThaiHoaDon.ChuaThanhToan && h.NgayTao < DateTime.UtcNow.AddHours(-2))
+            .ToListAsync();
+
+                if (oldPendingInvoices.Any())
+                {
+                    _logger.LogInformation($"Dọn dẹp {oldPendingInvoices.Count} hóa đơn chờ cũ.");
+                    // Với mỗi hóa đơn cũ, hoàn trả lại số lượng sản phẩm
+                    foreach (var oldInvoice in oldPendingInvoices)
+                    {
+                        var details = await _context.HoaDonChiTiets
+                                                    .Where(d => d.HoaDonId == oldInvoice.HoaDonId)
+                                                    .ToListAsync();
+                        foreach (var item in details)
+                        {
+                            var productDetail = await _context.SanPhamChiTiets.FindAsync(item.SanPhamChiTietId);
+                            if (productDetail != null)
+                            {
+                                productDetail.SoLuong += item.SoLuongSanPham;
+                            }
+                        }
+                        // Bạn cũng có thể hoàn trả voucher nếu cần
+                    }
+                    _context.HoaDons.RemoveRange(oldPendingInvoices);
+                    await _context.SaveChangesAsync();
+                }
+                // 1. Xử lý Hình thức thanh toán
                 var defaultHttt = await _context.HinhThucThanhToans.FirstOrDefaultAsync(h => h.TenHinhThuc == "Chưa xác định");
                 if (defaultHttt == null)
                 {
-                    // Nếu chưa có, tạo mới
-                    defaultHttt = new HinhThucThanhToan { HinhThucThanhToanId = Guid.NewGuid(), TenHinhThuc = "Chưa xác định" };
+                    defaultHttt = new HinhThucThanhToan
+                    {
+                        HinhThucThanhToanId = Guid.NewGuid(),
+                        TenHinhThuc = "Chưa xác định",
+                        MoTa = "Thanh toán khi nhận hàng tại quầy" // SỬA LỖI 1
+                    };
                     await _context.HinhThucThanhToans.AddAsync(defaultHttt);
-                    // Không cần SaveChanges ở đây vì nó nằm trong transaction
                 }
 
+                // 2. Xử lý Khách hàng và tạo Hóa đơn
                 var hoaDon = new HoaDon
                 {
                     HoaDonId = Guid.NewGuid(),
-                    NgayTao = DateTime.UtcNow, // Luôn dùng UtcNow ở backend
+                    NgayTao = DateTime.UtcNow,
                     TrangThai = (int)TrangThaiHoaDon.ChuaThanhToan,
-                    GhiChu = request.GhiChu,
+                    GhiChu = request.GhiChu ?? "",
                     NhanVienId = request.NhanVienId,
-                    HinhThucThanhToanId = defaultHttt.HinhThucThanhToanId, // SỬA LẠI DÒNG NÀY
+                    HinhThucThanhToanId = defaultHttt.HinhThucThanhToanId,
                     TongTien = 0,
-                    TongTienSauKhiGiam = 0
+                    TongTienSauKhiGiam = 0,
+
+                    LoaiHoaDon = request.GiaoHang ? "GiaoHang" : "BanTaiQuay"
+
                 };
 
-                // Gán khách hàng (logic của bạn đã tốt, chỉ cần sửa nhỏ)
                 if (!request.LaKhachLe && request.KhachHangId.HasValue)
                 {
                     await GanKhachHangNoSave(hoaDon, request.KhachHangId.Value);
@@ -84,20 +153,21 @@ namespace FurryFriends.API.Repository
                     var khachLe = await _context.KhachHangs.FirstOrDefaultAsync(k => k.TenKhachHang == "Khách lẻ");
                     if (khachLe == null)
                     {
-                        khachLe = new KhachHang { TenKhachHang = "Khách lẻ", NgayTaoTaiKhoan = DateTime.UtcNow, TrangThai = 1 };
+                        khachLe = new KhachHang
+                        {
+                            TenKhachHang = "Khách lẻ",
+                            NgayTaoTaiKhoan = DateTime.UtcNow,
+                            TrangThai = 1,
+                            EmailCuaKhachHang = "khachle@furryfriends.local", // SỬA LỖI 2
+                            SDT = "0000000000"
+                        };
                         await _context.KhachHangs.AddAsync(khachLe);
                     }
-                    hoaDon.KhachHang = khachLe; // Gán đối tượng thay vì chỉ ID để EF tracking tốt hơn
-                }
-
-                // Xử lý đơn giao hàng (giữ nguyên logic của bạn)
-                if (request.GiaoHang)
-                {
-                    // ... logic giao hàng ...
-                }
-                else
-                {
-                    hoaDon.LoaiHoaDon = "BanTaiQuay";
+                    
+                    hoaDon.KhachHangId = khachLe.KhachHangId;
+                    hoaDon.TenCuaKhachHang = khachLe.TenKhachHang;
+                    hoaDon.SdtCuaKhachHang = khachLe.SDT;
+                    hoaDon.EmailCuaKhachHang = khachLe.EmailCuaKhachHang; // SỬA LỖI 3
                 }
 
                 await _context.HoaDons.AddAsync(hoaDon);
@@ -110,7 +180,7 @@ namespace FurryFriends.API.Repository
             {
                 await transaction.RollbackAsync();
                 _logger.LogError(ex, "Lỗi khi tạo hóa đơn.");
-                throw; // Ném lại lỗi để Controller API bắt được
+                throw;
             }
         }
 
@@ -153,15 +223,33 @@ namespace FurryFriends.API.Repository
 
         #region Quản lý Sản phẩm trong Hóa đơn (LOGIC ĐÃ SỬA ĐÚNG)
 
+        // File: API/Repository/BanHangRepository.cs
         public async Task<HoaDonBanHangDto> ThemSanPhamVaoHoaDonAsync(ThemSanPhamVaoHoaDonRequest request)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 var hoaDon = await GetEditableHoaDon(request.HoaDonId);
-                var sanPhamChiTiet = await _context.SanPhamChiTiets.FindAsync(request.SanPhamChiTietId);
+                var sanPhamChiTiet = await _context.SanPhamChiTiets
+                    .Include(spct => spct.DotGiamGiaSanPhams)
+                        .ThenInclude(dggsp => dggsp.GiamGia)
+                    .FirstOrDefaultAsync(spct => spct.SanPhamChiTietId == request.SanPhamChiTietId);
 
                 if (sanPhamChiTiet == null) throw new KeyNotFoundException("Sản phẩm không tồn tại.");
+
+                // <<< LOGIC MỚI: TÍNH GIÁ BÁN THỰC TẾ >>>
+                var now = DateTime.UtcNow;
+                var activeSale = sanPhamChiTiet.DotGiamGiaSanPhams
+                    .Select(d => d.GiamGia)
+                    .FirstOrDefault(gg => gg.TrangThai && gg.NgayBatDau <= now && gg.NgayKetThuc >= now);
+
+                decimal actualSalePrice = sanPhamChiTiet.Gia; // Mặc định là giá gốc
+                if (activeSale != null)
+                {
+                    actualSalePrice = sanPhamChiTiet.Gia - (sanPhamChiTiet.Gia * (activeSale.PhanTramKhuyenMai / 100));
+                }
+                // <<< KẾT THÚC LOGIC MỚI >>>
+
                 if (sanPhamChiTiet.SoLuong < request.SoLuong) throw new InvalidOperationException("Số lượng sản phẩm trong kho không đủ.");
 
                 var existingItem = hoaDon.HoaDonChiTiets.FirstOrDefault(hct => hct.SanPhamChiTietId == request.SanPhamChiTietId);
@@ -176,14 +264,13 @@ namespace FurryFriends.API.Repository
                         HoaDonId = hoaDon.HoaDonId,
                         SanPhamChiTietId = sanPhamChiTiet.SanPhamChiTietId,
                         SoLuongSanPham = request.SoLuong,
-                        Gia = sanPhamChiTiet.Gia
+                        Gia = actualSalePrice // << SỬA LỖI: Lưu giá bán thực tế
                     };
                     await _context.HoaDonChiTiets.AddAsync(newItem);
                 }
 
                 sanPhamChiTiet.SoLuong -= request.SoLuong;
-                await TinhToanLaiTienHoaDon(hoaDon);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); // Lưu thay đổi trước khi tính toán
                 await transaction.CommitAsync();
 
                 return await GetHoaDonByIdAsync(hoaDon.HoaDonId);
@@ -195,7 +282,6 @@ namespace FurryFriends.API.Repository
                 throw;
             }
         }
-
         public async Task<HoaDonBanHangDto> XoaSanPhamKhoiHoaDonAsync(Guid hoaDonId, Guid sanPhamChiTietId)
         {
             // Tương tự CapNhatSoLuongSanPhamAsync với số lượng là 0
@@ -359,47 +445,59 @@ namespace FurryFriends.API.Repository
         // Trong BanHangRepository.cs
         public async Task<IEnumerable<SanPhamBanHangDto>> TimKiemSanPhamAsync(string keyword)
         {
-            var query = _context.SanPhamChiTiets
-                .AsNoTracking()
-                .Where(spct => spct.TrangThai == 1 && spct.SoLuong > 0); // Chỉ tìm sản phẩm đang bán và còn hàng
-
+            var now = DateTime.UtcNow;
+            var query = _context.SanPhamChiTiets.AsNoTracking().Where(spct => spct.TrangThai == 1 && spct.SoLuong > 0);
             if (!string.IsNullOrWhiteSpace(keyword))
             {
                 var lowerKeyword = keyword.ToLower();
-                query = query.Where(spct =>
-                    spct.SanPham.TenSanPham.ToLower().Contains(lowerKeyword) ||
-                    spct.MauSac.TenMau.ToLower().Contains(lowerKeyword) ||
-                    spct.KichCo.TenKichCo.ToLower().Contains(lowerKeyword)
-                );
+                query = query.Where(spct => spct.SanPham.TenSanPham.ToLower().Contains(lowerKeyword));
             }
 
-            return await query
-                .Take(20) // Giới hạn kết quả trả về để tránh quá tải
-                .ProjectTo<SanPhamBanHangDto>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+            var products = await query.Include(spct => spct.SanPham).Include(spct => spct.MauSac).Include(spct => spct.KichCo).Include(spct => spct.Anh)
+                .Include(spct => spct.DotGiamGiaSanPhams).ThenInclude(dggsp => dggsp.GiamGia)
+                .OrderByDescending(spct => spct.NgayTao).Take(20).ToListAsync();
+
+            var result = products.Select(spct =>
+            {
+                var activeSale = spct.DotGiamGiaSanPhams.Select(d => d.GiamGia).FirstOrDefault(gg => gg.TrangThai && gg.NgayBatDau <= now && gg.NgayKetThuc >= now);
+                decimal actualSalePrice = spct.Gia;
+                if (activeSale != null) { actualSalePrice = spct.Gia - (spct.Gia * (activeSale.PhanTramKhuyenMai / 100)); }
+
+                return new SanPhamBanHangDto
+                {
+                    SanPhamChiTietId = spct.SanPhamChiTietId,
+                    TenSanPham = spct.SanPham.TenSanPham,
+                    TenMauSac = spct.MauSac.TenMau,
+                    TenKichCo = spct.KichCo.TenKichCo,
+                    Gia = spct.Gia, // << Gán giá gốc
+                    GiaBan = actualSalePrice, // << Gán giá bán thực tế
+                    SoLuongTon = spct.SoLuong,
+                    HinhAnh = spct.Anh?.DuongDan
+                };
+            }).ToList();
+            return result;
         }
         public async Task<IEnumerable<KhachHangDto>> TimKiemKhachHangAsync(string keyword)
         {
-            // Bắt đầu với một query cơ bản, chỉ lấy khách hàng đang hoạt động
             var query = _context.KhachHangs
                 .AsNoTracking()
-                .Where(k => k.TrangThai == 1 && k.TenKhachHang != "Khách lẻ"); // Loại bỏ khách lẻ khỏi kết quả tìm kiếm
+                .Where(k => k.TrangThai == 1 && k.TenKhachHang != "Khách lẻ");
 
-            // Nếu có từ khóa, áp dụng bộ lọc
             if (!string.IsNullOrWhiteSpace(keyword))
             {
+                // Logic tìm kiếm khi có từ khóa (giữ nguyên)
                 var lowerKeyword = keyword.ToLower().Trim();
                 query = query.Where(k =>
                     k.TenKhachHang.ToLower().Contains(lowerKeyword) ||
-                    (k.SDT != null && k.SDT.Contains(lowerKeyword)) // Tìm kiếm theo SĐT
+                    k.SDT.Contains(lowerKeyword)
                 );
             }
 
-            // Luôn sắp xếp kết quả để đảm bảo tính nhất quán, ví dụ theo ngày tạo mới nhất
+            // Luôn sắp xếp và giới hạn số lượng kết quả
             return await query
-                .OrderByDescending(k => k.NgayTaoTaiKhoan)
-                .Take(15) // Rất quan trọng: Giới hạn số lượng kết quả trả về để tránh quá tải
-                .ProjectTo<KhachHangDto>(_mapper.ConfigurationProvider) // Dùng ProjectTo để tối ưu
+                .OrderByDescending(k => k.NgayTaoTaiKhoan) // Sắp xếp theo khách hàng mới nhất
+                .Take(10) // Chỉ lấy 10 kết quả để danh sách không quá dài
+                .ProjectTo<KhachHangDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 
@@ -517,6 +615,13 @@ namespace FurryFriends.API.Repository
                .Include(h => h.HoaDonChiTiets)
                    .ThenInclude(hct => hct.SanPhamChiTiet)
                    .ThenInclude(spct => spct.KichCo)
+
+               // <<< THÊM MỚI: DÒNG QUAN TRỌNG NHẤT ĐỂ LẤY DỮ LIỆU ẢNH >>>
+               .Include(h => h.HoaDonChiTiets)
+                   .ThenInclude(hct => hct.SanPhamChiTiet)
+                   .ThenInclude(spct => spct.Anh)
+               // <<< KẾT THÚC THÊM MỚI >>>
+
                .Include(h => h.KhachHang)
                .Include(h => h.HinhThucThanhToan)
                .Include(h => h.Voucher);
@@ -531,9 +636,19 @@ namespace FurryFriends.API.Repository
             dto.TienGiam = dto.TongTien - dto.ThanhTien;
             return dto;
         }
+        public async Task<IEnumerable<SanPhamBanHangDto>> GetSuggestedProductsAsync(int count)
+        {
+            return await _context.SanPhamChiTiets
+                .AsNoTracking()
+                .Where(spct => spct.TrangThai == 1 && spct.SoLuong > 0) // Chỉ lấy sản phẩm đang bán, còn hàng
+                .OrderByDescending(spct => spct.NgayTao) // Lấy sản phẩm mới nhất
+                .Take(count) // Giới hạn số lượng sản phẩm
+                .ProjectTo<SanPhamBanHangDto>(_mapper.ConfigurationProvider) // Dùng ProjectTo để tối ưu
+                .ToListAsync();
+        }
         #endregion
     }
-
+     
     public enum TrangThaiHoaDon
     {
         ChuaThanhToan = 0,

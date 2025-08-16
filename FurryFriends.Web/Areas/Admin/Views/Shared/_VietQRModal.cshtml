@@ -1,0 +1,156 @@
+﻿@*
+    PARTIAL VIEW HIỂN THỊ MODAL VIETQR - TỰ QUẢN LÝ VÀ CÓ THỂ TÁI SỬ DỤNG
+    --------------------------------------------------------------------
+    - CÁCH SỬ DỤNG:
+    1. Thêm vào View cha (ví dụ: _Layout.cshtml hoặc TaoHoaDonMoi.cshtml):
+       @await Html.PartialAsync("_VietQRModal")
+
+    2. Gọi từ bất kỳ file JavaScript nào bằng cách gửi một sự kiện:
+       const qrData = {
+           amount: 150000,
+           content: "HD123456",
+           bankBin: "970422",         // Mã BIN của MB Bank
+           accountNo: "0349767449",
+           accountName: "NGUYEN NGOC TRUONG"
+       };
+       $(document).trigger('showVietQR', [qrData]); // Gửi sự kiện để kích hoạt modal
+*@
+
+<div class="modal fade" id="vietQRModal" tabindex="-1" aria-labelledby="vietQRModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="vietQRModalLabel"><i class="fas fa-qrcode me-2"></i>Thanh toán qua VietQR</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+
+                <p class="text-muted">Quét mã QR dưới đây bằng ứng dụng ngân hàng của bạn để thanh toán.</p>
+
+                <!-- Vùng chứa ảnh QR, có spinner loading -->
+                <div id="qrImageContainer" class="d-flex justify-content-center align-items-center mb-3" style="min-height: 250px;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                    <img id="vietQrImage" src="" alt="VietQR Code" class="img-fluid rounded shadow-sm" style="display: none;" />
+                </div>
+
+                <!-- Bảng thông tin chuyển khoản -->
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm text-start">
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="bg-light" style="width: 35%;">Ngân hàng</th>
+                                <td>
+                                    <img id="bankLogo" src="https://api.vietqr.io/img/MB.png" height="20" class="me-2" alt="Bank Logo" />
+                                    <strong id="bankName">MB BANK</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="bg-light">Số tài khoản</th>
+                                <td class="fw-bold" id="accountNo">0349767449</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="bg-light">Chủ tài khoản</th>
+                                <td class="fw-bold" id="accountName">NGUYEN NGOC TRUONG</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="bg-light">Số tiền</th>
+                                <td>
+                                    <strong id="vietQrAmount" class="text-danger fs-5"></strong>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="bg-light">Nội dung</th>
+                                <td>
+                                    <strong id="vietQrContent" class="text-primary"></strong>
+                                    <button id="copyContentBtn" class="btn btn-sm btn-link p-0 ms-2" title="Sao chép nội dung">
+                                        <i class="far fa-copy"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript dành riêng cho Modal này -->
+<script>
+    $(document).ready(function() {
+        const qrModalElement = document.getElementById('vietQRModal');
+        const qrModal = new bootstrap.Modal(qrModalElement);
+
+        // Lắng nghe sự kiện tùy chỉnh 'showVietQR' được gửi từ các trang khác
+        $(document).on('showVietQR', function(event, data) {
+            if (!data) {
+                console.error("showVietQR event was triggered without data.");
+                return;
+            }
+
+            // --- Cập nhật dữ liệu từ object `data` ---
+            const amount = data.amount || 0;
+            const content = data.content || '';
+            const bankBin = data.bankBin || '970422'; // Mặc định là MB Bank
+            const accountNo = data.accountNo || '0349767449';
+            const accountName = data.accountName || 'NGUYEN NGOC TRUONG';
+
+            // API của VietQR để tạo link ảnh
+            const qrUrl = `https://img.vietqr.io/image/${bankBin}-${accountNo}-print.png?amount=${amount}&addInfo=${encodeURIComponent(content)}&accountName=${encodeURIComponent(accountName)}`;
+
+            // Cập nhật thông tin trong modal
+            $('#vietQrImage').data('src', qrUrl);
+            $('#bankLogo').attr('src', `https://api.vietqr.io/img/${bankBin}.png`);
+            // Cần một cơ chế để lấy tên ngân hàng từ BIN nếu muốn linh hoạt hơn
+            $('#bankName').text('MB BANK');
+            $('#accountNo').text(accountNo);
+            $('#accountName').text(accountName);
+            $('#vietQrAmount').text(amount.toLocaleString('vi-VN') + ' ₫');
+            $('#vietQrContent').text(content);
+
+            // Mở modal
+            qrModal.show();
+        });
+
+        // --- Các xử lý bên trong Modal ---
+        const qrImage = $('#vietQrImage');
+        const spinner = $('#qrImageContainer .spinner-border');
+        const qrContainer = $('#qrImageContainer');
+
+        $(qrModalElement).on('show.bs.modal', function () {
+            spinner.show();
+            qrImage.hide();
+            qrContainer.find('.qr-error').remove(); // Xóa thông báo lỗi cũ nếu có
+            // Tải ảnh QR mới. Dùng timeout nhỏ để đảm bảo data('src') đã được set
+            setTimeout(() => {
+                qrImage.attr('src', qrImage.data('src'));
+            }, 100);
+        });
+
+        qrImage.on('load', function() {
+            spinner.hide();
+            $(this).show();
+        }).on('error', function() {
+            spinner.hide();
+            qrContainer.append('<p class="text-danger small qr-error">Không thể tải mã QR. Vui lòng kiểm tra lại thông tin.</p>');
+        });
+
+        $('#copyContentBtn').on('click', function() {
+            const content = $('#vietQrContent').text();
+            if(navigator.clipboard && window.isSecureContext) {
+                 navigator.clipboard.writeText(content).then(function() {
+                    toastr.success('Đã sao chép nội dung chuyển khoản!');
+                }, function(err) {
+                    toastr.error('Không thể sao chép.');
+                });
+            } else {
+                toastr.warning('Trình duyệt không hỗ trợ sao chép an toàn.');
+            }
+        });
+    });
+</script>

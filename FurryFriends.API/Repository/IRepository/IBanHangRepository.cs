@@ -33,6 +33,9 @@ namespace FurryFriends.API.Repository.IRepository
         Task<IEnumerable<VoucherDto>> TimKiemVoucherHopLeAsync(Guid hoaDonId); // Tìm voucher áp dụng được cho hóa đơn
 
         // Khách hàng
+
+        Task<IEnumerable<SanPhamBanHangDto>> GetSuggestedProductsAsync(int count);
         Task<KhachHangDto> TaoKhachHangMoiAsync(TaoKhachHangRequest request);
+
     }
 }

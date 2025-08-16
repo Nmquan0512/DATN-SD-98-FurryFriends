@@ -1,0 +1,93 @@
+﻿@*
+    PARTIAL VIEW CHO MODAL TẠO NHANH KHÁCH HÀNG MỚI
+*@
+
+<div class="modal fade" id="createCustomerModal" tabindex="-1" aria-labelledby="createCustomerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Thẻ form bao bọc toàn bộ modal -->
+            <form id="createCustomerForm" novalidate>
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="createCustomerModalLabel"><i class="fas fa-user-plus me-2"></i>Tạo Khách Hàng Mới</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Khu vực hiển thị lỗi từ API -->
+                    <div id="createCustomerError" class="alert alert-danger" style="display:none;"></div>
+
+                    <!-- Tên khách hàng -->
+                    <div class="mb-3">
+                        <label for="newCustomerName" class="form-label">Tên khách hàng <span class="text-danger">*</span></label>
+                        <input type="text" id="newCustomerName" name="TenKhachHang" class="form-control" required placeholder="Nhập họ và tên..." />
+                        <div class="invalid-feedback">Vui lòng nhập tên khách hàng.</div>
+                    </div>
+
+                    <!-- Số điện thoại -->
+                    <div class="mb-3">
+                        <label for="newCustomerPhone" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                        <input type="text" id="newCustomerPhone" name="SDT" class="form-control" required placeholder="Nhập số điện thoại..." />
+                        <div class="invalid-feedback">Vui lòng nhập số điện thoại hợp lệ.</div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="newCustomerEmail" class="form-label">Email</label>
+                        <input type="email" id="newCustomerEmail" name="Email" class="form-control" placeholder="vidu@email.com" />
+                        <div class="invalid-feedback">Vui lòng nhập email hợp lệ.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                        Lưu và Chọn
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript dành riêng cho Modal này -->
+<script>
+    $(document).ready(function() {
+        const createCustomerModal = document.getElementById('createCustomerModal');
+        const form = $('#createCustomerForm');
+        const errorDiv = $('#createCustomerError');
+        const submitButton = form.find('button[type="submit"]');
+        const spinner = submitButton.find('.spinner-border');
+
+        // Sự kiện submit form
+        form.on('submit', function(e) {
+            e.preventDefault();
+            // Tắt validation mặc định và tự xử lý
+            if (!form[0].checkValidity()) {
+                e.stopPropagation();
+                form.addClass('was-validated');
+                return;
+            }
+            form.removeClass('was-validated');
+
+            // Hiển thị spinner, vô hiệu hóa nút
+            spinner.show();
+            submitButton.prop('disabled', true);
+            errorDiv.hide();
+
+            // Logic submit đã được viết trong file View chính (TaoHoaDonMoi.cshtml)
+            // File đó sẽ lắng nghe sự kiện submit này và gọi API.
+            // Đoạn code ở đây chỉ để quản lý UI của modal.
+        });
+
+        // Sự kiện khi modal được đóng
+        $(createCustomerModal).on('hidden.bs.modal', function () {
+            // Reset lại form
+            form[0].reset();
+            form.removeClass('was-validated');
+            errorDiv.hide().text('');
+
+            // Kích hoạt lại nút submit và ẩn spinner
+            spinner.hide();
+            submitButton.prop('disabled', false);
+        });
+    });
+</script>
