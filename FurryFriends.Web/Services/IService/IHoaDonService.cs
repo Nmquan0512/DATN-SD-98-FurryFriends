@@ -20,6 +20,8 @@ namespace FurryFriends.Web.Services.IService
         Task<int> GetTotalOrdersAsync();
         Task<decimal> GetMonthlyRevenueAsync();
         Task<List<object>> GetRevenueByMonthAsync();
+        Task<List<object>> GetRevenueByDayAsync();
+        Task<List<object>> GetRevenueByWeekAsync();
         Task<List<object>> GetOrdersByStatusAsync();
         Task<List<object>> GetRecentOrdersAsync(int count);
     }

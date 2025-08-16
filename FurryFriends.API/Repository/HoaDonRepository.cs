@@ -69,6 +69,8 @@ namespace FurryFriends.API.Repository
                                  .Include(h => h.HoaDonChiTiets)
                                     .ThenInclude(ct => ct.SanPhamChiTiet)
                                         .ThenInclude(spc => spc.KichCo)
+                                 .Include(h => h.LichSuTrangThaiHoaDons)
+                                    .ThenInclude(l => l.NhanVien)
                                  .FirstOrDefaultAsync(h => h.HoaDonId == hoaDonId);
 
             if (hoaDon == null)
@@ -556,6 +558,21 @@ namespace FurryFriends.API.Repository
 
                 // ✅ Cập nhật trạng thái thành "Đã hủy"
                 hoaDon.TrangThai = 4;
+                // ✅ Lưu thời gian thực khi hủy đơn
+                hoaDon.ThoiGianThayDoiTrangThai = DateTime.Now;
+
+                // ✅ Lưu lịch sử thay đổi trạng thái khi hủy đơn
+                var lichSu = new LichSuTrangThaiHoaDon
+                {
+                    Id = Guid.NewGuid(),
+                    HoaDonId = hoaDonId,
+                    TrangThaiCu = hoaDon.TrangThai,
+                    TrangThaiMoi = 4,
+                    ThoiGianThayDoi = DateTime.Now,
+                    GhiChu = "Hủy đơn hàng"
+                };
+                
+                _context.LichSuTrangThaiHoaDons.Add(lichSu);
                 // ✅ Không cần cập nhật ngày vì model không có property này
 
                 // ✅ Lưu thay đổi
@@ -590,6 +607,22 @@ namespace FurryFriends.API.Repository
                     return new ApiResult { Success = false, Message = GetInvalidTransitionMessage(hoaDon.TrangThai, trangThaiMoi) };
                 }
 
+                // ✅ Lưu lịch sử thay đổi trạng thái
+                var lichSu = new LichSuTrangThaiHoaDon
+                {
+                    Id = Guid.NewGuid(),
+                    HoaDonId = hoaDonId,
+                    TrangThaiCu = hoaDon.TrangThai,
+                    TrangThaiMoi = trangThaiMoi,
+                    ThoiGianThayDoi = DateTime.Now,
+                    GhiChu = $"Thay đổi từ {GetTrangThaiText(hoaDon.TrangThai)} sang {GetTrangThaiText(trangThaiMoi)}"
+                };
+                
+                _context.LichSuTrangThaiHoaDons.Add(lichSu);
+
+                // ✅ Lưu thời gian thực khi thay đổi trạng thái
+                hoaDon.ThoiGianThayDoiTrangThai = DateTime.Now;
+                
                 // Cập nhật trạng thái
                 hoaDon.TrangThai = trangThaiMoi;
 
@@ -613,11 +646,18 @@ namespace FurryFriends.API.Repository
             // 0 (Chờ duyệt) → 1 (Đã duyệt) ✓
             // 1 (Đã duyệt) → 2 (Đang giao) ✓
             // 2 (Đang giao) → 3 (Đã giao) ✓
+            // 0, 1 → 4 (Đã hủy) ✓ - Cho phép hủy đơn từ trạng thái chờ duyệt và đã duyệt
             // 4 (Đã hủy) → Không thể chuyển sang trạng thái khác
 
             if (trangThaiHienTai == 4) // Đã hủy
             {
                 return false; // Không thể chuyển từ trạng thái đã hủy
+            }
+
+            // Cho phép hủy đơn từ trạng thái "Chờ duyệt" và "Đã duyệt"
+            if ((trangThaiHienTai == 0 || trangThaiHienTai == 1) && trangThaiMoi == 4)
+            {
+                return true; // Cho phép hủy đơn
             }
 
             switch (trangThaiHienTai)
@@ -653,6 +693,19 @@ namespace FurryFriends.API.Repository
             if (trangThaiHienTai == 3)
             {
                 return "Không thể thay đổi trạng thái của đơn hàng đã giao thành công";
+            }
+
+            // Thông báo đặc biệt cho việc hủy đơn
+            if (trangThaiMoi == 4)
+            {
+                if (trangThaiHienTai == 2)
+                {
+                    return "Không thể hủy đơn hàng đang giao. Vui lòng chờ đơn hàng được giao hoặc liên hệ khách hàng.";
+                }
+                if (trangThaiHienTai == 3)
+                {
+                    return "Không thể hủy đơn hàng đã giao thành công.";
+                }
             }
 
             if (trangThaiHienTai == 1 && trangThaiMoi == 0)

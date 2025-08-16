@@ -42,6 +42,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 
                 // Lấy dữ liệu thật cho khách hàng, sản phẩm, nhân viên
                 var totalCustomers = await _khachHangService.GetTotalCustomersAsync();
+                var activeCustomers = await _khachHangService.GetActiveCustomersAsync();
+                var inactiveCustomers = await _khachHangService.GetInactiveCustomersAsync();
                 var totalProducts = await _sanPhamService.GetTotalProductsAsync();
                 var totalEmployees = await _nhanVienService.GetTotalEmployeesAsync();
                 
@@ -52,6 +54,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 ViewBag.OrdersByStatus = ordersByStatus;
                 ViewBag.RecentOrders = recentOrders;
                 ViewBag.TotalCustomers = totalCustomers;
+                ViewBag.ActiveCustomers = activeCustomers;
+                ViewBag.InactiveCustomers = inactiveCustomers;
                 ViewBag.TotalProducts = totalProducts;
                 ViewBag.TotalEmployees = totalEmployees;
 
@@ -63,6 +67,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 
                 // Fallback data nếu có lỗi
                 ViewBag.TotalCustomers = 0;
+                ViewBag.ActiveCustomers = 0;
+                ViewBag.InactiveCustomers = 0;
                 ViewBag.TotalProducts = 0;
                 ViewBag.TotalEmployees = 0;
                 ViewBag.TotalOrders = 0;
@@ -86,6 +92,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 // Lấy dữ liệu doanh thu theo khoảng thời gian được chọn
                 switch (period.ToLower())
                 {
+                    case "day":
+                        revenueData = await GetRevenueByDayAsync();
+                        break;
+                    case "week":
+                        revenueData = await GetRevenueByWeekAsync();
+                        break;
                     case "quarter":
                         revenueData = await GetRevenueByQuarterAsync();
                         break;
@@ -123,6 +135,97 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             {
                 _logger.LogError(ex, "Error getting chart data for period: {Period}", period);
                 return Json(new { success = false, message = "Có lỗi xảy ra khi tải dữ liệu biểu đồ" });
+            }
+        }
+
+        // Lấy doanh thu theo ngày
+        private async Task<List<object>> GetRevenueByDayAsync()
+        {
+            try
+            {
+                var allOrders = await _hoaDonService.GetHoaDonListAsync();
+                var currentDate = DateTime.Now.Date;
+                
+                var dailyData = new List<object>();
+                var labels = new string[24];
+                var values = new decimal[24];
+                
+                // Khởi tạo dữ liệu cho 24 giờ
+                for (int i = 0; i < 24; i++)
+                {
+                    labels[i] = $"{i:D2}:00";
+                    values[i] = 0;
+                }
+                
+                // Tính doanh thu theo từng giờ
+                foreach (var order in allOrders.Where(h => h.NgayTao.Date == currentDate))
+                {
+                    var hour = order.NgayTao.Hour;
+                    if (hour >= 0 && hour < 24)
+                    {
+                        values[hour] += order.TongTienSauKhiGiam;
+                    }
+                }
+                
+                dailyData.Add(new { labels = labels });
+                dailyData.Add(new { values = values });
+                
+                return dailyData;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting daily revenue data");
+                return new List<object>
+                {
+                    new { labels = new[] { "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00" } },
+                    new { values = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
+                };
+            }
+        }
+
+        // Lấy doanh thu theo tuần
+        private async Task<List<object>> GetRevenueByWeekAsync()
+        {
+            try
+            {
+                var allOrders = await _hoaDonService.GetHoaDonListAsync();
+                var currentDate = DateTime.Now.Date;
+                var startOfWeek = currentDate.AddDays(-(int)currentDate.DayOfWeek); // Bắt đầu tuần
+                
+                var weeklyData = new List<object>();
+                var labels = new string[7];
+                var values = new decimal[7];
+                
+                // Khởi tạo dữ liệu cho 7 ngày trong tuần
+                for (int i = 0; i < 7; i++)
+                {
+                    labels[i] = startOfWeek.AddDays(i).ToString("dd/MM");
+                    values[i] = 0;
+                }
+                
+                // Tính doanh thu theo từng ngày trong tuần
+                foreach (var order in allOrders.Where(h => h.NgayTao.Date >= startOfWeek && h.NgayTao.Date < startOfWeek.AddDays(7)))
+                {
+                    var dayOfWeek = (int)order.NgayTao.DayOfWeek;
+                    if (dayOfWeek >= 0 && dayOfWeek < 7)
+                    {
+                        values[dayOfWeek] += order.TongTienSauKhiGiam;
+                    }
+                }
+                
+                weeklyData.Add(new { labels = labels });
+                weeklyData.Add(new { values = values });
+                
+                return weeklyData;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting weekly revenue data");
+                return new List<object>
+                {
+                    new { labels = new[] { "CN", "T2", "T3", "T4", "T5", "T6", "T7" } },
+                    new { values = new[] { 0, 0, 0, 0, 0, 0, 0 } }
+                };
             }
         }
 

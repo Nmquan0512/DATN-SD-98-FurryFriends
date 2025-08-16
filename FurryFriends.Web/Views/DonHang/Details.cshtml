@@ -470,6 +470,122 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Status Timeline */
+        .status-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 1rem 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .timeline-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 25px;
+            top: 50px;
+            width: 2px;
+            height: calc(100% + 1rem);
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+        }
+
+        .timeline-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-time {
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .timeline-description {
+            font-size: 0.875rem;
+            color: #475569;
+            line-height: 1.5;
+        }
+
+        /* Timeline Icon Colors */
+        .timeline-icon.status-pending {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+
+        .timeline-icon.status-approved {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .timeline-icon.status-shipping {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .timeline-icon.status-delivered {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .timeline-icon.status-cancelled {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        /* Responsive Timeline */
+        @@media (max-width: 768px) {
+            .timeline-item {
+                gap: 1rem;
+            }
+
+            .timeline-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+
+            .timeline-content {
+                padding: 1rem;
+            }
+
+            .timeline-item:not(:last-child)::after {
+                left: 20px;
+                top: 40px;
+            }
+        }
     </style>
 }
 
@@ -585,6 +701,114 @@
                             <span class="info-label">Ghi chú:</span>
                             <span class="info-value">@Model.GhiChu</span>
                         </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Status History Section -->
+        <div class="order-details-container mt-8 fade-in">
+            <div class="products-section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="section-title">Lịch sử trạng thái đơn hàng</div>
+                </div>
+
+                <div class="status-timeline">
+                    <!-- Order Created -->
+                    <div class="timeline-item">
+                        <div class="timeline-icon status-pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Đơn hàng được tạo</div>
+                            <div class="timeline-time">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")</div>
+                            <div class="timeline-description">Đơn hàng của bạn đã được tạo thành công</div>
+                        </div>
+                    </div>
+
+                    <!-- Status Changes -->
+                    @if (Model.LichSuTrangThaiHoaDons != null && Model.LichSuTrangThaiHoaDons.Any())
+                    {
+                        var lichSuOrdered = Model.LichSuTrangThaiHoaDons.OrderBy(l => l.ThoiGianThayDoi).ToList();
+                        
+                        foreach (var lichSu in lichSuOrdered)
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-icon @GetStatusClass(lichSu.TrangThaiMoi)">
+                                    <i class="@GetStatusIcon(lichSu.TrangThaiMoi)"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">@GetStatusChangeText(lichSu.TrangThaiCu, lichSu.TrangThaiMoi)</div>
+                                    <div class="timeline-time">@lichSu.ThoiGianThayDoi.ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                    @if (!string.IsNullOrEmpty(lichSu.GhiChu))
+                                    {
+                                        <div class="timeline-description">@lichSu.GhiChu</div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <!-- Fallback: Show basic status progression -->
+                        @if (Model.TrangThai >= 1)
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-icon status-approved">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Đơn hàng được duyệt</div>
+                                    <div class="timeline-time">@Model.NgayTao.AddMinutes(30).ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                    <div class="timeline-description">Đơn hàng đã được xác nhận và đang được xử lý</div>
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (Model.TrangThai >= 2)
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-icon status-shipping">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Đơn hàng đang giao</div>
+                                    <div class="timeline-time">@Model.NgayTao.AddHours(2).ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                    <div class="timeline-description">Đơn hàng đang được vận chuyển đến bạn</div>
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (Model.TrangThai >= 3)
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-icon status-delivered">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Đơn hàng đã giao</div>
+                                    <div class="timeline-time">@Model.NgayTao.AddHours(4).ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                    <div class="timeline-description">Đơn hàng đã được giao thành công</div>
+                                </div>
+                            </div>
+                        }
+                        
+                        @if (Model.TrangThai == 4)
+                        {
+                            <div class="timeline-item">
+                                <div class="timeline-icon status-cancelled">
+                                    <i class="fas fa-times-circle"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <div class="timeline-title">Đơn hàng đã hủy</div>
+                                    <div class="timeline-time">@Model.NgayTao.AddHours(1).ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                    <div class="timeline-description">Đơn hàng đã được hủy</div>
+                                </div>
+                            </div>
+                        }
                     }
                 </div>
             </div>
@@ -765,5 +989,17 @@
             4 => "times-circle",
             _ => "clock"
         };
+    }
+
+    private string GetStatusChangeText(int oldStatus, int newStatus)
+    {
+        if (oldStatus == 0 && newStatus == 1) return "Đơn hàng được duyệt";
+        if (oldStatus == 1 && newStatus == 2) return "Đơn hàng đang giao";
+        if (oldStatus == 2 && newStatus == 3) return "Đơn hàng đã giao";
+        if (newStatus == 4) return "Đơn hàng đã hủy";
+        if (oldStatus == 0 && newStatus == 4) return "Đơn hàng đã hủy";
+        if (oldStatus == 1 && newStatus == 4) return "Đơn hàng đã hủy";
+        if (oldStatus == 2 && newStatus == 4) return "Đơn hàng đã hủy";
+        return "Trạng thái đã thay đổi";
     }
 }

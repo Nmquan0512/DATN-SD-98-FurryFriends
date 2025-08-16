@@ -70,7 +70,13 @@ namespace FurryFriends.API.Models
         // ✅ Snapshot địa chỉ giao hàng lúc mua
         public string? DiaChiGiaoHangLucMua { get; set; }
 
+        // ✅ Thời gian thay đổi trạng thái - lưu thời gian thực
+        public DateTime? ThoiGianThayDoiTrangThai { get; set; }
+
         public virtual ICollection<HoaDonChiTiet> HoaDonChiTiets { get; set; }
+
+        // ✅ Lịch sử thay đổi trạng thái chi tiết
+        public virtual ICollection<LichSuTrangThaiHoaDon> LichSuTrangThaiHoaDons { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

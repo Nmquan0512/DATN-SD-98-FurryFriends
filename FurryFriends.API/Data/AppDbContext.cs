@@ -41,7 +41,9 @@ namespace FurryFriends.API.Data
         public DbSet<ChatLieu> ChatLieus { get; set; }
         public DbSet<SanPhamThanhPhan> SanPhamThanhPhans { get; set; }
         public DbSet<SanPhamChatLieu> SanPhamChatLieus { get; set; }
+        public DbSet<LichSuTrangThaiHoaDon> LichSuTrangThaiHoaDons { get; set; }
         public DbSet<ThongBao> ThongBaos { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

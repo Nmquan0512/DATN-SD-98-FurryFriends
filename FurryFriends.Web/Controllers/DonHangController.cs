@@ -51,6 +51,17 @@ namespace FurryFriends.Web.Controllers
                         Math.Max(0, (h.TongTien + ((h.TongTienSauKhiGiam >= 500000m) ? 0m : 30000m)) - h.TongTienSauKhiGiam)
                         : (decimal?)null,
                     ThongTinVoucherLucMua = h.ThongTinVoucherLucMua,
+                    // ✅ Load lịch sử thay đổi trạng thái
+                    LichSuTrangThaiHoaDons = h.LichSuTrangThaiHoaDons?.Select(l => new LichSuTrangThaiHoaDonViewModel
+                    {
+                        Id = l.Id,
+                        HoaDonId = l.HoaDonId,
+                        TrangThaiCu = l.TrangThaiCu,
+                        TrangThaiMoi = l.TrangThaiMoi,
+                        ThoiGianThayDoi = l.ThoiGianThayDoi,
+                        GhiChu = l.GhiChu,
+                        NhanVienId = l.NhanVienId
+                    }).ToList() ?? new List<LichSuTrangThaiHoaDonViewModel>(),
                     ChiTiets = h.HoaDonChiTiets?.Select(ct => new DonHangChiTietViewModel
                     {
                         HoaDonChiTietId = ct.HoaDonChiTietId,
@@ -122,6 +133,17 @@ namespace FurryFriends.Web.Controllers
                         Math.Max(0, (hoaDon.TongTien + ((hoaDon.TongTienSauKhiGiam >= 500000m) ? 0m : 30000m)) - hoaDon.TongTienSauKhiGiam)
                         : (decimal?)null,
                     ThongTinVoucherLucMua = hoaDon.ThongTinVoucherLucMua,
+                    // ✅ Load lịch sử thay đổi trạng thái
+                    LichSuTrangThaiHoaDons = hoaDon.LichSuTrangThaiHoaDons?.Select(l => new LichSuTrangThaiHoaDonViewModel
+                    {
+                        Id = l.Id,
+                        HoaDonId = l.HoaDonId,
+                        TrangThaiCu = l.TrangThaiCu,
+                        TrangThaiMoi = l.TrangThaiMoi,
+                        ThoiGianThayDoi = l.ThoiGianThayDoi,
+                        GhiChu = l.GhiChu,
+                        NhanVienId = l.NhanVienId
+                    }).ToList() ?? new List<LichSuTrangThaiHoaDonViewModel>(),
                     ChiTiets = hoaDon.HoaDonChiTiets?.Select(ct => new DonHangChiTietViewModel
                     {
                         HoaDonChiTietId = ct.HoaDonChiTietId,

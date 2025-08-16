@@ -195,6 +195,7 @@ namespace FurryFriends.Web.Services
             }
         }
 
+        // ✅ Lấy doanh thu theo tháng
         public async Task<List<object>> GetRevenueByMonthAsync()
         {
             try
@@ -235,6 +236,97 @@ namespace FurryFriends.Web.Services
                 {
                     new { labels = new[] { "T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8", "T9", "T10", "T11", "T12" } },
                     new { values = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
+                };
+            }
+        }
+
+        // ✅ Lấy doanh thu theo ngày (24 giờ)
+        public async Task<List<object>> GetRevenueByDayAsync()
+        {
+            try
+            {
+                var allOrders = await GetHoaDonListAsync();
+                var currentDate = DateTime.Now.Date;
+                
+                var dailyData = new List<object>();
+                var labels = new string[24];
+                var values = new decimal[24];
+                
+                // Khởi tạo dữ liệu cho 24 giờ
+                for (int i = 0; i < 24; i++)
+                {
+                    labels[i] = $"{i:D2}:00";
+                    values[i] = 0;
+                }
+                
+                // Tính doanh thu theo từng giờ
+                foreach (var order in allOrders.Where(h => h.NgayTao.Date == currentDate))
+                {
+                    var hour = order.NgayTao.Hour;
+                    if (hour >= 0 && hour < 24)
+                    {
+                        values[hour] += order.TongTienSauKhiGiam;
+                    }
+                }
+                
+                dailyData.Add(new { labels = labels });
+                dailyData.Add(new { values = values });
+                
+                return dailyData;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetRevenueByDayAsync: {ex.Message}");
+                return new List<object>
+                {
+                    new { labels = new[] { "00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00" } },
+                    new { values = new[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } }
+                };
+            }
+        }
+
+        // ✅ Lấy doanh thu theo tuần (7 ngày)
+        public async Task<List<object>> GetRevenueByWeekAsync()
+        {
+            try
+            {
+                var allOrders = await GetHoaDonListAsync();
+                var currentDate = DateTime.Now.Date;
+                var startOfWeek = currentDate.AddDays(-(int)currentDate.DayOfWeek); // Bắt đầu tuần
+                
+                var weeklyData = new List<object>();
+                var labels = new string[7];
+                var values = new decimal[7];
+                
+                // Khởi tạo dữ liệu cho 7 ngày trong tuần
+                for (int i = 0; i < 7; i++)
+                {
+                    labels[i] = startOfWeek.AddDays(i).ToString("dd/MM");
+                    values[i] = 0;
+                }
+                
+                // Tính doanh thu theo từng ngày trong tuần
+                foreach (var order in allOrders.Where(h => h.NgayTao.Date >= startOfWeek && h.NgayTao.Date < startOfWeek.AddDays(7)))
+                {
+                    var dayOfWeek = (int)order.NgayTao.DayOfWeek;
+                    if (dayOfWeek >= 0 && dayOfWeek < 7)
+                    {
+                        values[dayOfWeek] += order.TongTienSauKhiGiam;
+                    }
+                }
+                
+                weeklyData.Add(new { labels = labels });
+                weeklyData.Add(new { values = values });
+                
+                return weeklyData;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetRevenueByWeekAsync: {ex.Message}");
+                return new List<object>
+                {
+                    new { labels = new[] { "CN", "T2", "T3", "T4", "T5", "T6", "T7" } },
+                    new { values = new[] { 0, 0, 0, 0, 0, 0, 0 } }
                 };
             }
         }

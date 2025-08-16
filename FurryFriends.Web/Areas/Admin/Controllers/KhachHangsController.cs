@@ -26,8 +26,31 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var khachHangs = await _khachHangService.GetAllAsync();
-            return View(khachHangs);
+            try
+            {
+                var khachHangs = await _khachHangService.GetAllAsync();
+                
+                // Tính toán thống kê
+                var totalCount = khachHangs.Count();
+                var activeCount = khachHangs.Count(kh => kh.TrangThai == 1); // 1 = Đang hoạt động
+                var inactiveCount = khachHangs.Count(kh => kh.TrangThai != 1); // Khác 1 = Không hoạt động
+                
+                ViewBag.TotalCount = totalCount;
+                ViewBag.ActiveCount = activeCount;
+                ViewBag.InactiveCount = inactiveCount;
+                
+                return View(khachHangs);
+            }
+            catch (Exception ex)
+            {
+                // Fallback data nếu có lỗi
+                ViewBag.TotalCount = 0;
+                ViewBag.ActiveCount = 0;
+                ViewBag.InactiveCount = 0;
+                
+                TempData["error"] = $"Lỗi khi tải dữ liệu: {ex.Message}";
+                return View(new List<KhachHang>());
+            }
         }
 
         // GET: Admin/KhachHangs/Create

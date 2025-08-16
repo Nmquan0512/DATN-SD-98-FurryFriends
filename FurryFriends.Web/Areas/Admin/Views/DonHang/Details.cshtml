@@ -434,6 +434,10 @@
             color: #64748b;
         }
 
+        .timeline-note {
+            margin-top: 0.25rem;
+        }
+
         .icon-pending { background: #f59e0b; }
         .icon-approved { background: #10b981; }
         .icon-shipping { background: #3b82f6; }
@@ -528,6 +532,13 @@
                     <div class="info-label">Phương thức thanh toán</div>
                     <div class="info-value">@(Model.HinhThucThanhToan?.TenHinhThuc ?? "N/A")</div>
                 </div>
+                @if (Model.ThoiGianThayDoiTrangThai.HasValue)
+                {
+                    <div class="info-item">
+                        <div class="info-label">Thời gian cập nhật cuối</div>
+                        <div class="info-value">@Model.ThoiGianThayDoiTrangThai.Value.ToString("dd/MM/yyyy HH:mm:ss")</div>
+                    </div>
+                }
             </div>
 
             <!-- Timeline trạng thái thời gian thực -->
@@ -547,8 +558,33 @@
                     </div>
                 </div>
                 
-                <!-- Chỉ hiển thị khi thực sự đã duyệt -->
-                @if (Model.TrangThai >= 1)
+                <!-- Hiển thị lịch sử thay đổi trạng thái thực tế -->
+                @if (Model.LichSuTrangThaiHoaDons != null && Model.LichSuTrangThaiHoaDons.Any())
+                {
+                    var lichSuOrdered = Model.LichSuTrangThaiHoaDons.OrderBy(l => l.ThoiGianThayDoi).ToList();
+                    
+                    foreach (var lichSu in lichSuOrdered)
+                    {
+                        <div class="timeline-item">
+                            <div class="timeline-icon @GetStatusIconClass(lichSu.TrangThaiMoi)">
+                                <i class="@GetStatusIcon(lichSu.TrangThaiMoi)"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <div class="timeline-title">@GetStatusChangeText(lichSu.TrangThaiCu, lichSu.TrangThaiMoi)</div>
+                                <div class="timeline-time">@lichSu.ThoiGianThayDoi.ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                @if (!string.IsNullOrEmpty(lichSu.GhiChu))
+                                {
+                                    <div class="timeline-note text-muted small">@lichSu.GhiChu</div>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <!-- Fallback: Hiển thị logic cũ nếu chưa có lịch sử -->
+                    <!-- Chỉ hiển thị khi thực sự đã duyệt VÀ không bị hủy -->
+                    @if (Model.TrangThai >= 1 && Model.TrangThai != 4)
                 {
                     <div class="timeline-item">
                         <div class="timeline-icon icon-approved">
@@ -556,13 +592,22 @@
                         </div>
                         <div class="timeline-content">
                             <div class="timeline-title">Đơn hàng được duyệt</div>
-                            <div class="timeline-time">@Model.NgayTao.AddMinutes(30).ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                <div class="timeline-time">
+                                    @if (Model.ThoiGianThayDoiTrangThai.HasValue)
+                                    {
+                                        @Model.ThoiGianThayDoiTrangThai.Value.ToString("dd/MM/yyyy HH:mm:ss")
+                                    }
+                                    else
+                                    {
+                                        @Model.NgayTao.AddMinutes(30).ToString("dd/MM/yyyy HH:mm:ss")
+                                    }
+                                </div>
                         </div>
                     </div>
                 }
                 
-                <!-- Chỉ hiển thị khi thực sự đang giao -->
-                @if (Model.TrangThai >= 2)
+                    <!-- Chỉ hiển thị khi thực sự đang giao VÀ không bị hủy -->
+                    @if (Model.TrangThai >= 2 && Model.TrangThai != 4)
                 {
                     <div class="timeline-item">
                         <div class="timeline-icon icon-shipping">
@@ -570,13 +615,22 @@
                         </div>
                         <div class="timeline-content">
                             <div class="timeline-title">Đơn hàng đang giao</div>
-                            <div class="timeline-time">@Model.NgayTao.AddHours(2).ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                <div class="timeline-time">
+                                    @if (Model.ThoiGianThayDoiTrangThai.HasValue)
+                                    {
+                                        @Model.ThoiGianThayDoiTrangThai.Value.ToString("dd/MM/yyyy HH:mm:ss")
+                                    }
+                                    else
+                                    {
+                                        @Model.NgayTao.AddHours(2).ToString("dd/MM/yyyy HH:mm:ss")
+                                    }
+                                </div>
                         </div>
                     </div>
                 }
                 
-                <!-- Chỉ hiển thị khi thực sự đã giao -->
-                @if (Model.TrangThai >= 3)
+                    <!-- Chỉ hiển thị khi thực sự đã giao VÀ không bị hủy -->
+                    @if (Model.TrangThai >= 3 && Model.TrangThai != 4)
                 {
                     <div class="timeline-item">
                         <div class="timeline-icon icon-delivered">
@@ -584,7 +638,16 @@
                         </div>
                         <div class="timeline-content">
                             <div class="timeline-title">Đơn hàng đã giao</div>
-                            <div class="timeline-time">@Model.NgayTao.AddHours(4).ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                <div class="timeline-time">
+                                    @if (Model.ThoiGianThayDoiTrangThai.HasValue)
+                                    {
+                                        @Model.ThoiGianThayDoiTrangThai.Value.ToString("dd/MM/yyyy HH:mm:ss")
+                                    }
+                                    else
+                                    {
+                                        @Model.NgayTao.AddHours(4).ToString("dd/MM/yyyy HH:mm:ss")
+                                    }
+                                </div>
                         </div>
                     </div>
                 }
@@ -598,9 +661,19 @@
                         </div>
                         <div class="timeline-content">
                             <div class="timeline-title">Đơn hàng đã hủy</div>
-                            <div class="timeline-time">@Model.NgayTao.AddHours(1).ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                <div class="timeline-time">
+                                    @if (Model.ThoiGianThayDoiTrangThai.HasValue)
+                                    {
+                                        @Model.ThoiGianThayDoiTrangThai.Value.ToString("dd/MM/yyyy HH:mm:ss")
+                                    }
+                                    else
+                                    {
+                                        @Model.NgayTao.AddHours(1).ToString("dd/MM/yyyy HH:mm:ss")
+                                    }
+                                </div>
                         </div>
                     </div>
+                    }
                 }
             </div>
 
@@ -872,6 +945,45 @@
             3 => "status-delivered",
             4 => "status-cancelled",
             _ => "status-pending"
+        };
+    }
+
+    public string GetStatusIconClass(int trangThai)
+    {
+        return trangThai switch
+        {
+            0 => "icon-pending",
+            1 => "icon-approved",
+            2 => "icon-shipping",
+            3 => "icon-delivered",
+            4 => "icon-cancelled",
+            _ => "icon-pending"
+        };
+    }
+
+    public string GetStatusIcon(int trangThai)
+    {
+        return trangThai switch
+        {
+            0 => "fa-clock",
+            1 => "fa-check",
+            2 => "fa-shipping-fast",
+            3 => "fa-home",
+            4 => "fa-times",
+            _ => "fa-info-circle"
+        };
+    }
+
+    public string GetStatusChangeText(int trangThaiCu, int trangThaiMoi)
+    {
+        return trangThaiCu switch
+        {
+            0 => "Đơn hàng được tạo",
+            1 => "Đơn hàng được duyệt",
+            2 => "Đơn hàng đang giao",
+            3 => "Đơn hàng đã giao",
+            4 => "Đơn hàng đã hủy",
+            _ => "Trạng thái không xác định"
         };
     }
 }

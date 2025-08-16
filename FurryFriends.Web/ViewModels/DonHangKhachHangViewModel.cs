@@ -18,6 +18,9 @@ namespace FurryFriends.Web.ViewModels
         public string? VoucherCode { get; set; }
         public decimal? VoucherDiscount { get; set; }
         public string? ThongTinVoucherLucMua { get; set; }
+
+        // ✅ Lịch sử thay đổi trạng thái
+        public List<LichSuTrangThaiHoaDonViewModel> LichSuTrangThaiHoaDons { get; set; } = new();
     }
 
     public class DonHangChiTietViewModel
@@ -49,6 +52,17 @@ namespace FurryFriends.Web.ViewModels
         // Thông tin giá gốc và giảm giá (để hiển thị)
         public decimal? GiaGoc { get; set; }
         public decimal? PhanTramGiam { get; set; }
+    }
+
+    public class LichSuTrangThaiHoaDonViewModel
+    {
+        public Guid Id { get; set; }
+        public Guid HoaDonId { get; set; }
+        public int TrangThaiCu { get; set; }
+        public int TrangThaiMoi { get; set; }
+        public DateTime ThoiGianThayDoi { get; set; }
+        public string? GhiChu { get; set; }
+        public Guid? NhanVienId { get; set; }
     }
 
     public enum TrangThaiDonHang

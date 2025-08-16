@@ -74,6 +74,8 @@
         <div class="card-header">
             <h3 class="card-title">Doanh Thu Theo Tháng</h3>
             <div class="chart-actions">
+                <button class="btn btn-sm btn-outline-primary" data-period="day">Ngày</button>
+                <button class="btn btn-sm btn-outline-primary" data-period="week">Tuần</button>
                 <button class="btn btn-sm btn-outline-primary active" data-period="month">Tháng</button>
                 <button class="btn btn-sm btn-outline-primary" data-period="quarter">Quý</button>
                 <button class="btn btn-sm btn-outline-primary" data-period="year">Năm</button>
@@ -274,7 +276,11 @@
                             revenueChart.data.datasets[0].data = revenueValues;
                             
                             // Cập nhật label theo period
-                            if (period === 'quarter') {
+                            if (period === 'day') {
+                                revenueChart.data.datasets[0].label = 'Doanh thu (VNĐ) - Theo ngày';
+                            } else if (period === 'week') {
+                                revenueChart.data.datasets[0].label = 'Doanh thu (VNĐ) - Theo tuần';
+                            } else if (period === 'quarter') {
                                 revenueChart.data.datasets[0].label = 'Doanh thu (VNĐ) - Theo quý';
                             } else if (period === 'year') {
                                 revenueChart.data.datasets[0].label = 'Doanh thu (VNĐ) - Theo năm';
