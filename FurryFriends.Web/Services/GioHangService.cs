@@ -42,7 +42,19 @@ namespace FurryFriends.Web.Services
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine("❌ API trả về lỗi: " + responseContent);
-                throw new Exception($"API lỗi: {(int)response.StatusCode} - {responseContent}");
+
+                try
+                {
+                    // Bước 1: parse trực tiếp
+                    var error = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    string msg = error?.message ?? "Có lỗi xảy ra.";
+                    throw new Exception((string)msg);
+                }
+                catch (JsonReaderException)
+                {
+                    // Bước 2: Nếu không phải JSON, giữ nguyên
+                    throw new Exception($"API lỗi: {(int)response.StatusCode} - {responseContent}");
+                }
             }
 
             Console.WriteLine("✅ Thêm giỏ hàng thành công.");
@@ -109,12 +121,12 @@ namespace FurryFriends.Web.Services
             {
                 return null;
             }
-            
+
             var responseBody = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"➡️ Response từ API ap-dung-voucher: {responseBody}");
-            
+
             dynamic result = JsonConvert.DeserializeObject(responseBody);
-            
+
             return new VoucherPreviewResult
             {
                 TongTienHang = result.tongTienHang ?? 0,
@@ -141,6 +153,17 @@ namespace FurryFriends.Web.Services
             }
 
             return await response.Content.ReadFromJsonAsync<ThanhToanResultViewModel>();
+        }
+
+        public async Task<int> GetDonChoDuyetCountAsync(Guid khachHangId)
+        {
+            var resp = await _httpClient.GetAsync($"/api/GioHang/cho-duyet-count/{khachHangId}");
+            if (!resp.IsSuccessStatusCode) return 0;
+
+            var body = await resp.Content.ReadAsStringAsync();
+            dynamic obj = JsonConvert.DeserializeObject(body);
+            int count = obj?.count ?? 0;
+            return count;
         }
         public class ApiErrorResponse
         {

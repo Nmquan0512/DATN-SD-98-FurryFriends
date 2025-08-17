@@ -12406,11 +12406,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
+      "projectUniqueName": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
       "projectName": "FurryFriends.Web",
-      "projectPath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
-      "packagesPath": "C:\\Users\\x\\.nuget\\packages\\",
-      "outputPath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\",
+      "projectPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\FurryFriends.Web.csproj",
+      "packagesPath": "C:\\Users\\Lenovo\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\x\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -12428,8 +12428,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {
-              "projectPath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj"
+            "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {
+              "projectPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj"
             }
           }
         }
@@ -12505,7 +12505,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
       }
     }
   },
