@@ -39,15 +39,15 @@ namespace FurryFriends.Web.Controllers
                     return Json(new { success = false, message = "Khách hàng chưa cung cấp email" });
                 }
 
-                // ✅ Sửa: Gửi email với nội dung đầy đủ thay vì PDF
+                // ✅ Sửa: Gửi email ngay lập tức không có timeout
                 try
                 {
                     // Gửi email với nội dung chi tiết
                     await SendInvoiceEmailAsync(hoaDon, id.ToString().Substring(0, 8).ToUpper());
-                    
+
                     // ✅ Log thành công
                     Console.WriteLine($"✅ Email sent successfully to: {hoaDon.EmailCuaKhachHang}");
-                    
+
                     return Json(new { success = true, message = "Hóa đơn đã được gửi thành công!" });
                 }
                 catch (Exception emailEx)
@@ -55,7 +55,7 @@ namespace FurryFriends.Web.Controllers
                     // ✅ Log lỗi chi tiết
                     Console.WriteLine($"❌ Email error: {emailEx.Message}");
                     Console.WriteLine($"❌ Email error details: {emailEx.StackTrace}");
-                    
+
                     return Json(new { success = false, message = $"Lỗi gửi email: {emailEx.Message}" });
                 }
             }
@@ -133,19 +133,14 @@ namespace FurryFriends.Web.Controllers
                 Console.WriteLine($"📧 SMTP Server: {smtpServer}:{smtpPort}");
                 Console.WriteLine($"📧 From: {senderEmail}");
 
-                // ✅ Tối ưu hóa SMTP client với timeout dài hơn
+                // ✅ Tối ưu hóa SMTP client không có timeout
                 using (var smtpClient = new SmtpClient(smtpServer))
                 {
                     smtpClient.Port = smtpPort;
                     smtpClient.Credentials = new NetworkCredential(senderEmail, senderPassword);
                     smtpClient.EnableSsl = true;
                     smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    smtpClient.Timeout = 10000; // ✅ Tăng timeout lên 10 giây
                     smtpClient.UseDefaultCredentials = false;
-                    
-                    // ✅ Thêm cấu hình tối ưu cho hiệu suất
-                    smtpClient.ServicePoint.MaxIdleTime = 10000;
-                    smtpClient.ServicePoint.ConnectionLimit = 1;
 
                     using (var mailMessage = new MailMessage(senderEmail, toEmail))
                     {
@@ -154,7 +149,7 @@ namespace FurryFriends.Web.Controllers
                         mailMessage.IsBodyHtml = true;
                         mailMessage.Priority = MailPriority.Normal;
 
-                        // ✅ Gửi email với timeout dài hơn
+                        // ✅ Gửi email không có timeout
                         Console.WriteLine($"📧 Attempting to send email...");
                         await smtpClient.SendMailAsync(mailMessage);
                         Console.WriteLine($"✅ Email sent successfully!");
@@ -165,13 +160,13 @@ namespace FurryFriends.Web.Controllers
             {
                 Console.WriteLine($"❌ Email sending failed: {ex.Message}");
                 Console.WriteLine($"❌ Exception type: {ex.GetType().Name}");
-                
+
                 // ✅ Thêm thông tin chi tiết về lỗi
                 if (ex.InnerException != null)
                 {
                     Console.WriteLine($"❌ Inner exception: {ex.InnerException.Message}");
                 }
-                
+
                 throw new Exception($"Failed to send email: {ex.Message}", ex);
             }
         }
@@ -239,24 +234,53 @@ namespace FurryFriends.Web.Controllers
 
         private string CreateDetailedEmailBody(object hoaDon, string invoiceNumber)
         {
-            // ✅ Lấy dữ liệu thật từ object bằng reflection
+            // ✅ Lấy dữ liệu thật từ HoaDon object với các trường LucMua
             var type = hoaDon.GetType();
-            
+
+            // ✅ Lấy thông tin khách hàng từ hóa đơn
             var tenKhachHang = type.GetProperty("TenCuaKhachHang")?.GetValue(hoaDon)?.ToString() ?? "Khách hàng";
             var emailKhachHang = type.GetProperty("EmailCuaKhachHang")?.GetValue(hoaDon)?.ToString() ?? "";
-            var soDienThoai = type.GetProperty("SoDienThoai")?.GetValue(hoaDon)?.ToString() ?? "";
-            var diaChiGiaoHang = type.GetProperty("DiaChiGiaoHang")?.GetValue(hoaDon)?.ToString() ?? "";
+            var soDienThoai = type.GetProperty("SdtCuaKhachHang")?.GetValue(hoaDon)?.ToString() ?? "";
+
+            // ✅ Lấy thông tin địa chỉ giao hàng lúc mua
+            var diaChiGiaoHangLucMua = type.GetProperty("DiaChiGiaoHangLucMua")?.GetValue(hoaDon)?.ToString() ?? "";
+
+            // ✅ Lấy thông tin hình thức thanh toán
+            var hinhThucProperty = type.GetProperty("HinhThucThanhToan");
+            var hinhThuc = hinhThucProperty?.GetValue(hoaDon);
+            var hinhThucThanhToan = "";
+
+            if (hinhThuc != null)
+            {
+                var hinhThucType = hinhThuc.GetType();
+                hinhThucThanhToan = hinhThucType.GetProperty("TenHinhThuc")?.GetValue(hinhThuc)?.ToString() ?? "Thanh toán khi nhận hàng";
+            }
+
+            // ✅ Lấy thông tin voucher
+            var thongTinVoucherLucMua = type.GetProperty("ThongTinVoucherLucMua")?.GetValue(hoaDon)?.ToString() ?? "";
+
+            // ✅ Lấy thông tin hóa đơn
             var ngayTao = type.GetProperty("NgayTao")?.GetValue(hoaDon);
             var trangThai = type.GetProperty("TrangThai")?.GetValue(hoaDon);
-            var trangThaiText = type.GetProperty("TrangThaiText")?.GetValue(hoaDon)?.ToString() ?? "";
-            var hinhThucThanhToan = type.GetProperty("HinhThucThanhToan")?.GetValue(hoaDon)?.ToString() ?? "";
             var tongTien = type.GetProperty("TongTien")?.GetValue(hoaDon);
-            var tienGiam = type.GetProperty("TienGiam")?.GetValue(hoaDon);
-            var phiVanChuyen = type.GetProperty("PhiVanChuyen")?.GetValue(hoaDon);
             var tongTienSauKhiGiam = type.GetProperty("TongTienSauKhiGiam")?.GetValue(hoaDon);
-            
+
+            // ✅ Tính toán giảm giá và phí vận chuyển
+            var tienGiam = 0m;
+            var phiVanChuyen = 0m;
+
+            if (tongTien is decimal tongTienCalc && tongTienSauKhiGiam is decimal tongTienSauKhiGiamCalc)
+            {
+                tienGiam = tongTienCalc - tongTienSauKhiGiamCalc;
+                // Tính phí vận chuyển (miễn phí nếu >= 500k, ngược lại 30k)
+                if (tongTienSauKhiGiamCalc < 500000)
+                {
+                    phiVanChuyen = 30000;
+                }
+            }
+
             // ✅ Lấy chi tiết sản phẩm
-            var chiTietsProperty = type.GetProperty("ChiTiets");
+            var chiTietsProperty = type.GetProperty("HoaDonChiTiets");
             var chiTiets = chiTietsProperty?.GetValue(hoaDon) as IEnumerable<object> ?? new List<object>();
 
             // ✅ Tạo nội dung email chi tiết với dữ liệu thật
@@ -303,9 +327,10 @@ namespace FurryFriends.Web.Controllers
                                 <p><strong>Mã đơn hàng:</strong> #{invoiceNumber}</p>
                                 <p><strong>Ngày đặt:</strong> {(ngayTao is DateTime date ? date.ToString("dd/MM/yyyy HH:mm") : "N/A")}</p>
                                 <p><strong>Trạng thái:</strong> 
-                                    <span class='status-badge status-{GetStatusClass(trangThai is int status ? status : 0)}'>{trangThaiText}</span>
+                                    <span class='status-badge status-{GetStatusClass(trangThai is int status ? status : 0)}'>{GetStatusText(trangThai is int st ? st : 0)}</span>
                                 </p>
                                 <p><strong>Hình thức thanh toán:</strong> {hinhThucThanhToan}</p>
+                                {(string.IsNullOrEmpty(thongTinVoucherLucMua) ? "" : $"<p><strong>Voucher áp dụng:</strong> {thongTinVoucherLucMua}</p>")}
                             </div>
                             
                             <div class='invoice-details'>
@@ -313,7 +338,7 @@ namespace FurryFriends.Web.Controllers
                                 <p><strong>Họ tên:</strong> {tenKhachHang}</p>
                                 <p><strong>Số điện thoại:</strong> {soDienThoai}</p>
                                 <p><strong>Email:</strong> {emailKhachHang}</p>
-                                <p><strong>Địa chỉ:</strong> {diaChiGiaoHang}</p>
+                                <p><strong>Địa chỉ:</strong> {diaChiGiaoHangLucMua}</p>
                             </div>
                             
                             <div class='invoice-details'>
@@ -321,6 +346,7 @@ namespace FurryFriends.Web.Controllers
                                 <table class='product-table'>
                                     <thead>
                                         <tr>
+                                            <th>STT</th>
                                             <th>Sản phẩm</th>
                                             <th>Màu sắc</th>
                                             <th>Kích cỡ</th>
@@ -331,26 +357,37 @@ namespace FurryFriends.Web.Controllers
                                     </thead>
                                     <tbody>";
 
-            // ✅ Thêm chi tiết sản phẩm
+            // ✅ Thêm chi tiết sản phẩm với dữ liệu LucMua
+            int stt = 1;
             foreach (var chiTiet in chiTiets)
             {
                 var chiTietType = chiTiet.GetType();
-                var tenSanPham = chiTietType.GetProperty("TenSanPham")?.GetValue(chiTiet)?.ToString() ?? "";
-                var mauSac = chiTietType.GetProperty("MauSac")?.GetValue(chiTiet)?.ToString() ?? "";
-                var kichCo = chiTietType.GetProperty("KichCo")?.GetValue(chiTiet)?.ToString() ?? "";
-                var soLuong = chiTietType.GetProperty("SoLuong")?.GetValue(chiTiet);
-                var donGia = chiTietType.GetProperty("DonGia")?.GetValue(chiTiet);
-                var thanhTien = chiTietType.GetProperty("ThanhTien")?.GetValue(chiTiet);
+
+                // ✅ Lấy dữ liệu từ các trường LucMua
+                var tenSanPhamLucMua = chiTietType.GetProperty("TenSanPhamLucMua")?.GetValue(chiTiet)?.ToString() ?? "";
+                var mauSacLucMua = chiTietType.GetProperty("MauSacLucMua")?.GetValue(chiTiet)?.ToString() ?? "";
+                var kichCoLucMua = chiTietType.GetProperty("KichCoLucMua")?.GetValue(chiTiet)?.ToString() ?? "";
+                var soLuongSanPham = chiTietType.GetProperty("SoLuongSanPham")?.GetValue(chiTiet);
+                var giaLucMua = chiTietType.GetProperty("GiaLucMua")?.GetValue(chiTiet);
+
+                // ✅ Tính thành tiền từ số lượng và giá lúc mua
+                decimal thanhTienTinh = 0;
+                if (soLuongSanPham is int sl && giaLucMua is decimal giaValue)
+                {
+                    thanhTienTinh = sl * giaValue;
+                }
 
                 emailBody += $@"
                                         <tr>
-                                            <td>{tenSanPham}</td>
-                                            <td>{mauSac}</td>
-                                            <td>{kichCo}</td>
-                                            <td>{soLuong}</td>
-                                            <td>{(donGia is decimal dg ? dg.ToString("N0") : "0")} VNĐ</td>
-                                            <td>{(thanhTien is decimal c ? c.ToString("N0") : "0")} VNĐ</td>
+                                            <td>{stt}</td>
+                                            <td>{tenSanPhamLucMua}</td>
+                                            <td>{mauSacLucMua}</td>
+                                            <td>{kichCoLucMua}</td>
+                                            <td>{soLuongSanPham}</td>
+                                            <td>{(giaLucMua is decimal giaDisplay ? giaDisplay.ToString("N0") : "0")} VNĐ</td>
+                                            <td>{thanhTienTinh.ToString("N0")} VNĐ</td>
                                         </tr>";
+                stt++;
             }
 
             emailBody += $@"
@@ -360,12 +397,12 @@ namespace FurryFriends.Web.Controllers
                             
                             <div class='total-section'>
                                 <h3 style='margin-top: 0; color: #155724;'>💰 Tổng thanh toán</h3>
-                                <p><strong>Tổng tiền hàng:</strong> {(tongTien is decimal tt ? tt.ToString("N0") : "0")} VNĐ</p>
-                                <p><strong>Giảm giá:</strong> {(tienGiam is decimal tg ? tg.ToString("N0") : "0")} VNĐ</p>
-                                <p><strong>Phí vận chuyển:</strong> {(phiVanChuyen is decimal pvc ? pvc.ToString("N0") : "0")} VNĐ</p>
+                                <p><strong>Tổng tiền hàng:</strong> {(tongTien is decimal tongTienDisplay ? tongTienDisplay.ToString("N0") : "0")} VNĐ</p>
+                                {(tienGiam > 0 ? $"<p><strong>Giảm giá:</strong> - {tienGiam.ToString("N0")} VNĐ</p>" : "")}
+                                <p><strong>Phí vận chuyển:</strong> {phiVanChuyen.ToString("N0")} VNĐ</p>
                                 <hr style='border: none; border-top: 2px solid #155724; margin: 15px 0;'>
                                 <p style='font-size: 18px; font-weight: bold; color: #155724;'>
-                                    <strong>Tổng cộng:</strong> {(tongTienSauKhiGiam is decimal ttskg ? ttskg.ToString("N0") : "0")} VNĐ
+                                    <strong>Tổng cộng:</strong> {(tongTienSauKhiGiam is decimal tongTienSauKhiGiamDisplay ? tongTienSauKhiGiamDisplay.ToString("N0") : "0")} VNĐ
                                 </p>
                             </div>
                             
@@ -400,11 +437,24 @@ namespace FurryFriends.Web.Controllers
             return status switch
             {
                 0 => "pending",
-                1 => "approved", 
+                1 => "approved",
                 2 => "shipping",
                 3 => "delivered",
                 4 => "cancelled",
                 _ => "pending"
+            };
+        }
+
+        private string GetStatusText(int status)
+        {
+            return status switch
+            {
+                0 => "Đang xử lý",
+                1 => "Đã duyệt",
+                2 => "Đang vận chuyển",
+                3 => "Đã giao hàng",
+                4 => "Đã hủy",
+                _ => "Đang xử lý"
             };
         }
     }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FurryFriends.Web.Filter;
+using FurryFriends.API.Models;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
