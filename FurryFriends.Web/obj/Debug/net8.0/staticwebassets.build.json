@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Bm3sG3+Z1V1pL1saNm+BgPlqyKypVb7b5vfMSDjAbcY=",
+  "Hash": "TNxSnZpv6HDgIGsN7tjdj0J1i9JWa8JP2uOZItj9VTk=",
   "Source": "FurryFriends.Web",
   "BasePath": "_content/FurryFriends.Web",
   "Mode": "Default",
@@ -566,6 +566,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\dangkystyle.css"
+    },
+    {
+      "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\donhang.css",
+      "SourceId": "FurryFriends.Web",
+      "SourceType": "Discovered",
+      "ContentRoot": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\",
+      "BasePath": "_content/FurryFriends.Web",
+      "RelativePath": "css/donhang.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\donhang.css"
     },
     {
       "Identity": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\notifications.css",

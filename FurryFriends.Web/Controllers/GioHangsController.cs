@@ -22,6 +22,7 @@ namespace FurryFriends.Web.Controllers
         private readonly IHinhThucThanhToanService _hinhThucThanhToanService;
         private readonly IDiaChiKhachHangService _diaChiKhachHangService;
         private readonly IVnPayService _vnPayService;
+        private readonly IEmailNotificationService _emailNotificationService;
         private readonly ILogger<GioHangsController> _logger;
 
         private Guid GetKhachHangId()
@@ -41,6 +42,7 @@ namespace FurryFriends.Web.Controllers
             IHinhThucThanhToanService hinhThucThanhToanService, 
             IDiaChiKhachHangService diaChiKhachHangService,
             IVnPayService vnPayService,
+            IEmailNotificationService emailNotificationService,
             ILogger<GioHangsController> logger)
         {
             _gioHangService = gioHangService;
@@ -49,6 +51,7 @@ namespace FurryFriends.Web.Controllers
             _hinhThucThanhToanService = hinhThucThanhToanService;
             _diaChiKhachHangService = diaChiKhachHangService;
             _vnPayService = vnPayService;
+            _emailNotificationService = emailNotificationService;
             _logger = logger;
         }
 
@@ -381,7 +384,20 @@ namespace FurryFriends.Web.Controllers
 
             // Nếu không phải VNPay, xử lý thanh toán thông thường
             var result = await _gioHangService.ThanhToanAsync(dto);
-            return View("KetQuaThanhToan", (ThanhToanResultViewModel)result);
+            
+            // ✅ Gửi thông báo email cho admin khi đặt hàng thành công
+            try
+            {
+                await _emailNotificationService.SendOrderNotificationToAdminAsync(result);
+                _logger.LogInformation($"✅ Admin notification sent for order {result.HoaDonId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"❌ Error sending admin notification: {ex.Message}");
+                // Không throw exception để không ảnh hưởng đến luồng thanh toán
+            }
+            
+            return View("KetQuaThanhToan", result);
         }
 
         public IActionResult CreatePaymentUrlVnpay(PaymentInformationModel model)
@@ -405,8 +421,21 @@ namespace FurryFriends.Web.Controllers
                     if (dto != null)
                     {
                         var result = await _gioHangService.ThanhToanAsync(dto);
+                        
+                        // ✅ Gửi thông báo email cho admin khi thanh toán VNPay thành công
+                        try
+                        {
+                            await _emailNotificationService.SendOrderNotificationToAdminAsync(result);
+                            _logger.LogInformation($"✅ Admin notification sent for VNPay order {result.HoaDonId}");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($"❌ Error sending admin notification for VNPay: {ex.Message}");
+                            // Không throw exception để không ảnh hưởng đến luồng thanh toán
+                        }
+                        
                         HttpContext.Session.Remove("ThanhToanDTO"); // Xóa sau khi xử lý
-                        return View("KetQuaThanhToan", (ThanhToanResultViewModel)result);
+                        return View("KetQuaThanhToan", result);
                     }
                 }
             }

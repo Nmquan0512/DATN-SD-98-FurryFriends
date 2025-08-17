@@ -515,12 +515,33 @@ namespace FurryFriends.API.Repository
                 await _context.SaveChangesAsync();
                 await tran.CommitAsync();
 
+                // ✅ Trả về đầy đủ thông tin cho ThanhToanResultViewModel
                 return new
                 {
                     success = true,
-                    hoaDonId = hoaDon.HoaDonId,
-                    tongTien = hoaDon.TongTien,
-                    tongTienSauKhiGiam = hoaDon.TongTienSauKhiGiam
+                    HoaDonId = hoaDon.HoaDonId,
+                    TenCuaKhachHang = hoaDon.TenCuaKhachHang,
+                    SdtCuaKhachHang = hoaDon.SdtCuaKhachHang,
+                    EmailCuaKhachHang = hoaDon.EmailCuaKhachHang,
+                    DiaChiCuaKhachHang = hoaDon.DiaChiGiaoHangLucMua,
+                    NgayTao = hoaDon.NgayTao,
+                    HinhThucThanhToan = hinhThucThanhToan?.TenHinhThuc ?? "",
+                    GhiChu = hoaDon.GhiChu,
+                    TongTien = hoaDon.TongTien,
+                    TongTienSauKhiGiam = hoaDon.TongTienSauKhiGiam,
+                    ChiTietSanPham = hoaDon.HoaDonChiTiets.Select(ct => new
+                    {
+                        TenSanPhamLucMua = ct.TenSanPhamLucMua,
+                        MoTaSanPhamLucMua = ct.MoTaSanPhamLucMua,
+                        ThuongHieuLucMua = ct.ThuongHieuLucMua,
+                        KichCoLucMua = ct.KichCoLucMua,
+                        MauSacLucMua = ct.MauSacLucMua,
+                        AnhSanPhamLucMua = ct.AnhSanPhamLucMua,
+                        ChatLieuLucMua = ct.ChatLieuLucMua,
+                        ThanhPhanLucMua = ct.ThanhPhanLucMua,
+                        SoLuong = ct.SoLuongSanPham,
+                        GiaLucMua = ct.GiaLucMua
+                    }).ToList()
                 };
             }
             catch

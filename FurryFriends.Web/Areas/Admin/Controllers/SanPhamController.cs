@@ -8,10 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AuthorizeAdminOnly]
+
     public class SanPhamController : Controller
     {
         private readonly ISanPhamService _sanPhamService;

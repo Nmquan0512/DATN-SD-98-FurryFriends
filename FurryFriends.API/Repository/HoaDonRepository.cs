@@ -626,7 +626,13 @@ namespace FurryFriends.API.Repository
                 // Cập nhật trạng thái
                 hoaDon.TrangThai = trangThaiMoi;
 
-                // Lưu thay đổi
+                // ✅ Nếu hủy đơn (trạng thái 4), hoàn trả số lượng sản phẩm
+                if (trangThaiMoi == 4) // Đã hủy
+                {
+                    await HoanTraSoLuongSanPham(hoaDonId);
+                }
+
+                // Lưu thay đổi (bao gồm cả trạng thái và số lượng sản phẩm)
                 await _context.SaveChangesAsync();
 
                 var trangThaiText = GetTrangThaiText(trangThaiMoi);
@@ -747,6 +753,38 @@ namespace FurryFriends.API.Repository
             {
                 Console.WriteLine($"Error in GetChiTietHoaDonAsync: {ex.Message}");
                 return new List<HoaDonChiTiet>();
+            }
+        }
+
+        // ✅ Hoàn trả số lượng sản phẩm khi hủy đơn hàng
+        private async Task HoanTraSoLuongSanPham(Guid hoaDonId)
+        {
+            try
+            {
+                // Lấy chi tiết hóa đơn với thông tin sản phẩm
+                var chiTietHoaDons = await _context.HoaDonChiTiets
+                    .Where(ct => ct.HoaDonId == hoaDonId)
+                    .Include(ct => ct.SanPhamChiTiet)
+                    .ToListAsync();
+
+                foreach (var chiTiet in chiTietHoaDons)
+                {
+                    if (chiTiet.SanPhamChiTiet != null)
+                    {
+                        // Hoàn trả số lượng đã mua vào kho
+                        chiTiet.SanPhamChiTiet.SoLuong += chiTiet.SoLuongSanPham;
+                        
+                        Console.WriteLine($"✅ Hoàn trả {chiTiet.SoLuongSanPham} sản phẩm ID: {chiTiet.SanPhamChiTiet.SanPhamChiTietId}");
+                        Console.WriteLine($"   Số lượng trước: {chiTiet.SanPhamChiTiet.SoLuong - chiTiet.SoLuongSanPham} → Sau: {chiTiet.SanPhamChiTiet.SoLuong}");
+                    }
+                }
+                
+                Console.WriteLine($"✅ Đã chuẩn bị hoàn trả số lượng cho đơn hàng: {hoaDonId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Lỗi khi hoàn trả số lượng sản phẩm: {ex.Message}");
+                throw; // Re-throw để transaction rollback nếu cần
             }
         }
     }

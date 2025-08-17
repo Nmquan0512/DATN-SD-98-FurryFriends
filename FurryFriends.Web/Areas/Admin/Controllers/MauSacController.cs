@@ -1,10 +1,13 @@
 ﻿using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
+using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+        [AuthorizeAdminOnly]
+
     public class MauSacController : Controller
     {
         private readonly IMauSacService _mauSacService;

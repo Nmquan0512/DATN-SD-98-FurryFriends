@@ -3,11 +3,14 @@ using FurryFriends.Web.Services.IService;
 using FurryFriends.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering; // Thêm using này
+using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers 
 { 
 
 [Area("Admin")]
+[AuthorizeAdminOnly]
+
     public class SanPhamChiTietController : Controller
     {
         private readonly ISanPhamChiTietService _chiTietService;

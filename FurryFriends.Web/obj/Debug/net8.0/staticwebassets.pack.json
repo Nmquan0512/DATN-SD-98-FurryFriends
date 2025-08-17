@@ -25,6 +25,10 @@
       "PackagePath": "staticwebassets\\css\\dangkystyle.css"
     },
     {
+      "Id": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\donhang.css",
+      "PackagePath": "staticwebassets\\css\\donhang.css"
+    },
+    {
       "Id": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\wwwroot\\css\\notifications.css",
       "PackagePath": "staticwebassets\\css\\notifications.css"
     },

@@ -6,10 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AuthorizeAdminOnly]
+
     public class GiamGiaController : Controller
     {
         private readonly IGiamGiaService _giamGiaService;

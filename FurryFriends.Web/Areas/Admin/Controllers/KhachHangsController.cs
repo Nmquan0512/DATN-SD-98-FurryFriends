@@ -28,7 +28,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             try
             {
-                var khachHangs = await _khachHangService.GetAllAsync();
+            var khachHangs = await _khachHangService.GetAllAsync();
                 
                 // Tính toán thống kê
                 var totalCount = khachHangs.Count();
@@ -39,7 +39,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 ViewBag.ActiveCount = activeCount;
                 ViewBag.InactiveCount = inactiveCount;
                 
-                return View(khachHangs);
+            return View(khachHangs);
             }
             catch (Exception ex)
             {

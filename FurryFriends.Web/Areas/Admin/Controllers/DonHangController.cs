@@ -2,19 +2,24 @@ using Microsoft.AspNetCore.Mvc;
 using FurryFriends.Web.Services.IService;
 using FurryFriends.API.Models;
 using FurryFriends.Web.ViewModels;
+using FurryFriends.Web.Services;
+using FurryFriends.Web.Filter;
 using System.Security.Claims;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AuthorizeAdminOnly]
     public class DonHangController : Controller
     {
         private readonly IHoaDonService _hoaDonService;
+        private readonly IEmailNotificationService _emailNotificationService;
         private readonly ILogger<DonHangController> _logger;
 
-        public DonHangController(IHoaDonService hoaDonService, ILogger<DonHangController> logger)
+        public DonHangController(IHoaDonService hoaDonService, IEmailNotificationService emailNotificationService, ILogger<DonHangController> logger)
         {
             _hoaDonService = hoaDonService;
+            _emailNotificationService = emailNotificationService;
             _logger = logger;
         }
 
@@ -121,13 +126,31 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     return Json(new { success = false, message = message });
                 }
 
+                // Lưu trạng thái cũ để gửi thông báo
+                var trangThaiCu = hoaDon.TrangThai;
+                var trangThaiCuText = GetTrangThaiText(trangThaiCu);
+
                 // Cập nhật trạng thái
                 var result = await _hoaDonService.CapNhatTrangThaiAsync(request.Id, request.TrangThaiMoi);
                 
                 if (result.Success)
                 {
-                    var trangThaiText = GetTrangThaiText(request.TrangThaiMoi);
-                    return Json(new { success = true, message = $"Cập nhật trạng thái thành công: {trangThaiText}" });
+                    var trangThaiMoiText = GetTrangThaiText(request.TrangThaiMoi);
+                    
+                    // ✅ Gửi thông báo email cho khách hàng khi đổi trạng thái
+                    try
+                    {
+                        await _emailNotificationService.SendStatusChangeNotificationToCustomerAsync(hoaDon, trangThaiCuText, trangThaiMoiText);
+                        _logger.LogInformation($"✅ Customer notification sent for order {request.Id} - Status: {trangThaiCuText} → {trangThaiMoiText}");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"❌ Error sending customer notification: {ex.Message}");
+                        _logger.LogError($"❌ Error details: {ex}");
+                        // Không throw exception để không ảnh hưởng đến luồng cập nhật trạng thái
+                    }
+                    
+                    return Json(new { success = true, message = $"Cập nhật trạng thái thành công: {trangThaiMoiText}" });
                 }
                 else
                 {
@@ -164,11 +187,30 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     return Json(new { success = false, message = "Chỉ có thể hủy đơn hàng khi trạng thái 'Chờ duyệt' hoặc 'Đã duyệt'" });
                 }
 
+                // Lưu trạng thái cũ để gửi thông báo
+                var trangThaiCu = hoaDon.TrangThai;
+                var trangThaiCuText = GetTrangThaiText(trangThaiCu);
+
                 // Cập nhật trạng thái thành "Đã hủy" (4)
                 var result = await _hoaDonService.CapNhatTrangThaiAsync(request.Id, 4);
                 
                 if (result.Success)
                 {
+                    var trangThaiMoiText = GetTrangThaiText(4);
+                    
+                    // ✅ Gửi thông báo email cho khách hàng khi hủy đơn
+                    try
+                    {
+                        await _emailNotificationService.SendStatusChangeNotificationToCustomerAsync(hoaDon, trangThaiCuText, trangThaiMoiText);
+                        _logger.LogInformation($"✅ Customer notification sent for order {request.Id} - Status: {trangThaiCuText} → {trangThaiMoiText}");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"❌ Error sending customer notification: {ex.Message}");
+                        _logger.LogError($"❌ Error details: {ex}");
+                        // Không throw exception để không ảnh hưởng đến luồng hủy đơn
+                    }
+                    
                     return Json(new { success = true, message = "Hủy đơn hàng thành công!" });
                 }
                 else
@@ -200,6 +242,10 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
                 }
 
+                // Lưu trạng thái cũ để gửi thông báo
+                var trangThaiCu = hoaDon.TrangThai;
+                var trangThaiCuText = GetTrangThaiText(trangThaiCu);
+                
                 // Tăng trạng thái lên 1 đơn vị
                 int trangThaiMoi = hoaDon.TrangThai + 1;
                 
@@ -214,8 +260,22 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 
                 if (result.Success)
                 {
-                    var trangThaiText = GetTrangThaiText(trangThaiMoi);
-                    return Json(new { success = true, message = $"Tăng trạng thái thành công: {trangThaiText}" });
+                    var trangThaiMoiText = GetTrangThaiText(trangThaiMoi);
+                    
+                    // ✅ Gửi thông báo email cho khách hàng khi tăng trạng thái
+                    try
+                    {
+                        await _emailNotificationService.SendStatusChangeNotificationToCustomerAsync(hoaDon, trangThaiCuText, trangThaiMoiText);
+                        _logger.LogInformation($"✅ Customer notification sent for order {request.Id} - Status: {trangThaiCuText} → {trangThaiMoiText}");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"❌ Error sending customer notification: {ex.Message}");
+                        _logger.LogError($"❌ Error details: {ex}");
+                        // Không throw exception để không ảnh hưởng đến luồng cập nhật trạng thái
+                    }
+                    
+                    return Json(new { success = true, message = $"Tăng trạng thái thành công: {trangThaiMoiText}" });
                 }
                 else
                 {

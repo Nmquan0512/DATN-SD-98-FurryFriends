@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using System.IO;
+using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AuthorizeAdminOnly]
     public class AnhController : Controller
     {
         private readonly IAnhService _anhService;

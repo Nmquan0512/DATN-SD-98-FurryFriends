@@ -1,0 +1,715 @@
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+/* Order Cards */
+.order-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.order-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+    /* ✅ Thêm padding để tránh bị đè */
+    padding-bottom: 1rem;
+}
+
+.order-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.order-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.order-id {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.order-date {
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.order-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-pending {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+}
+
+.status-approved {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+}
+
+.status-shipping {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+}
+
+.status-delivered {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+}
+
+.status-cancelled {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+}
+
+/* ✅ Nút hủy đơn hàng - sửa lỗi tràn và đẹp hơn */
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+    /* ✅ Đảm bảo nút không bị tràn và đẹp */
+    min-width: 100px;
+    max-width: 120px;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.7rem;
+    /* ✅ Thêm shadow và border */
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.1);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
+}
+
+/* ✅ Nút gửi email - sửa lỗi tràn và đẹp hơn */
+.btn-email {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+    /* ✅ Đảm bảo nút không bị tràn và đẹp */
+    min-width: 100px;
+    max-width: 120px;
+    /* ✅ Thêm border */
+    border: 1px solid rgba(16, 185, 129, 0.1);
+}
+
+.btn-email:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+.btn-email:disabled {
+    background: linear-gradient(135deg, #9ca3af, #6b7280);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 2px 8px rgba(156, 163, 175, 0.3);
+}
+
+/* ✅ Loading spinner cho email */
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s ease-in-out infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ✅ Notification system */
+.showNotification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 9999;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    min-width: 300px;
+}
+
+.showNotification.show {
+    transform: translateX(0);
+}
+
+.showNotification.success {
+    border-left: 4px solid #10b981;
+}
+
+.showNotification.error {
+    border-left: 4px solid #ef4444;
+}
+
+/* ✅ Toast notifications */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 9999;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    min-width: 300px;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast-success {
+    border-left: 4px solid #10b981;
+}
+
+.toast-error {
+    border-left: 4px solid #ef4444;
+}
+
+.toast-icon {
+    font-size: 1.25rem;
+}
+
+.toast-success .toast-icon {
+    color: #10b981;
+}
+
+.toast-error .toast-icon {
+    color: #ef4444;
+}
+
+.toast-message {
+    color: #374151;
+    font-weight: 500;
+}
+
+.cancel-order-btn {
+    margin-right: 0.5rem;
+}
+
+/* ✅ Notification Toast */
+.notification-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    padding: 20px 25px;
+    z-index: 10000;
+    max-width: 450px;
+    opacity: 0;
+    transform: translateX(100%) scale(0.8);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border-left: 5px solid #007bff;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.notification-toast.show {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+
+.notification-toast.notification-success {
+    border-left-color: #28a745;
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    border: 1px solid #c3e6cb;
+}
+
+.notification-toast.notification-error {
+    border-left-color: #dc3545;
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    border: 1px solid #f5c6cb;
+}
+
+.notification-toast.notification-info {
+    border-left-color: #17a2b8;
+    background: linear-gradient(135deg, #d1ecf1, #bee5eb);
+    border: 1px solid #bee5eb;
+}
+
+.notification-toast.notification-warning {
+    border-left-color: #ffc107;
+    background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+    border: 1px solid #ffeaa7;
+}
+
+.notification-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.notification-icon {
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+.notification-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.notification-message {
+    font-size: 0.95rem;
+    color: #34495e;
+    flex: 1;
+    font-weight: 400;
+    line-height: 1.5;
+    margin-bottom: 5px;
+}
+
+.notification-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 8px 12px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-close:hover {
+    background: rgba(255, 255, 255, 0.5);
+    color: #495057;
+    transform: rotate(90deg);
+}
+
+/* ✅ Animation cho notification */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%) scale(0.8);
+        opacity: 0;
+    }
+}
+
+.notification-toast.slide-in {
+    animation: slideInRight 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.notification-toast.slide-out {
+    animation: slideOutRight 0.3s ease-in-out;
+}
+
+.order-content {
+    padding: 1.5rem;
+    /* ✅ Thêm padding bottom để tránh bị đè */
+    padding-bottom: 2rem;
+}
+
+/* ✅ Thêm CSS cho container nút để tránh bị đè */
+.order-actions-container {
+    position: relative;
+    padding: 0.5rem 1.5rem;
+    background: #f8fafc;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 1rem;
+}
+
+.order-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.summary-item:hover {
+    background: #f1f5f9;
+}
+
+.summary-item i {
+    color: #667eea;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.summary-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+.summary-value {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.order-products {
+    margin-bottom: 1.5rem;
+}
+
+.products-header {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.product-preview {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.product-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #e5e7eb;
+}
+
+.product-image-placeholder {
+    width: 50px;
+    height: 50px;
+    background-color: #f1f5f9;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #e5e7eb;
+}
+
+.product-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.product-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1e293b;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.product-details {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-top: 0.25rem;
+}
+
+.product-quantity {
+    font-size: 0.75rem;
+    color: #667eea;
+    font-weight: 600;
+    align-self: flex-start;
+    margin-top: 0.25rem;
+}
+
+.more-products {
+    font-size: 0.75rem;
+    color: #667eea;
+    font-weight: 600;
+    text-align: center;
+    padding: 0.5rem;
+    background: #f0f4ff;
+    border-radius: 8px;
+    margin-top: 0.5rem;
+}
+
+.order-actions {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: flex-start;
+    align-items: center;
+    /* ✅ Đảm bảo nút luôn hàng ngang và không bị che */
+    flex-wrap: nowrap;
+    min-height: 50px;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+    /* ✅ Thêm margin để tránh bị đè */
+    margin: 0.5rem 0;
+    /* ✅ Thêm width để đảm bảo đủ không gian */
+    width: 100%;
+}
+
+.btn-modern {
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-size: 0.75rem;
+    /* ✅ Sửa lỗi nút bị tràn và đẹp hơn */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+    flex-shrink: 0;
+    /* ✅ Đảm bảo nút không bị wrap và có kích thước cố định */
+    flex: 0 0 auto;
+    /* ✅ Thêm shadow và border để đẹp hơn */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid transparent;
+    /* ✅ Giảm kích thước để vừa 3 nút */
+    max-width: 120px;
+}
+
+.btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-outline {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.btn-outline:hover {
+    background: #667eea;
+    color: white;
+}
+
+.total-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #10b981;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #d1d5db;
+    margin-bottom: 1rem;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.empty-description {
+    color: #6b7280;
+    margin-bottom: 2rem;
+}
+
+/* Filter Section */
+.filter-section {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.filter-label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.filter-select {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: white;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .order-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    /* ✅ Sửa lỗi nút tràn trên mobile - vẫn giữ hàng ngang và không bị che */
+    .order-actions {
+        flex-direction: row;
+        gap: 0.3rem;
+        align-items: center;
+        overflow-x: auto;
+        padding: 0.5rem 0;
+        /* ✅ Cho phép scroll ngang trên mobile */
+        -webkit-overflow-scrolling: touch;
+        /* ✅ Thêm margin để tránh bị đè */
+        margin: 0.5rem 0;
+        /* ✅ Đảm bảo đủ không gian cho 3 nút */
+        width: 100%;
+    }
+    
+    .btn-modern {
+        width: auto;
+        justify-content: center;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.65rem;
+        /* ✅ Đảm bảo nút không bị wrap và đẹp */
+        flex: 0 0 auto;
+        min-width: 90px;
+        max-width: 110px;
+        /* ✅ Giảm shadow trên mobile */
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-danger, .btn-email {
+        min-width: 90px;
+        max-width: 110px;
+        font-size: 0.65rem;
+        padding: 0.5rem 0.8rem;
+    }
+
+    .order-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+}

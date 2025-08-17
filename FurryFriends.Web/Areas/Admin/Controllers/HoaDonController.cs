@@ -1,20 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FurryFriends.Web.Services.IService;
+using FurryFriends.Web.Services;
 using FurryFriends.API.Models;
 using FurryFriends.Web.ViewModels;
+using FurryFriends.Web.Filter;
 using System.Security.Claims;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AuthorizeAdminOnly]
     public class HoaDonController : Controller
     {
         private readonly IHoaDonService _hoaDonService;
+        private readonly IEmailNotificationService _emailNotificationService;
         private readonly ILogger<HoaDonController> _logger;
 
-        public HoaDonController(IHoaDonService hoaDonService, ILogger<HoaDonController> logger)
+        public HoaDonController(
+            IHoaDonService hoaDonService, 
+            IEmailNotificationService emailNotificationService,
+            ILogger<HoaDonController> logger)
         {
             _hoaDonService = hoaDonService;
+            _emailNotificationService = emailNotificationService;
             _logger = logger;
         }
 
@@ -107,30 +115,63 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DoiTrangThai(Guid id, int trangThaiMoi)
         {
+            // ✅ Debug logging ngay đầu method
+            _logger.LogInformation($"🔍 Debug - DoiTrangThai called with id={id}, trangThaiMoi={trangThaiMoi}");
+            
             try
             {
                 var hoaDon = await _hoaDonService.GetByIdAsync(id);
                 if (hoaDon == null)
                 {
+                    _logger.LogWarning($"🔍 Debug - HoaDon not found for id={id}");
                     return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
                 }
+
+                _logger.LogInformation($"🔍 Debug - Found HoaDon: {hoaDon.HoaDonId}, current status: {hoaDon.TrangThai}");
 
                 // Validate trạng thái chuyển đổi
                 if (!IsValidStatusTransition(hoaDon.TrangThai, trangThaiMoi))
                 {
+                    _logger.LogWarning($"🔍 Debug - Invalid status transition: {hoaDon.TrangThai} -> {trangThaiMoi}");
                     return Json(new { success = false, message = GetInvalidTransitionMessage(hoaDon.TrangThai, trangThaiMoi) });
                 }
+
+                // Lưu trạng thái cũ để gửi thông báo
+                var trangThaiCu = hoaDon.TrangThai;
+                var trangThaiCuText = GetTrangThaiText(trangThaiCu);
+
+                _logger.LogInformation($"🔍 Debug - About to call CapNhatTrangThaiAsync");
 
                 // Cập nhật trạng thái
                 var result = await _hoaDonService.CapNhatTrangThaiAsync(id, trangThaiMoi);
                 
+                // ✅ Debug logging
+                _logger.LogInformation($"🔍 Debug - CapNhatTrangThaiAsync result: Success={result.Success}, Message={result.Message}");
+                
                 if (result.Success)
                 {
-                    var trangThaiText = GetTrangThaiText(trangThaiMoi);
-                    return Json(new { success = true, message = $"Cập nhật trạng thái thành công! Trạng thái mới: {trangThaiText}" });
+                    var trangThaiMoiText = GetTrangThaiText(trangThaiMoi);
+                    
+                    _logger.LogInformation($"🔍 Debug - About to send email notification for order {id}");
+                    
+                    // ✅ Gửi thông báo email cho khách hàng khi đổi trạng thái
+                    try
+                    {
+                        await _emailNotificationService.SendStatusChangeNotificationToCustomerAsync(hoaDon, trangThaiCuText, trangThaiMoiText);
+                        _logger.LogInformation($"✅ Customer notification sent for order {id} - Status: {trangThaiCuText} → {trangThaiMoiText}");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"❌ Error sending customer notification: {ex.Message}");
+                        _logger.LogError($"❌ Error details: {ex}");
+                        // Không throw exception để không ảnh hưởng đến luồng cập nhật trạng thái
+                    }
+                    
+                    return Json(new { success = true, message = $"Cập nhật trạng thái thành công! Trạng thái mới: {trangThaiMoiText}" });
                 }
                 else
                 {
+                    _logger.LogWarning($"⚠️ CapNhatTrangThaiAsync failed: {result.Message}");
                     return Json(new { success = false, message = result.Message });
                 }
             }

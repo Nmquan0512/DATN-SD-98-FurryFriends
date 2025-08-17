@@ -13,6 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 
+// ✅ Đăng ký EmailNotificationService
+builder.Services.AddScoped<IEmailNotificationService, EmailNotificationService>();
+
 builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");

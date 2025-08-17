@@ -485,20 +485,52 @@ namespace FurryFriends.Web.Services
                 var response = await _httpClient.PutAsync($"{BaseUrl}/{hoaDonId}/trang-thai/{trangThaiMoi}", null);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
+                // ✅ Debug logging
+                Console.WriteLine($"🔍 Debug - CapNhatTrangThaiAsync Response Status: {response.StatusCode}");
+                Console.WriteLine($"🔍 Debug - CapNhatTrangThaiAsync Response Content: {responseContent}");
+
                 if (response.IsSuccessStatusCode)
                 {
-                    var result = await response.Content.ReadFromJsonAsync<ApiResult>();
-                    return result ?? new ApiResult { Success = true, Message = "Cập nhật trạng thái thành công!" };
+                    try
+                    {
+                        // ✅ Thử parse theo format API trả về: { success = true, message = "..." }
+                        var jsonResult = await response.Content.ReadFromJsonAsync<object>();
+                        Console.WriteLine($"🔍 Debug - Raw JSON result: {jsonResult}");
+                        
+                        // Nếu response có success = true, coi như thành công
+                        if (jsonResult != null)
+                        {
+                            var jsonString = jsonResult.ToString();
+                            if (jsonString.Contains("\"success\":true") || jsonString.Contains("success") && jsonString.Contains("true"))
+                            {
+                                Console.WriteLine($"🔍 Debug - Success detected from JSON");
+                                return new ApiResult { Success = true, Message = "Cập nhật trạng thái thành công!" };
+                            }
+                        }
+                        
+                        // Thử parse ApiResult
+                        var result = await response.Content.ReadFromJsonAsync<ApiResult>();
+                        Console.WriteLine($"🔍 Debug - Parsed ApiResult: Success={result?.Success}, Message={result?.Message}");
+                        return result ?? new ApiResult { Success = true, Message = "Cập nhật trạng thái thành công!" };
+                    }
+                    catch (Exception parseEx)
+                    {
+                        Console.WriteLine($"🔍 Debug - Parse error: {parseEx.Message}");
+                        // Nếu không parse được, coi như thành công vì status code là 200
+                        return new ApiResult { Success = true, Message = "Cập nhật trạng thái thành công!" };
+                    }
                 }
                 else
                 {
                     try
                     {
                         var errorResult = await response.Content.ReadFromJsonAsync<ApiResult>();
+                        Console.WriteLine($"🔍 Debug - Error ApiResult: Success={errorResult?.Success}, Message={errorResult?.Message}");
                         return errorResult ?? new ApiResult { Success = false, Message = $"Lỗi: {response.StatusCode}" };
                     }
                     catch
                     {
+                        Console.WriteLine($"🔍 Debug - Error parse failed, returning generic error");
                         return new ApiResult { Success = false, Message = $"Lỗi khi cập nhật trạng thái: {response.StatusCode}" };
                     }
                 }
