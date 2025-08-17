@@ -37,7 +37,6 @@ namespace FurryFriends.API.Models
                 var isDuplicate = _context.ChucVus
                     .Any(c => c.TenChucVu.ToLower().Trim() == TenChucVu.ToLower().Trim()
                            && c.ChucVuId != ChucVuId); // bỏ qua chính nó khi update
-
                 if (isDuplicate)
                 {
                     yield return new ValidationResult(

@@ -1,4 +1,4 @@
-﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Repository.IRepository;
 using FurryFriends.API.Services.IServices;

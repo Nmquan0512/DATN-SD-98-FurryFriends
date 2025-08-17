@@ -1,59 +1,247 @@
-﻿@model IEnumerable<FurryFriends.API.Models.DTO.BanHang.HoaDonBanHangDto>
+﻿@using FurryFriends.API.Models.DTO.BanHang
+@model IEnumerable<FurryFriends.API.Models.DTO.BanHang.HoaDonBanHangDto>
 
 @{
-    ViewData["Title"] = "Lịch sử Hóa đơn";
+    ViewData["Title"] = "Quản lý Hóa đơn";
+    // Tách biệt danh sách ngay từ đầu để code dễ đọc hơn
+    var hoaDonCho = Model?.Where(h => h.TrangThai == "Chua Thanh Toan").OrderByDescending(h => h.NgayTao).ToList() ?? new List<HoaDonBanHangDto>();
+    var lichSuHoaDon = Model?.Where(h => h.TrangThai != "Chua Thanh Toan").OrderByDescending(h => h.NgayTao).ToList() ?? new List<HoaDonBanHangDto>();
+
+    // Tính toán thống kê an toàn hơn
+    var today = DateTime.Now.Date; // Lấy ngày hiện tại của server
+    var successfulToday = lichSuHoaDon.Count(h => h.TrangThai == "Da Thanh Toan" && h.NgayTao.ToLocalTime().Date == today);
+    var cancelledToday = lichSuHoaDon.Count(h => h.TrangThai == "Da Huy" && h.NgayTao.ToLocalTime().Date == today);
+    var revenueToday = lichSuHoaDon.Where(h => h.TrangThai == "Da Thanh Toan" && h.NgayTao.ToLocalTime().Date == today).Sum(h => h.ThanhTien);
 }
 
-<div class="card shadow border-0 my-4">
-    <div class="card-header bg-secondary bg-gradient ml-0 py-3">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h2 class="text-white py-2">Lịch Sử Hóa Đơn</h2>
+<div class="container-fluid py-4">
+    <!-- Tiêu đề và nút tạo mới -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-file-invoice-dollar me-2 text-primary"></i>@ViewData["Title"]</h2>
+
+        <a asp-action="TaoHoaDonMoi" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i> Tạo Hóa Đơn Mới (Tại quầy)
+        </a>
+    </div>
+
+    <!-- Thống kê -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow-sm border-start border-warning border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Hóa đơn chờ</h6>
+                    <h3 class="fw-bold text-warning mb-0">@hoaDonCho.Count()</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow-sm border-start border-success border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Thành công hôm nay</h6>
+                    <h3 class="fw-bold text-success mb-0">@successfulToday</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow-sm border-start border-danger border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Bị hủy hôm nay</h6>
+                    <h3 class="fw-bold text-danger mb-0">@cancelledToday</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow-sm border-start border-info border-4 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted mb-1">Tổng doanh thu hôm nay</h6>
+                    <h3 class="fw-bold text-info mb-0">@revenueToday.ToString("N0") ₫</h3>
+                </div>
             </div>
         </div>
     </div>
-    <div class="card-body p-4">
-        <div class="d-flex justify-content-end mb-3">
-            <form asp-action="Create" method="post">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i> Tạo Hóa Đơn Mới
-                </button>
-            </form>
-        </div>
 
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>Mã Hóa Đơn</th>
-                    <th>Khách Hàng</th>
-                    <th>Ngày Tạo</th>
-                    <th class="text-end">Tổng Tiền</th>
-                    <th>Trạng Thái</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+    <!-- Danh sách hóa đơn chờ -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0 text-warning"><i class="fas fa-clock me-2"></i>Hóa đơn đang chờ (@hoaDonCho.Count())</h5>
+        </div>
+        <div class="card-body p-0">
+            @if (hoaDonCho.Any())
+            {
+                <div class="list-group list-group-flush">
+                    @foreach (var item in hoaDonCho)
+                    {
+                        <a asp-action="Details" asp-route-id="@item.HoaDonId" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fw-bold me-3">@item.MaHoaDon</span>
+                                <i class="fas fa-user me-1 text-muted"></i>
+                                <span>@(item.KhachHang?.TenKhachHang ?? "Khách lẻ")</span>
+                            </div>
+                            <div>
+                                <span class="me-4"><i class="far fa-calendar-alt me-2 text-muted"></i>@item.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                                <span class="badge bg-warning rounded-pill">Chờ thanh toán</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center p-4 text-muted">Chưa có hóa đơn nào đang chờ.</div>
+            }
+        </div>
+    </div>
+
+    <!-- Lịch sử hóa đơn (với bộ lọc) -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-light">
+            <h5 class="mb-0"><i class="fas fa-history me-2"></i>Lịch sử giao dịch</h5>
+        </div>
+        <div class="card-body p-4">
+            <!-- Bộ lọc -->
+            <div class="row g-2 mb-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="searchInput" class="form-label small">Tìm theo mã HĐ, tên KH</label>
+                    <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Nhập từ khóa...">
+                </div>
+                <div class="col-md-3">
+                    <label for="statusFilter" class="form-label small">Trạng thái</label>
+                    <select id="statusFilter" class="form-select form-select-sm">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="Da Thanh Toan">Đã thanh toán</option>
+                        <option value="Da Huy">Đã hủy</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label small">Khoảng ngày tạo</label>
+                    <div class="input-group input-group-sm">
+                        <input type="date" id="startDate" class="form-control">
+                        <span class="input-group-text">đến</span>
+                        <input type="date" id="endDate" class="form-control">
+                    </div>
+                </div>
+                <div class="col-md-1 d-grid">
+                    <button id="resetFilters" class="btn btn-sm btn-outline-secondary">Reset</button>
+                </div>
+            </div>
+
+            <table class="table table-hover table-bordered" id="historyTable" style="width:100%">
+                <thead class="table-light">
                     <tr>
-                        <td>@item.MaHoaDon</td>
-                        <td>@item.KhachHang.TenKhachHang</td>
-                        <td>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td class="text-end">@item.ThanhTien.ToString("N0") đ</td>
-                        <td>
-                            <span class="badge @(item.TrangThai == "Đã thanh toán" ? "bg-success" : (item.TrangThai == "Đã hủy" ? "bg-danger" : "bg-warning"))">
-                                @item.TrangThai
-                            </span>
-                        </td>
-                        <td>
-                            <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.HoaDonId">
-                                <i class="bi bi-pencil-square"></i> Chi Tiết
-                            </a>
-                        </td>
+                        <th>Mã HĐ</th>
+                        <th>Khách Hàng</th>
+                        <th>Ngày Tạo</th>
+                        <th class="text-end">Thành Tiền</th>
+                        <th class="text-center">Trạng Thái</th>
+                        <th class="text-center">Thao tác</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @if (lichSuHoaDon.Any())
+                    {
+                        @foreach (var item in lichSuHoaDon)
+                        {
+                            <tr data-date="@item.NgayTao.ToString("yyyy-MM-dd")">
+                                <td class="fw-bold">@item.MaHoaDon</td>
+                                <td>@(item.KhachHang?.TenKhachHang ?? "Khách lẻ")</td>
+                                <td>@item.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                                <td class="text-end fw-semibold text-success">@item.ThanhTien.ToString("N0") ₫</td>
+                                <td class="text-center">
+                                    @{
+                                        var badgeClass = item.TrangThai switch
+                                        {
+                                            "Da Thanh Toan" => "bg-success-subtle text-success-emphasis border border-success-subtle",
+                                            "Da Huy" => "bg-danger-subtle text-danger-emphasis border border-danger-subtle",
+                                            _ => "bg-secondary-subtle text-secondary-emphasis border border-secondary-subtle"
+                                        };
+                                        var trangThaiText = item.TrangThai.Replace("Da ", "").Replace("Toan", "toán").Replace(" Huy", " hủy");
+                                    }
+                                    <span class="badge @badgeClass rounded-pill">@trangThaiText</span>
+                                </td>
+                                <td class="text-center">
+                                    <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@item.HoaDonId" title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css" />
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Khởi tạo DataTable. Nó sẽ tự động hiển thị thông báo nếu bảng trống.
+            var table = $('#historyTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/2.0.8/i18n/vi.json',
+                    emptyTable: "Không có giao dịch nào trong lịch sử"
+                },
+                order: [[2, 'desc']], // Sắp xếp theo cột Ngày Tạo (index 2) mới nhất
+                columnDefs: [
+                    {
+                        "orderable": false, // Vô hiệu hóa sắp xếp
+                        "targets": [5]      // Cho cột Thao tác (index 5)
+                    }
+                ]
+            });
+
+            // Lọc tùy chỉnh cho khoảng ngày
+            $.fn.dataTable.ext.search.push(
+                function(settings, data, dataIndex) {
+                    // Đảm bảo chỉ áp dụng cho bảng này
+                    if (settings.nTable.id !== 'historyTable') {
+                        return true;
+                    }
+
+                    var startDate = $('#startDate').val();
+                    var endDate = $('#endDate').val();
+
+                    // Lấy ngày từ thuộc tính data-date của thẻ <tr>
+                    var rowNode = table.row(dataIndex).node();
+                    var date = $(rowNode).data('date');
+
+                    if (
+                        (startDate === "" || !startDate || date >= startDate) &&
+                        (endDate === "" || !endDate || date <= endDate)
+                    ) {
+                        return true;
+                    }
+                    return false;
+                }
+            );
+
+            // Gắn sự kiện chung cho tất cả các input lọc
+            $('#searchInput, #statusFilter, #startDate, #endDate').on('keyup change', function() {
+                var searchTerm = $('#searchInput').val();
+                var statusTerm = $('#statusFilter').val();
+
+                // Lọc theo cột tìm kiếm (áp dụng cho tất cả các cột)
+                table.search(searchTerm)
+                     // Lọc theo cột trạng thái (cột index 4)
+                     .column(4).search(statusTerm)
+                     // Vẽ lại bảng để áp dụng tất cả các bộ lọc (bao gồm cả lọc ngày)
+                     .draw();
+            });
+
+            // Reset bộ lọc
+            $('#resetFilters').on('click', function() {
+                $('#searchInput').val('');
+                $('#statusFilter').val('');
+                $('#startDate').val('');
+                $('#endDate').val('');
+
+                // Xóa tất cả các bộ lọc và vẽ lại bảng
+                table.search('').columns().search('').draw();
+            });
+        });
+    </script>
+}

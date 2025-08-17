@@ -1,0 +1,33 @@
+﻿@model FurryFriends.API.Models.DTO.BanHang.HoaDonBanHangDto
+@*
+    PARTIAL VIEW CHO MODAL XÁC NHẬN HỦY HÓA ĐƠN
+*@
+
+<div class="modal fade" id="huyHoaDonModal" tabindex="-1" aria-labelledby="huyHoaDonModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Dùng thẻ form để validation nhưng sẽ submit bằng JS -->
+            <form id="cancelInvoiceForm">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="huyHoaDonModalLabel"><i class="fas fa-exclamation-triangle me-2"></i>Xác nhận Hủy Hóa Đơn</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn có chắc chắn muốn hủy hóa đơn <strong>@Model.MaHoaDon</strong>?</p>
+                    <p class="text-danger small">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Hành động này không thể hoàn tác. Số lượng sản phẩm và voucher (nếu có) sẽ được hoàn trả lại hệ thống.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không, giữ lại</button>
+                    <!-- Nút này không có type="submit" mà sẽ được xử lý bằng JS -->
+                    <button type="button" class="btn btn-danger" id="confirmCancelInvoiceBtn">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                        Đồng ý Hủy
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

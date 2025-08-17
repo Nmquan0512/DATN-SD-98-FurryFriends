@@ -1,20 +1,25 @@
 using FurryFriends.Web.Service;
 using FurryFriends.Web.Service.IService;
 using FurryFriends.Web.Services;
+using FurryFriends.Web.Services.Handlers;
 using FurryFriends.Web.Services.IService;
 using FurryFriends.Web.Services.IServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.Facebook;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<IVnPayService, VnPayService>();
 
-// ✅ Đăng ký EmailNotificationService
+// Đăng ký HttpMessageHandler
+builder.Services.AddScoped<AuthHeaderHandler>();
+
+// Đăng ký các service với HttpClient
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<IEmailNotificationService, EmailNotificationService>();
+builder.Services.AddScoped<DiscountCalculationService>();
 
 builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
 {
@@ -40,19 +45,19 @@ builder.Services.AddHttpClient<IKhachHangService, KhachHangService>(client =>
 });
 builder.Services.AddHttpClient<IChucVuService, ChucVuService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7289/api/"); // Địa chỉ API, thay đổi port nếu cần
+    client.BaseAddress = new Uri("https://localhost:7289/api/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 builder.Services.AddHttpClient<ITaiKhoanService, TaiKhoanService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7289/api/"); // Địa chỉ API, thay đổi port nếu cần
+    client.BaseAddress = new Uri("https://localhost:7289/api/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 builder.Services.AddHttpClient<INhanVienService, NhanVienService>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7289/api/"); // Địa chỉ API, thay đổi port nếu cần
+    client.BaseAddress = new Uri("https://localhost:7289/api/");
     client.DefaultRequestHeaders.Add("Accept", "application/json");
     client.Timeout = TimeSpan.FromSeconds(30);
 });
@@ -94,7 +99,6 @@ builder.Services.AddHttpClient<IHinhThucThanhToanService, HinhThucThanhToanServi
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
-
 builder.Services.AddHttpClient<IAnhService, AnhService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
@@ -105,18 +109,16 @@ builder.Services.AddHttpClient<ISanPhamChiTietService, SanPhamChiTietService>(cl
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
 
-// Đăng ký DiscountCalculationService
-builder.Services.AddScoped<DiscountCalculationService>();
-// Cách đúng đã kiểm tra
-
 builder.Services.AddHttpClient<ISanPhamService, SanPhamService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
+
+// Sử dụng AddHttpMessageHandler để thêm AuthHeaderHandler
 builder.Services.AddHttpClient<IBanHangService, BanHangService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7289/");
-});
+}).AddHttpMessageHandler<AuthHeaderHandler>();
 
 // Thêm cấu hình xác thực Google và Facebook
 builder.Services.AddAuthentication(options =>
@@ -147,7 +149,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 

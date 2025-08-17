@@ -13,7 +13,7 @@ namespace FurryFriends.API.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=PHUNGHUYTRUONG\\SQLEXPRESS01;Initial Catalog=MuaHangHoanThien;Integrated Security=True;Encrypt=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Server=DELL\\SQLEXPRESS;Database=DATN1;Trusted_Connection=True;TrustServerCertificate=True");
             }
         }
 
@@ -202,8 +202,14 @@ namespace FurryFriends.API.Data
                 .HasOne(hdct => hdct.HoaDon)
                 .WithMany(hd => hd.HoaDonChiTiets)
                 .HasForeignKey(hdct => hdct.HoaDonId)
-                .OnDelete(DeleteBehavior.Cascade);
 
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<HoaDon>()
+      .HasOne<NhanVien>() // Mỗi Hóa đơn có thể có MỘT Nhân viên
+      .WithMany()        // Một Nhân viên có thể có NHIỀU Hóa đơn
+      .HasForeignKey(hd => hd.NhanVienId) // Khóa ngoại là NhanVienId
+      .IsRequired(false)
+      .OnDelete(DeleteBehavior.SetNull);
         }
 
         private void ConfigureDotGiamGiaSanPham(ModelBuilder modelBuilder)

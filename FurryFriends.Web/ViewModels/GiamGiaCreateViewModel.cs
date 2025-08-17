@@ -1,4 +1,4 @@
-﻿using FurryFriends.API.Models.DTO;
+using FurryFriends.API.Models.DTO;
 using System;
 using System.Collections.Generic;
 

@@ -16,7 +16,7 @@ namespace FurryFriends.API.Controllers
     /// </summary>
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // Yêu cầu người dùng phải đăng nhập để sử dụng các API này
+   /* [Authorize]*/ // Yêu cầu người dùng phải đăng nhập để sử dụng các API này
     public class BanHangController : ControllerBase
     {
         private readonly IBanHangService _banHangService;
@@ -80,20 +80,12 @@ namespace FurryFriends.API.Controllers
         {
             try
             {
-                // Lấy NhanVienId từ token JWT của người dùng đang đăng nhập
-                var nhanVienIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-                if (nhanVienIdClaim == null || !Guid.TryParse(nhanVienIdClaim.Value, out var nhanVienId))
-                {
-                    return Unauthorized("Không thể xác định nhân viên từ token.");
-                }
-                request.NhanVienId = nhanVienId;
-
+                // Toàn bộ logic kiểm tra token và nhân viên đã được XÓA BỎ
                 var result = await _banHangService.TaoHoaDonAsync(request);
                 return CreatedAtAction(nameof(GetHoaDonById), new { hoaDonId = result.HoaDonId }, result);
             }
             catch (ArgumentException ex) { return BadRequest(ex.Message); }
         }
-
         /// <summary>
         /// Hủy một hóa đơn đang ở trạng thái chờ.
         /// </summary>
@@ -321,6 +313,23 @@ namespace FurryFriends.API.Controllers
             }
             catch (ValidationException ex) { return BadRequest(ex.Message); }
             catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
+        }
+        [HttpGet("tim-kiem/san-pham-goi-y")]
+        [ProducesResponseType(typeof(IEnumerable<SanPhamBanHangDto>), 200)]
+        public async Task<IActionResult> LaySanPhamGoiY()
+        {
+            try
+            {
+                // Bạn có thể thay đổi số lượng sản phẩm gợi ý ở đây, ví dụ 15 sản phẩm.
+                var result = await _banHangService.TimKiemSanPhamAsync(null); // Gọi với keyword là null/rỗng
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi lấy danh sách sản phẩm gợi ý.");
+                // Trả về lỗi 500 nếu có vấn đề ở server
+                return StatusCode(500, "Đã xảy ra lỗi hệ thống khi lấy sản phẩm gợi ý.");
+            }
         }
 
         #endregion

@@ -79,32 +79,39 @@ namespace FurryFriends.API.Profiles
         {
             // === K H Á C H   H À N G ===
             CreateMap<KhachHang, KhachHangDto>()
-                .ForMember(dest => dest.DiemTichLuy, opt => opt.MapFrom(src => src.DiemKhachHang ?? 0));
-            CreateMap<TaoKhachHangRequest, KhachHang>();
+                .ForMember(dest => dest.DiemTichLuy, opt => opt.MapFrom(src => src.DiemKhachHang ?? 0))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.EmailCuaKhachHang))
+                .ForMember(dest => dest.LaKhachLe, opt => opt.MapFrom(src => src.TenKhachHang == "Khách lẻ"));
 
+            CreateMap<TaoKhachHangRequest, KhachHang>()
+     .ForMember(dest => dest.EmailCuaKhachHang, opt => opt.MapFrom(src => src.Email));
+            CreateMap<DiaChiMoiDto, DiaChiKhachHang>();
 
             // === V O U C H E R ===
             CreateMap<Voucher, VoucherDto>()
-                 .ForMember(dest => dest.MaVoucher, opt => opt.MapFrom(src => src.TenVoucher)); // Giả sử TenVoucher là mã
-
+                 .ForMember(dest => dest.MaVoucher, opt => opt.MapFrom(src => src.TenVoucher))
+                 .ForMember(dest => dest.NgayHetHan, opt => opt.MapFrom(src => src.NgayKetThuc))
+                 .ForMember(dest => dest.GiaTriGiamToiDa, opt => opt.MapFrom(src => src.GiaTriGiamToiDa ?? 0));
 
             // === HÌNH THỨC THANH TOÁN ===
             CreateMap<HinhThucThanhToan, HinhThucThanhToanDto>();
 
-
-
-            // Dùng cho API tìm kiếm sản phẩm
+            // ==========================================================
+            // <<< SỬA LỖI 1: Mapping cho SanPhamBanHangDto >>>
+            // ==========================================================
             CreateMap<SanPhamChiTiet, SanPhamBanHangDto>()
-                .ForMember(dest => dest.SanPhamChiTietId, opt => opt.MapFrom(src => src.SanPhamChiTietId))
                 .ForMember(dest => dest.TenSanPham, opt => opt.MapFrom(src => src.SanPham.TenSanPham))
-                .ForMember(dest => dest.Gia, opt => opt.MapFrom(src => src.Gia))
                 .ForMember(dest => dest.SoLuongTon, opt => opt.MapFrom(src => src.SoLuong))
                 .ForMember(dest => dest.TenMauSac, opt => opt.MapFrom(src => src.MauSac.TenMau))
-                .ForMember(dest => dest.TenKichCo, opt => opt.MapFrom(src => src.KichCo.TenKichCo));
+                .ForMember(dest => dest.TenKichCo, opt => opt.MapFrom(src => src.KichCo.TenKichCo))
+              .ForMember(dest => dest.HinhAnh, opt => opt.MapFrom(src => src.Anh != null ? src.Anh.DuongDan : null));
+
+            // <<< THÊM MỚI: Dạy Mapper cách lấy ảnh cho DTO tìm kiếm >>>
 
 
-            // === C H I   T I Ế T   H Ó A   Đ Ơ N ===
-            // Sửa lỗi mapping sai, giờ sẽ map từ SanPhamChiTiet
+            // ==========================================================
+            // <<< SỬA LỖI 2: Mapping cho ChiTietHoaDonDto >>>
+            // ==========================================================
             CreateMap<HoaDonChiTiet, ChiTietHoaDonDto>()
                 .ForMember(dest => dest.SanPhamChiTietId, opt => opt.MapFrom(src => src.SanPhamChiTietId))
                 .ForMember(dest => dest.TenSanPham, opt => opt.MapFrom(src => src.SanPhamChiTiet.SanPham.TenSanPham))
@@ -112,26 +119,19 @@ namespace FurryFriends.API.Profiles
                 .ForMember(dest => dest.KichCo, opt => opt.MapFrom(src => src.SanPhamChiTiet.KichCo.TenKichCo))
                 .ForMember(dest => dest.Gia, opt => opt.MapFrom(src => src.Gia))
                 .ForMember(dest => dest.SoLuong, opt => opt.MapFrom(src => src.SoLuongSanPham))
-                .ForMember(dest => dest.ThanhTien, opt => opt.MapFrom(src => src.Gia * src.SoLuongSanPham));
-
+                .ForMember(dest => dest.ThanhTien, opt => opt.MapFrom(src => src.Gia * src.SoLuongSanPham))
+                .ForMember(dest => dest.SoLuongTon, opt => opt.MapFrom(src => src.SanPhamChiTiet.SoLuong))
+                // <<< THÊM MỚI: Dạy Mapper cách lấy ảnh cho chi tiết hóa đơn >>>
+                .ForMember(dest => dest.HinhAnh, opt => opt.MapFrom(src => src.SanPhamChiTiet.Anh != null ? src.SanPhamChiTiet.Anh.DuongDan : null));
 
             // === H Ó A   Đ Ơ N   (Chính) ===
-            // Mapping quan trọng nhất
             CreateMap<HoaDon, HoaDonBanHangDto>()
                 .ForMember(dest => dest.MaHoaDon, opt => opt.MapFrom(src => src.HoaDonId.ToString().Substring(0, 8).ToUpper()))
-                .ForMember(dest => dest.TrangThai, opt => opt.MapFrom(src => GetTrangThaiHoaDon(src.TrangThai)))
+                .ForMember(dest => dest.TrangThai, opt => opt.MapFrom(src => ((TrangThaiHoaDon)src.TrangThai).ToString().Replace("_", " ")))
                 .ForMember(dest => dest.KhachHang, opt => opt.MapFrom(src => src.KhachHang))
                 .ForMember(dest => dest.HinhThucThanhToan, opt => opt.MapFrom(src => src.HinhThucThanhToan))
-                .ForMember(dest => dest.Voucher, opt => opt.MapFrom(src => src.Voucher)) // <--- ĐÂY LÀ PHẦN SỬA LỖI
+                .ForMember(dest => dest.Voucher, opt => opt.MapFrom(src => src.Voucher))
                 .ForMember(dest => dest.ChiTietHoaDon, opt => opt.MapFrom(src => src.HoaDonChiTiets));
-            // Các trường TongTien, TienGiam, ThanhTien sẽ được tính toán trong Repository/Service nên không cần map ở đây
-
-        }
-
-        // Helper function để chuyển đổi trạng thái
-        private string GetTrangThaiHoaDon(int trangThai)
-        {
-            return ((TrangThaiHoaDon)trangThai).ToString().Replace("_", " ");
         }
     }
 }

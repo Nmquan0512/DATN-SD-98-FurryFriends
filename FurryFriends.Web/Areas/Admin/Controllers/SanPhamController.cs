@@ -1,4 +1,3 @@
-﻿using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.Services.IService;
 using FurryFriends.Web.ViewModels;
@@ -47,7 +46,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             try
             {
                 var result = await _sanPhamService.GetAllAsync();
-                await LoadDropdownData(); // Dùng hàm đã tái cấu trúc để load dữ liệu cho bộ lọc
+                await LoadDropdownData();
                 return View(result);
             }
             catch (Exception ex)
@@ -61,11 +60,11 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            await LoadDropdownData(isCreateMode: true); // Load dropdown chỉ với các mục đang hoạt động
+            await LoadDropdownData(isCreateMode: true);
 
             var viewModel = new SanPhamFullCreateViewModel
             {
-                SanPham = new SanPhamDTO { TrangThai = true }, // Mặc định là hoạt động
+                SanPham = new SanPhamDTO { TrangThai = true },
                 ChiTietList = new List<SanPhamChiTietCreateViewModel>()
             };
             return View(viewModel);
@@ -84,7 +83,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 return View(model);
             }
 
-            // SỬA LỖI: Xử lý ApiResult<T> từ service
             var createResult = await _sanPhamService.CreateAsync(model.SanPham);
 
             if (!createResult.Success)
@@ -97,7 +95,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             var createdSanPham = createResult.Data;
             bool hasVariantError = false;
 
-            // Tạo các biến thể sản phẩm
             foreach (var chiTietVM in model.ChiTietList)
             {
                 var chiTietToCreate = new SanPhamChiTietDTO
@@ -120,7 +117,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
             if (hasVariantError)
             {
-                // Nếu có lỗi khi tạo biến thể, cần thông báo và cho người dùng sửa lại
                 ModelState.AddModelError("", "Đã có lỗi xảy ra khi tạo một số biến thể. Vui lòng kiểm tra lại.");
                 await LoadDropdownData(isCreateMode: true);
                 return View(model);
@@ -137,9 +133,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             var sanPham = await _sanPhamService.GetByIdAsync(id);
             if (sanPham == null) return NotFound();
 
-            // TỐI ƯU: Chỉ nên lấy chi tiết của sản phẩm này, không phải tất cả.
-            // Giả sử service có phương thức GetBySanPhamIdAsync(id)
-            var allChiTiet = await _chiTietService.GetAllAsync(); // Tạm thời vẫn dùng cách cũ
+            var allChiTiet = await _chiTietService.GetAllAsync();
             var chiTietList = allChiTiet?
                 .Where(x => x.SanPhamId == id)
                 .Select(x => new SanPhamChiTietCreateViewModel
@@ -178,7 +172,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 return View(model);
             }
 
-            // SỬA LỖI: Xử lý ApiResult<T> từ service
             var updateResult = await _sanPhamService.UpdateAsync(model.SanPham.SanPhamId, model.SanPham);
 
             if (!updateResult.Success)
@@ -188,7 +181,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 return View(model);
             }
 
-            // Xử lý các biến thể
             await ProcessVariants(model.SanPham.SanPhamId, model.ChiTietList);
 
             TempData["Success"] = "Cập nhật sản phẩm thành công!";
@@ -211,12 +203,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             try
             {
                 var result = await _sanPhamService.DeleteAsync(id);
-                if (result.Data)
+                if (result.Success)
                 {
                     TempData["Success"] = "Xóa sản phẩm thành công!";
                     return RedirectToAction(nameof(Index));
                 }
-
+                
                 var errorMessage = result.Errors?.FirstOrDefault().Value.FirstOrDefault() ?? "Xóa sản phẩm thất bại!";
                 TempData["Error"] = errorMessage;
                 return RedirectToAction(nameof(Index));
@@ -228,28 +220,21 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
         }
 
-
         // ---------------- CÁC HÀM HỖ TRỢ (HELPER METHODS) ----------------
 
-        /// <summary>
-        /// TÁI CẤU TRÚC: Xử lý logic Thêm/Sửa/Xóa các biến thể
-        /// </summary>
         private async Task ProcessVariants(Guid sanPhamId, List<SanPhamChiTietCreateViewModel> submittedVariants)
         {
-            // Lấy danh sách biến thể cũ từ DB
             var existingVariants = (await _chiTietService.GetAllAsync() ?? new List<SanPhamChiTietDTO>())
                                      .Where(v => v.SanPhamId == sanPhamId).ToList();
 
             var submittedVariantIds = submittedVariants.Select(s => s.SanPhamChiTietId).Where(id => id.HasValue).ToList();
 
-            // 1. Xóa các biến thể không còn được gửi lên từ form
             var variantsToDelete = existingVariants.Where(e => !submittedVariantIds.Contains(e.SanPhamChiTietId));
             foreach (var variant in variantsToDelete)
             {
                 await _chiTietService.DeleteAsync(variant.SanPhamChiTietId);
             }
 
-            // 2. Cập nhật hoặc Thêm mới
             foreach (var submittedVariant in submittedVariants)
             {
                 var dto = new SanPhamChiTietDTO
@@ -266,20 +251,15 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
                 if (submittedVariant.SanPhamChiTietId.HasValue && submittedVariant.SanPhamChiTietId != Guid.Empty)
                 {
-                    // Cập nhật
                     await _chiTietService.UpdateAsync(submittedVariant.SanPhamChiTietId.Value, dto);
                 }
                 else
                 {
-                    // Thêm mới
                     await _chiTietService.CreateAsync(dto);
                 }
             }
         }
 
-        /// <summary>
-        /// TÁI CẤU TRÚC: Hàm kiểm tra validation cho danh sách biến thể
-        /// </summary>
         private void ValidateChiTietList(List<SanPhamChiTietCreateViewModel> chiTietList)
         {
             if (chiTietList == null || !chiTietList.Any())
@@ -298,9 +278,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
         }
 
-        /// <summary>
-        /// TÁI CẤU TRÚC: Hàm chung để thêm lỗi từ ApiResult vào ModelState
-        /// </summary>
         private void AddApiErrorsToModelState<T>(ApiResult<T> result)
         {
             if (result.Errors != null)
@@ -316,22 +293,13 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
         }
 
-        /// <summary>
-        /// TÁI CẤU TRÚC: Gom tất cả logic load dropdown vào một nơi.
-        /// </summary>
         private async Task LoadDropdownData(SanPhamDTO? sanPham = null, bool isCreateMode = false)
         {
-            // Hàm này sẽ load tất cả dữ liệu cần thiết cho các dropdown list trong View
-            // `sanPham` được dùng trong trang Edit để hiển thị các mục đã chọn dù chúng không còn hoạt động.
-            // `isCreateMode` được dùng để chỉ load các mục đang hoạt động trong trang Create.
-
             var allThuongHieu = (await _thuongHieuService.GetAllAsync()).ToList();
             var allChatLieu = (await _chatLieuService.GetAllAsync()).ToList();
             var allThanhPhan = (await _thanhPhanService.GetAllAsync()).ToList();
             var allKichCo = (await _kichCoService.GetAllAsync()).ToList();
             var allMauSac = (await _mauSacService.GetAllAsync()).ToList();
-
-            Func<dynamic, bool> isActive = item => isCreateMode ? item.TrangThai : true;
 
             ViewBag.ThuongHieuList = allThuongHieu
                 .Where(th => isCreateMode ? th.TrangThai : (th.TrangThai || th.ThuongHieuId == sanPham?.ThuongHieuId))
@@ -343,11 +311,9 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 .ToList();
 
             ViewBag.ThanhPhanList = allThanhPhan
-                .Where(tp => isCreateMode ? tp.TrangThai : (tp.TrangThai || (sanPham?.ThanhPhanIds?.Contains(tp.ThanhPhanId) ?? false)))
-                .Select(tp => new SelectListItem { Value = tp.ThanhPhanId.ToString(), Text = tp.TrangThai ? tp.TenThanhPhan : $"{tp.TenThanhPhan} (Ngưng hoạt động)" })
-                .ToList();
+                  .Where(tp => isCreateMode ? tp.TrangThai : (tp.TrangThai || (sanPham?.ThanhPhanIds?.Contains(tp.ThanhPhanId) ?? false)))
+                  .Select(tp => new SelectListItem { Value = tp.ThanhPhanId.ToString(), Text = tp.TrangThai ? tp.TenThanhPhan : $"{tp.TenThanhPhan} (Ngưng hoạt động)" }).ToList();
 
-            // Thêm ViewBag cho bộ lọc
             ViewBag.DanhSachThuongHieu = allThuongHieu;
             ViewBag.DanhSachChatLieu = allChatLieu;
             ViewBag.DanhSachThanhPhan = allThanhPhan;

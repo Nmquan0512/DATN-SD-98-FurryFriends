@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FurryFriends.API.Models.DTO.SanPhamChiTietDTO>
+@model IEnumerable<FurryFriends.API.Models.DTO.SanPhamChiTietDTO>
 @{
     ViewData["Title"] = "Biến thể sản phẩm";
     var tenSanPham = ViewBag.TenSanPham ?? "Không xác định";
@@ -64,8 +64,6 @@
                                 }
                             </td>
                             <td class="text-center">
-                                <!-- Thẻ canvas để vẽ mã QR -->
-                                <!-- data-value chứa ID duy nhất của biến thể -->
                                 <canvas class="qr-code-canvas" data-value="@item.SanPhamChiTietId"></canvas>
                             </td>
                             <td>
@@ -138,7 +136,6 @@
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
 
-    <!-- Thư viện tạo mã QR -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 
     <script>

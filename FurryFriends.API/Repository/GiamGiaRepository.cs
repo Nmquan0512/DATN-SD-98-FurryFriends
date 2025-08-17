@@ -58,7 +58,7 @@ namespace FurryFriends.API.Repositories
         public void Update(GiamGia entity)
         {
             entity.NgayCapNhat = DateTime.UtcNow;
-            // Đánh dấu đối tượng là đã bị thay đổi
+            // Đánh dấu đối tượng là đã bị thay đổi, không cần Save
             _context.Entry(entity).State = EntityState.Modified;
         }
 
@@ -82,7 +82,7 @@ namespace FurryFriends.API.Repositories
                 (!excludeId.HasValue || g.GiamGiaId != excludeId.Value));
         }
 
-        // Phương thức Commit duy nhất
+        // Phương thức Commit duy nhất, sử dụng transaction để đảm bảo toàn vẹn dữ liệu
         public async Task SaveAsync()
         {
             using var transaction = await _context.Database.BeginTransactionAsync();

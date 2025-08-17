@@ -33,16 +33,16 @@ namespace FurryFriends.API.Models
             [Range(1, int.MaxValue, ErrorMessage = "Số lượng phải lớn hơn 0.")]
             public int SoLuong { get; set; }
 
-        [Required]
-        public DateTime NgayTao { get; set; }
+            [Required]
+            public DateTime NgayTao { get; set; }
         
-        [Range(0, double.MaxValue, ErrorMessage = "Giá trị giảm tối đa phải lớn hơn hoặc bằng 0.")]
-        public decimal? GiaTriGiamToiDa { get; set; }
+            [Range(0, double.MaxValue, ErrorMessage = "Giá trị giảm tối đa phải lớn hơn hoặc bằng 0.")]
+            public decimal? GiaTriGiamToiDa { get; set; }
         
-        [Range(0, double.MaxValue, ErrorMessage = "Số tiền áp dụng tối thiểu phải lớn hơn hoặc bằng 0.")]
-        public decimal? SoTienApDungToiThieu { get; set; }
+            [Range(0, double.MaxValue, ErrorMessage = "Số tiền áp dụng tối thiểu phải lớn hơn hoặc bằng 0.")]
+            public decimal? SoTienApDungToiThieu { get; set; }
         
-        public DateTime? NgayCapNhat { get; set; }
+            public DateTime? NgayCapNhat { get; set; }
 
             [JsonIgnore]
             public virtual ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();

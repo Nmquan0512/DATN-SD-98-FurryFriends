@@ -1,0 +1,159 @@
+﻿@model dynamic
+@{
+    // Ép kiểu an toàn danh sách hình thức thanh toán
+    var hinhThucThanhToanList = (Model.HinhThucThanhToanList as IEnumerable<FurryFriends.API.Models.DTO.BanHang.HinhThucThanhToanDto>)
+                                ?? new List<FurryFriends.API.Models.DTO.BanHang.HinhThucThanhToanDto>();
+}
+
+<div class="modal fade" id="thanhToanModal" tabindex="-1" aria-labelledby="thanhToanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Dùng thẻ form để validation nhưng sẽ submit bằng JS -->
+            <form id="paymentForm" novalidate>
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="thanhToanModalLabel"><i class="fas fa-wallet me-2"></i>Xác nhận Thanh toán</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <p class="text-muted mb-1">TỔNG TIỀN CẦN THANH TOÁN</p>
+                        <h2 id="thanhToanTongTien" class="fw-bold text-success">0 ₫</h2>
+                    </div>
+
+                    <!-- Hình thức thanh toán -->
+                    <div class="mb-3">
+                        <label for="hinhThucThanhToanSelect" class="form-label">Hình thức thanh toán <span class="text-danger">*</span></label>
+                        <select id="hinhThucThanhToanSelect" class="form-select" required>
+                            @if (hinhThucThanhToanList.Any())
+                            {
+                                @foreach (var httt in hinhThucThanhToanList)
+                                {
+                                    // SỬA ĐỔI QUAN TRỌNG:
+                                    // Dùng LoaiHinhThuc (nếu có) hoặc tên để xác định data-type
+                                    // Điều này giúp logic JS ổn định hơn, không phụ thuộc vào chuỗi text
+                                    var dataType = httt.LoaiHinhThuc == 1 ? "cash" : "other";
+                                    <option value="@httt.HinhThucThanhToanId" data-type="@dataType">@httt.TenHinhThuc</option>
+                                }
+                            }
+                            else
+                            {
+                                <option value="">Không có hình thức thanh toán</option>
+                            }
+                        </select>
+                        <div class="invalid-feedback">Vui lòng chọn hình thức thanh toán.</div>
+                    </div>
+
+                    <!-- Tiền khách đưa (chỉ hiện khi là tiền mặt) -->
+                    <div id="tienKhachDuaSection" class="mb-3" style="display: none;">
+                        <label for="tienKhachDuaInput" class="form-label">Tiền khách đưa</label>
+                        <input type="text" id="tienKhachDuaInput" class="form-control" placeholder="0" inputmode="numeric">
+                    </div>
+
+                    <!-- Tiền thừa -->
+                    <div id="tienThuaSection" class="mb-3" style="display: none;">
+                        <label class="form-label">Tiền thừa trả khách</label>
+                        <input type="text" id="tienThuaDisplay" class="form-control-plaintext fs-5 fw-bold text-primary" value="0 ₫" readonly>
+                    </div>
+
+                    <!-- Ghi chú -->
+                    <div class="mb-3">
+                        <label for="ghiChuThanhToan" class="form-label">Ghi chú thanh toán</label>
+                        <textarea id="ghiChuThanhToan" class="form-control" rows="2"></textarea>
+                    </div>
+
+                    <!-- Nút hiển thị mã VietQR (sẽ được điều khiển bằng JS) -->
+                    <div class="text-center" id="vietQRButtonContainer" style="display: none;">
+                        <button type="button" class="btn btn-outline-primary" id="showVietQRBtn">
+                            <i class="fas fa-qrcode me-1"></i> Hiển thị mã VietQR
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-success" id="confirmPaymentBtn">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                        Xác nhận Thanh toán
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript dành riêng cho Modal này -->
+<script>
+    $(document).ready(function() {
+        const paymentModal = $('#thanhToanModal');
+        const hinhThucSelect = $('#hinhThucThanhToanSelect');
+        const tienKhachDuaSection = $('#tienKhachDuaSection');
+        const tienThuaSection = $('#tienThuaSection');
+        const tienKhachDuaInput = $('#tienKhachDuaInput');
+        const tienThuaDisplay = $('#tienThuaDisplay');
+        const vietQRButtonContainer = $('#vietQRButtonContainer');
+        const paymentForm = $('#paymentForm');
+
+        const formatCurrency = (value) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value || 0);
+
+        function calculateAndDisplayChange() {
+            const totalText = $('#thanhToanTongTien').text() || '0';
+            const total = parseFloat(totalText.replace(/[^0-9]/g, '')) || 0;
+            const paid = parseFloat(tienKhachDuaInput.val().replace(/[^0-9]/g, '')) || 0;
+            const change = paid - total;
+
+            if (!isNaN(total)) {
+                tienThuaDisplay.val(formatCurrency(change >= 0 ? change : 0));
+                // Thông báo nếu chưa đủ tiền
+                if (change < 0) {
+                    tienThuaDisplay.addClass('text-danger').removeClass('text-primary');
+                } else {
+                    tienThuaDisplay.addClass('text-primary').removeClass('text-danger');
+                }
+            }
+        }
+
+        hinhThucSelect.on('change', function() {
+            const selectedType = $(this).find('option:selected').data('type');
+            const isCash = selectedType === 'cash';
+
+            tienKhachDuaSection.toggle(isCash);
+            tienThuaSection.toggle(isCash);
+            // Chỉ hiện nút VietQR khi không phải tiền mặt
+            vietQRButtonContainer.toggle(!isCash);
+
+            // Reset giá trị khi chuyển đổi
+            if (!isCash) {
+                tienKhachDuaInput.val('');
+            }
+            calculateAndDisplayChange();
+        });
+
+        tienKhachDuaInput.on('input', function(e) {
+            // Tự động format số tiền khi người dùng nhập
+            let value = $(this).val().replace(/[^0-9]/g, '');
+            if (value) {
+                $(this).val(parseInt(value, 10).toLocaleString('vi-VN'));
+            } else {
+                $(this).val('');
+            }
+            calculateAndDisplayChange();
+        });
+
+        paymentModal.on('show.bs.modal', function() {
+            paymentForm[0].reset();
+            paymentForm.removeClass('was-validated');
+            hinhThucSelect.trigger('change');
+            calculateAndDisplayChange();
+        });
+
+        // Sự kiện submit sẽ được lắng nghe bởi View chính (TaoHoaDonMoi.cshtml)
+        // để thực hiện gọi API.
+        paymentForm.on('submit', function(e) {
+            e.preventDefault();
+            if (!paymentForm[0].checkValidity()) {
+                e.stopPropagation();
+                paymentForm.addClass('was-validated');
+            }
+            // Không có logic gọi API ở đây
+        });
+    });
+</script>

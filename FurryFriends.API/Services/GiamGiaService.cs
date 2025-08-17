@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Repository.IRepository;
@@ -90,7 +90,6 @@ namespace FurryFriends.API.Services
             // Trả về DTO đã được tạo, ánh xạ lại để có đầy đủ thông tin
             return _mapper.Map<GiamGiaDTO>(giamGiaEntity);
         }
-        // File: GiamGiaService.cs (API)
 
         public async Task<GiamGiaDTO> UpdateAsync(GiamGiaDTO dto)
         {
@@ -158,6 +157,7 @@ namespace FurryFriends.API.Services
                 throw new Exception(errorMessage, ex);
             }
         }
+        
         public async Task<bool> DeleteAsync(Guid id)
         {
             // Tải đối tượng cần xóa cùng với các liên kết

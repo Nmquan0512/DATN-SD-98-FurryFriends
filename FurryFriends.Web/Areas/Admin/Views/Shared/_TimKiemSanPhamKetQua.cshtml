@@ -1,0 +1,44 @@
+﻿@model IEnumerable<FurryFriends.API.Models.DTO.BanHang.SanPhamBanHangDto>
+
+@if (Model != null && Model.Any())
+{
+    <div class="list-group list-group-flush">
+        @foreach (var item in Model)
+        {
+            <a href="#" class="list-group-item list-group-item-action add-product-btn" data-id="@item.SanPhamChiTietId">
+                <div class="d-flex align-items-center">
+                    <img src="https://localhost:7289@(item.HinhAnh ?? "/images/no-image.png")"
+                         class="rounded border me-3"
+                         style="width: 50px; height: 50px; object-fit: cover;"
+                         alt="@item.TenSanPham"
+                         onerror="this.onerror=null;this.src='/images/no-image.png';" />
+
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1 text-primary">@item.TenSanPham</h6>
+                        <p class="mb-1 small text-muted">
+                            (@item.TenMauSac, @item.TenKichCo)
+                        </p>
+                        <small>Tồn kho: <strong>@item.SoLuongTon</strong></small>
+                    </div>
+
+                    @* <<< SỬA LẠI LOGIC HIỂN THỊ GIÁ CHO ĐÚNG >>> *@
+                    <div class="text-end">
+                        @if (item.GiaBan < item.Gia)
+                        {
+                            <h6 class="text-danger fw-bold mb-0">@item.GiaBan.ToString("N0") ₫</h6>
+                            <small class="text-muted text-decoration-line-through">@item.Gia.ToString("N0") ₫</small>
+                        }
+                        else
+                        {
+                            <h6 class="text-success fw-bold mb-0">@item.Gia.ToString("N0") ₫</h6>
+                        }
+                    </div>
+                </div>
+            </a>
+        }
+    </div>
+}
+else
+{
+    <p class="text-center text-muted p-3">Không tìm thấy sản phẩm nào.</p>
+}

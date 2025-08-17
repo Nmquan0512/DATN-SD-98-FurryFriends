@@ -1,4 +1,4 @@
-﻿using FurryFriends.API.Models.DTO;
+using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.Services; // Nơi định nghĩa lớp ApiException
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +12,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [AuthorizeAdminOnly]
-
     public class GiamGiaController : Controller
     {
         private readonly IGiamGiaService _giamGiaService;
@@ -112,7 +111,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             return View(discount);
         }
 
-
         // POST: /Admin/GiamGia/Edit/{id}
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -167,6 +165,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
         // Hàm hỗ trợ chung để xử lý lỗi từ API và thêm vào ModelState
         private void HandleApiException(ApiException ex)
         {

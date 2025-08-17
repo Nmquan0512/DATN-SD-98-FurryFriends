@@ -1,16 +1,16 @@
 ﻿using FurryFriends.API.Models.DTO.BanHang;
 using FurryFriends.API.Models.DTO.BanHang.Requests;
+using FurryFriends.Web.Services;
 using FurryFriends.Web.Services.IService;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize] // Yêu cầu đăng nhập cho toàn bộ chức năng bán hàng
+    [Route("Admin/BanHang/[action]")] // Định tuyến tập trung, dễ gọi từ JS
     public class BanHangController : Controller
     {
         private readonly IBanHangService _banHangService;
@@ -22,9 +22,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Hiển thị danh sách lịch sử hóa đơn.
-        /// </summary>
+        #region Actions trả về View (Giữ nguyên)
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -32,206 +31,182 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 var model = await _banHangService.GetAllHoaDonsAsync();
                 return View(model);
             }
-            catch (Exception ex)
+            catch (ApiException ex)
             {
-                _logger.LogError(ex, "Lỗi khi lấy danh sách hóa đơn.");
-                TempData["error"] = "Không thể tải lịch sử hóa đơn.";
+                TempData["error"] = "Không thể tải lịch sử hóa đơn: " + ex.Message;
                 return View(new List<HoaDonBanHangDto>());
             }
         }
 
-        /// <summary>
-        /// Bắt đầu quá trình tạo hóa đơn mới.
-        /// </summary>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create()
+        [HttpGet]
+        public IActionResult TaoHoaDonMoi()
         {
-            try
-            {
-                // Yêu cầu tạo một hóa đơn trống mặc định là khách lẻ
-                var request = new TaoHoaDonRequest { LaKhachLe = true };
-                var result = await _banHangService.TaoHoaDonAsync(request);
-
-                TempData["success"] = "Đã tạo hóa đơn mới (hóa đơn chờ).";
-                return RedirectToAction("Details", new { id = result.HoaDonId });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Lỗi khi tạo hóa đơn mới.");
-                TempData["error"] = $"Tạo hóa đơn thất bại: {ex.Message}";
-                return RedirectToAction("Index");
-            }
+            return View();
         }
 
-        /// <summary>
-        /// Hiển thị giao diện bán hàng chi tiết cho một hóa đơn.
-        /// </summary>
+        [HttpGet]
         public async Task<IActionResult> Details(Guid id)
         {
             try
             {
                 var hoaDon = await _banHangService.GetHoaDonByIdAsync(id);
-                if (hoaDon == null)
-                {
-                    TempData["error"] = "Không tìm thấy hóa đơn.";
-                    return RedirectToAction("Index");
-                }
-                return View(hoaDon);
+                if (hoaDon.TrangThai == "Chua Thanh Toan") return View("Details_Interactive", hoaDon);
+                return View("Details_ReadOnly", hoaDon);
             }
-            catch (Exception ex)
+            catch (ApiException ex)
             {
-                _logger.LogError(ex, $"Lỗi khi xem chi tiết hóa đơn {id}.");
-                TempData["error"] = "Lỗi khi tải dữ liệu chi tiết hóa đơn.";
-                return RedirectToAction("Index");
+                TempData["error"] = "Lỗi khi tải chi tiết hóa đơn: " + ex.Message;
+                return RedirectToAction(nameof(Index));
             }
         }
+        #endregion
 
+        #region Actions xử lý Form POST (Giữ nguyên)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ThemSanPham(Guid hoaDonId, Guid sanPhamChiTietId, int soLuong)
+        public async Task<IActionResult> TaoHoaDonCho()
         {
             try
             {
-                if (soLuong <= 0)
-                {
-                    TempData["error"] = "Số lượng phải lớn hơn 0.";
-                    return RedirectToAction("Details", new { id = hoaDonId });
-                }
-                var request = new ThemSanPhamRequest { SanPhamChiTietId = sanPhamChiTietId, SoLuong = soLuong };
-                await _banHangService.ThemSanPhamVaoHoaDonAsync(hoaDonId, request);
+                var request = new TaoHoaDonRequest { LaKhachLe = true, GhiChu = "Hóa đơn tại quầy" };
+                var result = await _banHangService.TaoHoaDonAsync(request);
+                TempData["success"] = "Đã tạo hóa đơn chờ mới.";
+                return RedirectToAction(nameof(Details), new { id = result.HoaDonId });
             }
-            catch (Exception ex)
+            catch (ApiException ex)
             {
-                _logger.LogError(ex, $"Lỗi khi thêm sản phẩm vào hóa đơn {hoaDonId}.");
-                TempData["error"] = ex.Message;
+                TempData["error"] = $"Tạo hóa đơn thất bại: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
-            return RedirectToAction("Details", new { id = hoaDonId });
         }
+        #endregion
+
+        #region === TOÀN BỘ PHẦN AJAX ĐƯỢC LÀM LẠI HOÀN TOÀN ===
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CapNhatSoLuong(Guid hoaDonId, Guid sanPhamChiTietId, int soLuongMoi)
+        public async Task<IActionResult> CreateInitialInvoice()
         {
             try
             {
-                var request = new CapNhatSoLuongRequest { SoLuongMoi = soLuongMoi };
-                await _banHangService.CapNhatSoLuongSanPhamAsync(hoaDonId, sanPhamChiTietId, request);
+                var request = new TaoHoaDonRequest { LaKhachLe = true };
+                var result = await _banHangService.TaoHoaDonAsync(request);
+                return Json(new { success = true, data = result });
             }
-            catch (Exception ex)
+            catch (ApiException ex)
             {
-                _logger.LogError(ex, $"Lỗi khi cập nhật số lượng sản phẩm {sanPhamChiTietId}.");
-                TempData["error"] = ex.Message;
+                return Json(new { success = false, message = ex.Message });
             }
-            return RedirectToAction("Details", new { id = hoaDonId });
         }
 
-        [HttpPost]
+        [HttpPost("{hoaDonId}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ThemSanPham([FromBody] ThemSanPhamRequest request, Guid hoaDonId)
+        {
+            try { var result = await _banHangService.ThemSanPhamVaoHoaDonAsync(hoaDonId, request); return Json(new { success = true, data = result }); }
+            catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
+        }
+
+        [HttpPut("{hoaDonId}/{sanPhamChiTietId}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CapNhatSoLuong([FromBody] CapNhatSoLuongRequest request, Guid hoaDonId, Guid sanPhamChiTietId)
+        {
+            try { var result = await _banHangService.CapNhatSoLuongSanPhamAsync(hoaDonId, sanPhamChiTietId, request); return Json(new { success = true, data = result }); }
+            catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
+        }
+
+        [HttpDelete("{hoaDonId}/{sanPhamChiTietId}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> XoaSanPham(Guid hoaDonId, Guid sanPhamChiTietId)
         {
-            try
-            {
-                await _banHangService.XoaSanPhamKhoiHoaDonAsync(hoaDonId, sanPhamChiTietId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Lỗi khi xóa sản phẩm khỏi hóa đơn {hoaDonId}.");
-                TempData["error"] = ex.Message;
-            }
-            return RedirectToAction("Details", new { id = hoaDonId });
+            try { var result = await _banHangService.XoaSanPhamKhoiHoaDonAsync(hoaDonId, sanPhamChiTietId); return Json(new { success = true, data = result }); }
+            catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
-        [HttpPost]
+        [HttpPost("{hoaDonId}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ApDungVoucher(Guid hoaDonId, string maVoucher)
+        public async Task<IActionResult> GanKhachHang([FromBody] GanKhachHangRequest request, Guid hoaDonId)
+        {
+            try { var result = await _banHangService.GanKhachHangAsync(hoaDonId, request); return Json(new { success = true, data = result }); }
+            catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
+        }
+
+        [HttpPost("{hoaDonId}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GanKhachLe(Guid hoaDonId)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(maVoucher))
+                var khachLeList = await _banHangService.TimKiemKhachHangAsync("Khách lẻ");
+                var khachLe = khachLeList.FirstOrDefault(k => k.TenKhachHang == "Khách lẻ");
+
+                if (khachLe == null)
                 {
-                    TempData["error"] = "Mã voucher không được để trống.";
-                    return RedirectToAction("Details", new { id = hoaDonId });
+                    return Json(new { success = false, message = "Không tìm thấy tài khoản 'Khách lẻ' mặc định." });
                 }
-                var request = new ApDungVoucherRequest { MaVoucher = maVoucher };
-                await _banHangService.ApDungVoucherAsync(hoaDonId, request);
-                TempData["success"] = "Áp dụng voucher thành công!";
+
+                var request = new GanKhachHangRequest { KhachHangId = khachLe.KhachHangId };
+                var result = await _banHangService.GanKhachHangAsync(hoaDonId, request);
+                return Json(new { success = true, data = result });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Lỗi khi áp dụng voucher cho hóa đơn {hoaDonId}.");
-                TempData["error"] = ex.Message;
-            }
-            return RedirectToAction("Details", new { id = hoaDonId });
+            catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
-        [HttpPost]
+        [HttpPost("{hoaDonId}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApDungVoucher([FromBody] ApDungVoucherRequest request, Guid hoaDonId)
+        {
+            try { var result = await _banHangService.ApDungVoucherAsync(hoaDonId, request); return Json(new { success = true, data = result }); }
+            catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
+        }
+
+        [HttpDelete("{hoaDonId}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GoBoVoucher(Guid hoaDonId)
         {
-            try
-            {
-                await _banHangService.GoBoVoucherAsync(hoaDonId);
-                TempData["success"] = "Đã gỡ bỏ voucher.";
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Lỗi khi gỡ voucher khỏi hóa đơn {hoaDonId}.");
-                TempData["error"] = ex.Message;
-            }
-            return RedirectToAction("Details", new { id = hoaDonId });
+            try { var result = await _banHangService.GoBoVoucherAsync(hoaDonId); return Json(new { success = true, data = result }); }
+            catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
-        [HttpPost]
+        [HttpPost("{hoaDonId}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ThanhToan(Guid hoaDonId, ThanhToanRequest request)
+        public async Task<IActionResult> ThanhToan([FromBody] ThanhToanRequest request, Guid hoaDonId)
         {
+            if (!ModelState.IsValid) return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    TempData["error"] = "Thông tin thanh toán không hợp lệ.";
-                    return RedirectToAction("Details", new { id = hoaDonId });
-                }
-
                 var result = await _banHangService.ThanhToanHoaDonAsync(hoaDonId, request);
                 TempData["success"] = "Thanh toán hóa đơn thành công!";
-                // Chuyển hướng đến trang chi tiết đã thanh toán (read-only) hoặc trang in hóa đơn
-                return RedirectToAction("Details", new { id = result.HoaDonId });
+                return Json(new { success = true, data = result, redirectUrl = Url.Action("Index") });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Lỗi khi thanh toán hóa đơn {hoaDonId}.");
-                TempData["error"] = ex.Message;
-                return RedirectToAction("Details", new { id = hoaDonId });
-            }
+            catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> HuyHoaDon(Guid hoaDonId)
+        public async Task<IActionResult> TaoKhachHangMoi([FromBody] TaoKhachHangRequest request)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                await _banHangService.HuyHoaDonAsync(hoaDonId);
-                TempData["success"] = "Đã hủy hóa đơn thành công.";
-                return RedirectToAction("Index");
+                var error = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault();
+                return Json(new { success = false, message = error?.ErrorMessage ?? "Dữ liệu không hợp lệ." });
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Lỗi khi hủy hóa đơn {hoaDonId}.");
-                TempData["error"] = ex.Message;
-                return RedirectToAction("Details", new { id = hoaDonId });
-            }
+            try { var result = await _banHangService.TaoKhachHangMoiAsync(request); return Json(new { success = true, data = result }); }
+            catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
-
-        #region AJAX Actions
 
         [HttpGet]
         public async Task<IActionResult> TimKiemSanPham(string keyword)
         {
             var results = await _banHangService.TimKiemSanPhamAsync(keyword);
-            return PartialView("_SanPhamSearchResults", results);
+            return PartialView("_TimKiemSanPhamKetQua", results);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> LaySanPhamGoiY()
+        {
+            var suggestedProducts = await _banHangService.GetSuggestedProductsAsync();
+            return PartialView("_TimKiemSanPhamKetQua", suggestedProducts);
         }
 
         [HttpGet]
@@ -239,44 +214,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             var results = await _banHangService.TimKiemKhachHangAsync(keyword);
             return PartialView("_KhachHangSearchResults", results);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> GanKhachHang(Guid hoaDonId, Guid khachHangId)
-        {
-            try
-            {
-                var request = new GanKhachHangRequest { KhachHangId = khachHangId };
-                await _banHangService.GanKhachHangAsync(hoaDonId, request);
-                return Json(new { success = true });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> TaoKhachHangMoi([FromBody] TaoKhachHangRequest request)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    // Lấy lỗi validation đầu tiên
-                    var error = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault();
-                    return Json(new { success = false, message = error?.ErrorMessage ?? "Dữ liệu không hợp lệ." });
-                }
-
-                var result = await _banHangService.TaoKhachHangMoiAsync(request);
-                return Json(new { success = true, data = result });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Lỗi khi tạo khách hàng mới qua AJAX.");
-                return Json(new { success = false, message = ex.Message });
-            }
         }
         #endregion
     }

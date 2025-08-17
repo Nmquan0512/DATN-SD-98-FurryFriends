@@ -2,6 +2,7 @@
 using FurryFriends.API.Models.DTO.BanHang.Requests;
 using FurryFriends.API.Repository.IRepository;
 using FurryFriends.API.Services.IServices;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -146,6 +147,16 @@ namespace FurryFriends.API.Services
             return await _banHangRepository.TimKiemVoucherHopLeAsync(hoaDonId);
         }
         #endregion
+
+        public async Task<IEnumerable<SanPhamBanHangDto>> GetSuggestedProductsAsync(int count)
+        {
+            _logger.LogInformation($"Lấy {count} sản phẩm gợi ý.");
+            if (count <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count), "Số lượng sản phẩm gợi ý phải lớn hơn 0.");
+            }
+            return await _banHangRepository.GetSuggestedProductsAsync(count);
+        }
 
         #region Khách hàng
         public async Task<KhachHangDto> TaoKhachHangMoiAsync(TaoKhachHangRequest request)

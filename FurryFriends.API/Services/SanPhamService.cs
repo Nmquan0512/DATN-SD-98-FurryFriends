@@ -1,4 +1,4 @@
-﻿using FurryFriends.API.Data;
+using FurryFriends.API.Data;
 using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Repository.IRepository;
@@ -22,16 +22,15 @@ namespace FurryFriends.API.Services
             _context = context;
         }
 
-        // Phương thức này và các phương thức Get khác giữ nguyên, chúng ta chấp nhận vấn đề hiệu năng.
         public async Task<IEnumerable<SanPhamDTO>> GetAllAsync()
         {
-            var list = await _repository.GetAllAsync(); // Giả sử GetAllAsync đã Include() các bảng liên quan
+            var list = await _repository.GetAllAsync();
             return list.Select(MapToDTO);
         }
 
         public async Task<SanPhamDTO> GetByIdAsync(Guid id)
         {
-            var sp = await _repository.GetByIdAsync(id) // Giả sử GetByIdAsync đã Include()
+            var sp = await _repository.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"Không tìm thấy sản phẩm với ID {id}");
 
             return MapToDTO(sp);
@@ -39,7 +38,6 @@ namespace FurryFriends.API.Services
 
         public async Task<SanPhamDTO> CreateAsync(SanPhamDTO dto)
         {
-            // Code của bạn ở đây đã tốt
             var sanPham = new SanPham
             {
                 SanPhamId = Guid.NewGuid(),
@@ -73,8 +71,11 @@ namespace FurryFriends.API.Services
 
         public async Task UpdateAsync(Guid id, SanPhamDTO dto)
         {
-            // 1. Tải đối tượng cần cập nhật từ repository
-            var existing = await _repository.GetByIdAsync(id)
+            // 1. Tải đối tượng cần cập nhật cùng với các collection liên quan
+            var existing = await _context.SanPhams
+                .Include(sp => sp.SanPhamThanhPhans)
+                .Include(sp => sp.SanPhamChatLieus)
+                .FirstOrDefaultAsync(sp => sp.SanPhamId == id)
                 ?? throw new KeyNotFoundException($"Không tìm thấy sản phẩm với ID {id}");
 
             // 2. Cập nhật các thuộc tính chính của SanPham
@@ -83,27 +84,27 @@ namespace FurryFriends.API.Services
             existing.TrangThai = dto.TrangThai;
 
             // 3. Xóa các quan hệ cũ một cách an toàn
-            existing.SanPhamThanhPhans?.Clear();
-            existing.SanPhamChatLieus?.Clear();
+            existing.SanPhamThanhPhans.Clear();
+            existing.SanPhamChatLieus.Clear();
 
             // 4. Thêm lại các quan hệ mới dựa trên DTO
             if (dto.LoaiSanPham == "DoAn" && dto.ThanhPhanIds != null)
             {
                 foreach (var tpId in dto.ThanhPhanIds)
                 {
-                    existing.SanPhamThanhPhans?.Add(new SanPhamThanhPhan { ThanhPhanId = tpId });
+                    existing.SanPhamThanhPhans.Add(new SanPhamThanhPhan { ThanhPhanId = tpId });
                 }
             }
             else if (dto.LoaiSanPham == "DoDung" && dto.ChatLieuIds != null)
             {
                 foreach (var clId in dto.ChatLieuIds)
                 {
-                    existing.SanPhamChatLieus?.Add(new SanPhamChatLieu { ChatLieuId = clId });
+                    existing.SanPhamChatLieus.Add(new SanPhamChatLieu { ChatLieuId = clId });
                 }
             }
 
-            // 5. Lưu thay đổi thông qua repository
-            await _repository.UpdateAsync(existing);
+            // 5. Lưu tất cả các thay đổi vào DB
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id)
@@ -120,9 +121,8 @@ namespace FurryFriends.API.Services
 
                 Console.WriteLine($"Found {sanPhamChiTiets.Count} SanPhamChiTiets for product {id}");
 
-                // Kiểm tra xem có sản phẩm chi tiết nào đang áp dụng giảm giá không
                 var sanPhamChiTietIds = sanPhamChiTiets.Select(spct => spct.SanPhamChiTietId).ToList();
-                
+
                 if (sanPhamChiTietIds.Any())
                 {
                     var dotGiamGiaSanPham = await _context.DotGiamGiaSanPhams
@@ -138,6 +138,7 @@ namespace FurryFriends.API.Services
                 }
 
                 await _repository.DeleteAsync(id);
+                await _repository.SaveAsync(); // Cần gọi SaveAsync sau khi Delete
                 Console.WriteLine($"Successfully deleted product {id}");
             }
             catch (Exception ex)
@@ -175,12 +176,9 @@ namespace FurryFriends.API.Services
 
         public async Task<IEnumerable<SanPhamDTO>> GetTopSellingProductsAsync(int top)
         {
-            // Bước 1: Bao gồm các quan hệ cần thiết để truy cập đến SanPhamId
             var topProductsInfo = await _context.HoaDonChiTiets
-                .Include(ct => ct.SanPhamChiTiet)       // Include SanPhamChiTiet từ HoaDonChiTiet
-                    .ThenInclude(spct => spct.SanPham)  // Include SanPham từ SanPhamChiTiet
-
-                // Bước 2: SỬA LỖI Ở ĐÂY - Nhóm theo ID của sản phẩm chung
+                .Include(ct => ct.SanPhamChiTiet)
+                    .ThenInclude(spct => spct.SanPham)
                 .GroupBy(ct => ct.SanPhamChiTiet.SanPhamId)
                 .Select(g => new
                 {
@@ -191,17 +189,15 @@ namespace FurryFriends.API.Services
                 .Take(top)
                 .ToListAsync();
 
-            // Các bước còn lại vẫn đúng logic, không cần thay đổi
             var ids = topProductsInfo.Select(x => x.SanPhamId).ToList();
 
-            // Giả sử _repository là repository của SanPham
-            var allSanPhams = await _repository.GetAllAsync(); // Hàm này cần trả về tất cả sản phẩm
+            var allSanPhams = await _repository.GetAllAsync();
 
             var topSellingSanPhams = allSanPhams.Where(sp => ids.Contains(sp.SanPhamId));
 
-            // Giả sử bạn có một hàm MapToDTO để chuyển đổi SanPham -> SanPhamDTO
             return topSellingSanPhams.Select(MapToDTO);
         }
+
         private static SanPhamDTO MapToDTO(SanPham x)
         {
             return new SanPhamDTO

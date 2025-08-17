@@ -7,6 +7,6 @@
         public string Email { get; set; }
 
         // Thêm địa chỉ nếu cần
-        public string DiaChi { get; set; }
+        public string? DiaChi { get; set; }
     }
 }

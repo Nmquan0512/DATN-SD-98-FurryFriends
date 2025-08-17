@@ -39,7 +39,7 @@ namespace FurryFriends.API.Models
         [Required]
         public int TrangThai { get; set; }
 
-        public string GhiChu { get; set; }
+        public string ? GhiChu { get; set; }
 
         [ForeignKey("VoucherId")]
         public virtual Voucher Voucher { get; set; }
@@ -50,19 +50,19 @@ namespace FurryFriends.API.Models
         [ForeignKey("HinhThucThanhToanId")]
         public virtual HinhThucThanhToan HinhThucThanhToan { get; set; }
         
-        [Required(ErrorMessage = "Địa chỉ giao hàng là bắt buộc")]
-        public Guid DiaChiGiaoHangId { get; set; } // Bắt buộc phải có địa chỉ giao hàng
+        // Hợp nhất: Địa chỉ giao hàng có thể có hoặc không tùy vào loại hóa đơn
+        public Guid? DiaChiGiaoHangId { get; set; }
 
         [ForeignKey("DiaChiGiaoHangId")]
-        public virtual DiaChiKhachHang DiaChiGiaoHang { get; set; }
-
-        //[Required]
-        public Guid? NhanVienId { get; set; } //thêm dấu ? vào đây (sửa ở đây)
+        public virtual DiaChiKhachHang? DiaChiGiaoHang { get; set; }
+        
+        // Hợp nhất: NhanVienId có thể có hoặc không
+        public Guid? NhanVienId { get; set; }
 
         [ForeignKey("NhanVienId")]
-        public virtual NhanVien? NhanVien { get; set; } //thêm dấu ? vào đây  (sửa ở đây)
+        public virtual NhanVien? NhanVien { get; set; }
 
-        public string LoaiHoaDon { get; set; } // Loại hóa đơn (ví dụ: "BanTaiQuay", ...)
+        public string LoaiHoaDon { get; set; } // Loại hóa đơn (ví dụ: "BanTaiQuay", "Online", ...)
 
         // ✅ Snapshot thông tin voucher lúc mua
         public string? ThongTinVoucherLucMua { get; set; }
@@ -94,14 +94,34 @@ namespace FurryFriends.API.Models
                     new[] { nameof(NgayNhanHang) });
             }
 
-            // ✅ Bắt buộc phải có địa chỉ giao hàng
-            if (DiaChiGiaoHangId == Guid.Empty)
+            // Validation tùy chỉnh cho từng loại hóa đơn
+            if (LoaiHoaDon == "BanTaiQuay")
             {
-                yield return new ValidationResult(
-                    "Địa chỉ giao hàng là bắt buộc.",
-                    new[] { nameof(DiaChiGiaoHangId) });
+                // Bắt buộc phải có nhân viên tạo hóa đơn
+                if (NhanVienId == Guid.Empty || NhanVienId == null)
+                {
+                    yield return new ValidationResult(
+                        "Hóa đơn bán tại quầy phải có nhân viên tạo.",
+                        new[] { nameof(NhanVienId) });
+                }
+                // Địa chỉ giao hàng không bắt buộc
+                if (DiaChiGiaoHangId != null && DiaChiGiaoHangId != Guid.Empty)
+                {
+                    yield return new ValidationResult(
+                        "Hóa đơn bán tại quầy không được có địa chỉ giao hàng.",
+                        new[] { nameof(DiaChiGiaoHangId) });
+                }
+            }
+            else if (LoaiHoaDon == "Online")
+            {
+                // Bắt buộc phải có địa chỉ giao hàng
+                if (DiaChiGiaoHangId == Guid.Empty || DiaChiGiaoHangId == null)
+                {
+                    yield return new ValidationResult(
+                        "Hóa đơn online phải có địa chỉ giao hàng.",
+                        new[] { nameof(DiaChiGiaoHangId) });
+                }
             }
         }
     }
-
 }
