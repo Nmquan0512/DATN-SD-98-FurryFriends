@@ -231,7 +231,7 @@
             // === STATE & CONFIG ===
             let invoiceState = null;
             let html5QrCode = null;
-            const SHIPPING_FEE = 20000;
+            const SHIPPING_FEE = 20000; // Phí giao hàng cố định
             const antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
             toastr.options = { "positionClass": "toast-bottom-right", "timeOut": 3000, "progressBar": true, "closeButton": true };
 
@@ -240,25 +240,23 @@
             const debounce = (func, delay) => { let timeout; return (...args) => { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), delay); }; };
             const showLoading = (show) => $('#loadingOverlay').toggle(show);
 
-            // === API SERVICE ===
+            // === API SERVICE (ĐÃ SỬA LẠI TOÀN BỘ ĐỂ GỌI ĐẾN MVC CONTROLLER) ===
             const apiService = {
                 createInitialInvoice: function() { return $.ajax({ url: '@Url.Action("CreateInitialInvoice", "BanHang")', method: 'POST', headers: { "RequestVerificationToken": antiForgeryToken } }); },
-                getSuggestedProducts: function() { return $.get('@Url.Action("TimKiemSanPham", "BanHang")'); },
+                getSuggestedProducts: function() { return $.get('@Url.Action("LaySanPhamGoiY", "BanHang")'); },
                 searchProducts: function(keyword) { return $.get('@Url.Action("TimKiemSanPham", "BanHang")', { keyword }); },
-                addProduct: function(hoaDonId, request) { return $.ajax({ url: `/api/BanHang/hoa-don/${hoaDonId}/items`, method: 'POST', contentType: 'application/json', headers: { "RequestVerificationToken": antiForgeryToken }, data: JSON.stringify(request) }); },
-                updateQty: function(hoaDonId, spId, request) { return $.ajax({ url: `/api/BanHang/hoa-don/${hoaDonId}/items/${spId}`, method: 'PUT', contentType: 'application/json', headers: { "RequestVerificationToken": antiForgeryToken }, data: JSON.stringify(request) }); },
-                deleteProduct: function(hoaDonId, spId) { return $.ajax({ url: `/api/BanHang/hoa-don/${hoaDonId}/items/${spId}`, method: 'DELETE', headers: { "RequestVerificationToken": antiForgeryToken } }); },
+                addProduct: function(hoaDonId, request) { return $.ajax({ url: `@Url.Action("ThemSanPham", "BanHang")/${hoaDonId}`, method: 'POST', contentType: 'application/json', headers: { "RequestVerificationToken": antiForgeryToken }, data: JSON.stringify(request) }); },
+                updateQty: function(hoaDonId, spId, request) { return $.ajax({ url: `@Url.Action("CapNhatSoLuong", "BanHang")/${hoaDonId}/${spId}`, method: 'PUT', contentType: 'application/json', headers: { "RequestVerificationToken": antiForgeryToken }, data: JSON.stringify(request) }); },
+                deleteProduct: function(hoaDonId, spId) { return $.ajax({ url: `@Url.Action("XoaSanPham", "BanHang")/${hoaDonId}/${spId}`, method: 'DELETE', headers: { "RequestVerificationToken": antiForgeryToken } }); },
                 searchCustomers: function(keyword) { return $.get('@Url.Action("TimKiemKhachHang", "BanHang")', { keyword }); },
-                createCustomer: function(request) { return $.ajax({ url: `/api/BanHang/khach-hang`, method: 'POST', contentType: 'application/json', headers: { "RequestVerificationToken": antiForgeryToken }, data: JSON.stringify(request) }); },
-                assignCustomer: function(hoaDonId, request) { return $.ajax({ url: `/api/BanHang/hoa-don/${hoaDonId}/khach-hang`, method: 'PUT', contentType: 'application/json', headers: { "RequestVerificationToken": antiForgeryToken }, data: JSON.stringify(request) }); },
+                createCustomer: function(request) { return $.ajax({ url: '@Url.Action("TaoKhachHangMoi", "BanHang")', method: 'POST', contentType: 'application/json', headers: { "RequestVerificationToken": antiForgeryToken }, data: JSON.stringify(request) }); },
+                assignCustomer: function(hoaDonId, request) { return $.ajax({ url: `@Url.Action("GanKhachHang", "BanHang")/${hoaDonId}`, method: 'POST', contentType: 'application/json', headers: { "RequestVerificationToken": antiForgeryToken }, data: JSON.stringify(request) }); },
                 assignKhachLe: function(hoaDonId) {
-                    // Logic đúng là gọi API để gán một khách hàng mặc định (khách lẻ)
-                    // Hoặc đơn giản hơn là reload lại thông tin hóa đơn từ server
-                    return $.ajax({ url: `/api/BanHang/hoa-don/${hoaDonId}`, method: 'GET' });
+                    return $.ajax({ url: `@Url.Action("GanKhachLe", "BanHang")/${hoaDonId}`, method: 'POST', headers: { "RequestVerificationToken": antiForgeryToken } });
                 },
-                applyVoucher: function(hoaDonId, request) { return $.ajax({ url: `/api/BanHang/hoa-don/${hoaDonId}/voucher`, method: 'POST', contentType: 'application/json', headers: { "RequestVerificationToken": antiForgeryToken }, data: JSON.stringify(request) }); },
-                removeVoucher: function(hoaDonId) { return $.ajax({ url: `/api/BanHang/hoa-don/${hoaDonId}/voucher`, method: 'DELETE', headers: { "RequestVerificationToken": antiForgeryToken } }); },
-                processPayment: function(hoaDonId, request) { return $.ajax({ url: `/api/BanHang/hoa-don/${hoaDonId}/thanh-toan`, method: 'POST', contentType: 'application/json', headers: { "RequestVerificationToken": antiForgeryToken }, data: JSON.stringify(request) }); }
+                applyVoucher: function(hoaDonId, request) { return $.ajax({ url: `@Url.Action("ApDungVoucher", "BanHang")/${hoaDonId}`, method: 'POST', contentType: 'application/json', headers: { "RequestVerificationToken": antiForgeryToken }, data: JSON.stringify(request) }); },
+                removeVoucher: function(hoaDonId) { return $.ajax({ url: `@Url.Action("GoBoVoucher", "BanHang")/${hoaDonId}`, method: 'DELETE', headers: { "RequestVerificationToken": antiForgeryToken } }); },
+                processPayment: function(hoaDonId, request) { return $.ajax({ url: `@Url.Action("ThanhToan", "BanHang")/${hoaDonId}`, method: 'POST', contentType: 'application/json', headers: { "RequestVerificationToken": antiForgeryToken }, data: JSON.stringify(request) }); }
             };
 
             // === UI RENDERER ===
@@ -279,7 +277,9 @@
                         return;
                     }
                     items.forEach(item => {
-                        const imageUrl = item.hinhAnh ? `https://localhost:7289${item.hinhAnh}` : '/images/no-image.png';
+                        // <<< SỬA LỖI 1: Xóa bỏ hardcode domain để ảnh hiển thị đúng khi deploy >>>
+                        const imageUrl = item.hinhAnh ? item.hinhAnh : '/images/no-image.png';
+                        
                         const giaBan = item.giaBan || 0;
                         const giaGoc = item.gia || 0;
                         let priceDisplayHtml = giaBan < giaGoc
@@ -323,7 +323,7 @@
                     const tienGiam = state.tienGiam || 0;
                     const thanhTien = tongTienHang + phiGiaoHang - tienGiam;
 
-                    state.thanhTien = thanhTien;
+                    state.thanhTien = thanhTien; // Cập nhật lại tổng tiền cuối cùng trong state
 
                     summaryDiv.html(`
                         <dl class="row mb-0">
@@ -341,22 +341,21 @@
 
             // === API HANDLER ===
             function handleApiResponse(promise, { successMessage = '', elementToDisable = null } = {}) {
-                if (elementToDisable) $(elementToDisable).prop('disabled', true).find('.spinner-border').show();
+                if (elementToDisable) $(elementToDisable).prop('disabled', true);
                 return promise.done(response => {
-                    // Kiểm tra xem response có cấu trúc { success: ..., data: ... } hay không
-                    const isWrapperObject = typeof response.success !== 'undefined';
-                    const data = isWrapperObject ? response.data : response;
-
-                    if (!isWrapperObject || response.success) {
-                        uiRenderer.updateAll(data);
+                    if (response.success) {
+                        if (response.data) { // Chỉ update UI nếu có dữ liệu trả về
+                           uiRenderer.updateAll(response.data);
+                        }
                         if (successMessage) toastr.success(successMessage);
                     } else {
                         toastr.error(response.message || 'Thao tác thất bại.');
                     }
                 }).fail(jqXHR => {
-                    toastr.error(jqXHR.responseJSON?.message || jqXHR.responseText || 'Lỗi hệ thống.');
+                    const errorMsg = jqXHR.responseJSON?.message || jqXHR.responseText || 'Lỗi hệ thống không xác định.';
+                    toastr.error(errorMsg);
                 }).always(() => {
-                    if (elementToDisable) $(elementToDisable).prop('disabled', false).find('.spinner-border').hide();
+                    if (elementToDisable) $(elementToDisable).prop('disabled', false);
                 });
             }
 
@@ -369,12 +368,13 @@
                         const qrCodeSuccessCallback = (decodedText, decodedResult) => {
                             stopQrScanner();
                             $('#qrScanModal').modal('hide');
-                            handleApiResponse(apiService.addProduct(invoiceState.hoaDonId, { sanPhamChiTietId: decodedText, soLuong: 1 }), { successMessage: "Đã thêm sản phẩm qua QR!" });
+                            const addRequest = { sanPhamChiTietId: decodedText, soLuong: 1 };
+                            handleApiResponse(apiService.addProduct(invoiceState.hoaDonId, addRequest), { successMessage: "Đã thêm sản phẩm qua QR!" });
                         };
                         html5QrCode.start({ facingMode: "environment" }, { fps: 10 }, qrCodeSuccessCallback)
-                           .catch(err => toastr.error("Không thể khởi động camera."));
+                           .catch(err => toastr.error("Không thể khởi động camera. Vui lòng cấp quyền."));
                     } else { toastr.error("Không tìm thấy camera trên thiết bị."); }
-                }).catch(err => toastr.error("Không thể truy cập camera. Vui lòng cấp quyền."));
+                }).catch(err => toastr.error("Không thể truy cập camera."));
             }
             function stopQrScanner() {
                 if (html5QrCode && html5QrCode.isScanning) {
@@ -390,7 +390,7 @@
 
                     const host = "https://provinces.open-api.vn/api/";
                     const renderOptions = (select, options) => {
-                        select.empty().append('<option></option>');
+                        select.empty().append('<option></option>'); // For placeholder
                         options.forEach(item => select.append(`<option value="${item.code}">${item.name}</option>`));
                     };
                     try {
@@ -428,16 +428,15 @@
                 });
                 $('#modalProductSearchInput').on('keyup', debounce(function() {
                     const keyword = $(this).val();
-                    if (keyword && keyword.length >= 2) {
-                        $('#resultsTitle').text('Kết quả tìm kiếm').show();
-                        $('#modalProductResultsContainer').html('<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div></div>');
-                        apiService.searchProducts(keyword).done(html => $('#modalProductResultsContainer').html(html));
-                    }
+                    $('#resultsTitle').text(keyword ? 'Kết quả tìm kiếm' : 'Sản phẩm gợi ý').show();
+                    $('#modalProductResultsContainer').html('<div class="text-center p-3"><div class="spinner-border spinner-border-sm"></div></div>');
+                    apiService.searchProducts(keyword).done(html => $('#modalProductResultsContainer').html(html));
                 }, 400));
                 $(document).on('click', '.add-product-btn', function(e) {
                     e.preventDefault();
                     if (!invoiceState) return;
-                    handleApiResponse(apiService.addProduct(invoiceState.hoaDonId, { sanPhamChiTietId: $(this).data('id'), soLuong: 1 }), { successMessage: "Đã thêm sản phẩm!" });
+                    const addRequest = { sanPhamChiTietId: $(this).data('id'), soLuong: 1 };
+                    handleApiResponse(apiService.addProduct(invoiceState.hoaDonId, addRequest), { successMessage: "Đã thêm sản phẩm!" });
                     $('#searchProductModal').modal('hide');
                 });
 
@@ -455,14 +454,13 @@
                         $('#customerSearchInput').val('');
                         loadCustomerResults('');
                     } else {
-                        if (invoiceState && !invoiceState.khachHang.laKhachLe) {
+                        // <<< SỬA LỖI 2: Gọi đến hàm logic đúng để gán khách lẻ >>>
+                        if (invoiceState && invoiceState.khachHang && !invoiceState.khachHang.laKhachLe) {
                              handleApiResponse(apiService.assignKhachLe(invoiceState.hoaDonId), { successMessage: "Đã chuyển sang khách lẻ." });
                         }
                     }
                 });
-                $('#customerSearchInput').on('keyup', debounce(function () {
-                    loadCustomerResults($(this).val());
-                }, 400));
+                $('#customerSearchInput').on('keyup', debounce(function () { loadCustomerResults($(this).val()); }, 400));
                 $(document).on('click', '.select-customer-btn', function(e) {
                     e.preventDefault();
                     if (!invoiceState) return;
@@ -472,15 +470,20 @@
                 $('#createCustomerForm').on('submit', function(e) {
                     e.preventDefault();
                     const $form = $(this);
-                    if (!$form[0].checkValidity()) { $form.addClass('was-validated'); return; }
+                    if (!$form.valid()) { return; }
                     const request = { tenKhachHang: $('#newCustomerName').val(), sdt: $('#newCustomerPhone').val(), email: $('#newCustomerEmail').val() };
                     apiService.createCustomer(request)
                         .done(response => {
-                            if (response.success || response.khachHangId) { // Check cả 2 cấu trúc
-                                const newCustomerId = response.data?.khachHangId || response.khachHangId;
+                            if (response.success) {
+                                const newCustomerId = response.data.khachHangId;
                                 $('#createCustomerModal').modal('hide');
+                                $form[0].reset();
+                                $form.find('.is-invalid').removeClass('is-invalid');
+                                $('#createCustomerError').hide();
                                 handleApiResponse(apiService.assignCustomer(invoiceState.hoaDonId, { khachHangId: newCustomerId }), { successMessage: "Tạo và chọn khách hàng thành công!" });
-                            } else { $('#createCustomerError').text(response.message).show(); }
+                            } else { 
+                                $('#createCustomerError').text(response.message).show(); 
+                            }
                         }).fail(jqXHR => $('#createCustomerError').text(jqXHR.responseJSON?.message || 'Lỗi hệ thống').show());
                 });
 
@@ -492,9 +495,12 @@
                     handleApiResponse(apiService.updateQty(invoiceState.hoaDonId, spId, { soLuongMoi: newQty }));
                 }, 500));
                 $(document).on('click', '.btn-decrease-qty, .btn-increase-qty', function() {
-                    const $input = $(this).siblings('.qty-input');
-                    let newQty = parseInt($input.val()) + ($(this).hasClass('btn-increase-qty') ? 1 : -1);
-                    if (newQty >= 0) $input.val(newQty).trigger('input');
+                    const $input = $(this).closest('.input-group').find('.qty-input');
+                    let currentQty = parseInt($input.val());
+                    let newQty = currentQty + ($(this).hasClass('btn-increase-qty') ? 1 : -1);
+                    if (newQty >= 0) {
+                        $input.val(newQty).trigger('input'); // Trigger the debounced input event
+                    }
                 });
                 $(document).on('click', '.btn-delete-item', function() {
                     const spId = $(this).data('sp-id');
@@ -507,7 +513,7 @@
                     if (invoiceState) {
                         invoiceState.isShippingEnabled = isChecked;
                         uiRenderer.renderSummary(invoiceState);
-                        toastr.info(isChecked ? "Đã bật giao hàng. Phí vận chuyển 20,000 ₫." : "Đã tắt chức năng giao hàng.");
+                        toastr.info(isChecked ? `Đã bật giao hàng. Phí vận chuyển ${formatCurrency(SHIPPING_FEE)}.` : "Đã tắt chức năng giao hàng.");
                     }
                 });
                 $(document).on('click', '.btn-apply-voucher', function() {
@@ -516,6 +522,7 @@
                 });
                 $(document).on('click', '.btn-remove-voucher', () => handleApiResponse(apiService.removeVoucher(invoiceState.hoaDonId), { successMessage: "Đã gỡ voucher." }));
                 $(document).on('click', '#openThanhToanModalBtn', function(){
+                    if($(this).is(':disabled')) return;
                     $('#thanhToanTongTien').text(formatCurrency(invoiceState.thanhTien));
                     $('#thanhToanModal').modal('show');
                 });
@@ -547,9 +554,11 @@
                         if (response.success) {
                             uiRenderer.updateAll(response.data);
                             toastr.success('Hóa đơn chờ đã sẵn sàng!');
-                        } else { toastr.error(response.message || 'Không thể khởi tạo hóa đơn.'); }
+                        } else { 
+                            toastr.error(response.message || 'Không thể khởi tạo hóa đơn.'); 
+                        }
                     })
-                    .fail(() => toastr.error('Lỗi nghiêm trọng. Vui lòng tải lại trang.'))
+                    .fail(() => toastr.error('Lỗi nghiêm trọng khi khởi tạo. Vui lòng tải lại trang.'))
                     .always(() => showLoading(false));
 
                 bindAllEvents();

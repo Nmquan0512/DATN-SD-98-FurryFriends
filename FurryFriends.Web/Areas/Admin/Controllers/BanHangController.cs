@@ -1,16 +1,16 @@
 ﻿using FurryFriends.API.Models.DTO.BanHang;
 using FurryFriends.API.Models.DTO.BanHang.Requests;
-using FurryFriends.Web.Services; // Nơi chứa ApiException
+using FurryFriends.Web.Services;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Route("Admin/BanHang/[action]")] // Định tuyến tập trung, dễ gọi từ JS
     public class BanHangController : Controller
     {
         private readonly IBanHangService _banHangService;
@@ -22,8 +22,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             _logger = logger;
         }
 
-        #region Actions trả về View (Tải trang)
-
+        #region Actions trả về View (Giữ nguyên)
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -34,8 +33,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
             catch (ApiException ex)
             {
-                _logger.LogError(ex, "Lỗi API khi lấy danh sách hóa đơn.");
-                TempData["error"] = "Không thể tải lịch sử hóa đơn. Vui lòng thử lại.";
+                TempData["error"] = "Không thể tải lịch sử hóa đơn: " + ex.Message;
                 return View(new List<HoaDonBanHangDto>());
             }
         }
@@ -43,7 +41,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult TaoHoaDonMoi()
         {
-            // Có thể truyền ViewBag.HinhThucThanhToanList ở đây nếu cần
             return View();
         }
 
@@ -53,32 +50,38 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             try
             {
                 var hoaDon = await _banHangService.GetHoaDonByIdAsync(id);
-                if (hoaDon == null)
-                {
-                    TempData["error"] = "Không tìm thấy hóa đơn.";
-                    return RedirectToAction(nameof(Index));
-                }
-
-                // ViewBag.HinhThucThanhToanList = await _htttService.GetAllAsync();
-
-                if (hoaDon.TrangThai == "Chua Thanh Toan")
-                {
-                    return View("Details_Interactive", hoaDon);
-                }
-
+                if (hoaDon.TrangThai == "Chua Thanh Toan") return View("Details_Interactive", hoaDon);
                 return View("Details_ReadOnly", hoaDon);
             }
             catch (ApiException ex)
             {
-                _logger.LogError(ex, $"Lỗi API khi xem chi tiết hóa đơn {id}.");
-                TempData["error"] = "Lỗi khi tải dữ liệu chi tiết hóa đơn.";
+                TempData["error"] = "Lỗi khi tải chi tiết hóa đơn: " + ex.Message;
                 return RedirectToAction(nameof(Index));
             }
         }
-
         #endregion
 
-        #region Actions xử lý AJAX (Trả về JSON hoặc Partial View)
+        #region Actions xử lý Form POST (Giữ nguyên)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TaoHoaDonCho()
+        {
+            try
+            {
+                var request = new TaoHoaDonRequest { LaKhachLe = true, GhiChu = "Hóa đơn tại quầy" };
+                var result = await _banHangService.TaoHoaDonAsync(request);
+                TempData["success"] = "Đã tạo hóa đơn chờ mới.";
+                return RedirectToAction(nameof(Details), new { id = result.HoaDonId });
+            }
+            catch (ApiException ex)
+            {
+                TempData["error"] = $"Tạo hóa đơn thất bại: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+        #endregion
+
+        #region === TOÀN BỘ PHẦN AJAX ĐƯỢC LÀM LẠI HOÀN TOÀN ===
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -86,74 +89,90 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             try
             {
-                var request = new TaoHoaDonRequest { LaKhachLe = true, GhiChu = "Hóa đơn tại quầy" };
+                var request = new TaoHoaDonRequest { LaKhachLe = true };
                 var result = await _banHangService.TaoHoaDonAsync(request);
                 return Json(new { success = true, data = result });
             }
             catch (ApiException ex)
             {
-                _logger.LogError(ex, "Lỗi API khi tạo hóa đơn chờ ban đầu.");
                 return Json(new { success = false, message = ex.Message });
             }
         }
 
-        [HttpPost("Admin/BanHang/HoaDon/{hoaDonId}/ThemSanPham")]
-        public async Task<IActionResult> ThemSanPhamVaoHoaDon(Guid hoaDonId, [FromBody] ThemSanPhamRequest request)
+        [HttpPost("{hoaDonId}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ThemSanPham([FromBody] ThemSanPhamRequest request, Guid hoaDonId)
         {
             try { var result = await _banHangService.ThemSanPhamVaoHoaDonAsync(hoaDonId, request); return Json(new { success = true, data = result }); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
-        [HttpPut("Admin/BanHang/HoaDon/{hoaDonId}/SanPham/{sanPhamChiTietId}")]
-        public async Task<IActionResult> CapNhatSoLuong(Guid hoaDonId, Guid sanPhamChiTietId, [FromBody] CapNhatSoLuongRequest request)
+        [HttpPut("{hoaDonId}/{sanPhamChiTietId}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CapNhatSoLuong([FromBody] CapNhatSoLuongRequest request, Guid hoaDonId, Guid sanPhamChiTietId)
         {
             try { var result = await _banHangService.CapNhatSoLuongSanPhamAsync(hoaDonId, sanPhamChiTietId, request); return Json(new { success = true, data = result }); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
-        [HttpDelete("Admin/BanHang/HoaDon/{hoaDonId}/SanPham/{sanPhamChiTietId}")]
-        public async Task<IActionResult> XoaSanPhamKhoiHoaDon(Guid hoaDonId, Guid sanPhamChiTietId)
+        [HttpDelete("{hoaDonId}/{sanPhamChiTietId}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> XoaSanPham(Guid hoaDonId, Guid sanPhamChiTietId)
         {
             try { var result = await _banHangService.XoaSanPhamKhoiHoaDonAsync(hoaDonId, sanPhamChiTietId); return Json(new { success = true, data = result }); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
-        [HttpPut("Admin/BanHang/HoaDon/{hoaDonId}/GanKhachHang")]
-        public async Task<IActionResult> GanKhachHang(Guid hoaDonId, [FromBody] GanKhachHangRequest request)
+        [HttpPost("{hoaDonId}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GanKhachHang([FromBody] GanKhachHangRequest request, Guid hoaDonId)
         {
             try { var result = await _banHangService.GanKhachHangAsync(hoaDonId, request); return Json(new { success = true, data = result }); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
-        [HttpPut("Admin/BanHang/HoaDon/{hoaDonId}/AssignKhachLe")]
-        public async Task<IActionResult> AssignKhachLe(Guid hoaDonId)
+        [HttpPost("{hoaDonId}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> GanKhachLe(Guid hoaDonId)
         {
             try
             {
-                // Giả sử service của bạn có một phương thức chuyên dụng để gán khách lẻ
-                var result = await _banHangService.GanKhachLeAsync(hoaDonId);
+                var khachLeList = await _banHangService.TimKiemKhachHangAsync("Khách lẻ");
+                var khachLe = khachLeList.FirstOrDefault(k => k.TenKhachHang == "Khách lẻ");
+
+                if (khachLe == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy tài khoản 'Khách lẻ' mặc định." });
+                }
+
+                var request = new GanKhachHangRequest { KhachHangId = khachLe.KhachHangId };
+                var result = await _banHangService.GanKhachHangAsync(hoaDonId, request);
                 return Json(new { success = true, data = result });
             }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
-        [HttpPost("Admin/BanHang/HoaDon/{hoaDonId}/ApDungVoucher")]
-        public async Task<IActionResult> ApDungVoucher(Guid hoaDonId, [FromBody] ApDungVoucherRequest request)
+        [HttpPost("{hoaDonId}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApDungVoucher([FromBody] ApDungVoucherRequest request, Guid hoaDonId)
         {
             try { var result = await _banHangService.ApDungVoucherAsync(hoaDonId, request); return Json(new { success = true, data = result }); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
-        [HttpDelete("Admin/BanHang/HoaDon/{hoaDonId}/GoBoVoucher")]
+        [HttpDelete("{hoaDonId}")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> GoBoVoucher(Guid hoaDonId)
         {
             try { var result = await _banHangService.GoBoVoucherAsync(hoaDonId); return Json(new { success = true, data = result }); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
-        [HttpPost("Admin/BanHang/HoaDon/{hoaDonId}/ThanhToan")]
-        public async Task<IActionResult> ThanhToan(Guid hoaDonId, [FromBody] ThanhToanRequest request)
+        [HttpPost("{hoaDonId}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ThanhToan([FromBody] ThanhToanRequest request, Guid hoaDonId)
         {
+            if (!ModelState.IsValid) return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
             try
             {
                 var result = await _banHangService.ThanhToanHoaDonAsync(hoaDonId, request);
@@ -163,19 +182,18 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
-        [HttpPost("Admin/BanHang/HoaDon/{hoaDonId}/Huy")]
-        public async Task<IActionResult> HuyHoaDonAjax(Guid hoaDonId)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TaoKhachHangMoi([FromBody] TaoKhachHangRequest request)
         {
-            try
+            if (!ModelState.IsValid)
             {
-                await _banHangService.HuyHoaDonAsync(hoaDonId);
-                TempData["success"] = "Đã hủy hóa đơn thành công.";
-                return Json(new { success = true, redirectUrl = Url.Action("Index") });
+                var error = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault();
+                return Json(new { success = false, message = error?.ErrorMessage ?? "Dữ liệu không hợp lệ." });
             }
+            try { var result = await _banHangService.TaoKhachHangMoiAsync(request); return Json(new { success = true, data = result }); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
-
-        // --- Các Action trả về Partial View ---
 
         [HttpGet]
         public async Task<IActionResult> TimKiemSanPham(string keyword)
@@ -196,19 +214,6 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             var results = await _banHangService.TimKiemKhachHangAsync(keyword);
             return PartialView("_KhachHangSearchResults", results);
-        }
-
-        // --- Action tạo mới ---
-
-        [HttpPost]
-        public async Task<IActionResult> TaoKhachHangMoi([FromBody] TaoKhachHangRequest request)
-        {
-            try
-            {
-                var result = await _banHangService.TaoKhachHangMoiAsync(request);
-                return Json(new { success = true, data = result });
-            }
-            catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
         #endregion
     }

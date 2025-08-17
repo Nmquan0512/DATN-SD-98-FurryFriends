@@ -42,13 +42,7 @@ namespace FurryFriends.API.Repository
             //    Cách này sẽ sử dụng cấu hình đầy đủ của BanHangMappingProfile mà không bị lỗi.
             return _mapper.Map<IEnumerable<HoaDonBanHangDto>>(hoaDons);
         }
-           public async Task<HoaDonBanHangDto> GanKhachLeAsync(Guid hoaDonId)
-        {
-            var hoaDon = await GetEditableHoaDon(hoaDonId);
-            await GanKhachLeNoSave(hoaDon);
-            await _context.SaveChangesAsync();
-            return await GetHoaDonByIdAsync(hoaDonId);
-        }
+
 
         public async Task<HoaDonBanHangDto> GetHoaDonByIdAsync(Guid id)
         {
@@ -270,6 +264,7 @@ namespace FurryFriends.API.Repository
                 }
 
                 sanPhamChiTiet.SoLuong -= request.SoLuong;
+                await TinhToanLaiTienHoaDon(hoaDon);
                 await _context.SaveChangesAsync(); // Lưu thay đổi trước khi tính toán
                 await transaction.CommitAsync();
 
