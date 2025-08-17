@@ -58,7 +58,7 @@
                 
                 @foreach (var sanPham in products)
                 {
-                    <div class="product-card" data-product-id="@sanPham.SanPhamId" onclick="goToProductDetail('@sanPham.SanPhamId')" style="cursor: pointer;" title="Click để xem chi tiết sản phẩm" data-name="@sanPham.TenSanPham" data-brand="@sanPham.TenThuongHieu" data-min-price="@sanPham.ChiTietList.Min(c=>c.GiaBan)" data-max-price="@sanPham.ChiTietList.Max(c=>c.GiaBan)">
+                    <div class="product-card" data-product-id="@sanPham.SanPhamId" onclick="goToProductDetail('@sanPham.SanPhamId')" style="cursor: pointer;" title="Click để xem chi tiết sản phẩm" data-name="@sanPham.TenSanPham" data-brand="@sanPham.TenThuongHieu" data-min-price="@(sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Min(c=>c.GiaBan) : 0)" data-max-price="@(sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Max(c=>c.GiaBan) : 0)">
                         @{
                             var (coGiamGia, minGiaSauGiam, maxGiaSauGiam) = DiscountService.CalculateSafeDiscountRange(sanPham.ChiTietList);
                         }
@@ -87,24 +87,27 @@
                                 {
                                     <span><strong>Thương hiệu:</strong> @sanPham.TenThuongHieu</span>
                                 }
-                                <span>@sanPham.ChiTietList.Sum(c => c.SoLuongTon) còn hàng</span>
+                                <span>@(sanPham.ChiTietList?.Sum(c => c.SoLuongTon) ?? 0) còn hàng</span>
                     </div>
                             
                             <div class="product-variants">
-                                @foreach (var chiTiet in sanPham.ChiTietList.Take(3))
+                                @if (sanPham.ChiTietList?.Any() == true)
                                 {
-                                    <span class="variant-badge">@chiTiet.MauSac - @chiTiet.KichCo</span>
-                                }
-                                @if (sanPham.ChiTietList.Count > 3)
-                                {
-                                    <span class="variant-badge">+@(sanPham.ChiTietList.Count - 3) khác</span>
+                                    @foreach (var chiTiet in sanPham.ChiTietList.Take(3))
+                                    {
+                                        <span class="variant-badge">@chiTiet.MauSac - @chiTiet.KichCo</span>
+                                    }
+                                    @if (sanPham.ChiTietList.Count > 3)
+                                    {
+                                        <span class="variant-badge">+@(sanPham.ChiTietList.Count - 3) khác</span>
+                                    }
                                 }
             </div>
 
                             <div class="product-price">
                                 @{
-                                    var minPrice = sanPham.ChiTietList.Min(c => c.GiaBan);
-                                    var maxPrice = sanPham.ChiTietList.Max(c => c.GiaBan);
+                                    var minPrice = sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Min(c => c.GiaBan) : 0;
+                                    var maxPrice = sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Max(c => c.GiaBan) : 0;
                                 }
                                 @if (coGiamGia)
                                 {

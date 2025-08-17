@@ -245,7 +245,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 // Lưu trạng thái cũ để gửi thông báo
                 var trangThaiCu = hoaDon.TrangThai;
                 var trangThaiCuText = GetTrangThaiText(trangThaiCu);
-                
+
                 // Tăng trạng thái lên 1 đơn vị
                 int trangThaiMoi = hoaDon.TrangThai + 1;
                 

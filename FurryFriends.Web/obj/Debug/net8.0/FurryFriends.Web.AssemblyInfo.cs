@@ -14,11 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FurryFriends.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7d28f1c133bc58e95945267dc63256a730758c58")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c4a3779fe2932981b55e36e483be720c84fcfeb5")]
->>>>>>> origin/ValidateMuaHangOnl(60%)
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d4b08543aba219bfc64d089314c376cd8fe03c6e")]
 [assembly: System.Reflection.AssemblyProductAttribute("FurryFriends.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FurryFriends.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,7 +1,6 @@
 {
   "format": 1,
   "restore": {
-<<<<<<< HEAD
     "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {}
   },
   "projects": {
@@ -13,19 +12,6 @@
         "projectPath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
         "packagesPath": "C:\\Users\\x\\.nuget\\packages\\",
         "outputPath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\obj\\",
-=======
-    "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {}
-  },
-  "projects": {
-    "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
-        "projectName": "FurryFriends.API",
-        "projectPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
-        "packagesPath": "C:\\Users\\Lenovo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Lenovo\\OneDrive\\Desktop\\New folder\\DATN-SD-98-FurryFriends\\FurryFriends.API\\obj\\",
->>>>>>> origin/ValidateMuaHangOnl(60%)
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\x\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -140,11 +126,7 @@
               "privateAssets": "all"
             }
           },
-<<<<<<< HEAD
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
-=======
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
->>>>>>> origin/ValidateMuaHangOnl(60%)
         }
       }
     }

@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{134F7FEB-158E-4485-BCEF-71BF0E89AA1B}|FurryFriends.API\\FurryFriends.API.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\dotnet\\sdk\\8.0.303\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\controllers\\hoadoncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -93,9 +105,6 @@
       "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{134F7FEB-158E-4485-BCEF-71BF0E89AA1B}|FurryFriends.API\\FurryFriends.API.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250816125317_nmq.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -121,9 +130,6 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\views\\sanphamkhachhang\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5DED26BA-ADA1-4000-948F-7C2CF3AB5EE3}|FurryFriends.Web\\FurryFriends.Web.csproj|\\\\mac\\home\\downloads\\datn-sd-98-furryfriends\\furryfriends.web\\controllers\\giohangscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
@@ -298,11 +304,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 11,
+          "SelectedChildIndex": 12,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 30,
               "Title": "Details.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\DonHang\\Details.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\DonHang\\Details.cshtml",
@@ -329,6 +335,17 @@
             {
               "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "Microsoft.NET.Sdk.targets",
+              "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\8.0.303\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.targets",
+              "ToolTip": "C:\\Program Files\\dotnet\\sdk\\8.0.303\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.NET.Sdk.targets",
+              "ViewState": "AQIAAPsBAAAAAAAAAAAhwMQCAAAEAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2025-08-17T05:49:07.97Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "ChucVuService.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\ChucVuService.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Services\\ChucVuService.cs",
@@ -341,7 +358,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 7,
               "Title": "ChucVuRepository.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Repository\\ChucVuRepository.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Repository\\ChucVuRepository.cs",
@@ -354,7 +371,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 10,
               "Title": "VouchersController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\VouchersController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\VouchersController.cs",
@@ -367,7 +384,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 11,
               "Title": "ThuongHieuController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\ThuongHieuController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\ThuongHieuController.cs",
@@ -380,7 +397,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 12,
               "Title": "ThongBaoController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\ThongBaoController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\ThongBaoController.cs",
@@ -393,7 +410,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 13,
               "Title": "ThanhPhanController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\ThanhPhanController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\ThanhPhanController.cs",
@@ -407,6 +424,43 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\appsettings.json",
+              "RelativeDocumentMoniker": "FurryFriends.API\\appsettings.json",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\appsettings.json",
+              "RelativeToolTip": "FurryFriends.API\\appsettings.json",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAABMAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-07-18T16:47:56.322Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\Home\\Index.cshtml",
+              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "FurryFriends.Web\\Views\\Home\\Index.cshtml",
+              "ViewState": "AQIAAMcFAAAAAQAAAGAwwPEFAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-08-11T07:27:25.825Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Microsoft.Common.CurrentVersion.targets",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\Bin\\amd64\\Microsoft.Common.CurrentVersion.targets",
+              "ViewState": "AQIAANERAAAAeGZmZuYswN4RAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
+              "WhenOpened": "2025-08-17T05:41:28.325Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "HoaDonRepository.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Repository\\HoaDonRepository.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Repository\\HoaDonRepository.cs",
@@ -419,7 +473,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
               "Title": "HoaDonController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Controllers\\HoaDonController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Controllers\\HoaDonController.cs",
@@ -432,7 +486,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 9,
               "Title": "GioHangRepository.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Repository\\GioHangRepository.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Repository\\GioHangRepository.cs",
@@ -445,7 +499,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 8,
               "Title": "ChatLieuService.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Services\\ChatLieuService.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Services\\ChatLieuService.cs",
@@ -458,7 +512,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 14,
               "Title": "TaiKhoanController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\TaiKhoanController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\TaiKhoanController.cs",
@@ -471,7 +525,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 15,
               "Title": "SanPhamController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\SanPhamController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\SanPhamController.cs",
@@ -484,7 +538,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 16,
               "Title": "SanPhamChiTietController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\SanPhamChiTietController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\SanPhamChiTietController.cs",
@@ -497,7 +551,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 17,
               "Title": "NhanVienController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\NhanVienController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\NhanVienController.cs",
@@ -510,7 +564,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 18,
               "Title": "MauSacController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\MauSacController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\MauSacController.cs",
@@ -523,7 +577,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 19,
               "Title": "KichCoController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\KichCoController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\KichCoController.cs",
@@ -536,7 +590,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 20,
               "Title": "GiamGiasController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\GiamGiasController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\GiamGiasController.cs",
@@ -549,7 +603,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 21,
               "Title": "GiamGiaController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\GiamGiaController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\GiamGiaController.cs",
@@ -562,7 +616,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 23,
               "Title": "ChatLieuController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\ChatLieuController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\ChatLieuController.cs",
@@ -575,7 +629,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 24,
               "Title": "BanHangController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\BanHangController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\BanHangController.cs",
@@ -588,7 +642,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 25,
               "Title": "AnhController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\AnhController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\AnhController.cs",
@@ -601,7 +655,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 26,
               "Title": "DiaChiKhachHang.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DiaChiKhachHang.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DiaChiKhachHang.cs",
@@ -614,7 +668,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 29,
               "Title": "IKhachHangService.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\IService\\IKhachHangService.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Services\\IService\\IKhachHangService.cs",
@@ -627,7 +681,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 22,
               "Title": "DashboardController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Controllers\\DashboardController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Controllers\\DashboardController.cs",
@@ -640,7 +694,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 37,
               "Title": "20250816122549_nmq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250816122549_nmq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250816122549_nmq.cs",
@@ -653,7 +707,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 52,
               "Title": "ThanhPhan.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\ThanhPhan.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\ThanhPhan.cs",
@@ -665,7 +719,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 55,
               "Title": "KichCo.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\KichCo.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\KichCo.cs",
@@ -677,7 +731,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 56,
               "Title": "20250810101426_mq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250810101426_mq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250810101426_mq.cs",
@@ -689,7 +743,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 27,
               "Title": "HoaDon.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\HoaDon.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\HoaDon.cs",
@@ -702,7 +756,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 28,
               "Title": "KhachHang.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\KhachHang.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\KhachHang.cs",
@@ -715,7 +769,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 60,
+              "DocumentIndex": 62,
               "Title": "20250809181417_mq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250809181417_mq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250809181417_mq.cs",
@@ -727,7 +781,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 41,
               "Title": "Details.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\HoaDon\\Details.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\HoaDon\\Details.cshtml",
@@ -739,7 +793,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 32,
               "Title": "Index.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\DonHang\\Index.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\DonHang\\Index.cshtml",
@@ -752,7 +806,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 31,
               "Title": "Index.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\DonHang\\Index.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\DonHang\\Index.cshtml",
@@ -765,7 +819,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 34,
               "Title": "20250816125317_nmq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250816125317_nmq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250816125317_nmq.cs",
@@ -778,7 +832,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 33,
               "Title": "appsettings.json",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\appsettings.json",
               "RelativeDocumentMoniker": "FurryFriends.Web\\appsettings.json",
@@ -791,7 +845,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 42,
               "Title": "Index.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\SanPhamKhachHang\\Index.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\SanPhamKhachHang\\Index.cshtml",
@@ -803,20 +857,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\appsettings.json",
-              "RelativeDocumentMoniker": "FurryFriends.API\\appsettings.json",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\appsettings.json",
-              "RelativeToolTip": "FurryFriends.API\\appsettings.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABcAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-07-18T16:47:56.322Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 35,
               "Title": "LichSuTrangThaiHoaDon.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\LichSuTrangThaiHoaDon.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\LichSuTrangThaiHoaDon.cs",
@@ -829,7 +870,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 36,
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Data\\AppDbContext.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Data\\AppDbContext.cs",
@@ -842,7 +883,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 51,
               "Title": "DangNhap.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\Auth\\DangNhap.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\Auth\\DangNhap.cshtml",
@@ -854,7 +895,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 38,
               "Title": "20250812115019_nh.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250812115019_nh.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250812115019_nh.cs",
@@ -866,7 +907,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 39,
               "Title": "Program.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Program.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Program.cs",
@@ -878,7 +919,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 40,
               "Title": "Index.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\Dashboard\\Index.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\Dashboard\\Index.cshtml",
@@ -890,7 +931,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 43,
               "Title": "GioHangsController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Controllers\\GioHangsController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Controllers\\GioHangsController.cs",
@@ -902,7 +943,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 50,
               "Title": "Index.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\DangKy\\Index.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\DangKy\\Index.cshtml",
@@ -914,19 +955,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\Home\\Index.cshtml",
-              "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\Home\\Index.cshtml",
-              "ToolTip": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\Home\\Index.cshtml",
-              "RelativeToolTip": "FurryFriends.Web\\Views\\Home\\Index.cshtml",
-              "ViewState": "AQIAAGQAAACAl5mZmZkuwEoBAAAKAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-08-11T07:27:25.825Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 44,
               "Title": "HomeController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Controllers\\HomeController.cs",
@@ -938,7 +967,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 45,
               "Title": "SanPhamDTO.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\SanPhamDTO.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DTO\\SanPhamDTO.cs",
@@ -950,7 +979,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 47,
               "Title": "About.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\Home\\About.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\Home\\About.cshtml",
@@ -962,7 +991,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 46,
               "Title": "Contact.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\Home\\Contact.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\Home\\Contact.cshtml",
@@ -974,7 +1003,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 64,
+              "DocumentIndex": 66,
               "Title": "KetQuaThanhToan.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\GioHangs\\KetQuaThanhToan.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\GioHangs\\KetQuaThanhToan.cshtml",
@@ -986,7 +1015,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 48,
               "Title": "Index.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\GioHangs\\Index.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\GioHangs\\Index.cshtml",
@@ -998,7 +1027,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 49,
               "Title": "HoaDonService.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\HoaDonService.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Services\\HoaDonService.cs",
@@ -1010,7 +1039,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 63,
+              "DocumentIndex": 65,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Views\\Shared\\_Layout.cshtml",
@@ -1022,7 +1051,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
+              "DocumentIndex": 53,
               "Title": "SanPhamChiTiet.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\SanPhamChiTiet.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\SanPhamChiTiet.cs",
@@ -1034,7 +1063,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 57,
+              "DocumentIndex": 59,
               "Title": "20250809190201_mq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250809190201_mq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250809190201_mq.cs",
@@ -1046,7 +1075,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 54,
               "Title": "ChatLieu.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\ChatLieu.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\ChatLieu.cs",
@@ -1058,7 +1087,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 56,
+              "DocumentIndex": 58,
               "Title": "GioHangService.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\GioHangService.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Services\\GioHangService.cs",
@@ -1070,7 +1099,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 55,
+              "DocumentIndex": 57,
               "Title": "Index.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\GiamGia\\Index.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\GiamGia\\Index.cshtml",
@@ -1082,7 +1111,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 59,
+              "DocumentIndex": 61,
               "Title": "Program.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Program.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Program.cs",
@@ -1094,7 +1123,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 58,
+              "DocumentIndex": 60,
               "Title": "Voucher.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\Voucher.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\Voucher.cs",
@@ -1106,7 +1135,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 61,
+              "DocumentIndex": 63,
               "Title": "DiscountService.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\DiscountService.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Services\\DiscountService.cs",
@@ -1118,7 +1147,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 62,
+              "DocumentIndex": 64,
               "Title": "DiscountCalculationService.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Services\\DiscountCalculationService.cs",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Services\\DiscountCalculationService.cs",
@@ -1130,7 +1159,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 65,
+              "DocumentIndex": 67,
               "Title": "_Layout.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml",
@@ -1142,7 +1171,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 66,
+              "DocumentIndex": 68,
               "Title": "Index.cshtml",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.Web\\Areas\\Admin\\Views\\SanPham\\Index.cshtml",
               "RelativeDocumentMoniker": "FurryFriends.Web\\Areas\\Admin\\Views\\SanPham\\Index.cshtml",
@@ -1154,7 +1183,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 69,
+              "DocumentIndex": 71,
               "Title": "ChatLieuDTO.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\ChatLieuDTO.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DTO\\ChatLieuDTO.cs",
@@ -1166,7 +1195,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 70,
+              "DocumentIndex": 72,
               "Title": "20250806143210_nmquan.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250806143210_nmquan.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250806143210_nmquan.cs",
@@ -1178,7 +1207,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 74,
+              "DocumentIndex": 76,
               "Title": "20250802164715_m.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802164715_m.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250802164715_m.cs",
@@ -1189,7 +1218,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 68,
+              "DocumentIndex": 70,
               "Title": "ChatLieuController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\ChatLieuController.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\ChatLieuController.cs",
@@ -1201,7 +1230,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 73,
+              "DocumentIndex": 75,
               "Title": "20250802171902_m.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802171902_m.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250802171902_m.cs",
@@ -1212,7 +1241,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 67,
+              "DocumentIndex": 69,
               "Title": "ThuongHieuService.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Services\\ThuongHieuService.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Services\\ThuongHieuService.cs",
@@ -1224,7 +1253,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 75,
+              "DocumentIndex": 77,
               "Title": "20250802164244_m.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250802164244_m.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250802164244_m.cs",
@@ -1235,7 +1264,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 84,
+              "DocumentIndex": 86,
               "Title": "20250723174342_nmq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723174342_nmq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723174342_nmq.cs",
@@ -1246,7 +1275,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 71,
+              "DocumentIndex": 73,
               "Title": "FurryFriends.API.csproj",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\FurryFriends.API.csproj",
               "RelativeDocumentMoniker": "FurryFriends.API\\FurryFriends.API.csproj",
@@ -1254,11 +1283,12 @@
               "RelativeToolTip": "FurryFriends.API\\FurryFriends.API.csproj",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAACEAAAAfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-07-05T19:27:25.529Z"
+              "WhenOpened": "2025-07-05T19:27:25.529Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 72,
+              "DocumentIndex": 74,
               "Title": "MauSac.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\MauSac.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\MauSac.cs",
@@ -1270,7 +1300,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 76,
+              "DocumentIndex": 78,
               "Title": "GiamGiaController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\GiamGiaController.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\GiamGiaController.cs",
@@ -1282,7 +1312,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 82,
+              "DocumentIndex": 84,
               "Title": "20250723175910_nmq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723175910_nmq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723175910_nmq.cs",
@@ -1293,7 +1323,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 77,
+              "DocumentIndex": 79,
               "Title": "SanPhamChiTietDTO.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\SanPhamChiTietDTO.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DTO\\SanPhamChiTietDTO.cs",
@@ -1305,7 +1335,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 79,
+              "DocumentIndex": 81,
               "Title": "20250724042703_nmq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250724042703_nmq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250724042703_nmq.cs",
@@ -1316,7 +1346,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 78,
+              "DocumentIndex": 80,
               "Title": "20250724043356_nmq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250724043356_nmq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250724043356_nmq.cs",
@@ -1327,7 +1357,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 80,
+              "DocumentIndex": 82,
               "Title": "GiamGiaRepository.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Repository\\GiamGiaRepository.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Repository\\GiamGiaRepository.cs",
@@ -1339,7 +1369,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 81,
+              "DocumentIndex": 83,
               "Title": "GiamGiaService.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Services\\GiamGiaService.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Services\\GiamGiaService.cs",
@@ -1351,7 +1381,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 85,
+              "DocumentIndex": 87,
               "Title": "20250723174204_nmq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723174204_nmq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723174204_nmq.cs",
@@ -1362,7 +1392,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 86,
+              "DocumentIndex": 88,
               "Title": "20250723173955_nmq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723173955_nmq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723173955_nmq.cs",
@@ -1373,7 +1403,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 87,
+              "DocumentIndex": 89,
               "Title": "20250723173649_nmq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250723173649_nmq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250723173649_nmq.cs",
@@ -1384,7 +1414,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 83,
+              "DocumentIndex": 85,
               "Title": "DotGiamGiaSanPham.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DotGiamGiaSanPham.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DotGiamGiaSanPham.cs",
@@ -1396,7 +1426,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 95,
+              "DocumentIndex": 97,
               "Title": "20250716034911_nmqu.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250716034911_nmqu.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250716034911_nmqu.cs",
@@ -1407,7 +1437,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 88,
+              "DocumentIndex": 90,
               "Title": "20250718165647_nmq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250718165647_nmq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250718165647_nmq.cs",
@@ -1418,7 +1448,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 89,
+              "DocumentIndex": 91,
               "Title": "20250718165101_nmq.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Migrations\\20250718165101_nmq.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Migrations\\20250718165101_nmq.cs",
@@ -1429,7 +1459,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 90,
+              "DocumentIndex": 92,
               "Title": "SanPhamChiTietController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\SanPhamChiTietController.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\SanPhamChiTietController.cs",
@@ -1441,7 +1471,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 91,
+              "DocumentIndex": 93,
               "Title": "VoucherController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\VoucherController.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\VoucherController.cs",
@@ -1453,7 +1483,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 92,
+              "DocumentIndex": 94,
               "Title": "ThuongHieuDTO.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Models\\DTO\\ThuongHieuDTO.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Models\\DTO\\ThuongHieuDTO.cs",
@@ -1465,7 +1495,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 93,
+              "DocumentIndex": 95,
               "Title": "KichCoController.cs",
               "DocumentMoniker": "\\\\Mac\\Home\\Downloads\\DATN-SD-98-FurryFriends\\FurryFriends.API\\Controllers\\KichCoController.cs",
               "RelativeDocumentMoniker": "FurryFriends.API\\Controllers\\KichCoController.cs",
@@ -1477,7 +1507,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 94,
+              "DocumentIndex": 96,
               "Title": "Microsoft.PackageDependencyResolution.targets",
               "DocumentMoniker": "C:\\Program Files\\dotnet\\sdk\\8.0.303\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",
               "ToolTip": "C:\\Program Files\\dotnet\\sdk\\8.0.303\\Sdks\\Microsoft.NET.Sdk\\targets\\Microsoft.PackageDependencyResolution.targets",

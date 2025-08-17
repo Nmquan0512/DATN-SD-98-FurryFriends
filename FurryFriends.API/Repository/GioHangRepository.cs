@@ -123,7 +123,7 @@ namespace FurryFriends.API.Repository
                     var giamMax = (gc.SanPhamChiTietId.HasValue && idToMaxDiscount.TryGetValue(gc.SanPhamChiTietId.Value, out var p)) ? p : 0m;
                     var donGiaSau = TinhDonGiaSauGiam(giaGoc, giamMax);
                     var thanhTienTinhLai = donGiaSau * gc.SoLuong;
-
+                    
                     Console.WriteLine($"🔍 [Repository] GetGioHangByKhachHangIdAsync - Sản phẩm: {gc.SanPhamChiTiet?.SanPham?.TenSanPham}");
                     Console.WriteLine($"  - Giá gốc: {giaGoc:N0}");
                     Console.WriteLine($"  - Giảm tối đa: {giamMax}%");
@@ -133,7 +133,7 @@ namespace FurryFriends.API.Repository
                     Console.WriteLine($"  - Thành tiền tính lại: {thanhTienTinhLai:N0}");
                     Console.WriteLine($"  - Kiểm tra: {donGiaSau:N0} × {gc.SoLuong} = {thanhTienTinhLai:N0}");
                     Console.WriteLine($"  - Chênh lệch: {gc.ThanhTien - thanhTienTinhLai:N0}");
-
+                    
                     gioHangDTO.GioHangChiTiets.Add(new GioHangChiTietDTO
                     {
                         GioHangChiTietId = gc.GioHangChiTietId,
@@ -340,10 +340,10 @@ namespace FurryFriends.API.Repository
                     : 0m;
                 donGiaHienTai = TinhDonGiaSauGiam(giaGoc, giamMax);
                 gioHangChiTiet.DonGia = donGiaHienTai;
-
+                
                 Console.WriteLine($"🔍 [Repository] Cập nhật đơn giá: {giaGoc:N0} -> {donGiaHienTai:N0} (giảm {giamMax}%)");
             }
-
+            
             var thanhTienMoi = donGiaHienTai * soLuong;
             gioHangChiTiet.ThanhTien = thanhTienMoi;
             gioHangChiTiet.NgayCapNhat = DateTime.Now;
@@ -480,8 +480,8 @@ namespace FurryFriends.API.Repository
                 int trangThai;
                 var hinhThucThanhToan = await _context.HinhThucThanhToans
                     .FirstOrDefaultAsync(h => h.HinhThucThanhToanId == dto.HinhThucThanhToanId);
-
-                if (hinhThucThanhToan != null &&
+                
+                if (hinhThucThanhToan != null && 
                     (hinhThucThanhToan.TenHinhThuc.Contains("VNPay", StringComparison.OrdinalIgnoreCase) ||
                      hinhThucThanhToan.TenHinhThuc.Contains("VNPAY", StringComparison.OrdinalIgnoreCase)))
                 {
@@ -515,9 +515,9 @@ namespace FurryFriends.API.Repository
 
                 // ✅ Lưu snapshot địa chỉ giao hàng lúc mua
                 var diaChi = await _context.DiaChiKhachHangs.FindAsync(dto.DiaChiGiaoHangId);
-                if (diaChi != null)
-                {
-                    hoaDon.DiaChiGiaoHangLucMua = $"{diaChi.TenDiaChi}, {diaChi.PhuongXa}, {diaChi.ThanhPho}";
+                    if (diaChi != null)
+                    {
+                        hoaDon.DiaChiGiaoHangLucMua = $"{diaChi.TenDiaChi}, {diaChi.PhuongXa}, {diaChi.ThanhPho}";
                 }
 
                 decimal tongSauDotGiam = 0m;
@@ -531,7 +531,7 @@ namespace FurryFriends.API.Repository
                         .Include(x => x.KichCo)
                         .Include(x => x.Anh)
                         .FirstOrDefaultAsync(x => x.SanPhamChiTietId == gioHangChiTiet.SanPhamChiTietId);
-
+                    
                     if (spct == null) throw new Exception("Không tìm thấy chi tiết sản phẩm");
                     if (spct.SoLuong < gioHangChiTiet.SoLuong)
                         throw new Exception("Số lượng tồn không đủ");
@@ -551,7 +551,7 @@ namespace FurryFriends.API.Repository
                         SanPhamChiTietId = gioHangChiTiet.SanPhamChiTietId ?? Guid.Empty,
                         SoLuongSanPham = gioHangChiTiet.SoLuong,
                         Gia = donGiaSau,
-
+                        
                         // ✅ Snapshot data - lưu thông tin tại thời điểm mua
                         GiaLucMua = donGiaSau,
                         TenSanPhamLucMua = spct.SanPham?.TenSanPham ?? "N/A",
@@ -577,7 +577,7 @@ namespace FurryFriends.API.Repository
                 {
                     var voucher = await _context.Vouchers
                         .FirstOrDefaultAsync(v => v.VoucherId == dto.VoucherId.Value);
-
+                    
                     if (voucher != null)
                     {
                         // Tính phí ship dùng cho điều kiện voucher (giống phần preview)
@@ -587,13 +587,13 @@ namespace FurryFriends.API.Repository
                         {
                             tienGiamVoucher = voucherResult.SoTienGiam;
                             hoaDon.VoucherId = dto.VoucherId;
-
+                            
                             // ✅ Snapshot thông tin voucher lúc mua
                             hoaDon.ThongTinVoucherLucMua = $"{voucher.TenVoucher} - Giảm {voucher.PhanTramGiam}%" +
                                 (voucher.GiaTriGiamToiDa.HasValue ? $" (tối đa {voucher.GiaTriGiamToiDa.Value:N0} VNĐ)" : "") +
                                 (voucher.SoTienApDungToiThieu.HasValue ? $" - Đơn tối thiểu {voucher.SoTienApDungToiThieu.Value:N0} VNĐ" : "") +
                                 $" - Tiết kiệm: {tienGiamVoucher:N0} VNĐ";
-
+                            
                             // Giảm số lượng voucher
                             voucher.SoLuong -= 1;
                             _context.Vouchers.Update(voucher);
@@ -604,7 +604,7 @@ namespace FurryFriends.API.Repository
                 // Tính phí ship (miễn phí nếu đơn >= 500k sau khi giảm voucher, ngược lại 30k)
                 var tongSauVoucher = tongSauDotGiam - tienGiamVoucher;
                 var phiShip = tongSauVoucher >= 500000m ? 0m : 30000m;
-
+                
                 hoaDon.TongTienSauKhiGiam = tongSauVoucher + phiShip; // tổng thanh toán cuối cùng
 
                 // Xóa giỏ hàng

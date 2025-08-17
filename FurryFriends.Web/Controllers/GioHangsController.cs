@@ -38,10 +38,10 @@ namespace FurryFriends.Web.Controllers
         }
 
         public GioHangsController(
-            IGioHangService gioHangService,
-            IVoucherService voucherService,
-            IKhachHangService khachHangService,
-            IHinhThucThanhToanService hinhThucThanhToanService,
+            IGioHangService gioHangService, 
+            IVoucherService voucherService, 
+            IKhachHangService khachHangService, 
+            IHinhThucThanhToanService hinhThucThanhToanService, 
             IDiaChiKhachHangService diaChiKhachHangService,
             IVnPayService vnPayService,
             ILogger<GioHangsController> logger,
@@ -92,7 +92,7 @@ namespace FurryFriends.Web.Controllers
                     ViewBag.TongDonHang = preview.TongDonHang;
                     ViewBag.TenVoucher = preview.TenVoucher;
                     ViewBag.MaVoucher = preview.MaVoucher;
-
+                    
                     if (preview.GiamGia <= 0)
                     {
                         TempData["Warning"] = "Voucher không đủ điều kiện hoặc không áp dụng được.";
@@ -172,14 +172,14 @@ namespace FurryFriends.Web.Controllers
         {
             var result = await _gioHangService.UpdateSoLuongAsync(chiTietId, soLuong);
 
-            if (!result.Success)
-            {
-                TempData["ErrorMessage"] = result.Message;
-                return RedirectToAction("Index", new { voucherId });
-            }
+    if (!result.Success)
+    {
+        TempData["ErrorMessage"] = result.Message;
+        return RedirectToAction("Index", new { voucherId });
+    }
 
-            TempData["SuccessMessage"] = result.Message;
-            return RedirectToAction("Index", new { voucherId });
+    TempData["SuccessMessage"] = result.Message;
+    return RedirectToAction("Index", new { voucherId });
         }
 
         [HttpPost]
@@ -359,7 +359,7 @@ namespace FurryFriends.Web.Controllers
             var hinhThuc = await _hinhThucThanhToanService.GetByIdAsync(dto.HinhThucThanhToanId);
             _logger.LogInformation($"HinhThuc: {hinhThuc?.TenHinhThuc ?? "NULL"}");
             _logger.LogInformation($"HinhThuc ID: {hinhThuc?.HinhThucThanhToanId}");
-
+            
             // Kiểm tra nhiều cách gọi tên VNPay
             var isVnPay = hinhThuc != null && (
                 hinhThuc.TenHinhThuc.Equals("Thanh toán VNPay", StringComparison.OrdinalIgnoreCase) ||
@@ -367,9 +367,9 @@ namespace FurryFriends.Web.Controllers
                 hinhThuc.TenHinhThuc.Equals("VNPAY", StringComparison.OrdinalIgnoreCase) ||
                 hinhThuc.TenHinhThuc.Contains("VNPay", StringComparison.OrdinalIgnoreCase)
             );
-
+            
             _logger.LogInformation($"Is VNPay: {isVnPay}");
-
+            
             // Lấy tổng tiền từ giỏ hàng để kiểm tra validation
             decimal tongTien = 0;
             if (dto.VoucherId.HasValue && dto.VoucherId != Guid.Empty)
@@ -380,9 +380,9 @@ namespace FurryFriends.Web.Controllers
             {
                 tongTien = gioHang.GioHangChiTiets.Sum(x => x.ThanhTien);
             }
-
+            
             _logger.LogInformation($"Tổng tiền: {tongTien}");
-
+            
             // Validation: Không cho phép đặt hàng quá 5 triệu
             const decimal MAX_ORDER_AMOUNT = 5000000; // 5 triệu VNĐ
             if (tongTien > MAX_ORDER_AMOUNT)
@@ -391,7 +391,7 @@ namespace FurryFriends.Web.Controllers
                 TempData["Loi"] = $"Không thể đặt hàng vì tổng tiền vượt quá {MAX_ORDER_AMOUNT:N0} VNĐ. Tổng tiền hiện tại: {tongTien:N0} VNĐ.";
                 return RedirectToAction("Index", "GioHangs");
             }
-
+            
             if (isVnPay)
             {
                 _logger.LogInformation("Đang xử lý thanh toán VNPay...");
@@ -409,9 +409,9 @@ namespace FurryFriends.Web.Controllers
                 _logger.LogInformation("Đang tạo URL thanh toán VNPay...");
                 try
                 {
-                    var url = _vnPayService.CreatePaymentUrl(paymentModel, HttpContext);
+                var url = _vnPayService.CreatePaymentUrl(paymentModel, HttpContext);
                     _logger.LogInformation($"URL VNPay: {url}");
-                    return Redirect(url);
+                return Redirect(url);
                 }
                 catch (Exception ex)
                 {
