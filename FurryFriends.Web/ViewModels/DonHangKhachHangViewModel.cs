@@ -12,6 +12,7 @@ namespace FurryFriends.Web.ViewModels
         public string GhiChu { get; set; } = "";
         public string HinhThucThanhToan { get; set; } = "";
         public string DiaChiGiaoHang { get; set; } = "";
+        public string LoaiHoaDon { get; set; } = "";
         public List<DonHangChiTietViewModel> ChiTiets { get; set; } = new();
         
         // Voucher info (snapshot)

@@ -33,13 +33,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             {
                 var hoaDons = await _hoaDonService.GetAllAsync();
                 
-                // Thống kê tổng quan
-                ViewBag.TotalCount = hoaDons?.Count() ?? 0;
-                ViewBag.BanTaiQuayCount = hoaDons?.Count(h => h.LoaiHoaDon == "BanTaiQuay") ?? 0;
-                ViewBag.OnlineCount = hoaDons?.Count(h => h.LoaiHoaDon == "BanTrucTiep") ?? 0;
+                // ✅ Thống kê chỉ đếm hóa đơn đã hoàn thành (trạng thái 3 và 7)
+                var hoaDonsHoanThanh = hoaDons?.Where(h => h.TrangThai == 3 || h.TrangThai == 7).ToList() ?? new List<HoaDon>();
                 
-                // Chỉ lấy những đơn đã hoàn thành (trạng thái = 3)
-                var hoaDonsHoanThanh = hoaDons?.Where(h => h.TrangThai == 3).ToList() ?? new List<HoaDon>();
+                ViewBag.TotalCount = hoaDonsHoanThanh.Count;
+                ViewBag.BanTaiQuayCount = hoaDonsHoanThanh.Count(h => h.LoaiHoaDon == "BanTaiQuay");
+                ViewBag.OnlineCount = hoaDonsHoanThanh.Count(h => h.LoaiHoaDon == "Online");
                 
                 return View(hoaDonsHoanThanh);
             }

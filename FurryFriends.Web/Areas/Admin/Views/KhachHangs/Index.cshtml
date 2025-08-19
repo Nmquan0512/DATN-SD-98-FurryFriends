@@ -285,13 +285,17 @@
                 var rowDiem = parseInt($(table.row(dataIndex).node()).find('.diem-value').text() || '0');
                 var rowNgay = data[4];
                 var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(5)').text().trim();
+                
                 // Trạng thái
                 if (trangThai && !rowTrangThai.includes(trangThai)) return false;
+                
                 // Ngày tham gia
                 if (ngayTu && rowNgay < ngayTu) return false;
                 if (ngayDen && rowNgay > ngayDen) return false;
-                // Điểm
-                if (rowDiem !== diem) return false;
+                
+                // ✅ Điểm tích lũy - nếu giá trị là 0 thì không lọc (null)
+                if (diem > 0 && rowDiem !== diem) return false;
+                
                 return true;
             });
             $('.action-btn').on('click', function (e) {

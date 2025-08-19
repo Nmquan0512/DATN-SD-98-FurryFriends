@@ -81,6 +81,12 @@ namespace FurryFriends.Web.Services
             var response = await _httpClient.DeleteAsync($"{BasePath}/hoa-don/{hoaDonId}/voucher");
             return await ProcessResponse<HoaDonBanHangDto>(response);
         }
+
+        public async Task<HoaDonBanHangDto> CapNhatDiaChiGiaoHangAsync(Guid hoaDonId, DiaChiMoiDto diaChiMoi)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"{BasePath}/hoa-don/{hoaDonId}/dia-chi-giao-hang", diaChiMoi);
+            return await ProcessResponse<HoaDonBanHangDto>(response);
+        }
         #endregion
          
         #region Thanh toán
@@ -88,6 +94,18 @@ namespace FurryFriends.Web.Services
         {
             var response = await _httpClient.PostAsJsonAsync($"{BasePath}/hoa-don/{hoaDonId}/thanh-toan", request);
             return await ProcessResponse<HoaDonBanHangDto>(response);
+        }
+
+        public async Task<IEnumerable<HinhThucThanhToanDto>> GetHinhThucThanhToanAsync()
+        {
+            var response = await _httpClient.GetAsync("api/HinhThucThanhToan");
+            return await ProcessResponse<IEnumerable<HinhThucThanhToanDto>>(response);
+        }
+
+        public async Task<object> GetQRCodeAsync(Guid hoaDonId)
+        {
+            var response = await _httpClient.GetAsync($"{BasePath}/hoa-don/{hoaDonId}/qr-code");
+            return await ProcessResponse<object>(response);
         }
         #endregion
 

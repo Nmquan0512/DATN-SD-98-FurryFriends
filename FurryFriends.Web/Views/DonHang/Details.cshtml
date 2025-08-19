@@ -298,6 +298,20 @@
             color: #10b981;
             text-align: right;
         }
+        
+        /* ✅ CSS cho voucher và giảm giá */
+        .total-item.text-success {
+            color: #059669;
+        }
+        
+        .total-item.text-muted {
+            color: #6b7280;
+        }
+        
+        .total-item.small {
+            font-size: 0.875rem;
+        }
+        }
 
         /* Order Summary */
         .order-summary {
@@ -714,7 +728,7 @@
             try {
                 // ✅ Tối ưu hóa: Sử dụng AbortController để timeout sau 5 giây
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
                 
                 const response = await fetch(`/HoaDon/SendEmailInvoice/${hoaDonId}`, {
                     method: 'POST',
@@ -839,9 +853,21 @@
             <div class="order-header">
                 <div class="order-number">
                     Đơn hàng #@Model.HoaDonId.ToString().Substring(0, 8).ToUpper()
+                    @if (Model.LoaiHoaDon == "BanTaiQuay")
+                    {
+                        <span class="order-type-badge order-type-offline">
+                            <i class="fas fa-store me-1"></i>Khách tại quầy
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="order-type-badge order-type-online">
+                            <i class="fas fa-globe me-1"></i>Online
+                        </span>
+                    }
                 </div>
                 <div class="order-date">
-                    Đặt hàng lúc @Model.NgayTao.ToString("dd/MM/yyyy 'lúc' HH:mm")
+                    Đặt hàng lúc @Model.NgayTao.ToLocalTime().ToString("dd/MM/yyyy 'lúc' HH:mm")
                 </div>
                 <div class="status-badge @GetStatusClass(Model.TrangThai)">
                     <i class="fas fa-@GetStatusIcon(Model.TrangThai)"></i>
@@ -865,13 +891,13 @@
                     </div>
                     <div class="info-item">
                         <span class="info-label">Ngày đặt:</span>
-                        <span class="info-value">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</span>
+                        <span class="info-value">@Model.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
                     </div>
                     @if (Model.NgayNhanHang.HasValue)
                     {
                         <div class="info-item">
                             <span class="info-label">Ngày nhận:</span>
-                            <span class="info-value">@Model.NgayNhanHang.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                            <span class="info-value">@Model.NgayNhanHang.Value.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
                         </div>
                     }
                     <div class="info-item">
@@ -890,7 +916,16 @@
                     </div>
                     <div class="info-item">
                         <span class="info-label">Phương thức:</span>
-                        <span class="info-value">@Model.HinhThucThanhToan</span>
+                        <span class="info-value">
+                            @if (Model.LoaiHoaDon == "BanTaiQuay")
+                            {
+                                <span class="text-success fw-semibold">Đã thanh toán</span>
+                            }
+                            else
+                            {
+                                @Model.HinhThucThanhToan
+                            }
+                        </span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">Địa chỉ:</span>
@@ -932,7 +967,7 @@
                         </div>
                         <div class="timeline-content">
                             <div class="timeline-title">Đơn hàng được tạo</div>
-                            <div class="timeline-time">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")</div>
+                            <div class="timeline-time">@Model.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</div>
                             <div class="timeline-description">Đơn hàng của bạn đã được tạo thành công</div>
                         </div>
                     </div>
@@ -970,7 +1005,17 @@
                                 </div>
                                 <div class="timeline-content">
                                     <div class="timeline-title">Đơn hàng được duyệt</div>
-                                    <div class="timeline-time">@Model.NgayTao.AddMinutes(30).ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                    <div class="timeline-time">
+                                        @* ✅ Đối với đơn hàng offline, ngày duyệt = ngày tạo *@
+                                        @if (Model.LoaiHoaDon == "BanTaiQuay")
+                                        {
+                                            @Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")
+                                        }
+                                        else
+                                        {
+                                            @Model.NgayTao.AddMinutes(30).ToString("dd/MM/yyyy HH:mm:ss")
+                                        }
+                                    </div>
                                     <div class="timeline-description">Đơn hàng đã được xác nhận và đang được xử lý</div>
                                 </div>
                             </div>
@@ -984,7 +1029,17 @@
                                 </div>
                                 <div class="timeline-content">
                                     <div class="timeline-title">Đơn hàng đang giao</div>
-                                    <div class="timeline-time">@Model.NgayTao.AddHours(2).ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                    <div class="timeline-time">
+                                        @* ✅ Đối với đơn hàng offline, vẫn theo giờ thao tác thực tế *@
+                                        @if (Model.LoaiHoaDon == "BanTaiQuay")
+                                        {
+                                            @Model.NgayTao.AddHours(1).ToString("dd/MM/yyyy HH:mm:ss")
+                                        }
+                                        else
+                                        {
+                                            @Model.NgayTao.AddHours(2).ToString("dd/MM/yyyy HH:mm:ss")
+                                        }
+                                    </div>
                                     <div class="timeline-description">Đơn hàng đang được vận chuyển đến bạn</div>
                                 </div>
                             </div>
@@ -998,7 +1053,17 @@
                                 </div>
                                 <div class="timeline-content">
                                     <div class="timeline-title">Đơn hàng đã giao</div>
-                                    <div class="timeline-time">@Model.NgayTao.AddHours(4).ToString("dd/MM/yyyy HH:mm:ss")</div>
+                                    <div class="timeline-time">
+                                        @* ✅ Đối với đơn hàng offline, vẫn theo giờ thao tác thực tế *@
+                                        @if (Model.LoaiHoaDon == "BanTaiQuay")
+                                        {
+                                            @Model.NgayTao.AddHours(2).ToString("dd/MM/yyyy HH:mm:ss")
+                                        }
+                                        else
+                                        {
+                                            @Model.NgayTao.AddHours(4).ToString("dd/MM/yyyy HH:mm:ss")
+                                        }
+                                    </div>
                                     <div class="timeline-description">Đơn hàng đã được giao thành công</div>
                                 </div>
                             </div>
@@ -1135,12 +1200,28 @@
                                 </div>
                                 @if (Model.VoucherDiscount.HasValue && Model.VoucherDiscount > 0)
                                 {
-                                    <div class="total-item">
-                                        <span>Giảm giá:</span>
+                                    <div class="total-item text-success">
+                                        <span>
+                                            <i class="fas fa-ticket-alt me-1"></i>
+                                            Giảm giá:
+                                        </span>
                                         <span>-@Model.VoucherDiscount.Value.ToString("N0") VNĐ</span>
                                     </div>
+                                    @if (!string.IsNullOrEmpty(Model.VoucherCode))
+                                    {
+                                        <div class="total-item text-muted small">
+                                            <span>Mã voucher:</span>
+                                            <span>@Model.VoucherCode</span>
+                                        </div>
+                                    }
                                 }
-                                @{ var _discount = Model.VoucherDiscount ?? 0m; var _phiShip = Model.TongTienSauKhiGiam - (Model.TongTien - _discount); }
+                                @{ 
+                                    var _discount = Model.VoucherDiscount ?? 0m; 
+                                    // ✅ Tính toán phí ship đúng: Tổng thanh toán - (Tổng tiền hàng - Giảm giá)
+                                    var _phiShip = Model.TongTienSauKhiGiam - (Model.TongTien - _discount);
+                                    // ✅ Đảm bảo phí ship không âm và không vượt quá 30k
+                                    _phiShip = Math.Max(0, Math.Min(30000, _phiShip));
+                                }
                                 <div class="total-item">
                                     <span>Phí vận chuyển:</span>
                                     <span>@_phiShip.ToString("N0") VNĐ</span>

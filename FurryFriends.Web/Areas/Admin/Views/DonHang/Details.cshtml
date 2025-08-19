@@ -6,6 +6,47 @@
 
 @section Styles {
     <style>
+        /* ✅ Đảm bảo layout admin hiển thị đúng */
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background: #1e293b;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 60px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 20px;
+            background: #f8fafc;
+            min-height: calc(100vh - 60px);
+        }
+        
+        @@media (max-width: 1024px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+        
         .order-detail-container {
             background: white;
             border-radius: 16px;
@@ -149,27 +190,38 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 0;
+            padding: 0.5rem 0;
             border-bottom: 1px solid #e2e8f0;
         }
-
+        
         .price-item:last-child {
             border-bottom: none;
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: #059669;
-            padding-top: 1rem;
-            border-top: 2px solid #cbd5e1;
         }
-
+        
+        .price-item.total {
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: #1e293b;
+            border-top: 2px solid #cbd5e1;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .price-item.text-success {
+            color: #059669;
+        }
+        
+        .price-item.text-muted {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
         .price-label {
-            color: #64748b;
             font-weight: 500;
         }
-
+        
         .price-value {
             font-weight: 600;
-            color: #1e293b;
         }
 
         .total-amount {
@@ -474,7 +526,7 @@
         <div class="order-header">
             <div>
                 <div class="order-id">Đơn hàng #@Model.HoaDonId.ToString().Substring(0, 8).ToUpper()</div>
-                <div class="order-date">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</div>
+                <div class="order-date">@Model.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
             </div>
             <div class="status-badge @GetStatusClass(Model.TrangThai)">
                 @GetStatusText(Model.TrangThai)
@@ -518,7 +570,7 @@
                 </div>
                 <div class="info-item">
                     <div class="info-label">Ngày tạo</div>
-                    <div class="info-value">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")</div>
+                    <div class="info-value">@Model.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Trạng thái</div>
@@ -530,7 +582,16 @@
                 </div>
                 <div class="info-item">
                     <div class="info-label">Phương thức thanh toán</div>
-                    <div class="info-value">@(Model.HinhThucThanhToan?.TenHinhThuc ?? "N/A")</div>
+                    <div class="info-value">
+                        @if (Model.LoaiHoaDon == "BanTaiQuay")
+                        {
+                            <span class="text-success fw-semibold">Đã thanh toán</span>
+                        }
+                        else
+                        {
+                            @(Model.HinhThucThanhToan?.TenHinhThuc ?? "N/A")
+                        }
+                    </div>
                 </div>
                 @if (Model.ThoiGianThayDoiTrangThai.HasValue)
                 {
@@ -554,7 +615,7 @@
                     </div>
                     <div class="timeline-content">
                         <div class="timeline-title">Đơn hàng được tạo</div>
-                        <div class="timeline-time">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")</div>
+                        <div class="timeline-time">@Model.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</div>
                     </div>
                 </div>
                 
@@ -599,7 +660,15 @@
                                     }
                                     else
                                     {
-                                        @Model.NgayTao.AddMinutes(30).ToString("dd/MM/yyyy HH:mm:ss")
+                                        @* ✅ Đối với đơn hàng offline, ngày duyệt = ngày tạo *@
+                                        @if (Model.LoaiHoaDon == "BanTaiQuay")
+                                        {
+                                            @Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")
+                                        }
+                                        else
+                                        {
+                                            @Model.NgayTao.AddMinutes(30).ToString("dd/MM/yyyy HH:mm:ss")
+                                        }
                                     }
                                 </div>
                         </div>
@@ -622,7 +691,15 @@
                                     }
                                     else
                                     {
-                                        @Model.NgayTao.AddHours(2).ToString("dd/MM/yyyy HH:mm:ss")
+                                        @* ✅ Đối với đơn hàng offline, vẫn theo giờ thao tác thực tế *@
+                                        @if (Model.LoaiHoaDon == "BanTaiQuay")
+                                        {
+                                            @Model.NgayTao.AddHours(1).ToString("dd/MM/yyyy HH:mm:ss")
+                                        }
+                                        else
+                                        {
+                                            @Model.NgayTao.AddHours(2).ToString("dd/MM/yyyy HH:mm:ss")
+                                        }
                                     }
                                 </div>
                         </div>
@@ -645,7 +722,15 @@
                                     }
                                     else
                                     {
-                                        @Model.NgayTao.AddHours(4).ToString("dd/MM/yyyy HH:mm:ss")
+                                        @* ✅ Đối với đơn hàng offline, vẫn theo giờ thao tác thực tế *@
+                                        @if (Model.LoaiHoaDon == "BanTaiQuay")
+                                        {
+                                            @Model.NgayTao.AddHours(2).ToString("dd/MM/yyyy HH:mm:ss")
+                                        }
+                                        else
+                                        {
+                                            @Model.NgayTao.AddHours(4).ToString("dd/MM/yyyy HH:mm:ss")
+                                        }
                                     }
                                 </div>
                         </div>
@@ -747,11 +832,43 @@
                         <span class="price-label">Tổng tiền hàng:</span>
                         <span class="price-value">@Model.TongTien.ToString("N0") VNĐ</span>
                     </div>
-                    <div class="price-item">
-                        <span class="price-label">Phí vận chuyển:</span>
-                        <span class="price-value">30,000 VNĐ</span>
-                    </div>
-                    <div class="price-item">
+                    
+                    @* ✅ Hiển thị phí vận chuyển chỉ khi có giao hàng *@
+                    @if (!string.IsNullOrEmpty(Model.DiaChiGiaoHangLucMua))
+                    {
+                        <div class="price-item">
+                            <span class="price-label">Phí vận chuyển:</span>
+                            <span class="price-value">30,000 VNĐ</span>
+                        </div>
+                    }
+                    
+                    @* ✅ Hiển thị voucher/giảm giá nếu có *@
+                    @if (!string.IsNullOrEmpty(Model.ThongTinVoucherLucMua))
+                    {
+                        <div class="price-item text-success">
+                            <span class="price-label">
+                                <i class="fas fa-ticket-alt me-1"></i>
+                                Voucher áp dụng:
+                            </span>
+                            <span class="price-value">-@((Model.TongTien + 30000 - Model.TongTienSauKhiGiam).ToString("N0")) VNĐ</span>
+                        </div>
+                        <div class="price-item text-muted small">
+                            <span class="price-label">Chi tiết:</span>
+                            <span class="price-value">@Model.ThongTinVoucherLucMua</span>
+                        </div>
+                    }
+                    else if (Model.Voucher != null)
+                    {
+                        <div class="price-item text-success">
+                            <span class="price-label">
+                                <i class="fas fa-ticket-alt me-1"></i>
+                                Giảm giá (@Model.Voucher.TenVoucher):
+                            </span>
+                            <span class="price-value">-@((Model.TongTien + 30000 - Model.TongTienSauKhiGiam).ToString("N0")) VNĐ</span>
+                        </div>
+                    }
+                    
+                    <div class="price-item total">
                         <span class="price-label">Tổng thanh toán:</span>
                         <span class="price-value">@Model.TongTienSauKhiGiam.ToString("N0") VNĐ</span>
                     </div>

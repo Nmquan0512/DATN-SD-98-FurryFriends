@@ -157,13 +157,22 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     values[i] = 0;
                 }
                 
-                // Tính doanh thu theo từng giờ
-                foreach (var order in allOrders.Where(h => h.NgayTao.Date == currentDate))
+                // ✅ Tính doanh thu theo từng giờ - chỉ tính từ đơn hàng có trạng thái 3 (Đã giao) và 7 (Đã thanh toán)
+                // ✅ Doanh thu = TongTienSauKhiGiam - PhiShip (nếu có)
+                foreach (var order in allOrders.Where(h => h.NgayTao.Date == currentDate && (h.TrangThai == 3 || h.TrangThai == 7)))
                 {
                     var hour = order.NgayTao.Hour;
                     if (hour >= 0 && hour < 24)
                     {
-                        values[hour] += order.TongTienSauKhiGiam;
+                        // Tính phí ship nếu có
+                        decimal phiShip = 0;
+                        if (order.LoaiHoaDon == "GiaoHang" || !string.IsNullOrEmpty(order.DiaChiGiaoHangLucMua))
+                        {
+                            // Logic freeship: Đơn hàng trên 500k được freeship
+                            var tongTienHang = order.TongTien - (order.TongTien - order.TongTienSauKhiGiam); // Tổng tiền sau khi giảm voucher
+                            phiShip = tongTienHang >= 500000m ? 0m : 30000m;
+                        }
+                        values[hour] += order.TongTienSauKhiGiam - phiShip;
                     }
                 }
                 
@@ -203,13 +212,22 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     values[i] = 0;
                 }
                 
-                // Tính doanh thu theo từng ngày trong tuần
-                foreach (var order in allOrders.Where(h => h.NgayTao.Date >= startOfWeek && h.NgayTao.Date < startOfWeek.AddDays(7)))
+                // ✅ Tính doanh thu theo từng ngày trong tuần - chỉ tính từ đơn hàng có trạng thái 3 (Đã giao) và 7 (Đã thanh toán)
+                // ✅ Doanh thu = TongTienSauKhiGiam - PhiShip (nếu có)
+                foreach (var order in allOrders.Where(h => h.NgayTao.Date >= startOfWeek && h.NgayTao.Date < startOfWeek.AddDays(7) && (h.TrangThai == 3 || h.TrangThai == 7)))
                 {
                     var dayOfWeek = (int)order.NgayTao.DayOfWeek;
                     if (dayOfWeek >= 0 && dayOfWeek < 7)
                     {
-                        values[dayOfWeek] += order.TongTienSauKhiGiam;
+                        // Tính phí ship nếu có
+                        decimal phiShip = 0;
+                        if (order.LoaiHoaDon == "GiaoHang" || !string.IsNullOrEmpty(order.DiaChiGiaoHangLucMua))
+                        {
+                            // Logic freeship: Đơn hàng trên 500k được freeship
+                            var tongTienHang = order.TongTien - (order.TongTien - order.TongTienSauKhiGiam); // Tổng tiền sau khi giảm voucher
+                            phiShip = tongTienHang >= 500000m ? 0m : 30000m;
+                        }
+                        values[dayOfWeek] += order.TongTienSauKhiGiam - phiShip;
                     }
                 }
                 
@@ -248,13 +266,22 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     values[i] = 0;
                 }
                 
-                // Tính doanh thu theo từng quý
-                foreach (var order in allOrders.Where(h => h.NgayTao.Year == currentYear))
+                // ✅ Tính doanh thu theo từng quý - chỉ tính từ đơn hàng có trạng thái 3 (Đã giao) và 7 (Đã thanh toán)
+                // ✅ Doanh thu = TongTienSauKhiGiam - PhiShip (nếu có)
+                foreach (var order in allOrders.Where(h => h.NgayTao.Year == currentYear && (h.TrangThai == 3 || h.TrangThai == 7)))
                 {
                     var quarter = (order.NgayTao.Month - 1) / 3; // Tính quý (0-3)
                     if (quarter >= 0 && quarter < 4)
                     {
-                        values[quarter] += order.TongTienSauKhiGiam;
+                        // Tính phí ship nếu có
+                        decimal phiShip = 0;
+                        if (order.LoaiHoaDon == "GiaoHang" || !string.IsNullOrEmpty(order.DiaChiGiaoHangLucMua))
+                        {
+                            // Logic freeship: Đơn hàng trên 500k được freeship
+                            var tongTienHang = order.TongTien - (order.TongTien - order.TongTienSauKhiGiam); // Tổng tiền sau khi giảm voucher
+                            phiShip = tongTienHang >= 500000m ? 0m : 30000m;
+                        }
+                        values[quarter] += order.TongTienSauKhiGiam - phiShip;
                     }
                 }
                 
@@ -295,13 +322,22 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     values[i] = 0;
                 }
                 
-                // Tính doanh thu theo từng năm
-                foreach (var order in allOrders)
+                // ✅ Tính doanh thu theo từng năm - chỉ tính từ đơn hàng có trạng thái 3 (Đã giao) và 7 (Đã thanh toán)
+                // ✅ Doanh thu = TongTienSauKhiGiam - PhiShip (nếu có)
+                foreach (var order in allOrders.Where(h => h.TrangThai == 3 || h.TrangThai == 7))
                 {
                     var yearIndex = order.NgayTao.Year - (currentYear - 4);
                     if (yearIndex >= 0 && yearIndex < 5)
                     {
-                        values[yearIndex] += order.TongTienSauKhiGiam;
+                        // Tính phí ship nếu có
+                        decimal phiShip = 0;
+                        if (order.LoaiHoaDon == "GiaoHang" || !string.IsNullOrEmpty(order.DiaChiGiaoHangLucMua))
+                        {
+                            // Logic freeship: Đơn hàng trên 500k được freeship
+                            var tongTienHang = order.TongTien - (order.TongTien - order.TongTienSauKhiGiam); // Tổng tiền sau khi giảm voucher
+                            phiShip = tongTienHang >= 500000m ? 0m : 30000m;
+                        }
+                        values[yearIndex] += order.TongTienSauKhiGiam - phiShip;
                     }
                 }
                 

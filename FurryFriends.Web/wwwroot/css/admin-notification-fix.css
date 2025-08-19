@@ -4,9 +4,9 @@
     display: none !important;
 }
 
-/* Ẩn thông báo sau 3 giây */
-.alert-success,
-.alert-info {
+/* Ẩn thông báo sau 3 giây - chỉ áp dụng cho thông báo thực sự, không phải thông tin khách hàng */
+.alert-success:not(.customer-info),
+.alert-info:not(.customer-info) {
     animation: fadeOut 3s ease-in-out forwards;
 }
 
@@ -14,6 +14,14 @@
     0% { opacity: 1; }
     70% { opacity: 1; }
     100% { opacity: 0; display: none; }
+}
+
+/* Đảm bảo thông tin khách hàng không bị ẩn */
+.alert.customer-info {
+    animation: none !important;
+    opacity: 1 !important;
+    display: block !important;
+    visibility: visible !important;
 }
 
 /* Ẩn thông báo khi có class hide-notification */

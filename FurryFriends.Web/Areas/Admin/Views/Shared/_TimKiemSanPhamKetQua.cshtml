@@ -2,6 +2,12 @@
 
 @if (Model != null && Model.Any())
 {
+    <!-- ✅ Thông báo về chính sách giá -->
+    <div class="alert alert-info alert-sm mb-3" style="font-size: 0.875rem;">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Chính sách giá:</strong> Bán hàng offline sử dụng giá gốc. Giảm giá chỉ áp dụng khi mua online để khuyến khích thương mại điện tử.
+    </div>
+    
     <div class="list-group list-group-flush">
         @foreach (var item in Model)
         {
@@ -21,17 +27,10 @@
                         <small>Tồn kho: <strong>@item.SoLuongTon</strong></small>
                     </div>
 
-                    @* <<< SỬA LẠI LOGIC HIỂN THỊ GIÁ CHO ĐÚNG >>> *@
+                    @* <<< BÁN HÀNG OFFLINE LUÔN HIỂN THỊ GIÁ GỐC >>> *@
                     <div class="text-end">
-                        @if (item.GiaBan < item.Gia)
-                        {
-                            <h6 class="text-danger fw-bold mb-0">@item.GiaBan.ToString("N0") ₫</h6>
-                            <small class="text-muted text-decoration-line-through">@item.Gia.ToString("N0") ₫</small>
-                        }
-                        else
-                        {
-                            <h6 class="text-success fw-bold mb-0">@item.Gia.ToString("N0") ₫</h6>
-                        }
+                        <h6 class="text-success fw-bold mb-0">@item.Gia.ToString("N0") ₫</h6>
+                        <small class="text-muted">Giá gốc</small>
                     </div>
                 </div>
             </a>

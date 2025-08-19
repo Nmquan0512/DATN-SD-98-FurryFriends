@@ -241,6 +241,20 @@ namespace FurryFriends.Web.Controllers
                 ModelState.AddModelError("HinhThucThanhToanId", "Vui lòng chọn hình thức thanh toán.");
                 return View(dto);
             }
+            
+            // ✅ Kiểm tra hình thức thanh toán có hợp lệ không
+            var allowedPaymentMethodIds = new[]
+            {
+                Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"), // Thanh toán khi nhận hàng
+                Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")  // Thanh toán VNPay
+            };
+            
+            if (!allowedPaymentMethodIds.Contains(dto.HinhThucThanhToanId))
+            {
+                ViewBag.HinhThucThanhToanList = await _hinhThucThanhToanService.GetAllAsync();
+                ModelState.AddModelError("HinhThucThanhToanId", "Chỉ hỗ trợ thanh toán khi nhận hàng hoặc thanh toán VNPay!");
+                return View(dto);
+            }
             // 🔍 Kiểm tra voucher nếu có
             if (dto.VoucherId.HasValue && dto.VoucherId != Guid.Empty)
             {

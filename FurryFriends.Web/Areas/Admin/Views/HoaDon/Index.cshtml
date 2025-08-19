@@ -49,7 +49,7 @@
                 <select id="filterLoaiHoaDon" class="form-select">
                     <option value="">Tất cả</option>
                     <option value="BanTaiQuay">Bán tại quầy</option>
-                    <option value="BanTrucTiep">Bán trực tiếp</option>
+                    <option value="Online">Online</option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -102,7 +102,7 @@
                         <div>@item.TenCuaKhachHang</div>
                         <small class="text-muted">@item.SdtCuaKhachHang</small>
                     </td>
-                    <td>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
                     <td>@item.TongTien.ToString("N0")đ</td>
                     <td>
                         @if (item.Voucher != null)
@@ -133,6 +133,9 @@
                             case 4:
                                 <span class="badge bg-danger">Đã hủy</span>
                                 break;
+                            case 7:
+                                <span class="badge bg-success">Hoàn thành</span>
+                                break;
                             default:
                                 <span class="badge bg-secondary">Không xác định</span>
                                 break;
@@ -142,7 +145,7 @@
                         @(item.LoaiHoaDon == "BanTaiQuay" ? (item.NhanVien?.HoVaTen ?? "-") : "Được hệ thống tự động tạo")
                     </td>
                     <td>
-                        @(item.LoaiHoaDon == "BanTaiQuay" ? "Bán tại quầy" : "Bán trực tiếp")
+                        @(item.LoaiHoaDon == "BanTaiQuay" ? "Bán tại quầy" : "Online")
                     </td>
                     <td>
                         <div class="d-flex gap-2">
@@ -648,7 +651,7 @@
                     }
                     
                                     // Lọc theo loại hóa đơn
-                if (loaiHoaDon && ((loaiHoaDon === 'BanTaiQuay' && rowLoaiHoaDon !== 'Bán tại quầy') || (loaiHoaDon === 'BanTrucTiep' && rowLoaiHoaDon !== 'Bán trực tiếp'))) {
+                if (loaiHoaDon && ((loaiHoaDon === 'BanTaiQuay' && rowLoaiHoaDon !== 'Bán tại quầy') || (loaiHoaDon === 'Online' && rowLoaiHoaDon !== 'Online'))) {
                     return false;
                 }
                     

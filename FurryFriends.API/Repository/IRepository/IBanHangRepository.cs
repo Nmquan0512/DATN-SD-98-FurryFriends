@@ -22,20 +22,26 @@ namespace FurryFriends.API.Repository.IRepository
         // Voucher & Khách hàng
         Task<HoaDonBanHangDto> ApDungVoucherAsync(Guid hoaDonId, string maVoucher);
         Task<HoaDonBanHangDto> GoBoVoucherAsync(Guid hoaDonId);
-        Task<HoaDonBanHangDto> GanKhachHangAsync(Guid hoaDonId, Guid khachHangId);
+        Task<HoaDonBanHangDto> GanKhachHangAsync(Guid hoaDonId, Guid? khachHangId);
 
         // Thanh toán
         Task<HoaDonBanHangDto> ThanhToanHoaDonAsync(ThanhToanRequest request);
 
         // Tìm kiếm
         Task<IEnumerable<SanPhamBanHangDto>> TimKiemSanPhamAsync(string keyword);
-        Task<IEnumerable<KhachHangDto>> TimKiemKhachHangAsync(string keyword);
+        Task<IEnumerable<KhachHangDto>> TimKiemKhachHangAsync(string? keyword);
         Task<IEnumerable<VoucherDto>> TimKiemVoucherHopLeAsync(Guid hoaDonId); // Tìm voucher áp dụng được cho hóa đơn
 
         // Khách hàng
 
         Task<IEnumerable<SanPhamBanHangDto>> GetSuggestedProductsAsync(int count);
         Task<KhachHangDto> TaoKhachHangMoiAsync(TaoKhachHangRequest request);
+        
+        // ✅ Cập nhật địa chỉ giao hàng
+        Task<HoaDonBanHangDto> CapNhatDiaChiGiaoHangAsync(Guid hoaDonId, DiaChiMoiDto diaChiMoi);
+        
+        // ✅ Sửa dữ liệu hóa đơn
+        Task FixInvoiceDataAsync();
 
     }
 }

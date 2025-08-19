@@ -60,13 +60,46 @@ namespace FurryFriends.API.Services
         #region Quản lý sản phẩm
         public async Task<HoaDonBanHangDto> ThemSanPhamVaoHoaDonAsync(ThemSanPhamVaoHoaDonRequest request)
         {
-            if (request == null) throw new ArgumentNullException(nameof(request));
-            if (request.HoaDonId == Guid.Empty) throw new ArgumentException("ID hóa đơn không hợp lệ.", nameof(request.HoaDonId));
-            if (request.SanPhamChiTietId == Guid.Empty) throw new ArgumentException("ID sản phẩm chi tiết không hợp lệ.", nameof(request.SanPhamChiTietId));
-            if (request.SoLuong <= 0) throw new ArgumentOutOfRangeException(nameof(request.SoLuong), "Số lượng phải lớn hơn 0.");
+            try
+            {
+                _logger.LogInformation("Service: Bắt đầu thêm sản phẩm vào hóa đơn. Request: {@Request}", request);
+                
+                if (request == null) 
+                {
+                    _logger.LogError("Service: Request null");
+                    throw new ArgumentNullException(nameof(request));
+                }
+                
+                if (request.HoaDonId == Guid.Empty) 
+                {
+                    _logger.LogError("Service: HoaDonId empty");
+                    throw new ArgumentException("ID hóa đơn không hợp lệ.", nameof(request.HoaDonId));
+                }
+                
+                if (request.SanPhamChiTietId == Guid.Empty) 
+                {
+                    _logger.LogError("Service: SanPhamChiTietId empty");
+                    throw new ArgumentException("ID sản phẩm chi tiết không hợp lệ.", nameof(request.SanPhamChiTietId));
+                }
+                
+                if (request.SoLuong <= 0) 
+                {
+                    _logger.LogError("Service: SoLuong <= 0: {SoLuong}", request.SoLuong);
+                    throw new ArgumentOutOfRangeException(nameof(request.SoLuong), "Số lượng phải lớn hơn 0.");
+                }
 
-            _logger.LogInformation($"Thêm {request.SoLuong} sản phẩm {request.SanPhamChiTietId} vào hóa đơn {request.HoaDonId}.");
-            return await _banHangRepository.ThemSanPhamVaoHoaDonAsync(request);
+                _logger.LogInformation("Service: Gọi repository với request hợp lệ");
+                var result = await _banHangRepository.ThemSanPhamVaoHoaDonAsync(request);
+                
+                _logger.LogInformation("Service: Thêm sản phẩm thành công. Kết quả: {@Result}", result);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Service: Lỗi khi thêm sản phẩm {SanPhamChiTietId} vào hóa đơn {HoaDonId}", 
+                    request?.SanPhamChiTietId, request?.HoaDonId);
+                throw;
+            }
         }
 
         public async Task<HoaDonBanHangDto> CapNhatSoLuongSanPhamAsync(Guid hoaDonId, Guid sanPhamChiTietId, int soLuongMoi)
@@ -104,12 +137,22 @@ namespace FurryFriends.API.Services
             return await _banHangRepository.GoBoVoucherAsync(hoaDonId);
         }
 
-        public async Task<HoaDonBanHangDto> GanKhachHangAsync(Guid hoaDonId, Guid khachHangId)
+        public async Task<HoaDonBanHangDto> GanKhachHangAsync(Guid hoaDonId, Guid? khachHangId)
         {
             if (hoaDonId == Guid.Empty) throw new ArgumentException("ID hóa đơn không hợp lệ.", nameof(hoaDonId));
-            if (khachHangId == Guid.Empty) throw new ArgumentException("ID khách hàng không hợp lệ.", nameof(khachHangId));
+            
+            if (khachHangId.HasValue && khachHangId.Value == Guid.Empty) 
+                throw new ArgumentException("ID khách hàng không hợp lệ.", nameof(khachHangId));
 
-            _logger.LogInformation($"Gán khách hàng {khachHangId} cho hóa đơn {hoaDonId}.");
+            if (khachHangId.HasValue)
+            {
+                _logger.LogInformation($"Gán khách hàng {khachHangId.Value} cho hóa đơn {hoaDonId}.");
+            }
+            else
+            {
+                _logger.LogInformation($"Chuyển hóa đơn {hoaDonId} về khách lẻ.");
+            }
+            
             return await _banHangRepository.GanKhachHangAsync(hoaDonId, khachHangId);
         }
         #endregion
@@ -134,9 +177,9 @@ namespace FurryFriends.API.Services
             return await _banHangRepository.TimKiemSanPhamAsync(keyword);
         }
 
-        public async Task<IEnumerable<KhachHangDto>> TimKiemKhachHangAsync(string keyword)
+        public async Task<IEnumerable<KhachHangDto>> TimKiemKhachHangAsync(string? keyword)
         {
-            _logger.LogInformation($"Tìm kiếm khách hàng với từ khóa: '{keyword}'.");
+            _logger.LogInformation($"Tìm kiếm khách hàng với từ khóa: '{keyword ?? "null"}'.");
             return await _banHangRepository.TimKiemKhachHangAsync(keyword);
         }
 
@@ -145,6 +188,16 @@ namespace FurryFriends.API.Services
             if (hoaDonId == Guid.Empty) throw new ArgumentException("ID hóa đơn không hợp lệ.", nameof(hoaDonId));
             _logger.LogInformation($"Tìm kiếm voucher hợp lệ cho hóa đơn {hoaDonId}.");
             return await _banHangRepository.TimKiemVoucherHopLeAsync(hoaDonId);
+        }
+
+        public async Task<HoaDonBanHangDto> CapNhatDiaChiGiaoHangAsync(Guid hoaDonId, DiaChiMoiDto diaChiMoi)
+        {
+            if (diaChiMoi == null) throw new ArgumentNullException(nameof(diaChiMoi));
+            if (string.IsNullOrWhiteSpace(diaChiMoi.TenNguoiNhan))
+                throw new ArgumentException("Tên người nhận không được để trống.", nameof(diaChiMoi.TenNguoiNhan));
+
+            _logger.LogInformation("Bắt đầu cập nhật địa chỉ giao hàng cho hóa đơn: {HoaDonId}", hoaDonId);
+            return await _banHangRepository.CapNhatDiaChiGiaoHangAsync(hoaDonId, diaChiMoi);
         }
         #endregion
 
@@ -171,6 +224,11 @@ namespace FurryFriends.API.Services
 
             _logger.LogInformation($"Tạo khách hàng mới với SĐT: {request.SDT}.");
             return await _banHangRepository.TaoKhachHangMoiAsync(request);
+        }
+
+        public async Task FixInvoiceDataAsync()
+        {
+            await _banHangRepository.FixInvoiceDataAsync();
         }
         #endregion
     }

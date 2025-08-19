@@ -110,8 +110,10 @@
                     }
 
                     <div id="customerInfo">
-                        <p><strong>Tên:</strong> @Model.KhachHang.TenKhachHang</p>
-                        <p><strong>SĐT:</strong> @(Model.KhachHang.SDT ?? "N/A")</p>
+                        <!-- ✅ Hiển thị thông tin từ snapshot thay vì navigation property -->
+                        <p><strong>Tên:</strong> @(Model.TenCuaKhachHang ?? Model.KhachHang?.TenKhachHang ?? "N/A")</p>
+                        <p><strong>SĐT:</strong> @(Model.SdtCuaKhachHang ?? Model.KhachHang?.SDT ?? "N/A")</p>
+                        <p><strong>Email:</strong> @(Model.EmailCuaKhachHang ?? Model.KhachHang?.Email ?? "N/A")</p>
                     </div>
 
                     @if (isEditable)

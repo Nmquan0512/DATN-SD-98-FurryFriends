@@ -30,6 +30,7 @@ namespace FurryFriends.API.Repository
                     .Include(h => h.Voucher)
                     .Include(h => h.HinhThucThanhToan)
                     .Include(h => h.DiaChiGiaoHang) // ✅ Include địa chỉ giao hàng
+                    .OrderByDescending(h => h.NgayTao) // ✅ Sắp xếp theo thời gian gần nhất
                     .AsNoTracking() // Tối ưu performance
                     .ToListAsync();
 
@@ -39,6 +40,32 @@ namespace FurryFriends.API.Repository
             {
                 // Log error và trả về empty list thay vì throw exception
                 Console.WriteLine($"Error in GetHoaDonListAsync: {ex.Message}");
+                return new List<HoaDon>();
+            }
+        }
+
+        // ✅ Method mới cho quản lý đơn hàng - chỉ lấy hóa đơn trạng thái 0-5
+        public async Task<IEnumerable<HoaDon>> GetDonHangListAsync()
+        {
+            try
+            {
+                var hoaDons = await _context.HoaDons
+                    .Include(h => h.HoaDonChiTiets)
+                        .ThenInclude(ct => ct.SanPhamChiTiet)
+                    .Include(h => h.KhachHang)
+                    .Include(h => h.Voucher)
+                    .Include(h => h.HinhThucThanhToan)
+                    .Include(h => h.DiaChiGiaoHang)
+                    .Where(h => h.TrangThai >= 0 && h.TrangThai <= 5) // ✅ Chỉ lấy hóa đơn trạng thái 0-5
+                    .OrderByDescending(h => h.NgayTao) // ✅ Sắp xếp theo thời gian gần nhất
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                return hoaDons;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GetDonHangListAsync: {ex.Message}");
                 return new List<HoaDon>();
             }
         }

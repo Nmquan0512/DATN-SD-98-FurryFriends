@@ -48,6 +48,41 @@ namespace FurryFriends.Web.Services
             }
         }
 
+        // ✅ Method mới cho quản lý đơn hàng - chỉ lấy hóa đơn trạng thái 0-5
+        public async Task<IEnumerable<HoaDon>> GetDonHangListAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{BaseUrl}/don-hang");
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<IEnumerable<HoaDon>>();
+                    return result ?? new List<HoaDon>();
+                }
+                
+                // Log error details
+                var errorContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"API Error: {response.StatusCode} - {errorContent}");
+                
+                throw new Exception($"Lỗi khi lấy danh sách đơn hàng: {response.StatusCode}");
+            }
+            catch (TaskCanceledException ex)
+            {
+                Console.WriteLine($"Timeout error: {ex.Message}");
+                throw new Exception("Yêu cầu bị timeout. Vui lòng thử lại sau.");
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"HTTP request error: {ex.Message}");
+                throw new Exception("Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"General error: {ex.Message}");
+                throw new Exception($"Lỗi khi lấy danh sách đơn hàng: {ex.Message}");
+            }
+        }
+
         public async Task<HoaDon> GetHoaDonByIdAsync(Guid hoaDonId)
         {
             try
@@ -165,7 +200,8 @@ namespace FurryFriends.Web.Services
             try
             {
                 var allOrders = await GetHoaDonListAsync();
-                return allOrders.Count();
+                // ✅ Chỉ tính tổng đơn hàng có trạng thái từ 0-5
+                return allOrders.Where(h => h.TrangThai >= 0 && h.TrangThai <= 5).Count();
             }
             catch (Exception ex)
             {
@@ -182,9 +218,21 @@ namespace FurryFriends.Web.Services
                 var currentMonth = DateTime.Now.Month;
                 var currentYear = DateTime.Now.Year;
                 
+                // ✅ Chỉ tính doanh thu từ đơn hàng có trạng thái 3 (Đã giao) và 7 (Đã thanh toán)
+                // ✅ Doanh thu = TongTienSauKhiGiam - PhiShip (nếu có)
                 var monthlyRevenue = allOrders
-                    .Where(h => h.NgayTao.Month == currentMonth && h.NgayTao.Year == currentYear)
-                    .Sum(h => h.TongTienSauKhiGiam);
+                    .Where(h => h.NgayTao.Month == currentMonth && h.NgayTao.Year == currentYear && (h.TrangThai == 3 || h.TrangThai == 7))
+                    .Sum(h => {
+                        // Tính phí ship nếu có
+                        decimal phiShip = 0;
+                        if (h.LoaiHoaDon == "GiaoHang" || !string.IsNullOrEmpty(h.DiaChiGiaoHangLucMua))
+                        {
+                            // Logic freeship: Đơn hàng trên 500k được freeship
+                            var tongTienHang = h.TongTien - (h.TongTien - h.TongTienSauKhiGiam); // Tổng tiền sau khi giảm voucher
+                            phiShip = tongTienHang >= 500000m ? 0m : 30000m;
+                        }
+                        return h.TongTienSauKhiGiam - phiShip;
+                    });
                 
                 return monthlyRevenue;
             }
@@ -214,13 +262,22 @@ namespace FurryFriends.Web.Services
                     values[i] = 0;
                 }
                 
-                // Tính doanh thu theo từng tháng
-                foreach (var order in allOrders.Where(h => h.NgayTao.Year == currentYear))
+                // ✅ Tính doanh thu theo từng tháng - chỉ tính từ đơn hàng có trạng thái 3 (Đã giao) và 7 (Đã thanh toán)
+                // ✅ Doanh thu = TongTienSauKhiGiam - PhiShip (nếu có)
+                foreach (var order in allOrders.Where(h => h.NgayTao.Year == currentYear && (h.TrangThai == 3 || h.TrangThai == 7)))
                 {
                     var monthIndex = order.NgayTao.Month - 1; // Month bắt đầu từ 1, index bắt đầu từ 0
                     if (monthIndex >= 0 && monthIndex < 12)
                     {
-                        values[monthIndex] += order.TongTienSauKhiGiam;
+                        // Tính phí ship nếu có
+                        decimal phiShip = 0;
+                        if (order.LoaiHoaDon == "GiaoHang" || !string.IsNullOrEmpty(order.DiaChiGiaoHangLucMua))
+                        {
+                            // Logic freeship: Đơn hàng trên 500k được freeship
+                            var tongTienHang = order.TongTien - (order.TongTien - order.TongTienSauKhiGiam); // Tổng tiền sau khi giảm voucher
+                            phiShip = tongTienHang >= 500000m ? 0m : 30000m;
+                        }
+                        values[monthIndex] += order.TongTienSauKhiGiam - phiShip;
                     }
                 }
                 
@@ -259,8 +316,8 @@ namespace FurryFriends.Web.Services
                     values[i] = 0;
                 }
                 
-                // Tính doanh thu theo từng giờ
-                foreach (var order in allOrders.Where(h => h.NgayTao.Date == currentDate))
+                // ✅ Tính doanh thu theo từng giờ - chỉ tính từ đơn hàng có trạng thái 3 (Đã giao) và 7 (Đã thanh toán)
+                foreach (var order in allOrders.Where(h => h.NgayTao.Date == currentDate && (h.TrangThai == 3 || h.TrangThai == 7)))
                 {
                     var hour = order.NgayTao.Hour;
                     if (hour >= 0 && hour < 24)
@@ -305,8 +362,8 @@ namespace FurryFriends.Web.Services
                     values[i] = 0;
                 }
                 
-                // Tính doanh thu theo từng ngày trong tuần
-                foreach (var order in allOrders.Where(h => h.NgayTao.Date >= startOfWeek && h.NgayTao.Date < startOfWeek.AddDays(7)))
+                // ✅ Tính doanh thu theo từng ngày trong tuần - chỉ tính từ đơn hàng có trạng thái 3 (Đã giao) và 7 (Đã thanh toán)
+                foreach (var order in allOrders.Where(h => h.NgayTao.Date >= startOfWeek && h.NgayTao.Date < startOfWeek.AddDays(7) && (h.TrangThai == 3 || h.TrangThai == 7)))
                 {
                     var dayOfWeek = (int)order.NgayTao.DayOfWeek;
                     if (dayOfWeek >= 0 && dayOfWeek < 7)
@@ -343,11 +400,12 @@ namespace FurryFriends.Web.Services
                     { 1, 0 }, // Đã duyệt
                     { 2, 0 }, // Đang giao
                     { 3, 0 }, // Đã giao
-                    { 4, 0 }  // Đã hủy
+                    { 4, 0 }, // Đã hủy
+                    { 5, 0 }  // Đã thanh toán
                 };
                 
-                // Đếm số lượng đơn hàng theo từng trạng thái
-                foreach (var order in allOrders)
+                // ✅ Đếm số lượng đơn hàng theo từng trạng thái - chỉ đếm trạng thái từ 0-5
+                foreach (var order in allOrders.Where(h => h.TrangThai >= 0 && h.TrangThai <= 5))
                 {
                     if (statusCounts.ContainsKey(order.TrangThai))
                     {
@@ -355,13 +413,14 @@ namespace FurryFriends.Web.Services
                     }
                 }
                 
-                var labels = new[] { "Chờ duyệt", "Đã duyệt", "Đang giao", "Đã giao", "Đã hủy" };
+                var labels = new[] { "Chờ duyệt", "Đã duyệt", "Đang giao", "Đã giao", "Đã hủy", "Đã thanh toán" };
                 var values = new[] { 
                     statusCounts[0], 
                     statusCounts[1], 
                     statusCounts[2], 
                     statusCounts[3], 
-                    statusCounts[4] 
+                    statusCounts[4],
+                    statusCounts[5]
                 };
                 
                 return new List<object>
@@ -375,8 +434,8 @@ namespace FurryFriends.Web.Services
                 Console.WriteLine($"Error in GetOrdersByStatusAsync: {ex.Message}");
                 return new List<object>
                 {
-                    new { labels = new[] { "Chờ duyệt", "Đã duyệt", "Đang giao", "Đã giao", "Đã hủy" } },
-                    new { values = new[] { 0, 0, 0, 0, 0 } }
+                    new { labels = new[] { "Chờ duyệt", "Đã duyệt", "Đang giao", "Đã giao", "Đã hủy", "Đã thanh toán" } },
+                    new { values = new[] { 0, 0, 0, 0, 0, 0 } }
                 };
             }
         }
@@ -386,7 +445,9 @@ namespace FurryFriends.Web.Services
             try
             {
                 var allOrders = await GetHoaDonListAsync();
+                // ✅ Chỉ lấy đơn hàng có trạng thái từ 0-5
                 var recentOrders = allOrders
+                    .Where(h => h.TrangThai >= 0 && h.TrangThai <= 5)
                     .OrderByDescending(h => h.NgayTao)
                     .Take(count)
                     .Select(h => new
@@ -420,6 +481,7 @@ namespace FurryFriends.Web.Services
                 2 => "Đang giao",
                 3 => "Đã giao",
                 4 => "Đã hủy",
+                5 => "Đã thanh toán",
                 _ => "Không xác định"
             };
         }

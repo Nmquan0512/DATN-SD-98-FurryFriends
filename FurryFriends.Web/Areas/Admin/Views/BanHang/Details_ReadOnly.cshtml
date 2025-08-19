@@ -1,0 +1,167 @@
+@model FurryFriends.API.Models.DTO.BanHang.HoaDonBanHangDto
+@{
+    ViewData["Title"] = "Chi tiết Hóa Đơn";
+}
+
+<div class="container-fluid py-4">
+    <!-- Tiêu đề -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">
+            <i class="fas fa-file-invoice me-2 text-primary"></i>Chi tiết Hóa Đơn #@Model.MaHoaDon
+        </h2>
+        <div class="d-flex gap-2">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Quay lại
+            </a>
+        </div>
+    </div>
+
+    <!-- Thông báo trạng thái -->
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Hóa đơn này đã được thanh toán.</strong> Bạn chỉ có thể xem thông tin, không thể chỉnh sửa.
+    </div>
+
+    <!-- Thông tin hóa đơn -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Sản phẩm trong hóa đơn</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.ChiTietHoaDon != null && Model.ChiTietHoaDon.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Sản phẩm</th>
+                                        <th>Giá</th>
+                                        <th>Số lượng</th>
+                                        <th>Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.ChiTietHoaDon)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    @{
+                                                        string imgLink = "/images/no-image.png";
+                                                        if (!string.IsNullOrWhiteSpace(item.HinhAnh)) { 
+                                                            if (item.HinhAnh.StartsWith("http", StringComparison.OrdinalIgnoreCase)) 
+                                                                imgLink = item.HinhAnh.Replace("localhost:7102", "localhost:7289"); 
+                                                            else if (item.HinhAnh.Contains("/")) 
+                                                                imgLink = "https://localhost:7289/" + item.HinhAnh.TrimStart('/'); 
+                                                            else 
+                                                                imgLink = $"https://localhost:7289/images/{System.IO.Path.GetFileName(item.HinhAnh)}"; 
+                                                        }
+                                                    }
+                                                    <img src="@imgLink" alt="@item.TenSanPham" class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                                    <div>
+                                                        <div class="fw-bold">@item.TenSanPham</div>
+                                                        <small class="text-muted">@item.MauSac - @item.KichCo</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@item.Gia.ToString("N0") ₫</td>
+                                            <td>@item.SoLuong</td>
+                                            <td class="fw-bold">@((item.Gia * item.SoLuong).ToString("N0")) ₫</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-shopping-cart fa-3x mb-3"></i>
+                            <p>Không có sản phẩm nào trong hóa đơn</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Thông tin khách hàng -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Thông tin khách hàng</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.KhachHang != null)
+                    {
+                        <div class="alert alert-info">
+                            <strong><i class="fas fa-user-check"></i> @Model.KhachHang.TenKhachHang</strong><br/>
+                            <i class="fas fa-phone"></i> @Model.KhachHang.SDT<br/>
+                            <small class="text-muted">
+                                <i class="fas fa-envelope"></i> @Model.KhachHang.Email<br/>
+                                <i class="fas fa-star"></i> Điểm tích lũy: @Model.KhachHang.DiemTichLuy
+                            </small>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <i class="fas fa-user-clock"></i> Khách lẻ
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Thông tin thanh toán -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-credit-card me-2"></i>Thông tin thanh toán</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-6 fw-normal">Trạng thái</dt>
+                        <dd class="col-6 text-end">
+                            <span class="badge bg-success">@Model.TrangThai</span>
+                        </dd>
+                        <dt class="col-6 fw-normal">Ngày tạo</dt>
+                        <dd class="col-6 text-end">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</dd>
+                        @if (Model.HinhThucThanhToan != null)
+                        {
+                            <dt class="col-6 fw-normal">Phương thức</dt>
+                            <dd class="col-6 text-end">@Model.HinhThucThanhToan.TenHinhThuc</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Tổng kết -->
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-calculator me-2"></i>Tổng kết</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-6 fw-normal">Tổng tiền hàng</dt>
+                        <dd class="col-6 text-end">@Model.TongTien.ToString("N0") ₫</dd>
+                        @if (!string.IsNullOrEmpty(Model.LoaiHoaDon) && Model.LoaiHoaDon == "GiaoHang")
+                        {
+                            <dt class="col-6 fw-normal">Phí giao hàng</dt>
+                            <dd class="col-6 text-end">30,000 ₫</dd>
+                        }
+                        @if (Model.TienGiam > 0)
+                        {
+                            <dt class="col-6 fw-normal text-danger">Giảm giá</dt>
+                            <dd class="col-6 text-end text-danger">- @Model.TienGiam.ToString("N0") ₫</dd>
+                        }
+                    </dl>
+                    <hr class="my-3"/>
+                    <dl class="row align-items-center">
+                        <dt class="col-5 fs-5">THÀNH TIỀN</dt>
+                        <dd class="col-7 text-end fs-4 fw-bold text-success">@Model.ThanhTien.ToString("N0") ₫</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -95,9 +95,21 @@
                         <div class="order-header">
                             <div class="order-id">
                                 Đơn hàng #@order.HoaDonId.ToString().Substring(0, 8).ToUpper()
+                                @if (order.LoaiHoaDon == "BanTaiQuay")
+                                {
+                                    <span class="order-type-badge order-type-offline">
+                                        <i class="fas fa-store me-1"></i>Khách tại quầy
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="order-type-badge order-type-online">
+                                        <i class="fas fa-globe me-1"></i>Online
+                                    </span>
+                                }
                             </div>
                             <div class="order-date">
-                                @order.NgayTao.ToString("dd/MM/yyyy HH:mm")
+                                @order.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
                             </div>
                             <div class="order-status @GetStatusClass(order.TrangThai)">
                                 @order.TrangThaiText
@@ -114,7 +126,16 @@
                                 <div class="summary-item">
                                     <i class="fas fa-credit-card"></i>
                                     <div class="summary-label">Thanh toán</div>
-                                    <div class="summary-value">@order.HinhThucThanhToan</div>
+                                    <div class="summary-value">
+                                        @if (order.LoaiHoaDon == "BanTaiQuay")
+                                        {
+                                            <span class="text-success fw-semibold">Đã thanh toán</span>
+                                        }
+                                        else
+                                        {
+                                            @order.HinhThucThanhToan
+                                        }
+                                    </div>
                                 </div>
                             </div>
 

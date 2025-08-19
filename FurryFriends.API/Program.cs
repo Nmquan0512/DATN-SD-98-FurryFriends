@@ -30,7 +30,7 @@ try
     // Thêm validation services từ nhánh HEAD
     builder.Services.Configure<ApiBehaviorOptions>(options =>
     {
-        options.SuppressModelStateInvalidFilter = false;
+        options.SuppressModelStateInvalidFilter = true; // Cho phép parameters optional
     });
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -98,6 +98,9 @@ try
     builder.Services.AddScoped<IGioHangRepository, GioHangRepository>();
     builder.Services.AddScoped<IHinhThucThanhToanRepository, HinhThucThanhToanRepository>();
     builder.Services.AddScoped<VoucherCalculationService>();
+    
+    // ✅ Đăng ký Background Service để tự động hủy hóa đơn
+    builder.Services.AddHostedService<InvoiceCleanupService>();
 
     // Add CORS policy cho phép web admin truy cập API
     builder.Services.AddCors(options =>
@@ -107,7 +110,7 @@ try
             {
                 policy.WithOrigins("https://localhost:7102")
                       .AllowAnyHeader()
-                      .WithMethods("GET", "POST", "DELETE", "OPTIONS");
+                      .WithMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
             });
     });
 

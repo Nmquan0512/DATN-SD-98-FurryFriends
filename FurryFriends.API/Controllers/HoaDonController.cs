@@ -35,6 +35,21 @@ namespace FurryFriends.API.Controllers
             }
         }
 
+        // ✅ Endpoint mới cho quản lý đơn hàng - chỉ lấy hóa đơn trạng thái 0-5
+        [HttpGet("don-hang")]
+        public async Task<ActionResult<IEnumerable<HoaDon>>> GetDonHangList()
+        {
+            try
+            {
+                var hoaDons = await _hoaDonRepository.GetDonHangListAsync();
+                return Ok(hoaDons);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
 
         // GET: api/HoaDon/{id}
         [HttpGet("{id}")]

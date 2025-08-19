@@ -16,6 +16,9 @@ namespace FurryFriends.Web.Services.IService
         Task<HoaDon> GetByIdAsync(Guid id);
         Task<IEnumerable<HoaDonChiTiet>> GetChiTietHoaDonAsync(Guid hoaDonId);
         
+        // ✅ Method mới cho quản lý đơn hàng - chỉ lấy hóa đơn trạng thái 0-5
+        Task<IEnumerable<HoaDon>> GetDonHangListAsync();
+        
         // Dashboard methods
         Task<int> GetTotalOrdersAsync();
         Task<decimal> GetMonthlyRevenueAsync();

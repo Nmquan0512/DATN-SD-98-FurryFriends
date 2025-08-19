@@ -66,7 +66,7 @@ namespace FurryFriends.API.Services.IServices
         /// <summary>
         /// Gán một khách hàng đã tồn tại vào hóa đơn.
         /// </summary>
-        Task<HoaDonBanHangDto> GanKhachHangAsync(Guid hoaDonId, Guid khachHangId);
+        Task<HoaDonBanHangDto> GanKhachHangAsync(Guid hoaDonId, Guid? khachHangId);
         #endregion
 
         #region Thanh toán
@@ -85,12 +85,17 @@ namespace FurryFriends.API.Services.IServices
         /// <summary>
         /// Tìm kiếm khách hàng theo tên hoặc SĐT.
         /// </summary>
-        Task<IEnumerable<KhachHangDto>> TimKiemKhachHangAsync(string keyword);
+        Task<IEnumerable<KhachHangDto>> TimKiemKhachHangAsync(string? keyword);
 
         /// <summary>
         /// Lấy danh sách các voucher hợp lệ có thể áp dụng cho hóa đơn.
         /// </summary>
         Task<IEnumerable<VoucherDto>> TimKiemVoucherHopLeAsync(Guid hoaDonId);
+
+        /// <summary>
+        /// Cập nhật thông tin địa chỉ giao hàng cho hóa đơn.
+        /// </summary>
+        Task<HoaDonBanHangDto> CapNhatDiaChiGiaoHangAsync(Guid hoaDonId, DiaChiMoiDto diaChiMoi);
         #endregion
         Task<IEnumerable<SanPhamBanHangDto>> GetSuggestedProductsAsync(int count);
         #region Khách hàng
@@ -98,6 +103,11 @@ namespace FurryFriends.API.Services.IServices
         /// Tạo nhanh một khách hàng mới.
         /// </summary>
         Task<KhachHangDto> TaoKhachHangMoiAsync(TaoKhachHangRequest request);
+
+        /// <summary>
+        /// Kiểm tra và sửa dữ liệu GiaLucMua nếu cần (chỉ dùng cho debug)
+        /// </summary>
         #endregion
+        Task FixInvoiceDataAsync();
     }
 }

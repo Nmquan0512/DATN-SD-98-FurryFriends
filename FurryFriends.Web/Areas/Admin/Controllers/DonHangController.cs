@@ -24,12 +24,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         }
 
         // GET: Admin/DonHang
+        // ✅ Chỉ hiển thị hóa đơn online (trạng thái 0-5) và sắp xếp theo thời gian gần nhất
         public async Task<IActionResult> Index()
         {
             try
             {
-                var hoaDons = await _hoaDonService.GetHoaDonListAsync();
-                return View(hoaDons);
+                var hoaDons = await _hoaDonService.GetDonHangListAsync(); // ✅ Sử dụng method mới
+                
+                // ✅ Lọc bổ sung để đảm bảo chỉ hiển thị trạng thái 0-5
+                var hoaDonsFiltered = hoaDons?.Where(h => h.TrangThai >= 0 && h.TrangThai <= 5).ToList() ?? new List<HoaDon>();
+                
+                return View(hoaDonsFiltered);
             }
             catch (Exception ex)
             {
@@ -50,6 +55,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     return NotFound();
                 }
 
+                // ✅ Kiểm tra trạng thái để đảm bảo chỉ xem chi tiết hóa đơn trạng thái 0-5
+                if (hoaDon.TrangThai < 0 || hoaDon.TrangThai > 5)
+                {
+                    return NotFound("Không tìm thấy đơn hàng hoặc đơn hàng không thuộc quản lý đơn hàng");
+                }
+
                 return View(hoaDon);
             }
             catch (Exception ex)
@@ -61,6 +72,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         }
 
         // POST: Admin/DonHang/DuyetDon
+        // ✅ Chỉ xử lý hóa đơn online (trạng thái 0-5)
         [HttpPost]
         public async Task<IActionResult> DuyetDon([FromBody] DuyetDonRequest request)
         {
@@ -75,6 +87,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 if (hoaDon == null)
                 {
                     return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
+                }
+
+                // ✅ Kiểm tra trạng thái để đảm bảo chỉ xử lý hóa đơn trạng thái 0-5
+                if (hoaDon.TrangThai < 0 || hoaDon.TrangThai > 5)
+                {
+                    return Json(new { success = false, message = "Đơn hàng không thuộc quản lý đơn hàng" });
                 }
 
                 // Kiểm tra trạng thái hiện tại
@@ -103,6 +121,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         }
 
         // POST: Admin/DonHang/DoiTrangThai
+        // ✅ Chỉ xử lý hóa đơn online (trạng thái 0-5)
         [HttpPost]
         public async Task<IActionResult> DoiTrangThai([FromBody] DoiTrangThaiRequest request)
         {
@@ -117,6 +136,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 if (hoaDon == null)
                 {
                     return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
+                }
+
+                // ✅ Kiểm tra trạng thái để đảm bảo chỉ xử lý hóa đơn trạng thái 0-5
+                if (hoaDon.TrangThai < 0 || hoaDon.TrangThai > 5)
+                {
+                    return Json(new { success = false, message = "Đơn hàng không thuộc quản lý đơn hàng" });
                 }
 
                 // Kiểm tra tính hợp lệ của việc chuyển trạng thái
@@ -165,6 +190,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         }
 
         // POST: Admin/DonHang/HuyDon
+        // ✅ Chỉ xử lý hóa đơn online (trạng thái 0-5)
         [HttpPost]
         public async Task<IActionResult> HuyDon([FromBody] HuyDonRequest request)
         {
@@ -179,6 +205,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 if (hoaDon == null)
                 {
                     return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
+                }
+
+                // ✅ Kiểm tra trạng thái để đảm bảo chỉ xử lý hóa đơn trạng thái 0-5
+                if (hoaDon.TrangThai < 0 || hoaDon.TrangThai > 5)
+                {
+                    return Json(new { success = false, message = "Đơn hàng không thuộc quản lý đơn hàng" });
                 }
 
                 // Kiểm tra trạng thái hiện tại - chỉ có thể hủy đơn "Chờ duyệt" và "Đã duyệt"
@@ -226,6 +258,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         }
 
         // POST: Admin/DonHang/TangTrangThai
+        // ✅ Chỉ xử lý hóa đơn online (trạng thái 0-5)
         [HttpPost]
         public async Task<IActionResult> TangTrangThai([FromBody] TangTrangThaiRequest request)
         {
@@ -240,6 +273,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 if (hoaDon == null)
                 {
                     return Json(new { success = false, message = "Không tìm thấy đơn hàng" });
+                }
+
+                // ✅ Kiểm tra trạng thái để đảm bảo chỉ xử lý hóa đơn trạng thái 0-5
+                if (hoaDon.TrangThai < 0 || hoaDon.TrangThai > 5)
+                {
+                    return Json(new { success = false, message = "Đơn hàng không thuộc quản lý đơn hàng" });
                 }
 
                 // Lưu trạng thái cũ để gửi thông báo

@@ -21,6 +21,9 @@ namespace FurryFriends.Web.Services.IService
         Task<HoaDonBanHangDto> ApDungVoucherAsync(Guid hoaDonId, ApDungVoucherRequest request);
         Task<HoaDonBanHangDto> GoBoVoucherAsync(Guid hoaDonId);
 
+        // Cập nhật địa chỉ giao hàng
+        Task<HoaDonBanHangDto> CapNhatDiaChiGiaoHangAsync(Guid hoaDonId, DiaChiMoiDto diaChiMoi);
+
         // Thanh toán
         Task<HoaDonBanHangDto> ThanhToanHoaDonAsync(Guid hoaDonId, ThanhToanRequest request);
 
@@ -32,5 +35,11 @@ namespace FurryFriends.Web.Services.IService
         // Khách hàng
 
         Task<KhachHangDto> TaoKhachHangMoiAsync(TaoKhachHangRequest request);
+        
+        // ✅ Hình thức thanh toán
+        Task<IEnumerable<HinhThucThanhToanDto>> GetHinhThucThanhToanAsync();
+        
+        // ✅ QR Code chuyển khoản
+        Task<object> GetQRCodeAsync(Guid hoaDonId);
     }
 }

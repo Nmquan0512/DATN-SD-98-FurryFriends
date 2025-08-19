@@ -18,7 +18,6 @@ namespace FurryFriends.API.Models.DTO.BanHang.Requests
 
     public class GanKhachHangRequest
     {
-        [Required]
-        public Guid KhachHangId { get; set; }
+        public Guid? KhachHangId { get; set; }
     }
 }

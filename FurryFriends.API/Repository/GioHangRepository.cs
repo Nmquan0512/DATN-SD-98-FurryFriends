@@ -507,7 +507,7 @@ namespace FurryFriends.API.Repository
                     TenCuaKhachHang = dto.TenCuaKhachHang ?? "",
                     SdtCuaKhachHang = dto.SdtCuaKhachHang ?? "",
                     EmailCuaKhachHang = dto.EmailCuaKhachHang ?? "",
-                    LoaiHoaDon = dto.LoaiHoaDon ?? "BanTaiQuay",
+                    LoaiHoaDon = dto.LoaiHoaDon ?? "Online", // ✅ Sửa: Bán hàng online phải là "Online"
                     GhiChu = dto.GhiChu ?? "",
                     DiaChiGiaoHangId = dto.DiaChiGiaoHangId,
                     HoaDonChiTiets = new List<HoaDonChiTiet>()

@@ -26,7 +26,7 @@ namespace FurryFriends.Web.Controllers
             // Get all orders and filter by customer
             var allOrders = await _hoaDonService.GetHoaDonListAsync();
             var customerOrders = allOrders
-                .Where(h => h.KhachHangId == customerGuid)
+                .Where(h => h.KhachHangId == customerGuid && h.TrangThai >= 0 && h.TrangThai <= 5) // ✅ Chỉ lấy hóa đơn trạng thái 0-5
                 .OrderByDescending(h => h.NgayTao)
                 .Select(h => new DonHangKhachHangViewModel
                 {
@@ -39,6 +39,7 @@ namespace FurryFriends.Web.Controllers
                     TrangThaiText = GetTrangThaiText(h.TrangThai),
                     GhiChu = h.GhiChu ?? "",
                     HinhThucThanhToan = h.HinhThucThanhToan?.TenHinhThuc ?? "Không xác định",
+                    LoaiHoaDon = h.LoaiHoaDon ?? "",
                     DiaChiGiaoHang = !string.IsNullOrEmpty(h.DiaChiGiaoHangLucMua) ? 
                         h.DiaChiGiaoHangLucMua : 
                         (h.DiaChiGiaoHang != null ? 
@@ -110,6 +111,12 @@ namespace FurryFriends.Web.Controllers
                     return NotFound();
                 }
 
+                // ✅ Kiểm tra trạng thái để đảm bảo chỉ xem chi tiết hóa đơn trạng thái 0-5
+                if (hoaDon.TrangThai < 0 || hoaDon.TrangThai > 5)
+                {
+                    return NotFound("Không tìm thấy đơn hàng hoặc đơn hàng không thuộc quản lý đơn hàng");
+                }
+
                 var orderViewModel = new DonHangKhachHangViewModel
                 {
                     HoaDonId = hoaDon.HoaDonId,
@@ -121,6 +128,7 @@ namespace FurryFriends.Web.Controllers
                     TrangThaiText = GetTrangThaiText(hoaDon.TrangThai),
                     GhiChu = hoaDon.GhiChu ?? "",
                     HinhThucThanhToan = hoaDon.HinhThucThanhToan?.TenHinhThuc ?? "Không xác định",
+                    LoaiHoaDon = hoaDon.LoaiHoaDon ?? "",
                     DiaChiGiaoHang = !string.IsNullOrEmpty(hoaDon.DiaChiGiaoHangLucMua) ? 
                         hoaDon.DiaChiGiaoHangLucMua : 
                         (hoaDon.DiaChiGiaoHang != null ? 
@@ -185,6 +193,7 @@ namespace FurryFriends.Web.Controllers
                 2 => "Đang giao",
                 3 => "Đã giao",
                 4 => "Đã hủy",
+                5 => "Đã hoàn trả",
                 _ => "Không xác định"
             };
         }
@@ -208,6 +217,12 @@ namespace FurryFriends.Web.Controllers
                 if (hoaDon.KhachHangId != customerGuid)
                 {
                     return Json(new { success = false, message = "Bạn không có quyền hủy đơn hàng này!" });
+                }
+
+                // ✅ Kiểm tra trạng thái để đảm bảo chỉ hủy hóa đơn trạng thái 0-5
+                if (hoaDon.TrangThai < 0 || hoaDon.TrangThai > 5)
+                {
+                    return Json(new { success = false, message = "Đơn hàng không thuộc quản lý đơn hàng" });
                 }
 
                 // Gọi API hủy đơn hàng

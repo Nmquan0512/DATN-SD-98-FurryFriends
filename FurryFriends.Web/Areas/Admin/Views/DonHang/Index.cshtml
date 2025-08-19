@@ -121,6 +121,25 @@
             font-size: 1.1rem;
             color: #059669;
         }
+        
+        /* ✅ CSS cho voucher và giảm giá */
+        .price-item.text-success {
+            color: #059669;
+        }
+        
+        .price-item.text-muted {
+            color: #6b7280;
+        }
+        
+        .price-item.small {
+            font-size: 0.875rem;
+        }
+        
+        .price-item.total {
+            border-top: 2px solid #e2e8f0;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+        }
 
         .price-label {
             color: #64748b;
@@ -512,12 +531,13 @@
 
     <!-- Status Filter -->
     <div class="status-filter">
-        <button class="filter-btn active" data-status="all">Tất cả</button>
-        <button class="filter-btn" data-status="0">Chờ duyệt</button>
-        <button class="filter-btn" data-status="1">Đã duyệt</button>
-        <button class="filter-btn" data-status="2">Đang giao</button>
-        <button class="filter-btn" data-status="3">Đã giao</button>
-        <button class="filter-btn" data-status="4">Đã hủy</button>
+        <button class="filter-btn active" data-status="all" data-type="all">Tất cả</button>
+        <button class="filter-btn" data-status="0" data-type="all">Chờ duyệt</button>
+        <button class="filter-btn" data-status="1" data-type="all">Đã duyệt</button>
+        <button class="filter-btn" data-status="2" data-type="all">Đang giao</button>
+        <button class="filter-btn" data-status="3" data-type="all">Đã giao</button>
+        <button class="filter-btn" data-status="4" data-type="all">Đã hủy</button>
+                        <button class="filter-btn" data-status="all" data-type="BanTaiQuay">Khách tại quầy</button>
     </div>
 
     <div class="row">
@@ -526,11 +546,11 @@
             {
                 @foreach (var hoaDon in Model)
                 {
-                    <div class="order-card" data-status="@hoaDon.TrangThai">
+                    <div class="order-card" data-status="@hoaDon.TrangThai" data-type="@(hoaDon.LoaiHoaDon ?? "Online")">
                         <div class="order-header">
                             <div>
                                 <div class="order-id">Đơn hàng #@hoaDon.HoaDonId.ToString().Substring(0, 8).ToUpper()</div>
-                                <div class="order-date">@hoaDon.NgayTao.ToString("dd/MM/yyyy HH:mm")</div>
+                                <div class="order-date">@hoaDon.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
                             </div>
                             <div class="status-badge @GetStatusClass(hoaDon.TrangThai)">
                                 @GetStatusText(hoaDon.TrangThai)
@@ -541,7 +561,21 @@
                             <div class="customer-info">
                                 <div class="info-item">
                                     <span class="info-label">Khách hàng</span>
-                                    <span class="info-value">@(hoaDon.TenCuaKhachHang ?? "N/A")</span>
+                                    <span class="info-value">
+                                        @(hoaDon.TenCuaKhachHang ?? "N/A")
+                                        @if (hoaDon.LoaiHoaDon == "BanTaiQuay")
+                                        {
+                                                                    <span class="badge bg-warning text-dark ms-2">
+                            <i class="fas fa-store me-1"></i>Khách tại quầy
+                        </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-info text-white ms-2">
+                                                <i class="fas fa-globe me-1"></i>Online
+                                            </span>
+                                        }
+                                    </span>
                                 </div>
                                 <div class="info-item">
                                     <span class="info-label">Số điện thoại</span>
@@ -552,8 +586,31 @@
                                     <span class="info-value">@(hoaDon.EmailCuaKhachHang ?? "N/A")</span>
                                 </div>
                                 <div class="info-item">
-                                    <span class="info-label">Địa chỉ</span>
-                                    <span class="info-value">@(hoaDon.DiaChiGiaoHangLucMua ?? hoaDon.DiaChiGiaoHang?.TenDiaChi ?? "N/A")</span>
+                                    <span class="info-label">Địa chỉ giao hàng</span>
+                                    <span class="info-value">
+                                        @if (!string.IsNullOrWhiteSpace(hoaDon.DiaChiGiaoHangLucMua))
+                                        {
+                                            <span class="text-success">
+                                                <i class="fas fa-check-circle me-1"></i>
+                                                @hoaDon.DiaChiGiaoHangLucMua
+                                            </span>
+                                        }
+                                        else if (hoaDon.DiaChiGiaoHang != null)
+                                        {
+                                            var diaChi = hoaDon.DiaChiGiaoHang;
+                                            <span class="text-info">
+                                                <i class="fas fa-info-circle me-1"></i>
+                                                @diaChi.TenDiaChi @if(!string.IsNullOrWhiteSpace(diaChi.MoTa)){<text>- @diaChi.MoTa</text>} , @diaChi.PhuongXa, @diaChi.ThanhPho
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                                Chưa cập nhật địa chỉ giao hàng
+                                            </span>
+                                        }
+                                    </span>
                                 </div>
                             </div>
 
@@ -627,11 +684,37 @@
                                         <span class="price-label">Tổng tiền hàng:</span>
                                         <span class="price-value">@hoaDon.TongTien.ToString("N0") VNĐ</span>
                                     </div>
+                                    
+                                    @if (!string.IsNullOrEmpty(hoaDon.ThongTinVoucherLucMua))
+                                    {
+                                        <div class="price-item text-success">
+                                            <span class="price-label">
+                                                <i class="fas fa-ticket-alt me-1"></i>
+                                                Voucher áp dụng:
+                                            </span>
+                                            <span class="price-value">-@((hoaDon.TongTien + 30000 - hoaDon.TongTienSauKhiGiam).ToString("N0")) VNĐ</span>
+                                        </div>
+                                        <div class="price-item text-muted small">
+                                            <span class="price-label">Chi tiết:</span>
+                                            <span class="price-value">@hoaDon.ThongTinVoucherLucMua</span>
+                                        </div>
+                                    }
+                                    else if (hoaDon.Voucher != null)
+                                    {
+                                        <div class="price-item text-success">
+                                            <span class="price-label">
+                                                <i class="fas fa-ticket-alt me-1"></i>
+                                                Giảm giá (@hoaDon.Voucher.TenVoucher):
+                                            </span>
+                                            <span class="price-value">-@((hoaDon.TongTien + 30000 - hoaDon.TongTienSauKhiGiam).ToString("N0")) VNĐ</span>
+                                        </div>
+                                    }
+                                    
                                     <div class="price-item">
                                         <span class="price-label">Phí vận chuyển:</span>
                                         <span class="price-value">30,000 VNĐ</span>
                                     </div>
-                                    <div class="price-item">
+                                    <div class="price-item total">
                                         <span class="price-label">Tổng thanh toán:</span>
                                         <span class="price-value">@hoaDon.TongTienSauKhiGiam.ToString("N0") VNĐ</span>
                                     </div>
@@ -815,6 +898,7 @@
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     const status = this.dataset.status;
+                    const type = this.dataset.type;
                     
                     // Cập nhật active state
                     filterBtns.forEach(b => b.classList.remove('active'));
@@ -822,11 +906,22 @@
 
                     // Filter đơn hàng
                     orderCards.forEach(card => {
-                        if (status === 'all' || card.dataset.status === status) {
-                            card.style.display = 'block';
-                        } else {
-                            card.style.display = 'none';
+                        const cardStatus = card.dataset.status;
+                        const cardType = card.dataset.type;
+                        
+                        let shouldShow = true;
+                        
+                        // Lọc theo trạng thái
+                        if (status !== 'all' && cardStatus !== status) {
+                            shouldShow = false;
                         }
+                        
+                        // Lọc theo loại hóa đơn (Khách tại quầy)
+                        if (type === 'BanTaiQuay' && cardType !== 'BanTaiQuay') {
+                            shouldShow = false;
+                        }
+                        
+                        card.style.display = shouldShow ? 'block' : 'none';
                     });
                 });
             });

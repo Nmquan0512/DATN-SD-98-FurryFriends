@@ -117,9 +117,10 @@ namespace FurryFriends.API.Profiles
                 .ForMember(dest => dest.TenSanPham, opt => opt.MapFrom(src => src.SanPhamChiTiet.SanPham.TenSanPham))
                 .ForMember(dest => dest.MauSac, opt => opt.MapFrom(src => src.SanPhamChiTiet.MauSac.TenMau))
                 .ForMember(dest => dest.KichCo, opt => opt.MapFrom(src => src.SanPhamChiTiet.KichCo.TenKichCo))
-                .ForMember(dest => dest.Gia, opt => opt.MapFrom(src => src.Gia))
+                .ForMember(dest => dest.Gia, opt => opt.MapFrom(src => src.SanPhamChiTiet.Gia)) // Giá gốc từ sản phẩm
+                .ForMember(dest => dest.GiaBan, opt => opt.MapFrom(src => src.GiaLucMua ?? src.Gia)) // Giá bán thực tế
                 .ForMember(dest => dest.SoLuong, opt => opt.MapFrom(src => src.SoLuongSanPham))
-                .ForMember(dest => dest.ThanhTien, opt => opt.MapFrom(src => src.Gia * src.SoLuongSanPham))
+                .ForMember(dest => dest.ThanhTien, opt => opt.MapFrom(src => (src.GiaLucMua ?? src.Gia) * src.SoLuongSanPham))
                 .ForMember(dest => dest.SoLuongTon, opt => opt.MapFrom(src => src.SanPhamChiTiet.SoLuong))
                 // <<< THÊM MỚI: Dạy Mapper cách lấy ảnh cho chi tiết hóa đơn >>>
                 .ForMember(dest => dest.HinhAnh, opt => opt.MapFrom(src => src.SanPhamChiTiet.Anh != null ? src.SanPhamChiTiet.Anh.DuongDan : null));
@@ -131,7 +132,14 @@ namespace FurryFriends.API.Profiles
                 .ForMember(dest => dest.KhachHang, opt => opt.MapFrom(src => src.KhachHang))
                 .ForMember(dest => dest.HinhThucThanhToan, opt => opt.MapFrom(src => src.HinhThucThanhToan))
                 .ForMember(dest => dest.Voucher, opt => opt.MapFrom(src => src.Voucher))
-                .ForMember(dest => dest.ChiTietHoaDon, opt => opt.MapFrom(src => src.HoaDonChiTiets));
+                .ForMember(dest => dest.ChiTietHoaDon, opt => opt.MapFrom(src => src.HoaDonChiTiets))
+                .ForMember(dest => dest.TongTien, opt => opt.MapFrom(src => src.TongTien))
+                .ForMember(dest => dest.ThanhTien, opt => opt.MapFrom(src => src.TongTienSauKhiGiam))
+                .ForMember(dest => dest.TienGiam, opt => opt.MapFrom(src => src.TongTien - src.TongTienSauKhiGiam))
+                // ✅ Thêm mapping cho các trường snapshot khách hàng
+                .ForMember(dest => dest.TenCuaKhachHang, opt => opt.MapFrom(src => src.TenCuaKhachHang))
+                .ForMember(dest => dest.SdtCuaKhachHang, opt => opt.MapFrom(src => src.SdtCuaKhachHang))
+                .ForMember(dest => dest.EmailCuaKhachHang, opt => opt.MapFrom(src => src.EmailCuaKhachHang));
         }
     }
 }

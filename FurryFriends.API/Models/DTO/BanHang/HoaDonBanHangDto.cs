@@ -16,6 +16,12 @@ namespace FurryFriends.API.Models.DTO.BanHang
         public VoucherDto Voucher { get; set; }
         public HinhThucThanhToanDto HinhThucThanhToan { get; set; }
         public string TrangThai { get; set; }
+        public string LoaiHoaDon { get; set; }
+        
+        // ✅ Thêm các trường snapshot khách hàng
+        public string TenCuaKhachHang { get; set; }
+        public string SdtCuaKhachHang { get; set; }
+        public string EmailCuaKhachHang { get; set; }
     }
 
     public class ChiTietHoaDonDto

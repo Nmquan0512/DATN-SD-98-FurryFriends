@@ -1,9 +1,11 @@
-﻿using FurryFriends.API.Models.DTO.BanHang;
+﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO.BanHang;
 using FurryFriends.API.Models.DTO.BanHang.Requests;
 using FurryFriends.Web.Services;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,11 +16,13 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     public class BanHangController : Controller
     {
         private readonly IBanHangService _banHangService;
+        private readonly IHinhThucThanhToanService _hinhThucThanhToanService;
         private readonly ILogger<BanHangController> _logger;
 
-        public BanHangController(IBanHangService banHangService, ILogger<BanHangController> logger)
+        public BanHangController(IBanHangService banHangService, IHinhThucThanhToanService hinhThucThanhToanService, ILogger<BanHangController> logger)
         {
             _banHangService = banHangService;
+            _hinhThucThanhToanService = hinhThucThanhToanService;
             _logger = logger;
         }
 
@@ -41,7 +45,38 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult TaoHoaDonMoi()
         {
-            return View();
+            try
+            {
+                // Tạo danh sách hình thức thanh toán mặc định cho bán hàng offline
+                var hinhThucThanhToanList = new List<HinhThucThanhToanDto>
+                {
+                    new HinhThucThanhToanDto
+                    {
+                        HinhThucThanhToanId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                        TenHinhThuc = "Tiền mặt",
+                        MoTa = "Thanh toán tiền mặt tại quầy",
+                        LoaiHinhThuc = 1, // Tiền mặt
+                        TrangThai = true
+                    },
+                    new HinhThucThanhToanDto
+                    {
+                        HinhThucThanhToanId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                        TenHinhThuc = "Chuyển khoản",
+                        MoTa = "Thanh toán chuyển khoản qua VietQR",
+                        LoaiHinhThuc = 2, // Chuyển khoản
+                        TrangThai = true
+                    }
+                };
+                
+                ViewBag.HinhThucThanhToanList = hinhThucThanhToanList;
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi tạo danh sách hình thức thanh toán");
+                ViewBag.HinhThucThanhToanList = new List<HinhThucThanhToanDto>();
+                return View();
+            }
         }
 
         [HttpGet]
@@ -50,7 +85,36 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             try
             {
                 var hoaDon = await _banHangService.GetHoaDonByIdAsync(id);
-                if (hoaDon.TrangThai == "Chua Thanh Toan") return View("Details_Interactive", hoaDon);
+                
+                // ✅ Sử dụng cùng danh sách hình thức thanh toán như TaoHoaDonMoi cho bán hàng offline
+                var hinhThucThanhToanList = new List<HinhThucThanhToanDto>
+                {
+                    new HinhThucThanhToanDto
+                    {
+                        HinhThucThanhToanId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                        TenHinhThuc = "Tiền mặt",
+                        MoTa = "Thanh toán tiền mặt tại quầy",
+                        LoaiHinhThuc = 1, // Tiền mặt
+                        TrangThai = true
+                    },
+                    new HinhThucThanhToanDto
+                    {
+                        HinhThucThanhToanId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                        TenHinhThuc = "Chuyển khoản",
+                        MoTa = "Thanh toán chuyển khoản qua VietQR",
+                        LoaiHinhThuc = 2, // Chuyển khoản
+                        TrangThai = true
+                    }
+                };
+                
+                ViewBag.HinhThucThanhToanList = hinhThucThanhToanList;
+                
+                // ✅ Kiểm tra các trạng thái hóa đơn chờ (có thể sửa)
+                var trangThaiCho = new[] { "Chua Thanh Toan", "Offline ChuaThanhToan" };
+                if (trangThaiCho.Contains(hoaDon.TrangThai)) 
+                {
+                    return View("Details_Interactive", hoaDon);
+                }
                 return View("Details_ReadOnly", hoaDon);
             }
             catch (ApiException ex)

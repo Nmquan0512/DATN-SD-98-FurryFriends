@@ -113,12 +113,27 @@
 
         hinhThucSelect.on('change', function() {
             const selectedType = $(this).find('option:selected').data('type');
+            const selectedText = $(this).find('option:selected').text().toLowerCase();
             const isCash = selectedType === 'cash';
+            // Kiểm tra nhiều cách viết khác nhau của "chuyển khoản"
+            const isBankTransfer = selectedText.includes('chuyển khoản') || 
+                                  selectedText.includes('bank transfer') || 
+                                  selectedText.includes('chuyển khoản') ||
+                                  selectedText.includes('bank') ||
+                                  selectedText.includes('transfer');
+
+            console.log('Payment method changed:'); // Debug log
+            console.log('- Selected type:', selectedType); // Debug log
+            console.log('- Selected text:', selectedText); // Debug log
+            console.log('- Is cash:', isCash); // Debug log
+            console.log('- Is bank transfer:', isBankTransfer); // Debug log
 
             tienKhachDuaSection.toggle(isCash);
             tienThuaSection.toggle(isCash);
-            // Chỉ hiện nút VietQR khi không phải tiền mặt
-            vietQRButtonContainer.toggle(!isCash);
+            // Chỉ hiện nút VietQR khi chọn chuyển khoản
+            vietQRButtonContainer.toggle(isBankTransfer);
+            
+            console.log('VietQR button container visibility:', vietQRButtonContainer.is(':visible')); // Debug log
 
             // Reset giá trị khi chuyển đổi
             if (!isCash) {
@@ -141,19 +156,91 @@
         paymentModal.on('show.bs.modal', function() {
             paymentForm[0].reset();
             paymentForm.removeClass('was-validated');
+            
+            // Debug: Log tất cả các option trong dropdown
+            console.log('Available payment methods:');
+            hinhThucSelect.find('option').each(function() {
+                console.log('- Text:', $(this).text(), '| Type:', $(this).data('type'), '| Value:', $(this).val());
+            });
+            
             hinhThucSelect.trigger('change');
             calculateAndDisplayChange();
         });
 
         // Sự kiện submit sẽ được lắng nghe bởi View chính (TaoHoaDonMoi.cshtml)
         // để thực hiện gọi API.
+        
+        // Event handler cho nút VietQR
+        $(document).on('click', '#showVietQRBtn', function() {
+            // Gọi function showQRCode từ parent view
+            if (typeof showQRCode === 'function') {
+                showQRCode();
+            } else {
+                console.error('showQRCode function not found');
+            }
+        });
+        
+        // Event handler cho nút Transfer Success
+        $(document).on('click', '#btnTransferSuccess', function() {
+            if (typeof confirmTransferSuccess === 'function') {
+                confirmTransferSuccess();
+            } else {
+                console.error('confirmTransferSuccess function not found');
+            }
+        });
+        // Ngăn form submit mặc định
         paymentForm.on('submit', function(e) {
             e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
+        });
+        
+        // Thêm event handler cho button submit để xử lý logic thanh toán
+        $(document).on('click', '#confirmPaymentBtn', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Confirm payment button clicked'); // Debug log
+            
+            // Validate form
             if (!paymentForm[0].checkValidity()) {
-                e.stopPropagation();
                 paymentForm.addClass('was-validated');
+                return false;
             }
-            // Không có logic gọi API ở đây
+            
+            // Kiểm tra nếu là chuyển khoản thì chỉ hiển thị thông báo
+            const selectedText = hinhThucSelect.find('option:selected').text().toLowerCase();
+            const isBankTransfer = selectedText.includes('chuyển khoản') || selectedText.includes('bank transfer');
+            
+            console.log('Selected payment method:', selectedText); // Debug log
+            console.log('Is bank transfer:', isBankTransfer); // Debug log
+            
+            if (isBankTransfer) {
+                // Đóng modal thanh toán và mở QR code trực tiếp
+                paymentModal.modal('hide');
+                
+                // Mở QR code modal sau khi đóng modal thanh toán
+                setTimeout(() => {
+                    if (typeof showQRCode === 'function') {
+                        showQRCode();
+                    } else {
+                        console.error('showQRCode function not found');
+                    }
+                }, 300); // Delay để modal thanh toán đóng hoàn toàn
+            } else {
+                // Với các hình thức khác, để parent view xử lý
+                // Trigger custom event để parent view biết
+                console.log('Triggering paymentFormSubmitted event'); // Debug log
+                $(document).trigger('paymentFormSubmitted', {
+                    formData: {
+                        hinhThucThanhToan: hinhThucSelect.find('option:selected').text(),
+                        tienKhachDua: tienKhachDuaInput.val(),
+                        ghiChu: $('#ghiChuThanhToan').val()
+                    }
+                });
+            }
+            
+            return false;
         });
     });
 </script>

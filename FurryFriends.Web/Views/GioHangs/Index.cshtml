@@ -1211,6 +1211,18 @@
                         showBeautifulNotification('Vui lòng chọn hình thức thanh toán!', 'error');
                         return false;
                     }
+                    
+                    // ✅ Kiểm tra hình thức thanh toán có hợp lệ không
+                    const allowedPaymentMethods = [
+                        'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', // Thanh toán khi nhận hàng
+                        'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'  // Thanh toán VNPay
+                    ];
+                    
+                    if (!allowedPaymentMethods.includes(hinhThucThanhToan)) {
+                        e.preventDefault();
+                        showBeautifulNotification('Chỉ hỗ trợ thanh toán khi nhận hàng hoặc thanh toán VNPay!', 'error');
+                        return false;
+                    }
                 });
             }
 

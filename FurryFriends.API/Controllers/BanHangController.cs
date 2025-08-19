@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace FurryFriends.API.Controllers
 {
@@ -80,11 +81,31 @@ namespace FurryFriends.API.Controllers
         {
             try
             {
+                _logger.LogInformation("API: Bắt đầu tạo hóa đơn mới. Request: {@Request}", request);
+                
+                if (request == null)
+                {
+                    _logger.LogWarning("API: Request tạo hóa đơn null");
+                    return BadRequest("Dữ liệu yêu cầu không hợp lệ.");
+                }
+                
                 // Toàn bộ logic kiểm tra token và nhân viên đã được XÓA BỎ
                 var result = await _banHangService.TaoHoaDonAsync(request);
+                
+                _logger.LogInformation("API: Tạo hóa đơn thành công. HoaDonId: {HoaDonId}", result.HoaDonId);
+                
                 return CreatedAtAction(nameof(GetHoaDonById), new { hoaDonId = result.HoaDonId }, result);
             }
-            catch (ArgumentException ex) { return BadRequest(ex.Message); }
+            catch (ArgumentException ex) 
+            { 
+                _logger.LogWarning("API: ArgumentException khi tạo hóa đơn: {Message}", ex.Message);
+                return BadRequest(ex.Message); 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "API: Lỗi không xác định khi tạo hóa đơn");
+                return StatusCode(500, $"Lỗi nội bộ server khi tạo hóa đơn: {ex.Message}");
+            }
         }
         /// <summary>
         /// Hủy một hóa đơn đang ở trạng thái chờ.
@@ -125,17 +146,73 @@ namespace FurryFriends.API.Controllers
         {
             try
             {
+                _logger.LogInformation("API: Bắt đầu thêm sản phẩm vào hóa đơn. HoaDonId: {HoaDonId}, Request: {@Request}", hoaDonId, request);
+                
+                if (request == null)
+                {
+                    _logger.LogWarning("API: Request null");
+                    return BadRequest("Dữ liệu yêu cầu không hợp lệ.");
+                }
+
+                if (request.SanPhamChiTietId == Guid.Empty)
+                {
+                    _logger.LogWarning("API: SanPhamChiTietId empty");
+                    return BadRequest("ID sản phẩm chi tiết không hợp lệ.");
+                }
+
+                if (request.SoLuong <= 0)
+                {
+                    _logger.LogWarning("API: SoLuong <= 0: {SoLuong}", request.SoLuong);
+                    return BadRequest("Số lượng phải lớn hơn 0.");
+                }
+
+                // Kiểm tra xem hóa đơn có tồn tại không
+                try
+                {
+                    var existingHoaDon = await _banHangService.GetHoaDonByIdAsync(hoaDonId);
+                    _logger.LogInformation("API: Hóa đơn tồn tại: {@HoaDon}", existingHoaDon);
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    _logger.LogError("API: Hóa đơn không tồn tại: {HoaDonId}, Error: {Message}", hoaDonId, ex.Message);
+                    return NotFound($"Hóa đơn với ID {hoaDonId} không tồn tại.");
+                }
+
                 var fullRequest = new ThemSanPhamVaoHoaDonRequest
                 {
                     HoaDonId = hoaDonId,
                     SanPhamChiTietId = request.SanPhamChiTietId,
                     SoLuong = request.SoLuong
                 };
+                
+                _logger.LogInformation("API: Gọi service với fullRequest: {@FullRequest}", fullRequest);
+                
                 var result = await _banHangService.ThemSanPhamVaoHoaDonAsync(fullRequest);
+                
+                _logger.LogInformation("API: Thêm sản phẩm thành công. Kết quả: {@Result}", result);
+                
                 return Ok(result);
             }
-            catch (KeyNotFoundException ex) { return NotFound(ex.Message); }
-            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
+            catch (KeyNotFoundException ex) 
+            { 
+                _logger.LogWarning("API: KeyNotFoundException: {Message}", ex.Message);
+                return NotFound(ex.Message); 
+            }
+            catch (InvalidOperationException ex) 
+            { 
+                _logger.LogWarning("API: InvalidOperationException: {Message}", ex.Message);
+                return BadRequest(ex.Message); 
+            }
+            catch (ArgumentException ex) 
+            { 
+                _logger.LogWarning("API: ArgumentException: {Message}", ex.Message);
+                return BadRequest(ex.Message); 
+            }
+            catch (Exception ex) 
+            { 
+                _logger.LogError(ex, "API: Lỗi không xác định khi thêm sản phẩm vào hóa đơn {HoaDonId}", hoaDonId);
+                return StatusCode(500, $"Lỗi nội bộ server khi thêm sản phẩm: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -186,11 +263,12 @@ namespace FurryFriends.API.Controllers
         /// <param name="request">Body chứa ID khách hàng.</param>
         [HttpPut("hoa-don/{hoaDonId}/khach-hang")]
         [ProducesResponseType(typeof(HoaDonBanHangDto), 200)]
-        public async Task<IActionResult> GanKhachHang(Guid hoaDonId, [FromBody] GanKhachHangRequest request)
+        public async Task<IActionResult> GanKhachHang(Guid hoaDonId, [FromBody] GanKhachHangRequest? request)
         {
             try
             {
-                var result = await _banHangService.GanKhachHangAsync(hoaDonId, request.KhachHangId);
+                Guid? khachHangId = request?.KhachHangId;
+                var result = await _banHangService.GanKhachHangAsync(hoaDonId, khachHangId);
                 return Ok(result);
             }
             catch (KeyNotFoundException ex) { return NotFound(ex.Message); }
@@ -233,6 +311,28 @@ namespace FurryFriends.API.Controllers
         }
         #endregion
 
+        #region Cập nhật thông tin địa chỉ giao hàng
+
+        /// <summary>
+        /// Cập nhật thông tin địa chỉ giao hàng cho hóa đơn.
+        /// </summary>
+        /// <param name="hoaDonId">ID của hóa đơn cần cập nhật.</param>
+        /// <param name="request">Thông tin địa chỉ giao hàng mới.</param>
+        [HttpPut("hoa-don/{hoaDonId}/dia-chi-giao-hang")]
+        [ProducesResponseType(typeof(HoaDonBanHangDto), 200)]
+        public async Task<IActionResult> CapNhatDiaChiGiaoHang(Guid hoaDonId, [FromBody] DiaChiMoiDto request)
+        {
+            try
+            {
+                var result = await _banHangService.CapNhatDiaChiGiaoHangAsync(hoaDonId, request);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex) { return NotFound(ex.Message); }
+            catch (InvalidOperationException ex) { return BadRequest(ex.Message); }
+        }
+
+        #endregion
+
         #region Thanh toán
 
         /// <summary>
@@ -246,6 +346,17 @@ namespace FurryFriends.API.Controllers
         {
             try
             {
+                if (request == null)
+                {
+                    return BadRequest("Dữ liệu thanh toán không hợp lệ.");
+                }
+                
+                // ✅ Kiểm tra hình thức thanh toán cho BanHang (Tiền mặt và Chuyển khoản)
+                if (request.HinhThucThanhToanId == Guid.Empty)
+                {
+                    return BadRequest("Vui lòng chọn hình thức thanh toán.");
+                }
+                
                 request.HoaDonId = hoaDonId;
                 var result = await _banHangService.ThanhToanHoaDonAsync(request);
                 return Ok(result);
@@ -272,13 +383,23 @@ namespace FurryFriends.API.Controllers
         /// <summary>
         /// Tìm kiếm khách hàng theo từ khóa (tên, SĐT...).
         /// </summary>
-        /// <param name="keyword">Từ khóa tìm kiếm.</param>
+        /// <param name="keyword">Từ khóa tìm kiếm (optional).</param>
         [HttpGet("tim-kiem/khach-hang")]
         [ProducesResponseType(typeof(IEnumerable<KhachHangDto>), 200)]
-        public async Task<IActionResult> TimKiemKhachHang([FromQuery] string keyword)
+        public async Task<IActionResult> TimKiemKhachHang([FromQuery] string? keyword = null)
         {
+            try
+            {
+                _logger.LogInformation("Tìm kiếm khách hàng với từ khóa: '{Keyword}'", keyword ?? "null");
             var result = await _banHangService.TimKiemKhachHangAsync(keyword);
+                _logger.LogInformation("Tìm thấy {Count} khách hàng", result?.Count() ?? 0);
             return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi tìm kiếm khách hàng với từ khóa: '{Keyword}'", keyword ?? "null");
+                return BadRequest($"Lỗi khi tìm kiếm khách hàng: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -332,7 +453,71 @@ namespace FurryFriends.API.Controllers
             }
         }
 
+        /// <summary>
+        /// Sửa dữ liệu hóa đơn bị lỗi (tổng tiền = 0)
+        /// </summary>
+        /// <response code="200">Sửa thành công.</response>
+        /// <response code="500">Lỗi server.</response>
+        [HttpPost("fix-invoice-data")]
+        [ProducesResponseType(typeof(string), 200)]
+        [ProducesResponseType(typeof(string), 500)]
+        public async Task<IActionResult> FixInvoiceData()
+        {
+            try
+            {
+                await _banHangService.FixInvoiceDataAsync();
+                return Ok("Đã sửa dữ liệu hóa đơn thành công");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi sửa dữ liệu hóa đơn");
+                return StatusCode(500, "Lỗi khi sửa dữ liệu hóa đơn");
+            }
+        }
+
+        /// <summary>
+        /// Lấy QR code chuyển khoản cho hóa đơn
+        /// </summary>
+        /// <param name="hoaDonId">ID của hóa đơn</param>
+        /// <response code="200">Trả về thông tin QR code</response>
+        /// <response code="404">Không tìm thấy hóa đơn</response>
+        [HttpGet("hoa-don/{hoaDonId}/qr-code")]
+        [ProducesResponseType(typeof(object), 200)]
+        [ProducesResponseType(typeof(string), 404)]
+        public async Task<IActionResult> GetQRCode(Guid hoaDonId)
+        {
+            try
+            {
+                var hoaDon = await _banHangService.GetHoaDonByIdAsync(hoaDonId);
+                if (hoaDon == null)
+                {
+                    return NotFound("Không tìm thấy hóa đơn");
+                }
+
+                // Tạo QR code URL với thông tin hóa đơn
+                var qrCodeUrl = $"https://img.vietqr.io/image/acb-40070087-compact2.jpg?amount={hoaDon.ThanhTien}&addInfo=Chuyen%20tien%20mua%20hang%20FurryFriends&accountName=Nguyen%20Minh%20Quan";
+                
+                var result = new
+                {
+                    qrCodeUrl = qrCodeUrl,
+                    amount = hoaDon.ThanhTien,
+                    hoaDonId = hoaDon.HoaDonId,
+                    maHoaDon = hoaDon.MaHoaDon
+                };
+
+                return Ok(result);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi tạo QR code cho hóa đơn {HoaDonId}", hoaDonId);
+                return StatusCode(500, "Lỗi khi tạo QR code");
+            }
+        }
+
         #endregion
     }
-
 }
