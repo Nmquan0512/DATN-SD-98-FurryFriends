@@ -3,6 +3,7 @@ using FurryFriends.API.Models.DTO.BanHang.Requests;
 using FurryFriends.Web.Services.IService;
 using System.Net;
 using System.Net.Http.Json;
+using Newtonsoft.Json;
 
 namespace FurryFriends.Web.Services
 {
@@ -74,6 +75,22 @@ namespace FurryFriends.Web.Services
         {
             var response = await _httpClient.PostAsJsonAsync($"{BasePath}/hoa-don/{hoaDonId}/voucher", request);
             return await ProcessResponse<HoaDonBanHangDto>(response);
+        }
+
+        // Sử dụng API của Giỏ hàng để áp dụng voucher (giống logic Giỏ hàng)
+        public async Task<object> ApDungVoucherGioHangAsync(Guid khachHangId, Guid voucherId)
+        {
+            var dto = new { KhachHangId = khachHangId, VoucherId = voucherId };
+            var response = await _httpClient.PostAsJsonAsync("/api/GioHang/ap-dung-voucher", dto);
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new Exception($"Không thể áp dụng voucher: {error}");
+            }
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+            return Newtonsoft.Json.JsonConvert.DeserializeObject(responseBody);
         }
 
         public async Task<HoaDonBanHangDto> GoBoVoucherAsync(Guid hoaDonId)

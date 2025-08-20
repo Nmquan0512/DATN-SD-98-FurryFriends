@@ -30,10 +30,10 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             {
             var khachHangs = await _khachHangService.GetAllAsync();
                 
-                // Tính toán thống kê
+                // Tính toán thống kê - chỉ đếm những khách hàng chưa bị xóa
                 var totalCount = khachHangs.Count();
                 var activeCount = khachHangs.Count(kh => kh.TrangThai == 1); // 1 = Đang hoạt động
-                var inactiveCount = khachHangs.Count(kh => kh.TrangThai != 1); // Khác 1 = Không hoạt động
+                var inactiveCount = khachHangs.Count(kh => kh.TrangThai != 1 && kh.TrangThai != 0); // Khác 1 và khác 0 = Không hoạt động (không tính đã xóa)
                 
                 ViewBag.TotalCount = totalCount;
                 ViewBag.ActiveCount = activeCount;

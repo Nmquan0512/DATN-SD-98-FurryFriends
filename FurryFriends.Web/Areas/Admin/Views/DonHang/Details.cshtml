@@ -4,504 +4,12 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 
-@section Styles {
-    <style>
-        /* ✅ Đảm bảo layout admin hiển thị đúng */
-        .admin-container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-        .admin-sidebar {
-            width: 280px;
-            background: #1e293b;
-            color: white;
-            position: fixed;
-            left: 0;
-            top: 60px;
-            height: calc(100vh - 60px);
-            overflow-y: auto;
-            z-index: 1000;
-        }
-        
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 20px;
-            background: #f8fafc;
-            min-height: calc(100vh - 60px);
-        }
-        
-        @@media (max-width: 1024px) {
-            .admin-sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .admin-sidebar.show {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-        }
-        
-        .order-detail-container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            border: 1px solid #f1f5f9;
-        }
-
-        .order-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2rem;
-            position: relative;
-        }
-
-        .order-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            pointer-events: none;
-        }
-
-        .order-id {
-            font-weight: 800;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .order-date {
-            font-size: 1rem;
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
-        }
-
-        .order-body {
-            padding: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .info-item {
-            background: #f8fafc;
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .info-label {
-            font-weight: 600;
-            color: #475569;
-            font-size: 0.875rem;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .info-value {
-            color: #1e293b;
-            font-size: 1rem;
-            font-weight: 500;
-        }
-
-        .status-badge {
-            padding: 0.75rem 1.5rem;
-            border-radius: 25px;
-            font-size: 0.875rem;
-            font-weight: 700;
-            text-align: center;
-            min-width: 120px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-        }
-
-        .status-pending { 
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); 
-            color: #92400e; 
-            border: 2px solid #f59e0b;
-        }
-        .status-approved { 
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); 
-            color: #065f46; 
-            border: 2px solid #10b981;
-        }
-        .status-shipping { 
-            background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%); 
-            color: #1e40af; 
-            border: 2px solid #3b82f6;
-        }
-        .status-delivered { 
-            background: linear-gradient(135deg, #dcfce7 0%, #86efac 100%); 
-            color: #166534; 
-            border: 2px solid #22c55e;
-        }
-        .status-cancelled { 
-            background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%); 
-            color: #991b1b; 
-            border: 2px solid #ef4444;
-        }
-
-        .order-summary {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid #cbd5e1;
-        }
-
-        .price-breakdown {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .price-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        
-        .price-item:last-child {
-            border-bottom: none;
-        }
-        
-        .price-item.total {
-            font-weight: 700;
-            font-size: 1.125rem;
-            color: #1e293b;
-            border-top: 2px solid #cbd5e1;
-            padding-top: 1rem;
-            margin-top: 0.5rem;
-        }
-        
-        .price-item.text-success {
-            color: #059669;
-        }
-        
-        .price-item.text-muted {
-            color: #6b7280;
-            font-size: 0.875rem;
-        }
-        
-        .price-label {
-            font-weight: 500;
-        }
-        
-        .price-value {
-            font-weight: 600;
-        }
-
-        .total-amount {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #059669;
-            text-align: right;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Product list styles */
-        .products-section {
-            margin: 1.5rem 0;
-            padding: 1.5rem;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .product-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-            border: 1px solid #e2e8f0;
-            transition: all 0.2s ease;
-        }
-
-        .product-item:hover {
-            border-color: #cbd5e1;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        }
-
-        .product-image {
-            width: 56px;
-            height: 56px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .product-image-placeholder {
-            width: 56px;
-            height: 56px;
-            background-color: #f1f5f9;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #e2e8f0;
-        }
-
-        .product-info {
-            flex: 1;
-        }
-
-        .product-name {
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 0.25rem;
-            font-size: 1rem;
-        }
-
-        .product-brand {
-            font-size: 0.8rem;
-            color: #64748b;
-            margin-bottom: 0.5rem;
-        }
-
-        .product-details {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .product-badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            background: #f1f5f9;
-            color: #475569;
-            border: 1px solid #cbd5e1;
-            font-weight: 500;
-        }
-
-        .product-price {
-            font-weight: 600;
-            color: #10b981;
-            margin-left: auto;
-            text-align: right;
-            font-size: 0.9rem;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-            justify-content: center;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            min-width: 120px;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn-primary { 
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); 
-            color: white; 
-        }
-        .btn-primary:hover { 
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); 
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-        }
-
-        .btn-success { 
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-            color: white; 
-        }
-        .btn-success:hover { 
-            background: linear-gradient(135deg, #059669 0%, #047857 100%); 
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-danger { 
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
-            color: white; 
-        }
-        .btn-danger:hover { 
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); 
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
-        }
-
-        .btn-secondary { 
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%); 
-            color: white; 
-        }
-        .btn-secondary:hover { 
-            background: linear-gradient(135deg, #4b5563 0%, #374151 100%); 
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.4);
-        }
-
-        .btn-info { 
-            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); 
-            color: white; 
-        }
-        .btn-info:hover { 
-            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%); 
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            padding: 2rem;
-            border-radius: 16px;
-            margin-bottom: 2rem;
-            border: 1px solid #cbd5e1;
-        }
-
-        .page-title {
-            color: #1e293b;
-            font-weight: 800;
-            font-size: 2rem;
-            margin: 0;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            color: white;
-            font-weight: 600;
-            z-index: 1000;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .notification.show {
-            transform: translateX(0);
-        }
-
-        .notification.success { 
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-        }
-        .notification.error { 
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); 
-        }
-
-        .order-timeline {
-            background: #f8fafc;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid #e2e8f0;
-        }
-
-        .timeline-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .timeline-item:last-child {
-            border-bottom: none;
-        }
-
-        .timeline-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: white;
-        }
-
-        .timeline-content {
-            flex: 1;
-        }
-
-        .timeline-title {
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 0.25rem;
-        }
-
-        .timeline-time {
-            font-size: 0.875rem;
-            color: #64748b;
-        }
-
-        .timeline-note {
-            margin-top: 0.25rem;
-        }
-
-        .icon-pending { background: #f59e0b; }
-        .icon-approved { background: #10b981; }
-        .icon-shipping { background: #3b82f6; }
-        .icon-delivered { background: #22c55e; }
-        .icon-cancelled { background: #ef4444; }
-    </style>
-}
-
-<div class="container-fluid">
-    <div class="page-header">
-        <h1 class="page-title">📦 Chi tiết đơn hàng</h1>
-        <p class="text-muted mb-0">Xem thông tin chi tiết và quản lý đơn hàng</p>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-file-invoice-dollar me-2 text-primary"></i>Chi tiết đơn hàng</h2>
+        <a href="@Url.Action("Index", "DonHang", new { area = "Admin" })" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Quay lại
+        </a>
     </div>
 
     @if (TempData["Error"] != null)
@@ -522,67 +30,72 @@
         </div>
     }
 
-    <div class="order-detail-container">
-        <div class="order-header">
-            <div>
-                <div class="order-id">Đơn hàng #@Model.HoaDonId.ToString().Substring(0, 8).ToUpper()</div>
-                <div class="order-date">@Model.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
-            </div>
-            <div class="status-badge @GetStatusClass(Model.TrangThai)">
-                @GetStatusText(Model.TrangThai)
-            </div>
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-shopping-cart me-2"></i>
+                Đơn hàng #@Model.HoaDonId.ToString().Substring(0, 8).ToUpper()
+                <span class="badge bg-light text-dark ms-2">@GetStatusText(Model.TrangThai)</span>
+            </h5>
         </div>
-
-        <div class="order-body">
+        <div class="card-body">
+            <div class="row">
             <!-- Thông tin khách hàng -->
-            <div class="section-title">
-                <i class="fas fa-user"></i>
-                Thông tin khách hàng
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="fas fa-user me-2 text-primary"></i>Thông tin khách hàng</h6>
             </div>
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-label">Họ tên</div>
-                    <div class="info-value">@(Model.TenCuaKhachHang ?? "N/A")</div>
+                        <div class="card-body">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold" style="width: 120px;">Họ tên:</td>
+                                    <td>@(Model.TenCuaKhachHang ?? "N/A")</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Số điện thoại:</td>
+                                    <td>@(Model.SdtCuaKhachHang ?? "N/A")</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Email:</td>
+                                    <td>@(Model.EmailCuaKhachHang ?? "N/A")</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Địa chỉ:</td>
+                                    <td>@(Model.DiaChiGiaoHangLucMua ?? Model.DiaChiGiaoHang?.TenDiaChi ?? "N/A")</td>
+                                </tr>
+                            </table>
                 </div>
-                <div class="info-item">
-                    <div class="info-label">Số điện thoại</div>
-                    <div class="info-value">@(Model.SdtCuaKhachHang ?? "N/A")</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Email</div>
-                    <div class="info-value">@(Model.EmailCuaKhachHang ?? "N/A")</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Địa chỉ</div>
-                    <div class="info-value">@(Model.DiaChiGiaoHangLucMua ?? Model.DiaChiGiaoHang?.TenDiaChi ?? "N/A")</div>
                 </div>
             </div>
 
             <!-- Thông tin đơn hàng -->
-            <div class="section-title">
-                <i class="fas fa-shopping-cart"></i>
-                Thông tin đơn hàng
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0"><i class="fas fa-receipt me-2 text-success"></i>Thông tin đơn hàng</h6>
             </div>
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-label">Mã đơn hàng</div>
-                    <div class="info-value">@Model.HoaDonId</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Ngày tạo</div>
-                    <div class="info-value">@Model.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Trạng thái</div>
-                    <div class="info-value">
-                        <span class="status-badge @GetStatusClass(Model.TrangThai)">
+                        <div class="card-body">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td class="fw-bold" style="width: 120px;">Mã đơn hàng:</td>
+                                    <td>@Model.HoaDonId</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Ngày tạo:</td>
+                                    <td>@Model.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Trạng thái:</td>
+                                    <td>
+                                        <span class="badge @GetStatusBadgeClass(Model.TrangThai)">
                             @GetStatusText(Model.TrangThai)
                         </span>
-                    </div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Phương thức thanh toán</div>
-                    <div class="info-value">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold">Phương thức thanh toán:</td>
+                                    <td>
                         @if (Model.LoaiHoaDon == "BanTaiQuay")
                         {
                             <span class="text-success fw-semibold">Đã thanh toán</span>
@@ -591,190 +104,47 @@
                         {
                             @(Model.HinhThucThanhToan?.TenHinhThuc ?? "N/A")
                         }
-                    </div>
-                </div>
+                                    </td>
+                                </tr>
                 @if (Model.ThoiGianThayDoiTrangThai.HasValue)
-                {
-                    <div class="info-item">
-                        <div class="info-label">Thời gian cập nhật cuối</div>
-                        <div class="info-value">@Model.ThoiGianThayDoiTrangThai.Value.ToString("dd/MM/yyyy HH:mm:ss")</div>
-                    </div>
-                }
-            </div>
-
-            <!-- Timeline trạng thái thời gian thực -->
-            <div class="section-title">
-                <i class="fas fa-clock"></i>
-                Lịch sử trạng thái
-            </div>
-            <div class="order-timeline">
-                <!-- Luôn hiển thị trạng thái đầu tiên -->
-                <div class="timeline-item">
-                    <div class="timeline-icon icon-pending">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="timeline-content">
-                        <div class="timeline-title">Đơn hàng được tạo</div>
-                        <div class="timeline-time">@Model.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm:ss")</div>
-                    </div>
-                </div>
-                
-                <!-- Hiển thị lịch sử thay đổi trạng thái thực tế -->
-                @if (Model.LichSuTrangThaiHoaDons != null && Model.LichSuTrangThaiHoaDons.Any())
-                {
-                    var lichSuOrdered = Model.LichSuTrangThaiHoaDons.OrderBy(l => l.ThoiGianThayDoi).ToList();
-                    
-                    foreach (var lichSu in lichSuOrdered)
-                    {
-                        <div class="timeline-item">
-                            <div class="timeline-icon @GetStatusIconClass(lichSu.TrangThaiMoi)">
-                                <i class="@GetStatusIcon(lichSu.TrangThaiMoi)"></i>
-                            </div>
-                            <div class="timeline-content">
-                                <div class="timeline-title">@GetStatusChangeText(lichSu.TrangThaiCu, lichSu.TrangThaiMoi)</div>
-                                <div class="timeline-time">@lichSu.ThoiGianThayDoi.ToString("dd/MM/yyyy HH:mm:ss")</div>
-                                @if (!string.IsNullOrEmpty(lichSu.GhiChu))
                                 {
-                                    <div class="timeline-note text-muted small">@lichSu.GhiChu</div>
+                                    <tr>
+                                        <td class="fw-bold">Cập nhật cuối:</td>
+                                        <td>@Model.ThoiGianThayDoiTrangThai.Value.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                    </tr>
                                 }
-                            </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <!-- Fallback: Hiển thị logic cũ nếu chưa có lịch sử -->
-                    <!-- Chỉ hiển thị khi thực sự đã duyệt VÀ không bị hủy -->
-                    @if (Model.TrangThai >= 1 && Model.TrangThai != 4)
-                {
-                    <div class="timeline-item">
-                        <div class="timeline-icon icon-approved">
-                            <i class="fas fa-check"></i>
-                        </div>
-                        <div class="timeline-content">
-                            <div class="timeline-title">Đơn hàng được duyệt</div>
-                                <div class="timeline-time">
-                                    @if (Model.ThoiGianThayDoiTrangThai.HasValue)
-                                    {
-                                        @Model.ThoiGianThayDoiTrangThai.Value.ToString("dd/MM/yyyy HH:mm:ss")
-                                    }
-                                    else
-                                    {
-                                        @* ✅ Đối với đơn hàng offline, ngày duyệt = ngày tạo *@
-                                        @if (Model.LoaiHoaDon == "BanTaiQuay")
-                                        {
-                                            @Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")
-                                        }
-                                        else
-                                        {
-                                            @Model.NgayTao.AddMinutes(30).ToString("dd/MM/yyyy HH:mm:ss")
-                                        }
-                                    }
+                            </table>
                                 </div>
                         </div>
                     </div>
-                }
-                
-                    <!-- Chỉ hiển thị khi thực sự đang giao VÀ không bị hủy -->
-                    @if (Model.TrangThai >= 2 && Model.TrangThai != 4)
-                {
-                    <div class="timeline-item">
-                        <div class="timeline-icon icon-shipping">
-                            <i class="fas fa-shipping-fast"></i>
-                        </div>
-                        <div class="timeline-content">
-                            <div class="timeline-title">Đơn hàng đang giao</div>
-                                <div class="timeline-time">
-                                    @if (Model.ThoiGianThayDoiTrangThai.HasValue)
-                                    {
-                                        @Model.ThoiGianThayDoiTrangThai.Value.ToString("dd/MM/yyyy HH:mm:ss")
-                                    }
-                                    else
-                                    {
-                                        @* ✅ Đối với đơn hàng offline, vẫn theo giờ thao tác thực tế *@
-                                        @if (Model.LoaiHoaDon == "BanTaiQuay")
-                                        {
-                                            @Model.NgayTao.AddHours(1).ToString("dd/MM/yyyy HH:mm:ss")
-                                        }
-                                        else
-                                        {
-                                            @Model.NgayTao.AddHours(2).ToString("dd/MM/yyyy HH:mm:ss")
-                                        }
-                                    }
-                                </div>
-                        </div>
-                    </div>
-                }
-                
-                    <!-- Chỉ hiển thị khi thực sự đã giao VÀ không bị hủy -->
-                    @if (Model.TrangThai >= 3 && Model.TrangThai != 4)
-                {
-                    <div class="timeline-item">
-                        <div class="timeline-icon icon-delivered">
-                            <i class="fas fa-home"></i>
-                        </div>
-                        <div class="timeline-content">
-                            <div class="timeline-title">Đơn hàng đã giao</div>
-                                <div class="timeline-time">
-                                    @if (Model.ThoiGianThayDoiTrangThai.HasValue)
-                                    {
-                                        @Model.ThoiGianThayDoiTrangThai.Value.ToString("dd/MM/yyyy HH:mm:ss")
-                                    }
-                                    else
-                                    {
-                                        @* ✅ Đối với đơn hàng offline, vẫn theo giờ thao tác thực tế *@
-                                        @if (Model.LoaiHoaDon == "BanTaiQuay")
-                                        {
-                                            @Model.NgayTao.AddHours(2).ToString("dd/MM/yyyy HH:mm:ss")
-                                        }
-                                        else
-                                        {
-                                            @Model.NgayTao.AddHours(4).ToString("dd/MM/yyyy HH:mm:ss")
-                                        }
-                                    }
-                                </div>
-                        </div>
-                    </div>
-                }
-                
-                <!-- Chỉ hiển thị khi thực sự đã hủy -->
-                @if (Model.TrangThai == 4)
-                {
-                    <div class="timeline-item">
-                        <div class="timeline-icon icon-cancelled">
-                            <i class="fas fa-times"></i>
-                        </div>
-                        <div class="timeline-content">
-                            <div class="timeline-title">Đơn hàng đã hủy</div>
-                                <div class="timeline-time">
-                                    @if (Model.ThoiGianThayDoiTrangThai.HasValue)
-                                    {
-                                        @Model.ThoiGianThayDoiTrangThai.Value.ToString("dd/MM/yyyy HH:mm:ss")
-                                    }
-                                    else
-                                    {
-                                        @Model.NgayTao.AddHours(1).ToString("dd/MM/yyyy HH:mm:ss")
-                                    }
-                                </div>
-                        </div>
-                    </div>
-                    }
-                }
             </div>
 
             <!-- Chi tiết sản phẩm -->
-            <div class="section-title">
-                <i class="fas fa-box-open"></i>
-                Chi tiết sản phẩm
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-box-open me-2 text-warning"></i>Chi tiết sản phẩm</h6>
             </div>
-            <div class="products-section">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th class="text-center">Loại</th>
+                                    <th class="text-center">Đơn giá</th>
+                                    <th class="text-center">Số lượng</th>
+                                    <th class="text-center">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                 @if (Model.HoaDonChiTiets != null && Model.HoaDonChiTiets.Any())
                 {
                     @foreach (var item in Model.HoaDonChiTiets)
                     {
-                        <div class="product-item">
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
                             @{ 
-                                // ✅ Sử dụng ảnh snapshot nếu có, fallback sang ảnh hiện tại
                                 string imgLink = null; 
                                 var snapshotImg = item.AnhSanPhamLucMua ?? string.Empty;
                                 var currentImg = item.SanPhamChiTiet?.Anh?.DuongDan ?? string.Empty;
@@ -791,131 +161,132 @@
                             }
                             @if (!string.IsNullOrEmpty(imgLink)) 
                             {
-                                <img src="@imgLink" alt="@(item.TenSanPhamLucMua ?? "Sản phẩm")" class="product-image">
+                                                        <img src="@imgLink" alt="@(item.TenSanPhamLucMua ?? "Sản phẩm")" class="me-3" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px;">
                             } 
                             else 
                             {
-                                <div class="product-image-placeholder">
+                                                        <div class="me-3" style="width: 48px; height: 48px; background-color: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
                                     <i class="fas fa-image text-muted"></i>
                                 </div>
                             }
-                            <div class="product-info">
-                                <div class="product-name">@(item.TenSanPhamLucMua ?? "N/A")</div>
+                                                    <div>
+                                                        <div class="fw-semibold">@(item.TenSanPhamLucMua ?? "N/A")</div>
                                 @if (!string.IsNullOrEmpty(item.ThuongHieuLucMua))
                                 {
-                                    <div class="product-brand">@item.ThuongHieuLucMua</div>
+                                                            <small class="text-muted">@item.ThuongHieuLucMua</small>
                                 }
-                                <div class="product-details">
-                                    <span class="product-badge">@(item.MauSacLucMua ?? "N/A")</span>
-                                    <span class="product-badge">@(item.KichCoLucMua ?? "N/A")</span>
                                 </div>
                             </div>
-                            <div class="product-price">
-                                @((item.GiaLucMua ?? item.Gia).ToString("N0"))đ x @item.SoLuongSanPham
-                            </div>
-                        </div>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge bg-light text-dark">@(item.MauSacLucMua ?? "N/A")</span>
+                                                <span class="badge bg-light text-dark">@(item.KichCoLucMua ?? "N/A")</span>
+                                            </td>
+                                            <td class="text-center">@((item.GiaLucMua ?? item.Gia).ToString("N0"))đ</td>
+                                            <td class="text-center">@item.SoLuongSanPham</td>
+                                            <td class="text-center fw-bold">@(((item.GiaLucMua ?? item.Gia) * item.SoLuongSanPham).ToString("N0"))đ</td>
+                                        </tr>
                     }
                 }
                 else
                 {
-                    <div class="text-center text-muted py-3">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-4">
                         <i class="fas fa-box-open fa-2x mb-2"></i>
                         <div>Không có sản phẩm nào</div>
-                    </div>
-                }
-            </div>
-
-            <!-- Chi tiết giá và phí ship -->
-            <div class="order-summary">
-                <div class="price-breakdown">
-                    <div class="price-item">
-                        <span class="price-label">Tổng tiền hàng:</span>
-                        <span class="price-value">@Model.TongTien.ToString("N0") VNĐ</span>
-                    </div>
-                    
-                    @* ✅ Hiển thị phí vận chuyển chỉ khi có giao hàng *@
-                    @if (!string.IsNullOrEmpty(Model.DiaChiGiaoHangLucMua))
-                    {
-                        <div class="price-item">
-                            <span class="price-label">Phí vận chuyển:</span>
-                            <span class="price-value">30,000 VNĐ</span>
-                        </div>
-                    }
-                    
-                    @* ✅ Hiển thị voucher/giảm giá nếu có *@
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <td colspan="4" class="text-end fw-semibold">Tổng tiền hàng:</td>
+                                    <td class="fw-bold">@Model.TongTien.ToString("N0")đ</td>
+                                </tr>
+                                @{ 
+                                    var phuPhi = 0m;
+                                    var coGiaoHang = Model.LoaiHoaDon == "GiaoHang" || !string.IsNullOrEmpty(Model.DiaChiGiaoHangLucMua);
+                                    var tongTienSauGiam = Model.TongTienSauKhiGiam;
+                                    
+                                    if (coGiaoHang && tongTienSauGiam < 500000m)
+                                    {
+                                        phuPhi = 30000m;
+                                    }
+                                    
+                                    // ✅ Tính giảm giá voucher: Tổng tiền hàng - (Tổng tiền sau giảm - Phí ship)
+                                    var voucherDiscount = Math.Max(0m, Model.TongTien - (Model.TongTienSauKhiGiam - phuPhi));
+                                }
+                                
+                                @if (coGiaoHang)
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-end fw-semibold">Phí vận chuyển:</td>
+                                        <td class="fw-bold">@phuPhi.ToString("N0")đ</td>
+                                    </tr>
+                                }
+                                
                     @if (!string.IsNullOrEmpty(Model.ThongTinVoucherLucMua))
                     {
-                        <div class="price-item text-success">
-                            <span class="price-label">
+                                    <tr>
+                                        <td colspan="4" class="text-end fw-semibold text-success">
                                 <i class="fas fa-ticket-alt me-1"></i>
                                 Voucher áp dụng:
-                            </span>
-                            <span class="price-value">-@((Model.TongTien + 30000 - Model.TongTienSauKhiGiam).ToString("N0")) VNĐ</span>
-                        </div>
-                        <div class="price-item text-muted small">
-                            <span class="price-label">Chi tiết:</span>
-                            <span class="price-value">@Model.ThongTinVoucherLucMua</span>
-                        </div>
+                                        </td>
+                                        <td class="fw-bold text-success">-@voucherDiscount.ToString("N0")đ</td>
+                                    </tr>
                     }
                     else if (Model.Voucher != null)
                     {
-                        <div class="price-item text-success">
-                            <span class="price-label">
+                                    <tr>
+                                        <td colspan="4" class="text-end fw-semibold text-success">
                                 <i class="fas fa-ticket-alt me-1"></i>
                                 Giảm giá (@Model.Voucher.TenVoucher):
-                            </span>
-                            <span class="price-value">-@((Model.TongTien + 30000 - Model.TongTienSauKhiGiam).ToString("N0")) VNĐ</span>
-                        </div>
-                    }
-                    
-                    <div class="price-item total">
-                        <span class="price-label">Tổng thanh toán:</span>
-                        <span class="price-value">@Model.TongTienSauKhiGiam.ToString("N0") VNĐ</span>
+                                        </td>
+                                        <td class="fw-bold text-success">-@voucherDiscount.ToString("N0")đ</td>
+                                    </tr>
+                                }
+                                
+                                <tr>
+                                    <td colspan="4" class="text-end fs-5 fw-bold text-primary">Thành tiền:</td>
+                                    <td class="fs-5 fw-bold text-primary">@Model.TongTienSauKhiGiam.ToString("N0")đ</td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
             </div>
 
             <!-- Các nút hành động -->
-            <div class="action-buttons">
-                <a href="@Url.Action("Index", "DonHang", new { area = "Admin" })" 
-                   class="btn btn-secondary">
-                    <i class="fas fa-arrow-left"></i>
-                    Quay lại
+            <div class="d-flex justify-content-center gap-2 mt-4">
+                <a href="@Url.Action("Index", "DonHang", new { area = "Admin" })" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại
                 </a>
 
-                <!-- Chỉ hiển thị nút duyệt khi đang chờ duyệt -->
                 @if (Model.TrangThai == 0)
                 {
                     <button class="btn btn-success" onclick="duyetDon('@Model.HoaDonId')">
-                        <i class="fas fa-check"></i>
-                        Duyệt đơn
+                        <i class="fas fa-check me-2"></i>Duyệt đơn
                     </button>
                 }
 
-                <!-- Chỉ hiển thị nút chuyển sang đang giao khi đã duyệt -->
                 @if (Model.TrangThai == 1)
                 {
                     <button class="btn btn-info" onclick="chuyenSangDangGiao('@Model.HoaDonId')">
-                        <i class="fas fa-shipping-fast"></i>
-                        Chuyển sang đang giao
+                        <i class="fas fa-shipping-fast me-2"></i>Chuyển sang đang giao
                     </button>
                 }
 
-                <!-- Chỉ hiển thị nút chuyển sang đã giao khi đang giao -->
                 @if (Model.TrangThai == 2)
                 {
                     <button class="btn btn-success" onclick="chuyenSangDaGiao('@Model.HoaDonId')">
-                        <i class="fas fa-home"></i>
-                        Chuyển sang đã giao
+                        <i class="fas fa-home me-2"></i>Chuyển sang đã giao
                     </button>
                 }
 
-                <!-- Chỉ cho phép hủy khi chờ duyệt hoặc đã duyệt -->
                 @if (Model.TrangThai == 0 || Model.TrangThai == 1)
                 {
                     <button class="btn btn-danger" onclick="huyDon('@Model.HoaDonId')">
-                        <i class="fas fa-times"></i>
-                        Hủy đơn
+                        <i class="fas fa-times me-2"></i>Hủy đơn
                     </button>
                 }
             </div>
@@ -923,117 +294,94 @@
     </div>
 </div>
 
-<!-- Notification -->
-<div id="notification" class="notification"></div>
-
 @section Scripts {
     <script>
-        // Duyệt đơn hàng
         function duyetDon(hoaDonId) {
             if (confirm('Bạn có chắc chắn muốn duyệt đơn hàng này?')) {
                 fetch(`/Admin/DonHang/DuyetDon`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: hoaDonId })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    showNotification(data.message, data.success ? 'success' : 'error');
                     if (data.success) {
-                        setTimeout(() => location.reload(), 1500);
+                        location.reload();
+                    } else {
+                        alert(data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showNotification('Có lỗi xảy ra khi duyệt đơn hàng', 'error');
+                    alert('Có lỗi xảy ra khi duyệt đơn hàng');
                 });
             }
         }
 
-        // Chuyển sang đang giao
         function chuyenSangDangGiao(hoaDonId) {
             if (confirm('Bạn có chắc chắn muốn chuyển đơn hàng sang trạng thái đang giao?')) {
                 fetch(`/Admin/DonHang/DoiTrangThai`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: hoaDonId, trangThaiMoi: 2 })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    showNotification(data.message, data.success ? 'success' : 'error');
                     if (data.success) {
-                        setTimeout(() => location.reload(), 1500);
+                        location.reload();
+                    } else {
+                        alert(data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showNotification('Có lỗi xảy ra khi chuyển trạng thái', 'error');
+                    alert('Có lỗi xảy ra khi chuyển trạng thái');
                 });
             }
         }
 
-        // Chuyển sang đã giao
         function chuyenSangDaGiao(hoaDonId) {
             if (confirm('Bạn có chắc chắn muốn chuyển đơn hàng sang trạng thái đã giao?')) {
                 fetch(`/Admin/DonHang/DoiTrangThai`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: hoaDonId, trangThaiMoi: 3 })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    showNotification(data.message, data.success ? 'success' : 'error');
                     if (data.success) {
-                        setTimeout(() => location.reload(), 1500);
+                        location.reload();
+                    } else {
+                        alert(data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showNotification('Có lỗi xảy ra khi chuyển trạng thái', 'error');
+                    alert('Có lỗi xảy ra khi chuyển trạng thái');
                 });
             }
         }
 
-        // Hủy đơn hàng
         function huyDon(hoaDonId) {
             if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
                 fetch(`/Admin/DonHang/HuyDon`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id: hoaDonId })
                 })
                 .then(response => response.json())
                 .then(data => {
-                    showNotification(data.message, data.success ? 'success' : 'error');
                     if (data.success) {
-                        setTimeout(() => location.reload(), 1500);
+                        location.reload();
+                    } else {
+                        alert(data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showNotification('Có lỗi xảy ra khi hủy đơn hàng', 'error');
+                    alert('Có lỗi xảy ra khi hủy đơn hàng');
                 });
             }
-        }
-
-        // Hiển thị thông báo
-        function showNotification(message, type) {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type}`;
-            notification.classList.add('show');
-
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
         }
     </script>
 }
@@ -1052,55 +400,16 @@
         };
     }
 
-    public string GetStatusClass(int trangThai)
+    public string GetStatusBadgeClass(int trangThai)
     {
         return trangThai switch
         {
-            0 => "status-pending",
-            1 => "status-approved",
-            2 => "status-shipping",
-            3 => "status-delivered",
-            4 => "status-cancelled",
-            _ => "status-pending"
-        };
-    }
-
-    public string GetStatusIconClass(int trangThai)
-    {
-        return trangThai switch
-        {
-            0 => "icon-pending",
-            1 => "icon-approved",
-            2 => "icon-shipping",
-            3 => "icon-delivered",
-            4 => "icon-cancelled",
-            _ => "icon-pending"
-        };
-    }
-
-    public string GetStatusIcon(int trangThai)
-    {
-        return trangThai switch
-        {
-            0 => "fa-clock",
-            1 => "fa-check",
-            2 => "fa-shipping-fast",
-            3 => "fa-home",
-            4 => "fa-times",
-            _ => "fa-info-circle"
-        };
-    }
-
-    public string GetStatusChangeText(int trangThaiCu, int trangThaiMoi)
-    {
-        return trangThaiCu switch
-        {
-            0 => "Đơn hàng được tạo",
-            1 => "Đơn hàng được duyệt",
-            2 => "Đơn hàng đang giao",
-            3 => "Đơn hàng đã giao",
-            4 => "Đơn hàng đã hủy",
-            _ => "Trạng thái không xác định"
+            0 => "bg-warning text-dark",
+            1 => "bg-info text-white",
+            2 => "bg-primary",
+            3 => "bg-success",
+            4 => "bg-danger",
+            _ => "bg-secondary"
         };
     }
 }

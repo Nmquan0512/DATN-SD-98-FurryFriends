@@ -359,8 +359,54 @@ namespace FurryFriends.API.Repository
         }
         public async Task<HoaDonBanHangDto> XoaSanPhamKhoiHoaDonAsync(Guid hoaDonId, Guid sanPhamChiTietId)
         {
-            // Tương tự CapNhatSoLuongSanPhamAsync với số lượng là 0
-            return await CapNhatSoLuongSanPhamAsync(hoaDonId, sanPhamChiTietId, 0);
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                _logger.LogInformation("Bắt đầu xóa sản phẩm {SanPhamId} khỏi hóa đơn {HoaDonId}", sanPhamChiTietId, hoaDonId);
+                
+                var hoaDon = await GetEditableHoaDon(hoaDonId);
+                var itemToDelete = hoaDon.HoaDonChiTiets.FirstOrDefault(hct => hct.SanPhamChiTietId == sanPhamChiTietId);
+                
+                if (itemToDelete == null) 
+                {
+                    _logger.LogWarning("Sản phẩm {SanPhamId} không có trong hóa đơn {HoaDonId}", sanPhamChiTietId, hoaDonId);
+                    throw new KeyNotFoundException("Sản phẩm không có trong hóa đơn.");
+                }
+
+                var sanPhamChiTiet = await _context.SanPhamChiTiets.FindAsync(sanPhamChiTietId);
+                if (sanPhamChiTiet == null) 
+                {
+                    _logger.LogWarning("Sản phẩm {SanPhamId} không tồn tại", sanPhamChiTietId);
+                    throw new KeyNotFoundException("Sản phẩm không tồn tại.");
+                }
+
+                // Hoàn trả số lượng sản phẩm về kho
+                int soLuongHoanTra = itemToDelete.SoLuongSanPham;
+                sanPhamChiTiet.SoLuong += soLuongHoanTra;
+                _logger.LogInformation("Hoàn trả {SoLuong} sản phẩm về kho", soLuongHoanTra);
+
+                // Xóa item khỏi hóa đơn
+                hoaDon.HoaDonChiTiets.Remove(itemToDelete);
+                _context.HoaDonChiTiets.Remove(itemToDelete);
+                
+                _logger.LogInformation("Đã xóa sản phẩm khỏi hóa đơn. Số lượng items còn lại: {Count}", hoaDon.HoaDonChiTiets.Count);
+
+                // Tính toán lại tổng tiền hóa đơn
+                await TinhToanLaiTienHoaDon(hoaDon);
+                await _context.SaveChangesAsync();
+                
+                await transaction.CommitAsync();
+
+                // Clear EF cache và query lại để đảm bảo dữ liệu mới nhất
+                _context.ChangeTracker.Clear();
+                return await GetHoaDonByIdAsync(hoaDonId);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError(ex, "Lỗi khi xóa sản phẩm khỏi hóa đơn.");
+                throw;
+            }
         }
 
         public async Task<HoaDonBanHangDto> CapNhatSoLuongSanPhamAsync(Guid hoaDonId, Guid sanPhamChiTietId, int soLuongMoi)

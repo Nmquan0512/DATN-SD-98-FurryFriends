@@ -19,6 +19,7 @@ namespace FurryFriends.API.Repository
         {
             return await _context.KhachHangs
                                  .Include(k => k.DiaChiKhachHangs) // đúng tên
+                                 .Where(k => k.TrangThai != 0) // Chỉ lấy những khách hàng chưa bị xóa
                                  .ToListAsync();
         }
 
@@ -26,6 +27,7 @@ namespace FurryFriends.API.Repository
         {
             return await _context.KhachHangs
                                  .Include(k => k.DiaChiKhachHangs)
+                                 .Where(k => k.TrangThai != 0) // Chỉ lấy những khách hàng chưa bị xóa
                                  .FirstOrDefaultAsync(k => k.KhachHangId == id);
         }
 
@@ -46,7 +48,10 @@ namespace FurryFriends.API.Repository
             var khachHang = await _context.KhachHangs.FindAsync(id);
             if (khachHang != null)
             {
-                _context.KhachHangs.Remove(khachHang);
+                // Soft delete: Thay đổi trạng thái thay vì xóa thực sự
+                khachHang.TrangThai = 0; // 0 = Đã xóa/Inactive
+                khachHang.NgayCapNhatCuoiCung = DateTime.Now;
+                _context.KhachHangs.Update(khachHang);
                 await _context.SaveChangesAsync();
             }
         }
@@ -55,6 +60,7 @@ namespace FurryFriends.API.Repository
         {
             return await _context.KhachHangs
                                  .Include(k => k.DiaChiKhachHangs)
+                                 .Where(k => k.TrangThai != 0) // Chỉ lấy những khách hàng chưa bị xóa
                                  .FirstOrDefaultAsync(k => k.EmailCuaKhachHang == email);
         }
 
@@ -62,7 +68,16 @@ namespace FurryFriends.API.Repository
         {
             return await _context.KhachHangs
                                  .Include(k => k.DiaChiKhachHangs)
+                                 .Where(k => k.TrangThai != 0) // Chỉ lấy những khách hàng chưa bị xóa
                                  .FirstOrDefaultAsync(k => k.SDT == phone);
+        }
+
+        // Method để lấy tất cả khách hàng (bao gồm cả đã xóa) - dùng cho admin
+        public async Task<IEnumerable<KhachHang>> GetAllIncludingDeletedAsync()
+        {
+            return await _context.KhachHangs
+                                 .Include(k => k.DiaChiKhachHangs)
+                                 .ToListAsync();
         }
     }
 }

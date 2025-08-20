@@ -19,6 +19,7 @@ namespace FurryFriends.Web.Services.IService
         // Voucher & Khách hàng
         Task<HoaDonBanHangDto> GanKhachHangAsync(Guid hoaDonId, GanKhachHangRequest request);
         Task<HoaDonBanHangDto> ApDungVoucherAsync(Guid hoaDonId, ApDungVoucherRequest request);
+        Task<object> ApDungVoucherGioHangAsync(Guid khachHangId, Guid voucherId); // Sử dụng API của Giỏ hàng
         Task<HoaDonBanHangDto> GoBoVoucherAsync(Guid hoaDonId);
 
         // Cập nhật địa chỉ giao hàng

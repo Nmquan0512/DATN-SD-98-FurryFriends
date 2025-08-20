@@ -70,5 +70,12 @@ namespace FurryFriends.API.Controllers
             if (khachHang == null) return NotFound();
             return Ok(khachHang);
         }
+
+        [HttpGet("all-including-deleted")]
+        public async Task<ActionResult<IEnumerable<KhachHang>>> GetAllIncludingDeleted()
+        {
+            var khachHangs = await _repository.GetAllIncludingDeletedAsync();
+            return Ok(khachHangs);
+        }
     }
 }

@@ -107,7 +107,16 @@
                             </tr>
                             <tr>
                                 <th class="bg-light">Hình thức thanh toán</th>
-                                <td>@Model.HinhThucThanhToan?.TenHinhThuc</td>
+                                <td>
+                                    @if (Model.LoaiHoaDon == "BanTaiQuay")
+                                    {
+                                        <span class="text-success fw-bold">Đã thanh toán</span>
+                                    }
+                                    else
+                                    {
+                                        @Model.HinhThucThanhToan?.TenHinhThuc
+                                    }
+                                </td>
                             </tr>
                             <tr>
                                 <th class="bg-light">Trạng thái</th>
@@ -216,33 +225,26 @@
                             <td class="fw-bold">@Model.TongTien.ToString("N0")đ</td>
                         </tr>
                         @{ 
-                            // ✅ Tính toán đúng: Voucher discount = Tổng tiền hàng - (Tổng tiền sau giảm - Phí ship)
-                            var phuPhi = 0m; // Phí ship hoặc phí khác
+                            // ✅ Tính toán phí ship và giảm giá
+                            var phuPhi = 0m; // Phí ship
                             
                             // ✅ Kiểm tra có giao hàng không: LoaiHoaDon == "GiaoHang" HOẶC có địa chỉ giao hàng
                             var coGiaoHang = Model.LoaiHoaDon == "GiaoHang" || !string.IsNullOrEmpty(Model.DiaChiGiaoHangLucMua);
                             
-                            if (coGiaoHang && Model.TongTien < 500000m)
+                            // ✅ Tính phí ship: 30k nếu đơn dưới 500k và có giao hàng
+                            // Sử dụng tổng tiền sau giảm giá để tính phí ship (như GioHang)
+                            var tongTienSauGiam = Model.TongTienSauKhiGiam;
+                            if (coGiaoHang && tongTienSauGiam < 500000m)
                             {
-                                phuPhi = 30000m; // Phí ship 30k cho đơn dưới 500k
+                                phuPhi = 30000m;
                             }
                             
-                            // ✅ Tính toán voucher discount: Tổng tiền hàng - (Tổng tiền sau giảm - Phí ship)
-                            var voucherDiscount = 0m;
-                            if (coGiaoHang && phuPhi > 0)
-                            {
-                                // Có phí ship: voucher = tongTien - (tongTienSauKhiGiam - phuPhi)
-                                voucherDiscount = Math.Max(0m, Model.TongTien - (Model.TongTienSauKhiGiam - phuPhi));
-                            }
-                            else
-                            {
-                                // Không có phí ship: voucher = tongTien - tongTienSauKhiGiam
-                                voucherDiscount = Math.Max(0m, Model.TongTien - Model.TongTienSauKhiGiam);
-                            }
+                            // ✅ Tính giảm giá voucher: Tổng tiền hàng - (Tổng tiền sau giảm - Phí ship)
+                            var voucherDiscount = Math.Max(0m, Model.TongTien - (Model.TongTienSauKhiGiam - phuPhi));
                         }
                         
                         @* ✅ Hiển thị phí ship cho đơn giao hàng *@
-                        @if (coGiaoHang && phuPhi > 0)
+                        @if (coGiaoHang)
                         {
                             <tr>
                                 <td colspan="4" class="text-end fw-semibold">Phí vận chuyển:</td>

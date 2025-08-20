@@ -8,14 +8,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 3000);
     }
     
-    // Tự động ẩn tất cả thông báo sau 5 giây
+    // Tự động ẩn tất cả thông báo sau 5 giây (trừ thông tin khách hàng)
     const allAlerts = document.querySelectorAll('.alert');
     allAlerts.forEach(alert => {
-        setTimeout(() => {
-            if (alert.style.display !== 'none') {
-                alert.style.display = 'none';
-            }
-        }, 5000);
+        // Kiểm tra xem có phải là thông tin khách hàng hoặc cảnh báo hóa đơn không
+        const isCustomerInfo = alert.textContent.includes('fas fa-user-check') || 
+                              alert.textContent.includes('fas fa-phone') || 
+                              alert.textContent.includes('fas fa-envelope') ||
+                              alert.textContent.includes('Điểm tích lũy');
+        
+        const isInvoiceWarning = alert.textContent.includes('Hóa đơn này đã được thanh toán') ||
+                                alert.textContent.includes('Bạn chỉ có thể xem thông tin') ||
+                                alert.textContent.includes('không thể chỉnh sửa');
+        
+        // Chỉ ẩn nếu không phải là thông tin khách hàng hoặc cảnh báo hóa đơn
+        if (!isCustomerInfo && !isInvoiceWarning) {
+            setTimeout(() => {
+                if (alert.style.display !== 'none') {
+                    alert.style.display = 'none';
+                }
+            }, 5000);
+        }
     });
 });
 

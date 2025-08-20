@@ -4,6 +4,7 @@ using FurryFriends.API.Repository.IRepository;
 using FurryFriends.API.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -115,8 +116,8 @@ namespace FurryFriends.API.Services
         public async Task<HoaDonBanHangDto> XoaSanPhamKhoiHoaDonAsync(Guid hoaDonId, Guid sanPhamChiTietId)
         {
             _logger.LogInformation($"Xóa sản phẩm {sanPhamChiTietId} khỏi hóa đơn {hoaDonId}.");
-            // Xóa thực chất là cập nhật số lượng về 0
-            return await _banHangRepository.CapNhatSoLuongSanPhamAsync(hoaDonId, sanPhamChiTietId, 0);
+            // Gọi hàm xóa sản phẩm riêng biệt
+            return await _banHangRepository.XoaSanPhamKhoiHoaDonAsync(hoaDonId, sanPhamChiTietId);
         }
         #endregion
 
@@ -128,6 +129,33 @@ namespace FurryFriends.API.Services
 
             _logger.LogInformation($"Áp dụng voucher '{maVoucher}' cho hóa đơn {hoaDonId}.");
             return await _banHangRepository.ApDungVoucherAsync(hoaDonId, maVoucher);
+        }
+
+        public async Task<object> ApDungVoucherGioHangAsync(Guid khachHangId, Guid voucherId)
+        {
+            if (khachHangId == Guid.Empty) throw new ArgumentException("ID khách hàng không hợp lệ.", nameof(khachHangId));
+            if (voucherId == Guid.Empty) throw new ArgumentException("ID voucher không hợp lệ.", nameof(voucherId));
+
+            _logger.LogInformation($"Áp dụng voucher GioHang '{voucherId}' cho khách hàng {khachHangId}.");
+            
+            // Sử dụng logic của GioHang để tính toán voucher
+            var dto = new { KhachHangId = khachHangId, VoucherId = voucherId };
+            
+            // Gọi API của GioHang để tính toán
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.BaseAddress = new Uri("https://localhost:7289/");
+                var response = await httpClient.PostAsJsonAsync("/api/GioHang/ap-dung-voucher", dto);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    throw new Exception($"Không thể áp dụng voucher: {error}");
+                }
+
+                var responseBody = await response.Content.ReadAsStringAsync();
+                return Newtonsoft.Json.JsonConvert.DeserializeObject(responseBody);
+            }
         }
 
         public async Task<HoaDonBanHangDto> GoBoVoucherAsync(Guid hoaDonId)

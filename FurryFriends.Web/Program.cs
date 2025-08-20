@@ -7,11 +7,19 @@ using FurryFriends.Web.Services.IServices;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Facebook;
 using Microsoft.AspNetCore.Authentication.Google;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Cấu hình logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
 
 // Đăng ký HttpMessageHandler
 builder.Services.AddScoped<AuthHeaderHandler>();
@@ -126,12 +134,60 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 })
-.AddCookie()
+        .AddCookie(options =>
+        {
+            options.Cookie.Name = "FurryFriends.Auth";
+            options.Cookie.HttpOnly = true;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            options.Cookie.SameSite = SameSiteMode.Lax;
+            options.ExpireTimeSpan = TimeSpan.FromHours(2);
+            options.SlidingExpiration = true;
+        })
 .AddGoogle(options =>
 {
     options.ClientId = "968410379877-vk3bu6n1711b6ip9756ranke5uc7rvmd.apps.googleusercontent.com";
     options.ClientSecret = "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";
-    options.CallbackPath = "/DangKy/DangNhapGoogleCallback";
+    options.CallbackPath = "/DangKy/signin-google";
+    options.SaveTokens = true;
+    options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+    options.CorrelationCookie.Expiration = TimeSpan.FromMinutes(30);
+    options.Events = new Microsoft.AspNetCore.Authentication.OAuth.OAuthEvents
+    {
+        OnRemoteFailure = context =>
+        {
+            if (context.Failure?.Message?.Contains("oauth state was missing or invalid") == true)
+            {
+                context.HandleResponse();
+                context.Response.Redirect("/DangKy?error=oauth_state_invalid");
+                return Task.CompletedTask;
+            }
+            
+            context.HandleResponse();
+            context.Response.Redirect("/DangKy?error=google_auth_failed");
+            return Task.CompletedTask;
+        },
+        OnTicketReceived = async context =>
+        {
+            var claims = context.Principal.Identities.FirstOrDefault()?.Claims;
+            var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+            var picture = claims?.FirstOrDefault(c => c.Type == "urn:google:picture")?.Value;
+            
+            if (string.IsNullOrEmpty(email))
+            {
+                context.Response.Redirect("/DangKy?error=google_auth_failed_no_email");
+                context.HandleResponse();
+                return;
+            }
+            
+            // Prevent default redirect and redirect to our processing action with query parameters
+            context.HandleResponse();
+            var redirectUrl = $"/DangKy/ProcessGoogleLogin?email={Uri.EscapeDataString(email)}&name={Uri.EscapeDataString(name ?? "")}&picture={Uri.EscapeDataString(picture ?? "")}";
+            context.Response.Redirect(redirectUrl);
+            await Task.CompletedTask;
+        }
+    };
 });
 
 builder.Services.AddSession(options =>
@@ -152,15 +208,17 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseSession();
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseSession();
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {

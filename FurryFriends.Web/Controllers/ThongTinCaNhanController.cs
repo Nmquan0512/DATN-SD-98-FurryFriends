@@ -16,12 +16,14 @@ namespace FurryFriends.Web.Controllers
 		private readonly WebThongTinCaNhanService _thongTinCaNhanService;
 		private readonly IDiaChiKhachHangService _diaChiKhachHangService;
 		private readonly ITaiKhoanService _taiKhoanService;
+		        private readonly ILogger<ThongTinCaNhanController> _logger;
 
-		public ThongTinCaNhanController(WebThongTinCaNhanService thongTinCaNhanService, IDiaChiKhachHangService diaChiKhachHangService, ITaiKhoanService taiKhoanService)
+		public ThongTinCaNhanController(WebThongTinCaNhanService thongTinCaNhanService, IDiaChiKhachHangService diaChiKhachHangService, ITaiKhoanService taiKhoanService, ILogger<ThongTinCaNhanController> logger)
 		{
 			_thongTinCaNhanService = thongTinCaNhanService;
 			_diaChiKhachHangService = diaChiKhachHangService;
 			_taiKhoanService = taiKhoanService;
+			_logger = logger;
 		}
 
 		// Hiển thị thông tin cá nhân
@@ -29,8 +31,13 @@ namespace FurryFriends.Web.Controllers
 		public async Task<IActionResult> Index()
 		{
 			var taiKhoanIdStr = HttpContext.Session.GetString("TaiKhoanId");
+			var role = HttpContext.Session.GetString("Role");
+			var hoTen = HttpContext.Session.GetString("HoTen");
+			
 			if (string.IsNullOrEmpty(taiKhoanIdStr) || !Guid.TryParse(taiKhoanIdStr, out var taiKhoanId))
+			{
 				return RedirectToAction("DangNhap", "Auth");
+			}
 
 			var model = await _thongTinCaNhanService.GetThongTinCaNhanAsync(taiKhoanId);
 			if (model == null)
@@ -38,6 +45,7 @@ namespace FurryFriends.Web.Controllers
 				TempData["Error"] = "Không tìm thấy thông tin cá nhân. Vui lòng liên hệ hỗ trợ!";
 				return RedirectToAction("Index", "Home");
 			}
+			
 			return View(model);
 		}
 

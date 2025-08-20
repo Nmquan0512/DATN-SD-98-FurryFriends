@@ -43,23 +43,13 @@
                         <div class="invalid-feedback">Vui lòng chọn hình thức thanh toán.</div>
                     </div>
 
-                    <!-- Tiền khách đưa (chỉ hiện khi là tiền mặt) -->
-                    <div id="tienKhachDuaSection" class="mb-3" style="display: none;">
-                        <label for="tienKhachDuaInput" class="form-label">Tiền khách đưa</label>
-                        <input type="text" id="tienKhachDuaInput" class="form-control" placeholder="0" inputmode="numeric">
-                    </div>
-
-                    <!-- Tiền thừa -->
-                    <div id="tienThuaSection" class="mb-3" style="display: none;">
-                        <label class="form-label">Tiền thừa trả khách</label>
-                        <input type="text" id="tienThuaDisplay" class="form-control-plaintext fs-5 fw-bold text-primary" value="0 ₫" readonly>
-                    </div>
-
                     <!-- Ghi chú -->
                     <div class="mb-3">
                         <label for="ghiChuThanhToan" class="form-label">Ghi chú thanh toán</label>
                         <textarea id="ghiChuThanhToan" class="form-control" rows="2"></textarea>
                     </div>
+
+
 
                     <!-- Nút hiển thị mã VietQR (sẽ được điều khiển bằng JS) -->
                     <div class="text-center" id="vietQRButtonContainer" style="display: none;">
@@ -85,31 +75,8 @@
     $(document).ready(function() {
         const paymentModal = $('#thanhToanModal');
         const hinhThucSelect = $('#hinhThucThanhToanSelect');
-        const tienKhachDuaSection = $('#tienKhachDuaSection');
-        const tienThuaSection = $('#tienThuaSection');
-        const tienKhachDuaInput = $('#tienKhachDuaInput');
-        const tienThuaDisplay = $('#tienThuaDisplay');
         const vietQRButtonContainer = $('#vietQRButtonContainer');
         const paymentForm = $('#paymentForm');
-
-        const formatCurrency = (value) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value || 0);
-
-        function calculateAndDisplayChange() {
-            const totalText = $('#thanhToanTongTien').text() || '0';
-            const total = parseFloat(totalText.replace(/[^0-9]/g, '')) || 0;
-            const paid = parseFloat(tienKhachDuaInput.val().replace(/[^0-9]/g, '')) || 0;
-            const change = paid - total;
-
-            if (!isNaN(total)) {
-                tienThuaDisplay.val(formatCurrency(change >= 0 ? change : 0));
-                // Thông báo nếu chưa đủ tiền
-                if (change < 0) {
-                    tienThuaDisplay.addClass('text-danger').removeClass('text-primary');
-                } else {
-                    tienThuaDisplay.addClass('text-primary').removeClass('text-danger');
-                }
-            }
-        }
 
         hinhThucSelect.on('change', function() {
             const selectedType = $(this).find('option:selected').data('type');
@@ -128,30 +95,13 @@
             console.log('- Is cash:', isCash); // Debug log
             console.log('- Is bank transfer:', isBankTransfer); // Debug log
 
-            tienKhachDuaSection.toggle(isCash);
-            tienThuaSection.toggle(isCash);
             // Chỉ hiện nút VietQR khi chọn chuyển khoản
             vietQRButtonContainer.toggle(isBankTransfer);
             
             console.log('VietQR button container visibility:', vietQRButtonContainer.is(':visible')); // Debug log
-
-            // Reset giá trị khi chuyển đổi
-            if (!isCash) {
-                tienKhachDuaInput.val('');
-            }
-            calculateAndDisplayChange();
         });
 
-        tienKhachDuaInput.on('input', function(e) {
-            // Tự động format số tiền khi người dùng nhập
-            let value = $(this).val().replace(/[^0-9]/g, '');
-            if (value) {
-                $(this).val(parseInt(value, 10).toLocaleString('vi-VN'));
-            } else {
-                $(this).val('');
-            }
-            calculateAndDisplayChange();
-        });
+
 
         paymentModal.on('show.bs.modal', function() {
             paymentForm[0].reset();
@@ -164,7 +114,6 @@
             });
             
             hinhThucSelect.trigger('change');
-            calculateAndDisplayChange();
         });
 
         // Sự kiện submit sẽ được lắng nghe bởi View chính (TaoHoaDonMoi.cshtml)

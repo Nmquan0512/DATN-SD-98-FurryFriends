@@ -17,17 +17,40 @@ namespace FurryFriends.Web.Controllers
     {
         private readonly IKhachHangService _khachHangService;
         private readonly ITaiKhoanService _taiKhoanService;
+        private readonly ILogger<DangKyController> _logger;
 
-        public DangKyController(IKhachHangService khachHangService, ITaiKhoanService taiKhoanService)
+        public DangKyController(IKhachHangService khachHangService, ITaiKhoanService taiKhoanService, ILogger<DangKyController> logger)
         {
             _khachHangService = khachHangService;
             _taiKhoanService = taiKhoanService;
+            _logger = logger;
         }
 
         // GET: DangKy
         [HttpGet]
         public IActionResult Index()
         {
+            // Xử lý lỗi từ Google OAuth
+            var error = Request.Query["error"].ToString();
+            if (!string.IsNullOrEmpty(error))
+            {
+                switch (error)
+                {
+                    case "google_auth_failed":
+                        ViewBag.Error = "Đăng nhập Google thất bại! Vui lòng thử lại.";
+                        break;
+                    case "oauth_state_invalid":
+                        ViewBag.Error = "Phiên đăng nhập Google đã hết hạn! Vui lòng thử lại.";
+                        break;
+                    case "google_auth_failed_no_email":
+                        ViewBag.Error = "Không thể lấy thông tin email từ Google! Vui lòng thử lại.";
+                        break;
+                    default:
+                        ViewBag.Error = "Đăng nhập Google thất bại! Vui lòng thử lại.";
+                        break;
+                }
+            }
+            
             return View(new RegisterViewModel());
         }
 
@@ -104,34 +127,49 @@ namespace FurryFriends.Web.Controllers
         [HttpGet]
         public IActionResult DangNhapGoogle(string returnUrl = "/")
         {
-            var properties = new AuthenticationProperties { RedirectUri = Url.Action("DangNhapGoogleCallback", "DangKy") };
+            var redirectUri = Url.Action("ProcessGoogleLogin", "DangKy", null, Request.Scheme, Request.Host.Value);
+            
+            // Lưu returnUrl vào TempData để sử dụng sau
+            TempData["GoogleReturnUrl"] = returnUrl ?? "/";
+            
+            // Tạo state token và lưu vào session
+            var stateToken = Guid.NewGuid().ToString();
+            HttpContext.Session.SetString("GoogleOAuthState", stateToken);
+            
+            var properties = new AuthenticationProperties 
+            { 
+                RedirectUri = redirectUri,
+                Items = { 
+                    { "returnUrl", returnUrl ?? "/" },
+                    { "state", stateToken }
+                },
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
+            };
+            
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
-        // Callback Google - Gộp đăng nhập và đăng ký
+
+
+        // Xử lý thông tin Google từ query parameters
         [HttpGet]
-        public async Task<IActionResult> DangNhapGoogleCallback()
+        public async Task<IActionResult> ProcessGoogleLogin()
         {
             try
             {
-                var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                if (!authenticateResult.Succeeded)
-                {
-                    TempData["Error"] = "Đăng nhập Google thất bại! Vui lòng thử lại.";
-                    return RedirectToAction("Index");
-                }
-
-                var claims = authenticateResult.Principal.Identities.FirstOrDefault()?.Claims;
-                var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-                var name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
-                var picture = claims?.FirstOrDefault(c => c.Type == "urn:google:picture")?.Value;
+                var email = Request.Query["email"].ToString();
+                var name = Request.Query["name"].ToString();
+                var picture = Request.Query["picture"].ToString();
 
                 if (string.IsNullOrEmpty(email))
                 {
-                    TempData["Error"] = "Không thể lấy thông tin email từ Google! Vui lòng thử lại.";
+                    TempData["Error"] = "Không tìm thấy thông tin Google! Vui lòng thử lại.";
                     return RedirectToAction("Index");
                 }
 
+                // Kiểm tra xem email đã tồn tại trong database chưa
+                
                 // Kiểm tra email đã tồn tại chưa
                 var existingKhachHang = await _khachHangService.FindByEmailAsync(email);
                 
@@ -148,8 +186,16 @@ namespace FurryFriends.Web.Controllers
                         HttpContext.Session.SetString("Role", "KhachHang");
                         HttpContext.Session.SetString("HoTen", existingKhachHang.TenKhachHang);
 
+                        // Commit session để đảm bảo được lưu
+                        await HttpContext.Session.CommitAsync();
+
                         TempData["Success"] = $"Đăng nhập Google thành công! Xin chào {existingKhachHang.TenKhachHang}";
                         return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        TempData["Error"] = "Tài khoản không tồn tại! Vui lòng liên hệ hỗ trợ.";
+                        return RedirectToAction("Index");
                     }
                 }
                 else
@@ -159,6 +205,7 @@ namespace FurryFriends.Web.Controllers
                     {
                         TenKhachHang = name ?? email.Split('@')[0],
                         EmailCuaKhachHang = email,
+                        SDT = "0000000000", // Set default phone number
                         NgayTaoTaiKhoan = DateTime.Now,
                         TrangThai = 1
                     };
@@ -166,8 +213,8 @@ namespace FurryFriends.Web.Controllers
 
                     var taiKhoan = new TaiKhoan
                     {
-                        UserName = email, // Sử dụng email làm username
-                        Password = Guid.NewGuid().ToString(), // Tạo password ngẫu nhiên
+                        UserName = email,
+                        Password = Guid.NewGuid().ToString(),
                         NgayTaoTaiKhoan = DateTime.Now,
                         TrangThai = true,
                         KhachHangId = khachHang.KhachHangId
@@ -178,6 +225,9 @@ namespace FurryFriends.Web.Controllers
                     HttpContext.Session.SetString("TaiKhoanId", taiKhoan.TaiKhoanId.ToString());
                     HttpContext.Session.SetString("Role", "KhachHang");
                     HttpContext.Session.SetString("HoTen", khachHang.TenKhachHang);
+
+                    // Commit session để đảm bảo được lưu
+                    await HttpContext.Session.CommitAsync();
 
                     TempData["Success"] = $"Đăng ký Google thành công! Chào mừng {khachHang.TenKhachHang} đến với FurryFriends!";
                     return RedirectToAction("Index", "Home");
@@ -253,6 +303,7 @@ namespace FurryFriends.Web.Controllers
                     {
                         TenKhachHang = name ?? email.Split('@')[0],
                         EmailCuaKhachHang = email,
+                        SDT = "0000000000", // Set default phone number
                         NgayTaoTaiKhoan = DateTime.Now,
                         TrangThai = 1
                     };

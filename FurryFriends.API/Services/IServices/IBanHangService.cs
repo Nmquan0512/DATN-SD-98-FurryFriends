@@ -59,6 +59,11 @@ namespace FurryFriends.API.Services.IServices
         Task<HoaDonBanHangDto> ApDungVoucherAsync(Guid hoaDonId, string maVoucher);
 
         /// <summary>
+        /// Áp dụng voucher sử dụng logic của GioHang.
+        /// </summary>
+        Task<object> ApDungVoucherGioHangAsync(Guid khachHangId, Guid voucherId);
+
+        /// <summary>
         /// Gỡ bỏ voucher hiện tại khỏi hóa đơn.
         /// </summary>
         Task<HoaDonBanHangDto> GoBoVoucherAsync(Guid hoaDonId);

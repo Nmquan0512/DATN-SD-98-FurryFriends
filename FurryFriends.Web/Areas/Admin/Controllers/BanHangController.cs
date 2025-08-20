@@ -224,6 +224,46 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
+        [HttpPost("{hoaDonId}/ap-dung-voucher-giohang")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApDungVoucherGioHang([FromBody] ApDungVoucherGioHangRequest request, Guid hoaDonId)
+        {
+            try 
+            { 
+                var result = await _banHangService.ApDungVoucherGioHangAsync(request.KhachHangId, request.VoucherId); 
+                return Json(new { success = true, data = result }); 
+            }
+            catch (Exception ex) { return Json(new { success = false, message = ex.Message }); }
+        }
+
+        [HttpPost("{hoaDonId}/ap-dung-voucher-by-code")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ApDungVoucherByCode([FromBody] ApDungVoucherByCodeRequest request, Guid hoaDonId)
+        {
+            try 
+            { 
+                // Tìm voucher theo mã
+                var vouchers = await _banHangService.TimKiemVoucherHopLeAsync(hoaDonId);
+                var voucher = vouchers.FirstOrDefault(v => v.MaVoucher == request.MaVoucher);
+                
+                if (voucher == null)
+                {
+                    return Json(new { success = false, message = "Mã voucher không tồn tại hoặc không hợp lệ" });
+                }
+
+                // Lấy thông tin hóa đơn để có KhachHangId
+                var hoaDon = await _banHangService.GetHoaDonByIdAsync(hoaDonId);
+                if (hoaDon?.KhachHang?.KhachHangId == null)
+                {
+                    return Json(new { success = false, message = "Hóa đơn chưa có khách hàng" });
+                }
+
+                var result = await _banHangService.ApDungVoucherGioHangAsync(hoaDon.KhachHang.KhachHangId, voucher.VoucherId); 
+                return Json(new { success = true, data = result }); 
+            }
+            catch (Exception ex) { return Json(new { success = false, message = ex.Message }); }
+        }
+
         [HttpDelete("{hoaDonId}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GoBoVoucher(Guid hoaDonId)

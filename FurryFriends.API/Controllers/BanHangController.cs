@@ -1,8 +1,10 @@
 ﻿using FurryFriends.API.Models.DTO.BanHang;
 using FurryFriends.API.Models.DTO.BanHang.Requests;
 using FurryFriends.API.Services.IServices;
+using FurryFriends.API.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -22,11 +24,13 @@ namespace FurryFriends.API.Controllers
     {
         private readonly IBanHangService _banHangService;
         private readonly ILogger<BanHangController> _logger;
+        private readonly AppDbContext _context;
 
-        public BanHangController(IBanHangService banHangService, ILogger<BanHangController> logger)
+        public BanHangController(IBanHangService banHangService, ILogger<BanHangController> logger, AppDbContext context)
         {
             _banHangService = banHangService;
             _logger = logger;
+            _context = context;
         }
 
         #region Hóa Đơn (Hành động chính)
@@ -294,6 +298,55 @@ namespace FurryFriends.API.Controllers
         }
 
         /// <summary>
+        /// Áp dụng voucher bằng mã sử dụng logic của GioHang.
+        /// </summary>
+        /// <param name="hoaDonId">ID của hóa đơn cần áp dụng.</param>
+        /// <param name="request">Body chứa mã voucher.</param>
+        [HttpPost("{hoaDonId}/ap-dung-voucher-by-code")]
+        [ProducesResponseType(typeof(object), 200)]
+        public async Task<IActionResult> ApDungVoucherByCode([FromBody] ApDungVoucherByCodeRequest request, Guid hoaDonId)
+        {
+            try
+            {
+                _logger.LogInformation($"🎫 Applying voucher by code: {request.MaVoucher} for invoice: {hoaDonId}");
+                
+                // ✅ Lấy hóa đơn để có KhachHangId
+                var hoaDon = await _banHangService.GetHoaDonByIdAsync(hoaDonId);
+                if (hoaDon?.KhachHang?.KhachHangId == null)
+                {
+                    _logger.LogWarning($"🎫 Invoice {hoaDonId} has no customer assigned");
+                    return BadRequest(new { success = false, message = "Hóa đơn chưa có khách hàng" });
+                }
+                
+                var khachHangId = hoaDon.KhachHang.KhachHangId;
+                _logger.LogInformation($"🎫 Using customer: {khachHangId}");
+
+                // ✅ Sử dụng logic của GioHang: tìm voucher theo mã và áp dụng theo KhachHangId
+                var vouchers = await _banHangService.TimKiemVoucherHopLeAsync(hoaDonId);
+                var voucher = vouchers.FirstOrDefault(v => v.MaVoucher == request.MaVoucher);
+                
+                if (voucher == null)
+                {
+                    _logger.LogWarning($"🎫 Voucher {request.MaVoucher} not found in valid vouchers");
+                    return BadRequest(new { success = false, message = $"Mã voucher '{request.MaVoucher}' không tồn tại hoặc không hợp lệ" });
+                }
+                
+                _logger.LogInformation($"🎫 Found voucher: {voucher.MaVoucher} - {voucher.TenVoucher}");
+
+                // ✅ Gọi API của GioHang trực tiếp để đảm bảo logic giống hệt
+                var result = await _banHangService.ApDungVoucherGioHangAsync(khachHangId, voucher.VoucherId);
+                _logger.LogInformation($"🎫 Voucher applied successfully: {result}");
+                
+                return Ok(new { success = true, data = result });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"🎫 Error applying voucher {request.MaVoucher}: {ex.Message}");
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        /// <summary>
         /// Gỡ bỏ voucher khỏi hóa đơn.
         /// </summary>
         /// <param name="hoaDonId">ID của hóa đơn cần gỡ voucher.</param>
@@ -517,6 +570,134 @@ namespace FurryFriends.API.Controllers
                 return StatusCode(500, "Lỗi khi tạo QR code");
             }
         }
+
+        /// <summary>
+        /// Áp dụng voucher theo hóa đơn (tổng tiền hóa đơn).
+        /// </summary>
+        /// <param name="hoaDonId">ID của hóa đơn.</param>
+        /// <param name="request">Body chứa mã voucher.</param>
+        [HttpPost("{hoaDonId}/ap-dung-voucher")]
+        [ProducesResponseType(typeof(object), 200)]
+        public async Task<IActionResult> ApDungVoucherHoaDon(Guid hoaDonId, [FromBody] ApDungVoucherByCodeRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"🎫 Applying voucher: {request.MaVoucher} for invoice: {hoaDonId}");
+                
+                // ✅ Lấy hóa đơn để có tổng tiền
+                var hoaDon = await _banHangService.GetHoaDonByIdAsync(hoaDonId);
+                if (hoaDon == null)
+                {
+                    _logger.LogWarning($"🎫 Invoice {hoaDonId} not found");
+                    return BadRequest(new { success = false, message = "Hóa đơn không tồn tại" });
+                }
+                
+                _logger.LogInformation($"🎫 Invoice total: {hoaDon.TongTien:N0} VNĐ");
+
+                // ✅ Tìm voucher theo mã
+                var voucher = await _context.Vouchers
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(v => v.MaVoucher == request.MaVoucher && v.TrangThai == 1);
+                
+                if (voucher == null)
+                {
+                    _logger.LogWarning($"🎫 Voucher {request.MaVoucher} not found or invalid");
+                    
+                    // ✅ Debug: Kiểm tra tất cả voucher trong database
+                    var allVouchers = await _context.Vouchers
+                        .AsNoTracking()
+                        .Select(v => new { v.MaVoucher, v.TenVoucher, v.TrangThai, v.SoLuong })
+                        .ToListAsync();
+                    
+                    _logger.LogWarning($"🎫 All vouchers in DB: {string.Join(", ", allVouchers.Select(v => $"{v.MaVoucher}({v.TrangThai})"))}");
+                    
+                    return BadRequest(new { success = false, message = $"Mã voucher '{request.MaVoucher}' không tồn tại hoặc không hợp lệ" });
+                }
+                
+                _logger.LogInformation($"🎫 Found voucher: {voucher.MaVoucher} - {voucher.TenVoucher} - Status: {voucher.TrangThai} - Quantity: {voucher.SoLuong}");
+
+                // ✅ Tính toán voucher theo tổng tiền hóa đơn
+                var tongTienHang = hoaDon.TongTien;
+                var phiVanChuyen = 0m; // BanHang không có phí ship
+                var tongDonHang = tongTienHang + phiVanChuyen;
+                
+                _logger.LogInformation($"🎫 Total order amount: {tongDonHang:N0} VNĐ");
+                
+                // ✅ Kiểm tra điều kiện voucher
+                var now = DateTime.UtcNow;
+                if (voucher.NgayBatDau > now || voucher.NgayKetThuc < now)
+                {
+                    return BadRequest(new { success = false, message = "Voucher đã hết hạn hoặc chưa có hiệu lực" });
+                }
+                
+                if (voucher.SoLuong <= 0)
+                {
+                    return BadRequest(new { success = false, message = "Voucher đã hết lượt sử dụng" });
+                }
+                
+                if (tongDonHang < voucher.SoTienApDungToiThieu)
+                {
+                    return BadRequest(new { success = false, message = $"Đơn hàng tối thiểu {voucher.SoTienApDungToiThieu:N0} VNĐ để áp dụng voucher" });
+                }
+                
+                // ✅ Tính số tiền giảm
+                var soTienGiam = 0m;
+                if (voucher.PhanTramGiam > 0)
+                {
+                    soTienGiam = tongDonHang * voucher.PhanTramGiam / 100;
+                    if (voucher.GiaTriGiamToiDa.HasValue && soTienGiam > voucher.GiaTriGiamToiDa.Value)
+                    {
+                        soTienGiam = voucher.GiaTriGiamToiDa.Value;
+                    }
+                }
+                // Voucher chỉ có phần trăm giảm, không có số tiền giảm cố định
+                
+                var tongTienSauGiam = tongDonHang - soTienGiam;
+                
+                _logger.LogInformation($"🎫 Discount amount: {soTienGiam:N0} VNĐ");
+                _logger.LogInformation($"🎫 Final amount: {tongTienSauGiam:N0} VNĐ");
+                
+                // ✅ Lưu thông tin voucher vào hóa đơn
+                var hoaDonEntity = await _context.HoaDons.FindAsync(hoaDonId);
+                if (hoaDonEntity != null)
+                {
+                    hoaDonEntity.VoucherId = voucher.VoucherId;
+                    hoaDonEntity.TongTienSauKhiGiam = tongTienSauGiam; // Sử dụng TongTienSauKhiGiam thay vì ThanhTien
+                    hoaDonEntity.ThoiGianThayDoiTrangThai = DateTime.UtcNow; // Sử dụng ThoiGianThayDoiTrangThai thay vì NgayCapNhat
+                    
+                    // ✅ Giảm số lượng voucher
+                    voucher.SoLuong -= 1;
+                    _context.Vouchers.Update(voucher);
+                    
+                    await _context.SaveChangesAsync();
+                    _logger.LogInformation($"🎫 Saved voucher to invoice: VoucherId={voucher.VoucherId}, TienGiam={soTienGiam}, VoucherSoLuongConLai={voucher.SoLuong}");
+                }
+                else
+                {
+                    _logger.LogWarning($"🎫 Could not find invoice entity to save voucher: {hoaDonId}");
+                }
+                
+                // ✅ Trả về kết quả
+                var result = new
+                {
+                    tenVoucher = voucher.TenVoucher,
+                    maVoucher = voucher.MaVoucher,
+                    soTienGiam = soTienGiam,
+                    soTienApDungToiThieu = voucher.SoTienApDungToiThieu,
+                    tongTienHang = tongTienHang,
+                    tongTienSauGiam = tongTienSauGiam
+                };
+                
+                return Ok(new { success = true, data = result });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"🎫 Error applying voucher {request.MaVoucher}: {ex.Message}");
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+       
 
         #endregion
     }

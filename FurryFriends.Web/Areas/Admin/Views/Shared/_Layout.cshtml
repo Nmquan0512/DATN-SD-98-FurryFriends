@@ -61,6 +61,42 @@
                 </div>
 
                 <div class="nav-section">
+                    <h3 class="nav-section-title">Bán hàng</h3>
+                    <ul class="nav-item">
+                        <li>
+                            <a href="@Url.Action("Index", "BanHang", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "BanHang" ? "active" : "")">
+                                <i class="nav-icon fas fa-cash-register"></i>
+                                <span>Bán hàng</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
+                    <h3 class="nav-section-title">Đơn hàng</h3>
+                    <ul class="nav-item">
+                        <li>
+                            <a href="@Url.Action("Index", "HoaDon", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "HoaDon" ? "active" : "")">
+                                <i class="nav-icon fas fa-shopping-cart"></i>
+                                <span>Hóa đơn</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "DonHang", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DonHang" ? "active" : "")">
+                                <i class="nav-icon fas fa-boxes"></i>
+                                <span>Quản lý đơn hàng</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Index", "GiamGia", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "GiamGias" ? "active" : "")">
+                                <i class="nav-icon fas fa-percent"></i>
+                                <span>Khuyến mãi</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="nav-section">
                     <h3 class="nav-section-title">Quản lý</h3>
                     <ul class="nav-item">
                         <li>
@@ -105,12 +141,6 @@
                                 <span>Quản lý ảnh</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="@Url.Action("Index", "BanHang", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "BanHang" ? "active" : "")">
-                                <i class="nav-icon fas fa-image"></i>
-                                <span>BanHang</span>
-                            </a>
-                        </li>
 @*                         <li>
                             <a href="@Url.Action("Index", "DanhMuc", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DanhMuc" ? "active" : "")">
                                 <i class="nav-icon fas fa-tags"></i>
@@ -147,33 +177,6 @@
                                 <span>Thành phần</span>
                             </a>
                         </li>
-                    </ul>
-                </div>
-
-                <div class="nav-section">
-                    <h3 class="nav-section-title">Đơn hàng</h3>
-                    <ul class="nav-item">
-                        <li>
-                            <a href="@Url.Action("Index", "HoaDon", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "HoaDon" ? "active" : "")">
-                                <i class="nav-icon fas fa-shopping-cart"></i>
-                                <span>Hóa đơn</span>
-                            </a>
-                        </li>
-                        <li>
-
-                            <a href="@Url.Action("Index", "DonHang", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "DonHang" ? "active" : "")">
-                                <i class="nav-icon fas fa-boxes"></i>
-                                <span>Quản lý đơn hàng</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Action("Index", "GiamGia", new { area = "Admin" })" class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "GiamGias" ? "active" : "")">
-
-                                <i class="nav-icon fas fa-percent"></i>
-                                <span>Giảm giá</span>
-                            </a>
-                        </li>
-                       
                     </ul>
                 </div>
 

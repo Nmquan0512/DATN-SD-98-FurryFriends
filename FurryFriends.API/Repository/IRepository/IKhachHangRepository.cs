@@ -11,5 +11,6 @@ namespace FurryFriends.API.Repository.IRepository
 		Task DeleteAsync(Guid id);
 		Task<KhachHang?> FindByEmailAsync(string email);       // Tìm theo email
 		Task<KhachHang?> FindByPhoneAsync(string phone);       // Tìm theo số điện thoại
+		Task<IEnumerable<KhachHang>> GetAllIncludingDeletedAsync(); // Lấy tất cả (bao gồm đã xóa)
 	}
 }

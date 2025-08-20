@@ -130,9 +130,10 @@
             padding: 1.25rem;
             border-bottom: 1px solid var(--border-color);
             display: grid;
-            grid-template-columns: 90px 1fr 160px 140px 160px 90px;
+            grid-template-columns: 90px 3fr 120px 100px 120px 70px;
             gap: 1rem;
-            align-items: center;
+            align-items: start; /* Thay đổi từ center thành start */
+            min-height: 120px; /* Tăng chiều cao tối thiểu */
         }
 
             .cart-item:last-child {
@@ -158,6 +159,83 @@
             font-weight: 700;
             color: var(--dark-text);
             margin-bottom: .35rem;
+            /* Tối ưu hiển thị tên sản phẩm dài - Cách 2: Hiển thị nhiều dòng */
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; /* Hiển thị tối đa 2 dòng */
+            -webkit-box-orient: vertical;
+            line-height: 1.2;
+            max-height: 2.4em; /* 2 dòng × 1.2 line-height */
+            /* Font size cố định nhỏ hơn */
+            font-size: 0.85rem;
+            /* Thêm transition cho mượt mà */
+            transition: all 0.2s ease;
+        }
+
+        /* Responsive font size cho tên sản phẩm */
+        .product-title.long-text {
+            font-size: clamp(0.65rem, 2vw, 0.85rem);
+        }
+
+        .product-title.very-long-text {
+            font-size: clamp(0.55rem, 1.5vw, 0.75rem);
+        }
+
+        /* Tooltip cho tên sản phẩm dài */
+        .product-title-container {
+            position: relative;
+            cursor: help;
+        }
+
+        /* Custom tooltip */
+        .custom-tooltip {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.95);
+            color: white;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: normal;
+            z-index: 9999;
+            max-width: 450px;
+            min-width: 250px;
+            word-wrap: break-word;
+            word-break: break-word;
+            line-height: 1.4;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .custom-tooltip.show {
+            opacity: 1;
+        }
+
+        /* Ẩn một số thông tin khi tên sản phẩm quá dài */
+        .cart-item.compact .product-meta {
+            display: none;
+        }
+
+        .cart-item.compact .price-display {
+            font-size: 0.8rem;
+        }
+
+        /* Responsive cho mobile */
+        @@media (max-width: 768px) {
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+                grid-auto-rows: minmax(40px,auto);
+                gap: 0.5rem;
+            }
+            
+            .product-title {
+                font-size: 0.75rem;
+                -webkit-line-clamp: 3; /* Hiển thị 3 dòng trên mobile */
+                max-height: 3.6em;
+            }
         }
 
         .product-meta {
@@ -677,7 +755,9 @@
                             <div class="cart-item">
                                 <img src="@($"https://localhost:7289/images/{System.IO.Path.GetFileName(item.AnhSanPham ?? "")}")" class="product-image" alt="@item.TenSanPham" />
                                 <div>
-                                    <div class="product-title">@item.TenSanPham</div>
+                                    <div class="product-title-container" data-full-title="@item.TenSanPham">
+                                        <div class="product-title">@item.TenSanPham</div>
+                                    </div>
                                     <div class="product-meta">Màu: @item.MauSac | Size: @item.KichCo</div>
                                 </div>
                                 <div class="text-center">
@@ -917,6 +997,17 @@
         }
 
         document.addEventListener('DOMContentLoaded', function(){
+            // ✅ Tự động điều chỉnh font size cho tên sản phẩm khi trang load
+            adjustProductTitleFontSize();
+            
+            // ✅ Khởi tạo tooltip tùy chỉnh
+            initCustomTooltips();
+            
+            // ✅ Điều chỉnh lại khi resize window
+            window.addEventListener('resize', function() {
+                adjustProductTitleFontSize();
+            });
+            
             // Đồng bộ badge giỏ hàng thực tế mỗi khi vào trang này
             if (window.refreshCartCount) window.refreshCartCount();
 
@@ -1222,6 +1313,120 @@
                         e.preventDefault();
                         showBeautifulNotification('Chỉ hỗ trợ thanh toán khi nhận hàng hoặc thanh toán VNPay!', 'error');
                         return false;
+                    }
+                });
+            }
+
+            // ✅ Hàm tạo và quản lý tooltip tùy chỉnh
+            function initCustomTooltips() {
+                let tooltip = null;
+                let timeout = null;
+
+                // Tạo tooltip element
+                function createTooltip() {
+                    if (tooltip) return tooltip;
+                    tooltip = document.createElement('div');
+                    tooltip.className = 'custom-tooltip';
+                    document.body.appendChild(tooltip);
+                    return tooltip;
+                }
+
+                // Hiển thị tooltip
+                function showTooltip(element, text) {
+                    console.log('🔍 Showing tooltip for:', text); // Debug log
+                    const tooltipEl = createTooltip();
+                    tooltipEl.textContent = text;
+                    tooltipEl.classList.add('show');
+
+                    const rect = element.getBoundingClientRect();
+                    const tooltipRect = tooltipEl.getBoundingClientRect();
+                    
+                    // Tính toán vị trí
+                    let left = rect.left;
+                    let top = rect.top - tooltipRect.height - 10;
+
+                    // Kiểm tra nếu tooltip bị tràn ra ngoài màn hình
+                    if (left + tooltipRect.width > window.innerWidth) {
+                        left = window.innerWidth - tooltipRect.width - 10;
+                    }
+                    if (left < 10) left = 10;
+                    if (top < 10) {
+                        top = rect.bottom + 10;
+                    }
+
+                    tooltipEl.style.left = left + 'px';
+                    tooltipEl.style.top = top + 'px';
+                    
+                    console.log('🔍 Tooltip positioned at:', left, top); // Debug log
+                }
+
+                // Ẩn tooltip
+                function hideTooltip() {
+                    if (tooltip) {
+                        tooltip.classList.remove('show');
+                    }
+                }
+
+                // Xử lý sự kiện cho các product title
+                document.querySelectorAll('.product-title-container').forEach(container => {
+                    const title = container.querySelector('.product-title');
+                    if (!title) return;
+
+                    const fullText = container.getAttribute('data-full-title');
+                    
+                    // Luôn hiển thị tooltip khi có fullText
+                    if (fullText) {
+                        container.addEventListener('mouseenter', () => {
+                            clearTimeout(timeout);
+                            timeout = setTimeout(() => {
+                                showTooltip(container, fullText);
+                            }, 300); // Delay 300ms
+                        });
+
+                        container.addEventListener('mouseleave', () => {
+                            clearTimeout(timeout);
+                            hideTooltip();
+                        });
+                    }
+                });
+            }
+
+            // ✅ Hàm tự động điều chỉnh font size cho tên sản phẩm
+            function adjustProductTitleFontSize() {
+                const cartItems = document.querySelectorAll('.cart-item');
+                
+                cartItems.forEach(item => {
+                    const title = item.querySelector('.product-title');
+                    if (!title) return;
+                    
+                    const text = title.textContent || title.innerText;
+                    const textLength = text.length;
+                    
+                    // Xóa class cũ
+                    title.classList.remove('long-text', 'very-long-text');
+                    item.classList.remove('compact');
+                    
+                    // Thêm class dựa trên độ dài text
+                    if (textLength > 80) {
+                        title.classList.add('very-long-text');
+                        item.classList.add('compact'); // Ẩn thông tin phụ khi tên quá dài
+                    } else if (textLength > 60) {
+                        title.classList.add('very-long-text');
+                    } else if (textLength > 40) {
+                        title.classList.add('long-text');
+                    }
+                    
+                    // Điều chỉnh font size động nếu cần
+                    if (textLength > 100) {
+                        title.style.fontSize = '0.45rem';
+                    } else if (textLength > 80) {
+                        title.style.fontSize = '0.5rem';
+                    } else if (textLength > 60) {
+                        title.style.fontSize = '0.6rem';
+                    } else if (textLength > 40) {
+                        title.style.fontSize = '0.7rem';
+                    } else {
+                        title.style.fontSize = '';
                     }
                 });
             }
