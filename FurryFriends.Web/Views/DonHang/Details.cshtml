@@ -11,6 +11,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             position: relative;
             overflow: hidden;
+            padding: 5rem 0;
         }
 
         .hero-section::before {
@@ -41,6 +42,28 @@
 
         .breadcrumb-modern .breadcrumb-item.active {
             color: #64748b;
+        }
+
+        /* Order Type Badge */
+        .order-type-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 1rem;
+        }
+
+        .order-type-offline {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .order-type-online {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
         }
 
         /* Status Badge */
@@ -105,6 +128,11 @@
             font-weight: 800;
             color: #1e293b;
             margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .order-date {
@@ -310,7 +338,6 @@
         
         .total-item.small {
             font-size: 0.875rem;
-        }
         }
 
         /* Order Summary */
@@ -544,6 +571,8 @@
         @@media (max-width: 768px) {
             .order-number {
                 font-size: 2rem;
+                flex-direction: column;
+                gap: 0.5rem;
             }
 
             .info-grid {
@@ -582,6 +611,11 @@
 
             .action-buttons {
                 flex-direction: column;
+            }
+
+            .order-type-badge {
+                margin-left: 0;
+                margin-top: 0.5rem;
             }
         }
 
@@ -710,71 +744,178 @@
                 top: 40px;
             }
         }
+
+        /* Additional fixes for better styling */
+        .text-success {
+            color: #059669 !important;
+        }
+
+        .text-red-500 {
+            color: #ef4444 !important;
+        }
+
+        .text-gray-600 {
+            color: #4b5563 !important;
+        }
+
+        .text-gray-700 {
+            color: #374151 !important;
+        }
+
+        .leading-relaxed {
+            line-height: 1.625;
+        }
+
+        .text-sm {
+            font-size: 0.875rem;
+        }
+
+        .fw-semibold {
+            font-weight: 600;
+        }
+
+        /* Container styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Breadcrumb styles */
+        .breadcrumb {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumb-item:not(:last-child)::after {
+            content: '/';
+            margin: 0 0.5rem;
+            color: #cbd5e1;
+        }
+
+        /* Ensure proper spacing */
+        .py-16 {
+            padding-top: 4rem;
+            padding-bottom: 4rem;
+        }
+
+        .py-20 {
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+        }
+
+        /* Text utilities */
+        .text-4xl {
+            font-size: 2.25rem;
+        }
+
+        .text-5xl {
+            font-size: 3rem;
+        }
+
+        .text-xl {
+            font-size: 1.25rem;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .opacity-90 {
+            opacity: 0.9;
+        }
+
+        /* Responsive text */
+        @@media (max-width: 768px) {
+            .text-4xl {
+                font-size: 1.875rem;
+            }
+            
+            .text-5xl {
+                font-size: 2.25rem;
+            }
+        }
     </style>
 }
 
 @section Scripts {
     <script>
         // ✅ Gửi email hóa đơn - Tối ưu hóa để gửi trong 5 giây
-        document.getElementById('sendEmailBtn')?.addEventListener('click', async function() {
-            const hoaDonId = '@Model.HoaDonId';
-            const btn = this;
-            const originalText = btn.innerHTML;
-            
-            // Show loading state
-            btn.disabled = true;
-            btn.innerHTML = '<div class="loading-spinner"></div> Đang gửi...';
-            
-            try {
-                // ✅ Tối ưu hóa: Sử dụng AbortController để timeout sau 5 giây
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 15000);
-                
-                const response = await fetch(`/HoaDon/SendEmailInvoice/${hoaDonId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    signal: controller.signal
-                });
-                
-                clearTimeout(timeoutId);
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    if (result.success) {
-                        // ✅ Hiệu ứng thành công đẹp mắt
-                        btn.innerHTML = '<i class="fas fa-check"></i> Đã gửi';
-                        btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                        btn.style.transform = 'scale(1.05)';
+        document.addEventListener('DOMContentLoaded', function() {
+            const sendEmailBtn = document.getElementById('sendEmailBtn');
+            if (sendEmailBtn) {
+                sendEmailBtn.addEventListener('click', async function() {
+                    const hoaDonId = '@Model.HoaDonId';
+                    const btn = this;
+                    const originalText = btn.innerHTML;
+                    
+                    // Show loading state
+                    btn.disabled = true;
+                    btn.innerHTML = '<div class="loading-spinner"></div> Đang gửi...';
+                    
+                    try {
+                        // ✅ Tối ưu hóa: Sử dụng AbortController để timeout sau 15 giây
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 15000);
                         
-                        setTimeout(() => {
-                            btn.innerHTML = originalText;
-                            btn.style.background = '';
-                            btn.style.transform = '';
-                            btn.disabled = false;
-                        }, 2000);
+                        const response = await fetch(`/HoaDon/SendEmailInvoice/${hoaDonId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            signal: controller.signal
+                        });
                         
-                        // ✅ Toast notification đẹp mắt
-                        showSuccessToast('Hóa đơn đã được gửi thành công! 🎉');
-                    } else {
-                        throw new Error(result.message || 'Có lỗi xảy ra');
+                        clearTimeout(timeoutId);
+                        
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (result.success) {
+                                // ✅ Hiệu ứng thành công đẹp mắt
+                                btn.innerHTML = '<i class="fas fa-check"></i> Đã gửi';
+                                btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                                btn.style.transform = 'scale(1.05)';
+                                
+                                setTimeout(() => {
+                                    btn.innerHTML = originalText;
+                                    btn.style.background = '';
+                                    btn.style.transform = '';
+                                    btn.disabled = false;
+                                }, 2000);
+                                
+                                // ✅ Toast notification đẹp mắt
+                                showSuccessToast('Hóa đơn đã được gửi thành công! 🎉');
+                            } else {
+                                throw new Error(result.message || 'Có lỗi xảy ra');
+                            }
+                        } else {
+                            throw new Error('Không thể gửi email');
+                        }
+                    } catch (error) {
+                        console.error('Error sending email:', error);
+                        
+                        if (error.name === 'AbortError') {
+                            showErrorToast('Gửi email bị timeout. Vui lòng thử lại sau.');
+                        } else {
+                            showErrorToast('Có lỗi xảy ra khi gửi email. Vui lòng thử lại sau.');
+                        }
+                        
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
                     }
-                } else {
-                    throw new Error('Không thể gửi email');
-                }
-            } catch (error) {
-                console.error('Error sending email:', error);
-                
-                if (error.name === 'AbortError') {
-                    showErrorToast('Gửi email bị timeout. Vui lòng thử lại sau.');
-                } else {
-                    showErrorToast('Có lỗi xảy ra khi gửi email. Vui lòng thử lại sau.');
-                }
-                
-                btn.innerHTML = originalText;
-                btn.disabled = false;
+                });
             }
         });
 
@@ -805,14 +946,18 @@
             // Auto remove
             setTimeout(() => {
                 toast.classList.remove('show');
-                setTimeout(() => document.body.removeChild(toast), 300);
+                setTimeout(() => {
+                    if (document.body.contains(toast)) {
+                        document.body.removeChild(toast);
+                    }
+                }, 300);
             }, 3000);
         }
     </script>
 }
 
 <!-- Hero Section -->
-<section class="hero-section text-white py-20">
+<section class="hero-section text-white">
     <div class="container mx-auto px-4 relative z-10">
         <div class="text-center">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">
@@ -826,7 +971,7 @@
 </section>
 
 <!-- Main Content -->
-<section class="py-16 bg-gray-50">
+<section class="py-16" style="background-color: #f8fafc;">
     <div class="container mx-auto px-4">
         <!-- Breadcrumb -->
         <nav class="breadcrumb-modern">
@@ -950,7 +1095,7 @@
         </div>
 
         <!-- Status History Section -->
-        <div class="order-details-container mt-8 fade-in">
+        <div class="order-details-container fade-in" style="margin-top: 2rem;">
             <div class="products-section">
                 <div class="section-header">
                     <div class="section-icon">
@@ -1088,7 +1233,7 @@
         </div>
 
         <!-- Products Section -->
-        <div class="order-details-container mt-8 fade-in">
+        <div class="order-details-container fade-in" style="margin-top: 2rem;">
             <div class="products-section">
                 <div class="section-header">
                     <div class="section-icon">
