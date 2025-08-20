@@ -96,7 +96,7 @@
                                 <span>@(item.KhachHang?.TenKhachHang ?? "Khách lẻ")</span>
                             </div>
                             <div>
-                                <span class="me-4"><i class="far fa-calendar-alt me-2 text-muted"></i>@DateTimeHelper.FormatDateTime(item.NgayTao)</span>
+                                <span class="me-4"><i class="far fa-calendar-alt me-2 text-muted"></i>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</span>
                                 <span class="badge bg-warning rounded-pill">Chờ thanh toán</span>
                             </div>
                         </a>
@@ -162,7 +162,7 @@
                             <tr data-date="@item.NgayTao.ToString("yyyy-MM-dd")">
                                 <td class="fw-bold">@item.MaHoaDon</td>
                                 <td>@(item.KhachHang?.TenKhachHang ?? "Khách lẻ")</td>
-                                <td>@DateTimeHelper.FormatDateTime(item.NgayTao)</td>
+                                <td>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
                                 <td class="text-end fw-semibold text-success">@item.ThanhTien.ToString("N0") ₫</td>
                                 <td class="text-center">
                                     @{

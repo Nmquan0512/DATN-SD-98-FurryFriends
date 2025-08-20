@@ -162,7 +162,7 @@ namespace FurryFriends.API.Repository
                 var hoaDon = new HoaDon
                 {
                     HoaDonId = Guid.NewGuid(),
-                    NgayTao = DateTime.UtcNow,
+                    NgayTao = DateTime.Now, // ✅ Sử dụng giờ Việt Nam thay vì UTC
                     TrangThai = (int)TrangThaiHoaDon.Offline_ChuaThanhToan, // ✅ Sử dụng trạng thái offline mới
                     GhiChu = request.GhiChu ?? "",
                     NhanVienId = request.NhanVienId,
@@ -187,7 +187,7 @@ namespace FurryFriends.API.Repository
                         {
                             KhachHangId = Guid.NewGuid(),
                             TenKhachHang = "Khách lẻ",
-                            NgayTaoTaiKhoan = DateTime.UtcNow,
+                            NgayTaoTaiKhoan = DateTime.Now, // ✅ Sử dụng giờ Việt Nam
                             TrangThai = 1,
                             EmailCuaKhachHang = "khachle@furryfriends.local",
                             SDT = "0000000000"
@@ -575,7 +575,7 @@ namespace FurryFriends.API.Repository
                     hoaDon.TrangThai = (int)TrangThaiHoaDon.Offline_DaThanhToan; // ✅ Chuyển về trạng thái 7
                 }
                 
-                hoaDon.NgayNhanHang = DateTime.UtcNow; // Coi như ngày thanh toán là ngày nhận tại quầy
+                hoaDon.NgayNhanHang = DateTime.Now; // ✅ Sử dụng giờ Việt Nam - ngày thanh toán là ngày nhận tại quầy
                 hoaDon.GhiChu = string.IsNullOrEmpty(hoaDon.GhiChu) ? request.GhiChuThanhToan : hoaDon.GhiChu + " | " + request.GhiChuThanhToan;
                 
                 // Cập nhật điểm tích lũy cho khách hàng thành viên
@@ -605,7 +605,7 @@ namespace FurryFriends.API.Repository
         // Trong BanHangRepository.cs
         public async Task<IEnumerable<SanPhamBanHangDto>> TimKiemSanPhamAsync(string keyword)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now; // ✅ Sử dụng giờ Việt Nam
             var query = _context.SanPhamChiTiets.AsNoTracking().Where(spct => spct.TrangThai == 1 && spct.SoLuong > 0);
             if (!string.IsNullOrWhiteSpace(keyword))
             {
@@ -690,7 +690,7 @@ namespace FurryFriends.API.Repository
 
         public async Task<IEnumerable<VoucherDto>> TimKiemVoucherHopLeAsync(Guid hoaDonId)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now; // ✅ Sử dụng giờ Việt Nam
 
             // Lấy thông tin hóa đơn để kiểm tra các điều kiện (nếu cần trong tương lai)
             // Ví dụ: var hoaDon = await _context.HoaDons.FindAsync(hoaDonId);
@@ -884,7 +884,7 @@ namespace FurryFriends.API.Repository
                     {
                         KhachHangId = Guid.NewGuid(),
                         TenKhachHang = "Khách lẻ",
-                        NgayTaoTaiKhoan = DateTime.UtcNow,
+                        NgayTaoTaiKhoan = DateTime.Now, // ✅ Sử dụng giờ Việt Nam
                         TrangThai = 1,
                         EmailCuaKhachHang = "khachle@furryfriends.local",
                         SDT = "0000000000"

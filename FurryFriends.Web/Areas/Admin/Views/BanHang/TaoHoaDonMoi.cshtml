@@ -2108,44 +2108,7 @@
                 console.log('Events bound successfully'); // Log để kiểm tra bindAllEvents có được gọi không
                 shippingManager.init();
                 
-                // ✅ Thêm event listener để tự động xóa hóa đơn trống khi chuyển trang
-                setupAutoCleanup();
-            }
-            
-            // ✅ Hàm tự động xóa hóa đơn trống khi chuyển trang
-            function setupAutoCleanup() {
-                // Xử lý khi user rời khỏi trang
-                window.addEventListener('beforeunload', function(e) {
-                    if (invoiceState && shouldCleanupInvoice()) {
-                        console.log('Auto cleanup: Deleting empty invoice before leaving page');
-                        // Gửi request xóa hóa đơn trống (sync để đảm bảo hoàn thành)
-                        $.ajax({
-                            url: `https://localhost:7289/api/BanHang/hoa-don/${invoiceState.hoaDonId}/huy`,
-                            method: 'POST',
-                            async: false, // Sync để đảm bảo hoàn thành trước khi rời trang
-                            timeout: 2000 // Timeout 2 giây
-                        });
-                    }
-                });
-                
-                // Xử lý khi user chuyển tab hoặc ẩn trang
-                document.addEventListener('visibilitychange', function() {
-                    if (document.visibilityState === 'hidden' && invoiceState && shouldCleanupInvoice()) {
-                        console.log('Auto cleanup: Deleting empty invoice when page hidden');
-                        apiService.cancelInvoice(invoiceState.hoaDonId);
-                    }
-                });
-            }
-            
-            // ✅ Kiểm tra xem có nên xóa hóa đơn không
-            function shouldCleanupInvoice() {
-                if (!invoiceState) return false;
-                
-                // Xóa nếu hóa đơn trống (không có sản phẩm)
-                const hasProducts = invoiceState.chiTietHoaDon && invoiceState.chiTietHoaDon.length > 0;
-                const hasTotal = invoiceState.tongTien && invoiceState.tongTien > 0;
-                
-                return !hasProducts && !hasTotal;
+                // ✅ Đã xóa logic tự động hủy hóa đơn trống
             }
 
             // Voucher functions

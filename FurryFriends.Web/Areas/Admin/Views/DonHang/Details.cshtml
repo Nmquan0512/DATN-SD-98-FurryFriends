@@ -530,7 +530,7 @@
         <div class="order-header">
             <div>
                 <div class="order-id">Đơn hàng #@Model.HoaDonId.ToString().Substring(0, 8).ToUpper()</div>
-                                        <div class="order-date">@DateTimeHelper.FormatDateTime(Model.NgayTao)</div>
+                                                                                 <div class="order-date">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</div>
             </div>
             <div class="status-badge @GetStatusClass(Model.TrangThai)">
                 @GetStatusText(Model.TrangThai)
@@ -574,7 +574,7 @@
                 </div>
                 <div class="info-item">
                     <div class="info-label">Ngày tạo</div>
-                                            <div class="info-value">@DateTimeHelper.FormatDateTimeWithSeconds(Model.NgayTao)</div>
+                                            <div class="info-value">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")</div>
                 </div>
                 <div class="info-item">
                     <div class="info-label">Trạng thái</div>
@@ -619,7 +619,7 @@
                     </div>
                     <div class="timeline-content">
                         <div class="timeline-title">Đơn hàng được tạo</div>
-                        <div class="timeline-time">@DateTimeHelper.FormatDateTimeWithSeconds(Model.NgayTao)</div>
+                                                    <div class="timeline-time">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")</div>
                     </div>
                 </div>
 
@@ -838,24 +838,37 @@
                         <span class="price-value">@Model.TongTien.ToString("N0") VNĐ</span>
                     </div>
 
-                    @* ✅ Hiển thị phí vận chuyển chỉ khi có giao hàng *@
-                    @if (!string.IsNullOrEmpty(Model.DiaChiGiaoHangLucMua))
+                    @* ✅ Hiển thị phí vận chuyển chỉ khi có giao hàng VÀ đơn hàng dưới 500k *@
+                    @if (!string.IsNullOrEmpty(Model.DiaChiGiaoHangLucMua) && Model.TongTienSauKhiGiam < 500000)
                     {
                         <div class="price-item">
                             <span class="price-label">Phí vận chuyển:</span>
                             <span class="price-value">30,000 VNĐ</span>
                         </div>
                     }
+                    @* ✅ Hiển thị thông báo FREESHIP khi đơn hàng trên 500k *@
+                    @if (!string.IsNullOrEmpty(Model.DiaChiGiaoHangLucMua) && Model.TongTienSauKhiGiam >= 500000)
+                    {
+                        <div class="price-item text-success">
+                            <span class="price-label">
+                                <i class="fas fa-shipping-fast me-1"></i>
+                                Phí vận chuyển:
+                            </span>
+                            <span class="price-value">FREESHIP</span>
+                        </div>
+                    }
 
                     @* ✅ Hiển thị voucher/giảm giá nếu có *@
                     @if (!string.IsNullOrEmpty(Model.ThongTinVoucherLucMua))
                     {
+                        var shippingFee = Model.TongTienSauKhiGiam >= 500000 ? 0 : 30000;
+                        var discountAmount = Model.TongTien + shippingFee - Model.TongTienSauKhiGiam;
                         <div class="price-item text-success">
                             <span class="price-label">
                                 <i class="fas fa-ticket-alt me-1"></i>
                                 Voucher áp dụng:
                             </span>
-                            <span class="price-value">-@((Model.TongTien + 30000 - Model.TongTienSauKhiGiam).ToString("N0")) VNĐ</span>
+                            <span class="price-value">-@discountAmount.ToString("N0") VNĐ</span>
                         </div>
                         <div class="price-item text-muted small">
                             <span class="price-label">Chi tiết:</span>
@@ -864,12 +877,14 @@
                     }
                     else if (Model.Voucher != null)
                     {
+                        var shippingFee = Model.TongTienSauKhiGiam >= 500000 ? 0 : 30000;
+                        var discountAmount = Model.TongTien + shippingFee - Model.TongTienSauKhiGiam;
                         <div class="price-item text-success">
                             <span class="price-label">
                                 <i class="fas fa-ticket-alt me-1"></i>
                                 Giảm giá (@Model.Voucher.TenVoucher):
                             </span>
-                            <span class="price-value">-@((Model.TongTien + 30000 - Model.TongTienSauKhiGiam).ToString("N0")) VNĐ</span>
+                            <span class="price-value">-@discountAmount.ToString("N0") VNĐ</span>
                         </div>
                     }
 

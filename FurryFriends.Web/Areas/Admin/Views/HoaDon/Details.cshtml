@@ -1,4 +1,4 @@
-@using FurryFriends.Web.Helpers
+
 @model FurryFriends.API.Models.HoaDon
 
 @{
@@ -100,7 +100,7 @@
                             </tr>
                             <tr>
                                 <th class="bg-light">Ngày tạo</th>
-                                <td>@DateTimeHelper.FormatDateTime(Model.NgayTao)</td>
+                                <td>@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
                             </tr>
                             <tr>
                                 <th class="bg-light">Ngày nhận hàng</th>

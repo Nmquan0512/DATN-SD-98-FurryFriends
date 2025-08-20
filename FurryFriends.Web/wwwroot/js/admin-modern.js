@@ -13,6 +13,13 @@ class ModernAdmin {
         this.setupThemeToggle();
         this.setupSearch();
         this.setupKeyboardShortcuts();
+        this.setupScrollPosition(); // Thêm chức năng lưu vị trí cuộn
+    }
+
+    setupScrollPosition() {
+        // Tạm thời vô hiệu hóa để tránh xung đột với admin-scroll-fix.js
+        // Logic scroll đã được xử lý trong admin-scroll-fix.js
+        console.log('ModernAdmin scroll position disabled - using admin-scroll-fix.js instead');
     }
 
     setupEventListeners() {

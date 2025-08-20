@@ -1,4 +1,4 @@
-@using FurryFriends.Web.Helpers
+
 @model FurryFriends.Web.ViewModels.DonHangKhachHangViewModel
 
 @{
@@ -1013,7 +1013,7 @@
                     }
                 </div>
                 <div class="order-date">
-                    Đặt hàng lúc @DateTimeHelper.FormatDateTimeWithLuc(Model.NgayTao)
+                                            Đặt hàng lúc @Model.NgayTao.ToString("dd/MM/yyyy 'lúc' HH:mm")
                 </div>
                 <div class="status-badge @GetStatusClass(Model.TrangThai)">
                     <i class="fas fa-@GetStatusIcon(Model.TrangThai)"></i>
@@ -1037,13 +1037,13 @@
                     </div>
                     <div class="info-item">
                         <span class="info-label">Ngày đặt:</span>
-                        <span class="info-value">@DateTimeHelper.FormatDateTime(Model.NgayTao)</span>
+                        <span class="info-value">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</span>
                     </div>
                     @if (Model.NgayNhanHang.HasValue)
                     {
                         <div class="info-item">
                             <span class="info-label">Ngày nhận:</span>
-                            <span class="info-value">@DateTimeHelper.FormatDateTime(Model.NgayNhanHang.Value)</span>
+                            <span class="info-value">@Model.NgayNhanHang.Value.ToString("dd/MM/yyyy HH:mm")</span>
                         </div>
                     }
                     <div class="info-item">
@@ -1113,7 +1113,7 @@
                         </div>
                         <div class="timeline-content">
                             <div class="timeline-title">Đơn hàng được tạo</div>
-                            <div class="timeline-time">@DateTimeHelper.FormatDateTimeWithSeconds(Model.NgayTao)</div>
+                            <div class="timeline-time">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")</div>
                             <div class="timeline-description">Đơn hàng của bạn đã được tạo thành công</div>
                         </div>
                     </div>
@@ -1152,7 +1152,7 @@
                                 <div class="timeline-content">
                                     <div class="timeline-title">Đơn hàng được duyệt</div>
                                     <div class="timeline-time">
-                                        @DateTimeHelper.FormatDateTimeWithSeconds(Model.NgayTao)
+                                        @Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")
                                     </div>
                                     <div class="timeline-description">Đơn hàng đã được xác nhận và đang được xử lý</div>
                                 </div>
@@ -1168,7 +1168,7 @@
                                 <div class="timeline-content">
                                     <div class="timeline-title">Đơn hàng đang giao</div>
                                     <div class="timeline-time">
-                                        @DateTimeHelper.FormatDateTimeWithSeconds(Model.NgayTao)
+                                        @Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")
                                     </div>
                                     <div class="timeline-description">Đơn hàng đang được vận chuyển đến bạn</div>
                                 </div>
@@ -1184,7 +1184,7 @@
                                 <div class="timeline-content">
                                     <div class="timeline-title">Đơn hàng đã giao</div>
                                     <div class="timeline-time">
-                                        @DateTimeHelper.FormatDateTimeWithSeconds(Model.NgayTao)
+                                        @Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")
                                     </div>
                                     <div class="timeline-description">Đơn hàng đã được giao thành công</div>
                                 </div>
@@ -1199,7 +1199,7 @@
                                 </div>
                                 <div class="timeline-content">
                                     <div class="timeline-title">Đơn hàng đã hủy</div>
-                                    <div class="timeline-time">@DateTimeHelper.FormatDateTimeWithSeconds(Model.NgayTao)</div>
+                                    <div class="timeline-time">@Model.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")</div>
                                     <div class="timeline-description">Đơn hàng đã được hủy</div>
                                 </div>
                             </div>

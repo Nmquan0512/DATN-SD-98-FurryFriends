@@ -551,7 +551,7 @@
                         <div class="order-header">
                             <div>
                                 <div class="order-id">Đơn hàng #@hoaDon.HoaDonId.ToString().Substring(0, 8).ToUpper()</div>
-                                <div class="order-date">@DateTimeHelper.FormatDateTime(hoaDon.NgayTao)</div>
+                                                                 <div class="order-date">@hoaDon.NgayTao.ToString("dd/MM/yyyy HH:mm")</div>
                             </div>
                             <div class="status-badge @GetStatusClass(hoaDon.TrangThai)">
                                 @GetStatusText(hoaDon.TrangThai)
@@ -702,19 +702,36 @@
                                     }
                                     else if (hoaDon.Voucher != null)
                                     {
+                                        var shippingFee = hoaDon.TongTienSauKhiGiam >= 500000 ? 0 : 30000;
+                                        var discountAmount = hoaDon.TongTien + shippingFee - hoaDon.TongTienSauKhiGiam;
                                         <div class="price-item text-success">
                                             <span class="price-label">
                                                 <i class="fas fa-ticket-alt me-1"></i>
                                                 Giảm giá (@hoaDon.Voucher.TenVoucher):
                                             </span>
-                                            <span class="price-value">-@((hoaDon.TongTien + 30000 - hoaDon.TongTienSauKhiGiam).ToString("N0")) VNĐ</span>
+                                            <span class="price-value">-@discountAmount.ToString("N0") VNĐ</span>
                                         </div>
                                     }
                                     
-                                    <div class="price-item">
-                                        <span class="price-label">Phí vận chuyển:</span>
-                                        <span class="price-value">30,000 VNĐ</span>
-                                    </div>
+                                    @* ✅ Hiển thị phí vận chuyển chỉ khi đơn hàng dưới 500k *@
+                                    @if (hoaDon.TongTienSauKhiGiam < 500000)
+                                    {
+                                        <div class="price-item">
+                                            <span class="price-label">Phí vận chuyển:</span>
+                                            <span class="price-value">30,000 VNĐ</span>
+                                        </div>
+                                    }
+                                    @* ✅ Hiển thị FREESHIP khi đơn hàng trên 500k *@
+                                    @if (hoaDon.TongTienSauKhiGiam >= 500000)
+                                    {
+                                        <div class="price-item text-success">
+                                            <span class="price-label">
+                                                <i class="fas fa-shipping-fast me-1"></i>
+                                                Phí vận chuyển:
+                                            </span>
+                                            <span class="price-value">FREESHIP</span>
+                                        </div>
+                                    }
                                     <div class="price-item total">
                                         <span class="price-label">Tổng thanh toán:</span>
                                         <span class="price-value">@hoaDon.TongTienSauKhiGiam.ToString("N0") VNĐ</span>
