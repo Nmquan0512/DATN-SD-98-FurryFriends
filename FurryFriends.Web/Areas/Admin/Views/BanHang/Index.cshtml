@@ -1,4 +1,5 @@
 ﻿@using FurryFriends.API.Models.DTO.BanHang
+@using FurryFriends.Web.Helpers
 @model IEnumerable<FurryFriends.API.Models.DTO.BanHang.HoaDonBanHangDto>
 
 @{
@@ -95,7 +96,7 @@
                                 <span>@(item.KhachHang?.TenKhachHang ?? "Khách lẻ")</span>
                             </div>
                             <div>
-                                <span class="me-4"><i class="far fa-calendar-alt me-2 text-muted"></i>@item.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</span>
+                                <span class="me-4"><i class="far fa-calendar-alt me-2 text-muted"></i>@DateTimeHelper.FormatDateTime(item.NgayTao)</span>
                                 <span class="badge bg-warning rounded-pill">Chờ thanh toán</span>
                             </div>
                         </a>
@@ -161,7 +162,7 @@
                             <tr data-date="@item.NgayTao.ToString("yyyy-MM-dd")">
                                 <td class="fw-bold">@item.MaHoaDon</td>
                                 <td>@(item.KhachHang?.TenKhachHang ?? "Khách lẻ")</td>
-                                <td>@item.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@DateTimeHelper.FormatDateTime(item.NgayTao)</td>
                                 <td class="text-end fw-semibold text-success">@item.ThanhTien.ToString("N0") ₫</td>
                                 <td class="text-center">
                                     @{

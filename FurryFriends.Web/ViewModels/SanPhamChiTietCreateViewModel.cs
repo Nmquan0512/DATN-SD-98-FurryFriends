@@ -1,5 +1,4 @@
 ﻿using FurryFriends.API.Models.DTO;
-using FurryFriends.API.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace FurryFriends.Web.ViewModels

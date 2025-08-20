@@ -10,13 +10,13 @@
     </h3>
     <form asp-action="AddDiaChi" method="post" class="space-y-5">
         <div>
-            <label asp-for="TenDiaChi" class="font-medium text-gray-700 flex items-center gap-2"><i class="fas fa-home"></i> Tên địa chỉ</label>
-            <input asp-for="TenDiaChi" class="w-full px-4 py-2 border rounded" placeholder="Nhà riêng, Công ty..." />
+            <label asp-for="MoTa" class="font-medium text-gray-700 flex items-center gap-2"><i class="fas fa-home"></i> Tên địa chỉ</label>
+            <input asp-for="MoTa" class="w-full px-4 py-2 border rounded" placeholder="Nhà riêng, Công ty..." />
             <span asp-validation-for="TenDiaChi" class="text-red-500 text-sm"></span>
         </div>
         <div>
-            <label asp-for="MoTa" class="font-medium text-gray-700 flex items-center gap-2"><i class="fas fa-info-circle"></i> Mô tả</label>
-            <input asp-for="MoTa" class="w-full px-4 py-2 border rounded" placeholder="Số nhà, tên đường..." />
+            <label asp-for="TenDiaChi" class="font-medium text-gray-700 flex items-center gap-2"><i class="fas fa-info-circle"></i> Mô tả</label>
+            <input asp-for="TenDiaChi" class="w-full px-4 py-2 border rounded" placeholder="Số nhà, tên đường..." />
             <span asp-validation-for="MoTa" class="text-red-500 text-sm"></span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

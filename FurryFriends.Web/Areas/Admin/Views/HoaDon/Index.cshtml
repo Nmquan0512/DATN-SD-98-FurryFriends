@@ -1,4 +1,5 @@
-﻿@model IEnumerable<FurryFriends.API.Models.HoaDon>
+﻿@using FurryFriends.Web.Helpers
+@model IEnumerable<FurryFriends.API.Models.HoaDon>
 
 @{
     ViewData["Title"] = "Quản lý hóa đơn";
@@ -102,7 +103,7 @@
                         <div>@item.TenCuaKhachHang</div>
                         <small class="text-muted">@item.SdtCuaKhachHang</small>
                     </td>
-                    <td>@item.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@DateTimeHelper.FormatDateTime(item.NgayTao)</td>
                     <td>@item.TongTien.ToString("N0")đ</td>
                     <td>
                         @if (item.Voucher != null)

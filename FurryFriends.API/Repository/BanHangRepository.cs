@@ -108,22 +108,22 @@ namespace FurryFriends.API.Repository
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                // ✅ Tự động hủy hóa đơn chưa thanh toán sau 30 phút
-                await AutoCancelOldInvoices();
-                
-                var oldPendingInvoices = await _context.HoaDons
-            .Where(h => h.TrangThai == (int)TrangThaiHoaDon.Offline_ChuaThanhToan && h.NgayTao < DateTime.UtcNow.AddHours(-2))
-            .ToListAsync();
+                // ✅ Loại bỏ logic cleanup trùng lặp - đã có InvoiceCleanupService xử lý
+                // Chỉ giữ lại logic dọn dẹp hóa đơn rất cũ (sau 2 giờ) để tránh đầy database
+                var veryOldInvoices = await _context.HoaDons
+                    .Where(h => h.TrangThai == (int)TrangThaiHoaDon.Offline_ChuaThanhToan && 
+                               h.NgayTao < DateTime.UtcNow.AddHours(-2))
+                    .ToListAsync();
 
-                if (oldPendingInvoices.Any())
+                if (veryOldInvoices.Any())
                 {
-                    _logger.LogInformation($"Dọn dẹp {oldPendingInvoices.Count} hóa đơn chờ cũ.");
-                    // Với mỗi hóa đơn cũ, hoàn trả lại số lượng sản phẩm
-                    foreach (var oldInvoice in oldPendingInvoices)
+                    _logger.LogInformation($"Dọn dẹp {veryOldInvoices.Count} hóa đơn rất cũ (sau 2 giờ).");
+                    // Với mỗi hóa đơn rất cũ, hoàn trả lại số lượng sản phẩm
+                    foreach (var oldInvoice in veryOldInvoices)
                     {
                         var details = await _context.HoaDonChiTiets
-                                                    .Where(d => d.HoaDonId == oldInvoice.HoaDonId)
-                                                    .ToListAsync();
+                            .Where(d => d.HoaDonId == oldInvoice.HoaDonId)
+                            .ToListAsync();
                         foreach (var item in details)
                         {
                             var productDetail = await _context.SanPhamChiTiets.FindAsync(item.SanPhamChiTietId);
@@ -132,9 +132,17 @@ namespace FurryFriends.API.Repository
                                 productDetail.SoLuong += item.SoLuongSanPham;
                             }
                         }
-                        // Bạn cũng có thể hoàn trả voucher nếu cần
+                        // Hoàn trả voucher nếu có
+                        if (oldInvoice.VoucherId.HasValue)
+                        {
+                            var voucher = await _context.Vouchers.FindAsync(oldInvoice.VoucherId.Value);
+                            if (voucher != null)
+                            {
+                                voucher.SoLuong++;
+                            }
+                        }
                     }
-                    _context.HoaDons.RemoveRange(oldPendingInvoices);
+                    _context.HoaDons.RemoveRange(veryOldInvoices);
                     await _context.SaveChangesAsync();
                 }
                 // 1. Xử lý Hình thức thanh toán
@@ -468,7 +476,7 @@ namespace FurryFriends.API.Repository
                 var voucher = await _context.Vouchers.FirstOrDefaultAsync(v => v.TenVoucher.ToLower() == maVoucher.ToLower());
 
                 if (voucher == null) throw new KeyNotFoundException("Mã voucher không tồn tại.");
-                if (voucher.NgayKetThuc < DateTime.Now) throw new InvalidOperationException("Voucher đã hết hạn.");
+                if (voucher.NgayKetThuc < DateTime.UtcNow) throw new InvalidOperationException("Voucher đã hết hạn.");
                 if (voucher.SoLuong <= 0) throw new InvalidOperationException("Voucher đã hết lượt sử dụng.");
 
                 // Gỡ voucher cũ nếu có
@@ -567,7 +575,7 @@ namespace FurryFriends.API.Repository
                     hoaDon.TrangThai = (int)TrangThaiHoaDon.Offline_DaThanhToan; // ✅ Chuyển về trạng thái 7
                 }
                 
-                hoaDon.NgayNhanHang = DateTime.Now; // Coi như ngày thanh toán là ngày nhận tại quầy
+                hoaDon.NgayNhanHang = DateTime.UtcNow; // Coi như ngày thanh toán là ngày nhận tại quầy
                 hoaDon.GhiChu = string.IsNullOrEmpty(hoaDon.GhiChu) ? request.GhiChuThanhToan : hoaDon.GhiChu + " | " + request.GhiChuThanhToan;
                 
                 // Cập nhật điểm tích lũy cho khách hàng thành viên
@@ -716,7 +724,7 @@ namespace FurryFriends.API.Repository
 
             var khachHang = _mapper.Map<KhachHang>(request);
             khachHang.KhachHangId = Guid.NewGuid();
-            khachHang.NgayTaoTaiKhoan = DateTime.Now;
+            khachHang.NgayTaoTaiKhoan = DateTime.UtcNow;
             khachHang.TrangThai = 1;
 
             await _context.KhachHangs.AddAsync(khachHang);
@@ -761,59 +769,8 @@ namespace FurryFriends.API.Repository
             }
         }
 
-        // ✅ Tự động hủy hóa đơn chưa thanh toán sau 30 phút
-        private async Task AutoCancelOldInvoices()
-        {
-            try
-            {
-                var cutoffTime = DateTime.UtcNow.AddMinutes(-30); // 30 phút trước
-                
-                var oldInvoices = await _context.HoaDons
-                    .Include(h => h.HoaDonChiTiets)
-                    .Where(h => h.TrangThai == (int)TrangThaiHoaDon.Offline_ChuaThanhToan && 
-                               h.NgayTao < cutoffTime)
-                    .ToListAsync();
-
-                if (oldInvoices.Any())
-                {
-                    _logger.LogInformation($"Tự động hủy {oldInvoices.Count} hóa đơn chưa thanh toán sau 30 phút");
-                    
-                    foreach (var invoice in oldInvoices)
-                    {
-                        // Hoàn trả số lượng sản phẩm
-                        foreach (var item in invoice.HoaDonChiTiets)
-                        {
-                            var sanPhamChiTiet = await _context.SanPhamChiTiets.FindAsync(item.SanPhamChiTietId);
-                            if (sanPhamChiTiet != null)
-                            {
-                                sanPhamChiTiet.SoLuong += item.SoLuongSanPham;
-                            }
-                        }
-                        
-                        // Hoàn trả voucher nếu có
-                        if (invoice.VoucherId.HasValue)
-                        {
-                            var voucher = await _context.Vouchers.FindAsync(invoice.VoucherId.Value);
-                            if (voucher != null)
-                            {
-                                voucher.SoLuong++;
-                            }
-                        }
-                        
-                        // Cập nhật trạng thái thành đã hủy
-                        invoice.TrangThai = (int)TrangThaiHoaDon.Offline_DaHuy;
-                    }
-                    
-                    await _context.SaveChangesAsync();
-                    _logger.LogInformation($"Đã tự động hủy {oldInvoices.Count} hóa đơn thành công");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Lỗi khi tự động hủy hóa đơn cũ");
-                // Không throw exception để không ảnh hưởng đến việc tạo hóa đơn mới
-            }
-        }
+        // ✅ Loại bỏ AutoCancelOldInvoices - đã có InvoiceCleanupService xử lý
+        // Logic cleanup hóa đơn sau 30 phút được xử lý bởi InvoiceCleanupService
 
         private async Task<HoaDon> GetEditableHoaDon(Guid hoaDonId)
         {

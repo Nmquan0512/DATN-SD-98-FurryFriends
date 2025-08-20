@@ -1,3 +1,4 @@
+@using FurryFriends.Web.Helpers
 @model IEnumerable<FurryFriends.API.Models.HoaDon>
 @{
     ViewData["Title"] = "Quản lý đơn hàng - Admin";
@@ -550,7 +551,7 @@
                         <div class="order-header">
                             <div>
                                 <div class="order-id">Đơn hàng #@hoaDon.HoaDonId.ToString().Substring(0, 8).ToUpper()</div>
-                                <div class="order-date">@hoaDon.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")</div>
+                                <div class="order-date">@DateTimeHelper.FormatDateTime(hoaDon.NgayTao)</div>
                             </div>
                             <div class="status-badge @GetStatusClass(hoaDon.TrangThai)">
                                 @GetStatusText(hoaDon.TrangThai)

@@ -47,8 +47,11 @@ namespace FurryFriends.API.Services
             {
                 var cutoffTime = DateTime.UtcNow.AddMinutes(-30); // 30 phút trước
 
+                // ✅ Tối ưu hóa query để lấy cả sản phẩm chi tiết và voucher
                 var oldInvoices = await context.HoaDons
                     .Include(h => h.HoaDonChiTiets)
+                        .ThenInclude(hct => hct.SanPhamChiTiet)
+                    .Include(h => h.Voucher)
                     .Where(h => h.TrangThai == (int)TrangThaiHoaDon.Offline_ChuaThanhToan && 
                                h.NgayTao < cutoffTime)
                     .ToListAsync();
@@ -59,32 +62,36 @@ namespace FurryFriends.API.Services
 
                     foreach (var invoice in oldInvoices)
                     {
-                        // Hoàn trả số lượng sản phẩm
+                        // ✅ Hoàn trả số lượng sản phẩm (đã được include)
                         foreach (var item in invoice.HoaDonChiTiets)
                         {
-                            var sanPhamChiTiet = await context.SanPhamChiTiets.FindAsync(item.SanPhamChiTietId);
-                            if (sanPhamChiTiet != null)
+                            if (item.SanPhamChiTiet != null)
                             {
-                                sanPhamChiTiet.SoLuong += item.SoLuongSanPham;
+                                item.SanPhamChiTiet.SoLuong += item.SoLuongSanPham;
+                                _logger.LogDebug("Hoàn trả sản phẩm: {SanPhamId} +{SoLuong}", 
+                                    item.SanPhamChiTietId, item.SoLuongSanPham);
                             }
                         }
 
-                        // Hoàn trả voucher nếu có
-                        if (invoice.VoucherId.HasValue)
+                        // ✅ Hoàn trả voucher nếu có (đã được include)
+                        if (invoice.Voucher != null)
                         {
-                            var voucher = await context.Vouchers.FindAsync(invoice.VoucherId.Value);
-                            if (voucher != null)
-                            {
-                                voucher.SoLuong++;
-                            }
+                            invoice.Voucher.SoLuong++;
+                            _logger.LogDebug("Hoàn trả voucher: {VoucherCode} +1", 
+                                invoice.Voucher.MaVoucher);
                         }
 
                         // Cập nhật trạng thái thành đã hủy
                         invoice.TrangThai = (int)TrangThaiHoaDon.Offline_DaHuy;
+                        _logger.LogDebug("Hủy hóa đơn: {HoaDonId}", invoice.HoaDonId);
                     }
 
                     await context.SaveChangesAsync();
                     _logger.LogInformation($"Đã tự động hủy {oldInvoices.Count} hóa đơn thành công");
+                }
+                else
+                {
+                    _logger.LogDebug("Không có hóa đơn nào cần cleanup");
                 }
             }
             catch (Exception ex)

@@ -1,3 +1,4 @@
+@using FurryFriends.Web.Helpers
 @model List<FurryFriends.Web.ViewModels.DonHangKhachHangViewModel>
 
 @{
@@ -109,7 +110,7 @@
                                 }
                             </div>
                             <div class="order-date">
-                                @order.NgayTao.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                @DateTimeHelper.FormatDateTime(order.NgayTao)
                             </div>
                             <div class="order-status @GetStatusClass(order.TrangThai)">
                                 @order.TrangThaiText
