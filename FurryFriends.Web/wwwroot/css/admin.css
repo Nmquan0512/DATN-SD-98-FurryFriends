@@ -484,6 +484,7 @@ body {
 .card-icon.success { background: #219150; }
 .card-icon.warning { background: #ffc107; }
 .card-icon.info { background: #1976d2; }
+.card-icon.danger { background: #d32f2f; }
 
 .card-title {
     font-size: 14px;

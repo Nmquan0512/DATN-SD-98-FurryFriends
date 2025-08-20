@@ -159,7 +159,7 @@
                     {
                         @foreach (var item in lichSuHoaDon)
                         {
-                            <tr data-date="@item.NgayTao.ToString("yyyy-MM-dd")">
+                            <tr data-date="@item.NgayTao.ToString("yyyy-MM-dd")" data-status="@item.TrangThai">
                                 <td class="fw-bold">@item.MaHoaDon</td>
                                 <td>@(item.KhachHang?.TenKhachHang ?? "Khách lẻ")</td>
                                 <td>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
@@ -277,7 +277,7 @@
                 ]
             });
 
-            // Lọc tùy chỉnh cho khoảng ngày
+            // Lọc tùy chỉnh cho khoảng ngày và trạng thái
             $.fn.dataTable.ext.search.push(
                 function(settings, data, dataIndex) {
                     // Đảm bảo chỉ áp dụng cho bảng này
@@ -287,32 +287,33 @@
 
                     var startDate = $('#startDate').val();
                     var endDate = $('#endDate').val();
+                    var statusFilter = $('#statusFilter').val();
 
-                    // Lấy ngày từ thuộc tính data-date của thẻ <tr>
+                    // Lấy ngày và trạng thái từ thuộc tính data của thẻ <tr>
                     var rowNode = table.row(dataIndex).node();
                     var date = $(rowNode).data('date');
+                    var status = $(rowNode).data('status');
 
-                    if (
-                        (startDate === "" || !startDate || date >= startDate) &&
-                        (endDate === "" || !endDate || date <= endDate)
-                    ) {
-                        return true;
+                    // Kiểm tra lọc ngày
+                    var dateMatch = (startDate === "" || !startDate || date >= startDate) &&
+                                   (endDate === "" || !endDate || date <= endDate);
+
+                    // Kiểm tra lọc trạng thái
+                    var statusMatch = true;
+                    if (statusFilter) {
+                        statusMatch = status === statusFilter;
                     }
-                    return false;
+
+                    return dateMatch && statusMatch;
                 }
             );
 
             // Gắn sự kiện chung cho tất cả các input lọc
             $('#searchInput, #statusFilter, #startDate, #endDate').on('keyup change', function() {
                 var searchTerm = $('#searchInput').val();
-                var statusTerm = $('#statusFilter').val();
-
+                
                 // Lọc theo cột tìm kiếm (áp dụng cho tất cả các cột)
-                table.search(searchTerm)
-                       // Lọc theo cột trạng thái (cột index 4 - đã thay đổi sau khi xóa cột Loại HĐ)
-                       .column(4).search(statusTerm)
-                       // Vẽ lại bảng để áp dụng tất cả các bộ lọc (bao gồm cả lọc ngày)
-                       .draw();
+                table.search(searchTerm).draw();
             });
 
             // Reset bộ lọc

@@ -2,6 +2,7 @@ using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using FurryFriends.API.Models;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -47,6 +48,9 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 var totalProducts = await _sanPhamService.GetTotalProductsAsync();
                 var totalEmployees = await _nhanVienService.GetTotalEmployeesAsync();
                 
+                // Tính số sản phẩm bán ra trong ngày
+                var productsSoldToday = await GetProductsSoldTodayAsync();
+                
                 // Cập nhật tất cả dữ liệu thành thật
                 ViewBag.TotalOrders = totalOrders;
                 ViewBag.MonthlyRevenue = monthlyRevenue;
@@ -58,6 +62,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 ViewBag.InactiveCustomers = inactiveCustomers;
                 ViewBag.TotalProducts = totalProducts;
                 ViewBag.TotalEmployees = totalEmployees;
+                ViewBag.ProductsSoldToday = productsSoldToday;
 
                 return View();
             }
@@ -71,6 +76,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 ViewBag.InactiveCustomers = 0;
                 ViewBag.TotalProducts = 0;
                 ViewBag.TotalEmployees = 0;
+                ViewBag.ProductsSoldToday = 0;
                 ViewBag.TotalOrders = 0;
                 ViewBag.MonthlyRevenue = 0;
                 ViewBag.RevenueByMonth = new List<object>();
@@ -354,6 +360,30 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     new { labels = new[] { (currentYear - 4).ToString(), (currentYear - 3).ToString(), (currentYear - 2).ToString(), (currentYear - 1).ToString(), currentYear.ToString() } },
                     new { values = new[] { 0, 0, 0, 0, 0 } }
                 };
+            }
+        }
+
+        // Tính số sản phẩm bán ra trong ngày
+        private async Task<int> GetProductsSoldTodayAsync()
+        {
+            try
+            {
+                var allOrders = await _hoaDonService.GetHoaDonListAsync();
+                var currentDate = DateTime.Now.Date;
+                
+                // Tính tổng số lượng sản phẩm bán ra trong ngày từ các đơn hàng đã hoàn thành
+                var totalProductsSold = allOrders
+                    .Where(h => h.NgayTao.Date == currentDate && 
+                               (h.TrangThai == 3 || h.TrangThai == 7)) // Đã giao hoặc Đã thanh toán
+                    .SelectMany(h => h.HoaDonChiTiets ?? Enumerable.Empty<HoaDonChiTiet>())
+                    .Sum(item => item.SoLuongSanPham);
+                
+                return totalProductsSold;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calculating products sold today");
+                return 0;
             }
         }
     }
