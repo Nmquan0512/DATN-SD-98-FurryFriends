@@ -59,8 +59,16 @@
                                 <th class="bg-light">Địa chỉ</th>
                                 <td>
                                     @{
+                                        // ✅ Logic mới: Nếu BanTaiQuay và không có địa chỉ thì hiển thị "Không giao hàng"
+                                        if (Model.LoaiHoaDon == "BanTaiQuay" && Model.DiaChiGiaoHang == null)
+                                        {
+                                            <div class="text-info">
+                                                <i class="fas fa-store me-1"></i>
+                                                <strong>Không giao hàng</strong>
+                                            </div>
+                                        }
                                         // ✅ Ưu tiên hiển thị snapshot địa chỉ giao hàng lúc mua
-                                        if (!string.IsNullOrWhiteSpace(Model.DiaChiGiaoHangLucMua))
+                                        else if (!string.IsNullOrWhiteSpace(Model.DiaChiGiaoHangLucMua))
                                         {
                                             <div class="text-success">
                                                 <i class="fas fa-check-circle me-1"></i>
@@ -101,6 +109,36 @@
                             <tr>
                                 <th class="bg-light">Ngày tạo</th>
                                 <td>@Model.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
+                            </tr>
+                            <tr>
+                                <th class="bg-light">Loại hóa đơn</th>
+                                <td>
+                                    @{
+                                        string loaiHoaDonText = Model.LoaiHoaDon switch
+                                        {
+                                            "BanTaiQuay" => "Bán Tại Quầy",
+                                            "Online" => "Bán Online",
+                                            "GiaoHang" => "Giao Hàng",
+                                            _ => Model.LoaiHoaDon ?? "Không xác định"
+                                        };
+                                    }
+                                    @if (Model.LoaiHoaDon == "BanTaiQuay")
+                                    {
+                                        <span class="badge bg-primary">@loaiHoaDonText</span>
+                                    }
+                                    else if (Model.LoaiHoaDon == "Online")
+                                    {
+                                        <span class="badge bg-success">@loaiHoaDonText</span>
+                                    }
+                                    else if (Model.LoaiHoaDon == "GiaoHang")
+                                    {
+                                        <span class="badge bg-info">@loaiHoaDonText</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@loaiHoaDonText</span>
+                                    }
+                                </td>
                             </tr>
                             <tr>
                                 <th class="bg-light">Ngày nhận hàng</th>
@@ -160,7 +198,20 @@
                             </tr>
                             <tr>
                                 <th class="bg-light">Người tạo hóa đơn</th>
-                                <td>@Model.NhanVien?.HoVaTen</td>
+                                <td>
+                                    @{
+                                        string nguoiTaoHoaDon = "Chưa xác định";
+                                        if (Model.LoaiHoaDon == "BanTaiQuay")
+                                        {
+                                            nguoiTaoHoaDon = Model.NhanVien?.HoVaTen ?? "Chưa xác định";
+                                        }
+                                        else if (Model.LoaiHoaDon == "Online" || Model.LoaiHoaDon == "GiaoHang")
+                                        {
+                                            nguoiTaoHoaDon = "Hệ thống";
+                                        }
+                                    }
+                                    @nguoiTaoHoaDon
+                                </td>
                             </tr>
                         </table>
                     </div>

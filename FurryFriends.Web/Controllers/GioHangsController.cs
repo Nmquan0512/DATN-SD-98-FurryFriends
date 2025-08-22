@@ -134,7 +134,21 @@ namespace FurryFriends.Web.Controllers
                     return RedirectToAction("Index", "SanPhamKhachHang");
                 }
 
-                var khachHangId = GetKhachHangId();
+                Guid khachHangId;
+                try
+                {
+                    khachHangId = GetKhachHangId();
+                }
+                catch (InvalidOperationException)
+                {
+                    // Nếu là AJAX (fetch), trả về JSON với thông báo cần đăng nhập
+                    if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+                    {
+                        return StatusCode(401, new { success = false, message = "Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng", redirectToLogin = true });
+                    }
+                    // Ngược lại điều hướng đến trang đăng nhập
+                    return Redirect("/KhachHangLogin/DangNhap");
+                }
 
                 var dto = new AddToCartDTO
                 {

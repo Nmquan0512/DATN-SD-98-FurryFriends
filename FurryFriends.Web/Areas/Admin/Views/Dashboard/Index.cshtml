@@ -1,87 +1,253 @@
 @{
-    ViewData["Title"] = "Dashboard - Furry Friends Admin";
+    ViewData["Title"] = "Dashboard - FuryFriend Admin";
 }
 
-<div class="top-bar" style="padding-left: 50px;">
+<div class="top-bar" style="padding-left: 20px;">
     <h1>Dashboard</h1>
 </div>
 
-<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 50px;">
+<nav aria-label="breadcrumb" class="mb-3" style="padding-left: 20px;">
     <ol class="breadcrumb">
         <li class="breadcrumb-item active">Trang chủ</li>
     </ol>
 </nav>
 
-<!-- Dashboard Cards -->
-<div class="dashboard-grid" style="margin-left: 10px; margin-right: 40px;">
-    <div class="dashboard-card">
-        <div class="card-header">
-            <div class="card-icon primary">
-                <i class="fas fa-users"></i>
+<!-- Dashboard Cards - Row 1 (4 cards) -->
+<div class="dashboard-grid" style="grid-template-columns: repeat(4, 1fr); margin-left: 5px; margin-right: 20px;">
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon primary">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="card-change @(ViewBag.CustomerGrowthPercent > 0 ? "positive" : ViewBag.CustomerGrowthPercent < 0 ? "negative" : "neutral")">
+                        @if (ViewBag.CustomerGrowthPercent > 0)
+                        {
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+@ViewBag.CustomerGrowthPercent%</span>
+                        }
+                        else if (ViewBag.CustomerGrowthPercent < 0)
+                        {
+                            <i class="fas fa-arrow-down"></i>
+                            <span>@ViewBag.CustomerGrowthPercent%</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        }
+                    </div>
+                </div>
+                <h3 class="card-title">Tổng khách hàng</h3>
+                <p class="card-value">@ViewBag.TotalCustomers</p>
             </div>
-            <div class="card-change positive">
-                <i class="fas fa-arrow-up"></i> +12%
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h4>Chi tiết khách hàng</h4>
+                    <p>Khách hàng mới: @ViewBag.ActiveCustomers</p>
+                    <p>Khách hàng không hoạt động: @ViewBag.InactiveCustomers</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
             </div>
         </div>
-        <h3 class="card-title">Tổng khách hàng</h3>
-        <p class="card-value">@ViewBag.TotalCustomers</p>
     </div>
 
-    <div class="dashboard-card">
-        <div class="card-header">
-            <div class="card-icon success">
-                <i class="fas fa-shopping-cart"></i>
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon success">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="card-change @(ViewBag.OrderGrowthPercent > 0 ? "positive" : ViewBag.OrderGrowthPercent < 0 ? "negative" : "neutral")">
+                        @if (ViewBag.OrderGrowthPercent > 0)
+                        {
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+@ViewBag.OrderGrowthPercent%</span>
+                        }
+                        else if (ViewBag.OrderGrowthPercent < 0)
+                        {
+                            <i class="fas fa-arrow-down"></i>
+                            <span>@ViewBag.OrderGrowthPercent%</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        }
+                    </div>
+                </div>
+                <h3 class="card-title">Tổng đơn hàng</h3>
+                <p class="card-value">@ViewBag.TotalOrders</p>
             </div>
-            <div class="card-change positive">
-                <i class="fas fa-arrow-up"></i> +8%
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>Thống kê đơn hàng</h4>
+                    <p>Đơn hàng hôm nay: @ViewBag.TodayOrders</p>
+                    <p>Doanh thu hôm nay: @ViewBag.TodayRevenue?.ToString("N0") VNĐ</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
             </div>
         </div>
-        <h3 class="card-title">Tổng đơn hàng</h3>
-        <p class="card-value">@ViewBag.TotalOrders</p>
     </div>
 
-    <div class="dashboard-card">
-        <div class="card-header">
-            <div class="card-icon warning">
-                <i class="fas fa-box"></i>
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon warning">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="card-change @(ViewBag.ProductGrowthPercent > 0 ? "positive" : ViewBag.ProductGrowthPercent < 0 ? "negative" : "neutral")">
+                        @if (ViewBag.ProductGrowthPercent > 0)
+                        {
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+@ViewBag.ProductGrowthPercent%</span>
+                        }
+                        else if (ViewBag.ProductGrowthPercent < 0)
+                        {
+                            <i class="fas fa-arrow-down"></i>
+                            <span>@ViewBag.ProductGrowthPercent%</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        }
+                    </div>
+                </div>
+                <h3 class="card-title">Tổng sản phẩm</h3>
+                <p class="card-value">@ViewBag.TotalProducts</p>
             </div>
-            <div class="card-change positive">
-                <i class="fas fa-arrow-up"></i> +5%
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h4>Thông tin sản phẩm</h4>
+                    <p>Sản phẩm bán hôm nay: @ViewBag.ProductsSoldToday</p>
+                    <p>Danh mục sản phẩm: Đa dạng</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
             </div>
         </div>
-        <h3 class="card-title">Tổng sản phẩm</h3>
-        <p class="card-value">@ViewBag.TotalProducts</p>
     </div>
 
-    <div class="dashboard-card">
-        <div class="card-header">
-            <div class="card-icon info">
-                <i class="fas fa-user-tie"></i>
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon info">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="card-change @(ViewBag.EmployeeGrowthPercent > 0 ? "positive" : ViewBag.EmployeeGrowthPercent < 0 ? "negative" : "neutral")">
+                        @if (ViewBag.EmployeeGrowthPercent > 0)
+                        {
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+@ViewBag.EmployeeGrowthPercent%</span>
+                        }
+                        else if (ViewBag.EmployeeGrowthPercent < 0)
+                        {
+                            <i class="fas fa-arrow-down"></i>
+                            <span>@ViewBag.EmployeeGrowthPercent%</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-minus"></i>
+                            <span>0%</span>
+                        }
+                    </div>
+                </div>
+                <h3 class="card-title">Tổng nhân viên</h3>
+                <p class="card-value">@ViewBag.TotalEmployees</p>
             </div>
-            <div class="card-change positive">
-                <i class="fas fa-arrow-up"></i> +3%
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <h4>Quản lý nhân viên</h4>
+                    <p>Nhân viên đang làm việc: @ViewBag.TotalEmployees</p>
+                    <p>Phòng ban: Quản lý, Bán hàng</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
             </div>
         </div>
-        <h3 class="card-title">Tổng nhân viên</h3>
-        <p class="card-value">@ViewBag.TotalEmployees</p>
-    </div>
-
-    <div class="dashboard-card">
-        <div class="card-header">
-            <div class="card-icon danger">
-                <i class="fas fa-shopping-bag"></i>
-            </div>
-            <div class="card-change positive">
-                <i class="fas fa-arrow-up"></i> +15%
-            </div>
-        </div>
-        <h3 class="card-title">Sản phẩm bán hôm nay</h3>
-        <p class="card-value">@ViewBag.ProductsSoldToday</p>
     </div>
 </div>
 
+<!-- Dashboard Cards - Row 2 (2 cards) -->
+<div class="dashboard-grid" style="grid-template-columns: repeat(2, 1fr); margin-top: 16px; margin-left: 5px; margin-right: 20px;">
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon revenue">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+15.2%</span>
+                    </div>
+                </div>
+                <h3 class="card-title">Doanh thu hôm nay</h3>
+                <p class="card-value">@ViewBag.TodayRevenue?.ToString("N0") VNĐ</p>
+            </div>
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h4>Thống kê doanh thu</h4>
+                    <p>Trung bình/đơn: @(ViewBag.TodayOrders > 0 ? (ViewBag.TodayRevenue / ViewBag.TodayOrders)?.ToString("N0") : "0") VNĐ</p>
+                    <p>So hôm qua: @ViewBag.TodayRevenueGrowth%</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flip-card">
+        <div class="flip-card-inner">
+            <div class="flip-card-front">
+                <div class="card-header">
+                    <div class="card-icon monthly">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="card-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>+8.7%</span>
+                    </div>
+                </div>
+                <h3 class="card-title">Doanh thu tháng</h3>
+                <p class="card-value">@ViewBag.MonthlyRevenue?.ToString("N0") VNĐ</p>
+            </div>
+            <div class="flip-card-back">
+                <div class="back-content">
+                    <div class="back-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h4>Thống kê tháng</h4>
+                    <p>Đơn hàng tháng: @ViewBag.MonthlyOrders</p>
+                    <p>So tháng trước: @ViewBag.MonthlyRevenueGrowth%</p>
+                    <div class="flip-hint">Click để xem thêm</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
 <!-- Charts Section -->
-<div class="dashboard-grid" style="grid-template-columns: 2fr 1fr; margin-top: 24px; margin-left: 10px; margin-right: 40px;">
+<div class="dashboard-grid" style="grid-template-columns: 2fr 1fr; margin-top: 16px; margin-left: 5px; margin-right: 20px;">
     <!-- Revenue Chart -->
     <div class="dashboard-card">
         <div class="card-header">
@@ -111,7 +277,7 @@
 </div>
 
 <!-- Recent Orders -->
-<div class="dashboard-card" style="margin: 24px 40px;">
+<div class="dashboard-card" style="margin: 16px 20px;">
     <div class="card-header">
         <h3 class="card-title">Đơn Hàng Gần Đây</h3>
         <a href="/Admin/DonHang" class="btn btn-primary btn-sm">

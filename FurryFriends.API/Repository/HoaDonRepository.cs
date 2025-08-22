@@ -257,14 +257,43 @@ namespace FurryFriends.API.Repository
                 AddModernInfoRow(leftInfoTable, "Ngày lập:", hoaDon.NgayTao.ToString("dd/MM/yyyy HH:mm"), normalFont, boldFont);
                 AddModernInfoRow(leftInfoTable, "Nhân viên:", "Admin", normalFont, boldFont);
                 AddModernInfoRow(leftInfoTable, "Ngày nhận hàng:", hoaDon.NgayNhanHang?.ToString("dd/MM/yyyy HH:mm") ?? "Chưa cập nhật", normalFont, boldFont);
-                AddModernInfoRow(leftInfoTable, "Hình thức thanh toán:", hoaDon.HinhThucThanhToan?.TenHinhThuc ?? "Không xác định", normalFont, boldFont);
-                AddModernInfoRow(leftInfoTable, "Trạng thái:", GetTrangThaiText(hoaDon.TrangThai), normalFont, boldFont);
+                // Xác định hình thức thanh toán dựa trên LoaiHoaDon
+                string hinhThucThanhToan = "Không xác định";
+                if (hoaDon.LoaiHoaDon == "BanTaiQuay")
+                {
+                    hinhThucThanhToan = "Đã thanh toán";
+                }
+                else
+                {
+                    hinhThucThanhToan = hoaDon.HinhThucThanhToan?.TenHinhThuc ?? "Không xác định";
+                }
+                AddModernInfoRow(leftInfoTable, "Hình thức thanh toán:", hinhThucThanhToan, normalFont, boldFont);
+                // Hiển thị loại hóa đơn với text thân thiện
+                string loaiHoaDonText = hoaDon.LoaiHoaDon switch
+                {
+                    "BanTaiQuay" => "Bán Tại Quầy",
+                    "Online" => "Bán Online",
+                    "GiaoHang" => "Giao Hàng",
+                    _ => hoaDon.LoaiHoaDon ?? "Không xác định"
+                };
+                AddModernInfoRow(leftInfoTable, "Loại hóa đơn:", loaiHoaDonText, normalFont, boldFont);
+                AddModernInfoRow(leftInfoTable, "Trạng thái:", "Hoàn thành", normalFont, boldFont);
                 AddModernInfoRow(leftInfoTable, "Ghi chú:", hoaDon.GhiChu ?? "Hóa đơn Online", normalFont, boldFont);
                 if (!string.IsNullOrWhiteSpace(hoaDon.ThongTinVoucherLucMua))
                 {
                     AddModernInfoRow(leftInfoTable, "Voucher áp dụng:", hoaDon.ThongTinVoucherLucMua, normalFont, boldFont);
                 }
-                AddModernInfoRow(leftInfoTable, "Người tạo hóa đơn:", hoaDon.NhanVien?.HoVaTen ?? "System", normalFont, boldFont);
+                // Xác định người tạo hóa đơn dựa trên LoaiHoaDon
+                string nguoiTaoHoaDon = "Chưa xác định";
+                if (hoaDon.LoaiHoaDon == "BanTaiQuay")
+                {
+                    nguoiTaoHoaDon = hoaDon.NhanVien?.HoVaTen ?? "Chưa xác định";
+                }
+                else if (hoaDon.LoaiHoaDon == "Online" || hoaDon.LoaiHoaDon == "GiaoHang")
+                {
+                    nguoiTaoHoaDon = "Hệ thống";
+                }
+                AddModernInfoRow(leftInfoTable, "Người tạo hóa đơn:", nguoiTaoHoaDon, normalFont, boldFont);
 
                 var leftCell = new PdfPCell(leftInfoTable);
                 leftCell.Border = Rectangle.BOX;
@@ -288,11 +317,27 @@ namespace FurryFriends.API.Repository
                 AddModernInfoRow(rightInfoTable, "Số điện thoại:", hoaDon.SdtCuaKhachHang ?? "N/A", normalFont, boldFont);
                 AddModernInfoRow(rightInfoTable, "Email:", hoaDon.EmailCuaKhachHang ?? "N/A", normalFont, boldFont);
                 
-                // Thêm thông tin địa chỉ giao hàng
+                // Thêm thông tin địa chỉ giao hàng từ DiaChiGiaoHang
                 var diaChiGiaoHang = "N/A";
-                if (hoaDon.DiaChiGiaoHang != null)
+                if (hoaDon.LoaiHoaDon == "BanTaiQuay" && hoaDon.DiaChiGiaoHang == null)
                 {
-                    diaChiGiaoHang = $"{hoaDon.DiaChiGiaoHang.TenDiaChi}, {hoaDon.DiaChiGiaoHang.PhuongXa}, {hoaDon.DiaChiGiaoHang.ThanhPho}";
+                    diaChiGiaoHang = "Không giao hàng";
+                }
+                else if (hoaDon.DiaChiGiaoHang != null)
+                {
+                    var diaChi = hoaDon.DiaChiGiaoHang;
+                    var diaChiParts = new List<string>();
+                    
+                    if (!string.IsNullOrWhiteSpace(diaChi.TenDiaChi))
+                        diaChiParts.Add(diaChi.TenDiaChi);
+                    
+                    if (!string.IsNullOrWhiteSpace(diaChi.PhuongXa))
+                        diaChiParts.Add(diaChi.PhuongXa);
+                    
+                    if (!string.IsNullOrWhiteSpace(diaChi.ThanhPho))
+                        diaChiParts.Add(diaChi.ThanhPho);
+                    
+                    diaChiGiaoHang = string.Join(", ", diaChiParts);
                 }
                 AddModernInfoRow(rightInfoTable, "Địa chỉ:", diaChiGiaoHang, normalFont, boldFont);
 

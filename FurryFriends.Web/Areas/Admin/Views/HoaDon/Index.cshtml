@@ -652,8 +652,13 @@
                     }
                     
                                     // Lọc theo loại hóa đơn
-                if (loaiHoaDon && ((loaiHoaDon === 'BanTaiQuay' && rowLoaiHoaDon !== 'Bán tại quầy') || (loaiHoaDon === 'Online' && rowLoaiHoaDon !== 'Online'))) {
-                    return false;
+                if (loaiHoaDon) {
+                    if (loaiHoaDon === 'BanTaiQuay' && rowLoaiHoaDon !== 'Bán tại quầy') {
+                        return false;
+                    }
+                    if (loaiHoaDon === 'Online' && rowLoaiHoaDon !== 'Online') {
+                        return false;
+                    }
                 }
                     
                     // Lọc theo ngày tạo

@@ -15,5 +15,6 @@
         public decimal? PhanTramGiamGia { get; set; }
         public decimal? GiaSauGiam { get; set; }
         public bool CoGiamGia { get; set; } = false;
+        public DateTime? NgayKetThucGiamGia { get; set; } // Thêm ngày kết thúc giảm giá
     }
 }

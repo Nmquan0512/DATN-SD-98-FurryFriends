@@ -51,6 +51,19 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 // Tính số sản phẩm bán ra trong ngày
                 var productsSoldToday = await GetProductsSoldTodayAsync();
                 
+                // ✅ Tính % tăng trưởng thực tế so với tháng trước
+                var customerGrowthPercent = await CalculateGrowthPercentAsync("customers");
+                var orderGrowthPercent = await CalculateGrowthPercentAsync("orders");
+                var productGrowthPercent = await CalculateGrowthPercentAsync("products");
+                var employeeGrowthPercent = await CalculateGrowthPercentAsync("employees");
+                
+                // ✅ Thay thế "Sản phẩm bán hôm nay" bằng "Doanh thu hôm nay"
+                var todayRevenue = await GetTodayRevenueAsync();
+                var todayOrders = await GetTodayOrdersAsync();
+                var todayRevenueGrowth = await GetTodayRevenueGrowthAsync();
+                var monthlyOrders = await GetMonthlyOrdersAsync();
+                var monthlyRevenueGrowth = await GetMonthlyRevenueGrowthAsync();
+                
                 // Cập nhật tất cả dữ liệu thành thật
                 ViewBag.TotalOrders = totalOrders;
                 ViewBag.MonthlyRevenue = monthlyRevenue;
@@ -63,6 +76,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 ViewBag.TotalProducts = totalProducts;
                 ViewBag.TotalEmployees = totalEmployees;
                 ViewBag.ProductsSoldToday = productsSoldToday;
+                
+                // ✅ Thêm dữ liệu % tăng trưởng và doanh thu hôm nay
+                ViewBag.CustomerGrowthPercent = customerGrowthPercent;
+                ViewBag.OrderGrowthPercent = orderGrowthPercent;
+                ViewBag.ProductGrowthPercent = productGrowthPercent;
+                ViewBag.EmployeeGrowthPercent = employeeGrowthPercent;
+                ViewBag.TodayRevenue = todayRevenue;
+                ViewBag.TodayOrders = todayOrders;
+                ViewBag.TodayRevenueGrowth = todayRevenueGrowth;
+                ViewBag.MonthlyOrders = monthlyOrders;
+                ViewBag.MonthlyRevenueGrowth = monthlyRevenueGrowth;
 
                 return View();
             }
@@ -383,6 +407,189 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error calculating products sold today");
+                return 0;
+            }
+        }
+
+        // ✅ Tính % tăng trưởng so với ngày hôm qua
+        private async Task<decimal> CalculateGrowthPercentAsync(string type)
+        {
+            try
+            {
+                var today = DateTime.Now.Date;
+                var yesterday = today.AddDays(-1);
+
+                decimal currentValue = 0;
+                decimal lastValue = 0;
+
+                switch (type.ToLower())
+                {
+                    case "customers":
+                        var allCustomers = await _khachHangService.GetAllAsync();
+                        currentValue = allCustomers.Count(c => c.NgayTaoTaiKhoan.Date == today);
+                        lastValue = allCustomers.Count(c => c.NgayTaoTaiKhoan.Date == yesterday);
+                        break;
+                    case "orders":
+                        var allOrders = await _hoaDonService.GetAllAsync();
+                        currentValue = allOrders.Count(h => h.NgayTao.Date == today);
+                        lastValue = allOrders.Count(h => h.NgayTao.Date == yesterday);
+                        break;
+                    case "products":
+                        var allProducts = await _sanPhamService.GetAllAsync();
+                        currentValue = allProducts.Count(p => p.NgayTao.Date == today);
+                        lastValue = allProducts.Count(p => p.NgayTao.Date == yesterday);
+                        break;
+                    case "employees":
+                        var allEmployees = await _nhanVienService.GetAllAsync();
+                        currentValue = allEmployees.Count(e => e.NgayTao.Date == today);
+                        lastValue = allEmployees.Count(e => e.NgayTao.Date == yesterday);
+                        break;
+                }
+
+                if (lastValue == 0) 
+                {
+                    if (currentValue > 0) return 100; // Có dữ liệu hôm nay, không có hôm qua
+                    return 0; // Không có dữ liệu cả hai ngày
+                }
+                return Math.Round(((currentValue - lastValue) / lastValue) * 100, 1);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calculating growth percent for {Type}", type);
+                return 0;
+            }
+        }
+
+        // ✅ Lấy doanh thu hôm nay
+        private async Task<decimal> GetTodayRevenueAsync()
+        {
+            try
+            {
+                var allOrders = await _hoaDonService.GetHoaDonListAsync();
+                var today = DateTime.Now.Date;
+                
+                var todayRevenue = allOrders
+                    .Where(h => h.NgayTao.Date == today && (h.TrangThai == 3 || h.TrangThai == 7))
+                    .Sum(h => h.TongTienSauKhiGiam);
+                
+                return todayRevenue;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting today revenue");
+                return 0;
+            }
+        }
+
+        // ✅ Lấy số đơn hàng hôm nay
+        private async Task<int> GetTodayOrdersAsync()
+        {
+            try
+            {
+                var allOrders = await _hoaDonService.GetHoaDonListAsync();
+                var today = DateTime.Now.Date;
+                
+                var todayOrders = allOrders
+                    .Count(h => h.NgayTao.Date == today && (h.TrangThai == 3 || h.TrangThai == 7));
+                
+                return todayOrders;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting today orders");
+                return 0;
+            }
+        }
+
+        // ✅ Tính % tăng trưởng doanh thu hôm nay so với hôm qua
+        private async Task<decimal> GetTodayRevenueGrowthAsync()
+        {
+            try
+            {
+                var allOrders = await _hoaDonService.GetHoaDonListAsync();
+                var today = DateTime.Now.Date;
+                var yesterday = today.AddDays(-1);
+                
+                var todayRevenue = allOrders
+                    .Where(h => h.NgayTao.Date == today && (h.TrangThai == 3 || h.TrangThai == 7))
+                    .Sum(h => h.TongTienSauKhiGiam);
+                
+                var yesterdayRevenue = allOrders
+                    .Where(h => h.NgayTao.Date == yesterday && (h.TrangThai == 3 || h.TrangThai == 7))
+                    .Sum(h => h.TongTienSauKhiGiam);
+                
+                if (yesterdayRevenue == 0)
+                {
+                    if (todayRevenue > 0) return 100;
+                    return 0;
+                }
+                
+                return Math.Round(((todayRevenue - yesterdayRevenue) / yesterdayRevenue) * 100, 1);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calculating today revenue growth");
+                return 0;
+            }
+        }
+
+        // ✅ Lấy số đơn hàng tháng này
+        private async Task<int> GetMonthlyOrdersAsync()
+        {
+            try
+            {
+                var allOrders = await _hoaDonService.GetHoaDonListAsync();
+                var currentMonth = DateTime.Now.Month;
+                var currentYear = DateTime.Now.Year;
+                
+                var monthlyOrders = allOrders
+                    .Count(h => h.NgayTao.Month == currentMonth && 
+                               h.NgayTao.Year == currentYear && 
+                               (h.TrangThai == 3 || h.TrangThai == 7));
+                
+                return monthlyOrders;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting monthly orders");
+                return 0;
+            }
+        }
+
+        // ✅ Tính % tăng trưởng doanh thu tháng này so với tháng trước
+        private async Task<decimal> GetMonthlyRevenueGrowthAsync()
+        {
+            try
+            {
+                var allOrders = await _hoaDonService.GetHoaDonListAsync();
+                var currentMonth = DateTime.Now.Month;
+                var currentYear = DateTime.Now.Year;
+                var previousMonth = currentMonth == 1 ? 12 : currentMonth - 1;
+                var previousYear = currentMonth == 1 ? currentYear - 1 : currentYear;
+                
+                var currentMonthRevenue = allOrders
+                    .Where(h => h.NgayTao.Month == currentMonth && 
+                               h.NgayTao.Year == currentYear && 
+                               (h.TrangThai == 3 || h.TrangThai == 7))
+                    .Sum(h => h.TongTienSauKhiGiam);
+                
+                var previousMonthRevenue = allOrders
+                    .Where(h => h.NgayTao.Month == previousMonth && 
+                               h.NgayTao.Year == previousYear && 
+                               (h.TrangThai == 3 || h.TrangThai == 7))
+                    .Sum(h => h.TongTienSauKhiGiam);
+                
+                if (previousMonthRevenue == 0)
+                {
+                    if (currentMonthRevenue > 0) return 100;
+                    return 0;
+                }
+                
+                return Math.Round(((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) * 100, 1);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calculating monthly revenue growth");
                 return 0;
             }
         }

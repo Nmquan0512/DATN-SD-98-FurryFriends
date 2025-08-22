@@ -53,16 +53,23 @@ namespace FurryFriends.Web.Services
                 sanPham.CoGiamGia = false;
                 sanPham.PhanTramGiamGia = null;
                 sanPham.GiaSauGiam = null;
+                sanPham.NgayKetThucGiamGia = null;
                 return sanPham;
             }
 
             // Lấy % giảm giá cao nhất trong tất cả biến thể
             var maxPhanTramGiamGia = chiTietCoGiamGia.Max(c => c.PhanTramGiamGia ?? 0);
             var minGiaSauGiam = chiTietCoGiamGia.Min(c => c.GiaSauGiam ?? c.GiaBan);
+            
+            // Lấy ngày hết hạn sớm nhất trong các biến thể có giảm giá
+            var ngayKetThucSomNhat = chiTietCoGiamGia
+                .Where(c => c.NgayKetThucGiamGia.HasValue)
+                .Min(c => c.NgayKetThucGiamGia.Value);
 
             sanPham.CoGiamGia = true;
             sanPham.PhanTramGiamGia = maxPhanTramGiamGia;
             sanPham.GiaSauGiam = minGiaSauGiam;
+            sanPham.NgayKetThucGiamGia = ngayKetThucSomNhat;
 
             return sanPham;
         }

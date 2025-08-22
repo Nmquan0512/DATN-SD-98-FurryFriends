@@ -3,686 +3,7 @@
 {
     <div class="alert alert-danger">@TempData["Error"]</div>
 }
-<!-- Hero Section -->
-<section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
-    <!-- Animated background -->
-    <div class="absolute inset-0 gradient-animated"></div>
-    <div class="absolute inset-0 bg-black bg-opacity-40"></div>
 
-    <!-- Floating particles -->
-    <div class="absolute inset-0 overflow-hidden">
-        <div class="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full opacity-60 float-animation"></div>
-        <div class="absolute top-1/3 right-1/4 w-3 h-3 bg-white rounded-full opacity-40 float-animation" style="animation-delay: -1s;"></div>
-        <div class="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-white rounded-full opacity-50 float-animation" style="animation-delay: -2s;"></div>
-        <div class="absolute bottom-1/3 right-1/3 w-2.5 h-2.5 bg-white rounded-full opacity-30 float-animation" style="animation-delay: -0.5s;"></div>
-    </div>
-
-    <div class="relative container mx-auto px-4 text-center text-white z-10">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-6xl md:text-7xl font-bold mb-6 fade-in-up leading-tight">
-                Chào Mừng Đến Với
-                <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600">
-                    FurryFriends
-                </span>
-            </h1>
-            <p class="text-xl md:text-2xl mb-8 fade-in-up delay-1 opacity-90 leading-relaxed">
-                Cửa hàng thú cưng hiện đại với những sản phẩm chất lượng cao cho người bạn lông xù của bạn
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center fade-in-up delay-2">
-                <a href="#products" class="magnetic-btn px-8 py-4 bg-white text-gray-900 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 hover:scale-105 hover:shadow-2xl">
-                    <i class="fas fa-shopping-bag mr-2"></i>
-                    Mua Sắm Ngay
-                </a>
-                <a href="@Url.Action("Index", "SanPhamKhachHang")" class="magnetic-btn px-8 py-4 glass text-white rounded-full font-semibold hover:bg-white hover:bg-opacity-20 transition-all duration-300 hover:scale-105">
-                    <i class="fas fa-play mr-2"></i>
-                    Khám Phá Sản Phẩm
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Products Section -->
-<section id="products" class="py-20 relative">
-    <div class="absolute inset-0 bg-gradient-to-br from-gray-50 to-white"></div>
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gradient">Sản Phẩm Nổi Bật</h2>
-            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Những sản phẩm được yêu thích nhất với chất lượng đảm bảo</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            @if (ViewBag.FeaturedProducts != null && ((IEnumerable<FurryFriends.Web.ViewModels.SanPhamViewModel>)ViewBag.FeaturedProducts).Any())
-            {
-                var products = (IEnumerable<FurryFriends.Web.ViewModels.SanPhamViewModel>)ViewBag.FeaturedProducts;
-                
-                @foreach (var sanPham in products)
-                {
-                    <div class="product-card" data-product-id="@sanPham.SanPhamId" onclick="goToProductDetail('@sanPham.SanPhamId')" style="cursor: pointer;" title="Click để xem chi tiết sản phẩm" data-name="@sanPham.TenSanPham" data-brand="@sanPham.TenThuongHieu" data-min-price="@(sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Min(c=>c.GiaBan) : 0)" data-max-price="@(sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Max(c=>c.GiaBan) : 0)">
-                        @{
-                            var (coGiamGia, minGiaSauGiam, maxGiaSauGiam) = DiscountService.CalculateSafeDiscountRange(sanPham.ChiTietList);
-                        }
-                        @if (coGiamGia)
-                        {
-                            <div class="discount-badge-top">
-                                <span class="discount-text">Đang giảm giá</span>
-                                <span class="discount-percentage">-@(sanPham.PhanTramGiamGia?.ToString("0") ?? "0")%</span>
-                    </div>
-                        }
-                        <img src="@($"https://localhost:7289/images/{System.IO.Path.GetFileName(sanPham.AnhDaiDienUrl)}")"
-                             class="product-image"
-                             alt="@sanPham.TenSanPham" />
-                        
-                        <div class="product-info">
-                            <div class="product-header">
-                                <h3 class="product-title">@sanPham.TenSanPham</h3>
-                                <div class="view-detail-indicator">
-                                    <i class="fas fa-external-link-alt"></i>
-                </div>
-            </div>
-                            <p class="product-description">@sanPham.MoTa</p>
-                            
-                            <div class="product-meta">
-                                @if (!string.IsNullOrEmpty(sanPham.TenThuongHieu))
-                                {
-                                    <span><strong>Thương hiệu:</strong> @sanPham.TenThuongHieu</span>
-                                }
-                                <span>@(sanPham.ChiTietList?.Sum(c => c.SoLuongTon) ?? 0) còn hàng</span>
-                    </div>
-                            
-                            <div class="product-variants">
-                                @if (sanPham.ChiTietList?.Any() == true)
-                                {
-                                    @foreach (var chiTiet in sanPham.ChiTietList.Take(3))
-                                    {
-                                        <span class="variant-badge">@chiTiet.MauSac - @chiTiet.KichCo</span>
-                                    }
-                                    @if (sanPham.ChiTietList.Count > 3)
-                                    {
-                                        <span class="variant-badge">+@(sanPham.ChiTietList.Count - 3) khác</span>
-                                    }
-                                }
-            </div>
-
-                            <div class="product-price">
-                                @{
-                                    var minPrice = sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Min(c => c.GiaBan) : 0;
-                                    var maxPrice = sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Max(c => c.GiaBan) : 0;
-                                }
-                                @if (coGiamGia)
-                                {
-                                    <div class="price-with-discount">
-                                        <span class="original-price">
-                                            @if (minPrice == maxPrice)
-                                            {
-                                                @(minPrice.ToString("N0") + " VNĐ")
-                                            }
-                                            else
-                                            {
-                                                @(minPrice.ToString("N0") + " VNĐ - " + maxPrice.ToString("N0") + " VNĐ")
-                                            }
-                                        </span>
-                                        <span class="discounted-price">
-                                            @if (minGiaSauGiam == maxGiaSauGiam)
-                                            {
-                                                @(minGiaSauGiam?.ToString("N0") + " VNĐ")
-                                            }
-                                            else
-                                            {
-                                                @(minGiaSauGiam?.ToString("N0") + " VNĐ - " + maxGiaSauGiam?.ToString("N0") + " VNĐ")
-                                            }
-                                        </span>
-                    </div>
-                                }
-                                else
-                                {
-                                    @if (minPrice == maxPrice)
-                                    {
-                                        @(minPrice.ToString("N0") + " VNĐ")
-                                    }
-                                    else
-                                    {
-                                        @(minPrice.ToString("N0") + " VNĐ - " + maxPrice.ToString("N0") + " VNĐ")
-                                    }
-                                }
-            </div>
-
-                           <a asp-action="Index" asp-controller="SanPhamKhachHang"><button class="add-to-cart-btn" >
-                                <i class="fas fa-cart-plus"></i>
-                                Mua hàng ngay
-								</button>
-                                </a>
-                    </div>
-                </div>
-                }
-            }
-            else
-            {
-                <!-- Fallback products if no data -->
-                <div class="product-card">
-                    <img src="https://images.pexels.com/photos/4587998/pexels-photo-4587998.jpeg"
-                         class="product-image"
-                         alt="Áo Len Ấm Áp Cho Chó" />
-                    
-                    <div class="product-info">
-                        <div class="product-header">
-                            <h3 class="product-title">Áo Len Ấm Áp Cho Chó</h3>
-                            <div class="view-detail-indicator">
-                                <i class="fas fa-external-link-alt"></i>
-            </div>
-        </div>
-                        <p class="product-description">Áo len ấm áp và phong cách cho chó trong mùa đông</p>
-                        
-                        <div class="product-meta">
-                            <span><strong>Thương hiệu:</strong> FurryFriends</span>
-                            <span>25 còn hàng</span>
-    </div>
-                        
-                        <div class="product-variants">
-                            <span class="variant-badge">Đỏ - M</span>
-                            <span class="variant-badge">Xanh - L</span>
-                            <span class="variant-badge">+2 khác</span>
-        </div>
-
-                        <div class="product-price">
-                            <span class="price-value">599.000 VNĐ</span>
-                </div>
-                        
-                        <button class="add-to-cart-btn">
-                            <i class="fas fa-cart-plus"></i>
-                            Chọn biến thể
-                    </button>
-                </div>
-            </div>
-
-                <div class="product-card">
-                    <img src="https://images.pexels.com/photos/4588435/pexels-photo-4588435.jpeg"
-                         class="product-image"
-                         alt="Áo Mưa Chống Thấm" />
-                    
-                    <div class="product-info">
-                        <div class="product-header">
-                            <h3 class="product-title">Áo Mưa Chống Thấm</h3>
-                            <div class="view-detail-indicator">
-                                <i class="fas fa-external-link-alt"></i>
-                    </div>
-                </div>
-                        <p class="product-description">Áo mưa chống thấm nước hoàn hảo cho thú cưng</p>
-                        
-                        <div class="product-meta">
-                            <span><strong>Thương hiệu:</strong> FurryFriends</span>
-                            <span>18 còn hàng</span>
-                        </div>
-                        
-                        <div class="product-variants">
-                            <span class="variant-badge">Trong suốt - S</span>
-                            <span class="variant-badge">Trong suốt - M</span>
-                            <span class="variant-badge">+1 khác</span>
-                            </div>
-                        
-                        <div class="product-price">
-                            <span class="price-value">699.000 VNĐ</span>
-                        </div>
-                        
-                        <button class="add-to-cart-btn">
-                            <i class="fas fa-cart-plus"></i>
-                            Chọn biến thể
-                    </button>
-                </div>
-            </div>
-
-                <div class="product-card">
-                    <img src="https://images.pexels.com/photos/4587971/pexels-photo-4587971.jpeg"
-                         class="product-image"
-                         alt="Áo Khoác Mùa Đông" />
-                    
-                    <div class="product-info">
-                        <div class="product-header">
-                            <h3 class="product-title">Áo Khoác Mùa Đông</h3>
-                            <div class="view-detail-indicator">
-                                <i class="fas fa-external-link-alt"></i>
-                </div>
-                            </div>
-                        <p class="product-description">Áo khoác ấm áp và thời trang cho thú cưng</p>
-                        
-                        <div class="product-meta">
-                            <span><strong>Thương hiệu:</strong> FurryFriends</span>
-                            <span>32 còn hàng</span>
-                        </div>
-                        
-                        <div class="product-variants">
-                            <span class="variant-badge">Đen - L</span>
-                            <span class="variant-badge">Nâu - XL</span>
-                            <span class="variant-badge">+1 khác</span>
-                    </div>
-                        
-                        <div class="product-price">
-                            <span class="price-value">849.000 VNĐ</span>
-                        </div>
-                        
-                        <button class="add-to-cart-btn">
-                            <i class="fas fa-cart-plus"></i>
-                            Chọn biến thể
-                    </button>
-                </div>
-            </div>
-
-                <div class="product-card">
-                    <img src="https://images.pexels.com/photos/4588052/pexels-photo-4588052.jpeg"
-                         class="product-image"
-                         alt="Áo Thun Mùa Hè" />
-                    
-                    <div class="product-info">
-                        <div class="product-header">
-                            <h3 class="product-title">Áo Thun Mùa Hè</h3>
-                            <div class="view-detail-indicator">
-                                <i class="fas fa-external-link-alt"></i>
-                </div>
-                            </div>
-                        <p class="product-description">Áo thun thoáng mát và dễ thương cho thú cưng</p>
-                        
-                        <div class="product-meta">
-                            <span><strong>Thương hiệu:</strong> FurryFriends</span>
-                            <span>15 còn hàng</span>
-                        </div>
-                        
-                        <div class="product-variants">
-                            <span class="variant-badge">Trắng - S</span>
-                            <span class="variant-badge">Xanh - M</span>
-                            <span class="variant-badge">+2 khác</span>
-                    </div>
-                        
-                        <div class="product-price">
-                            <span class="price-value">499.000 VNĐ</span>
-                        </div>
-                        
-                        <button class="add-to-cart-btn">
-                            <i class="fas fa-cart-plus"></i>
-                            Chọn biến thể
-                    </button>
-                </div>
-            </div>
-            }
-        </div>
-    </div>
-</section>
-
-<!-- Stats Section -->
-<section class="py-20 relative overflow-hidden">
-    <div class="absolute inset-0 gradient-animated"></div>
-    <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
-            <div class="fade-in-up">
-                <div class="text-4xl md:text-5xl font-bold mb-2">29999+</div>
-                <div class="text-lg opacity-90">Khách Hàng Hài Lòng</div>
-            </div>
-            <div class="fade-in-up delay-1">
-                <div class="text-4xl md:text-5xl font-bold mb-2">@(ViewBag.TotalProducts ?? 500)+</div>
-                <div class="text-lg opacity-90">Sản Phẩm Chất Lượng</div>
-            </div>
-            <div class="fade-in-up delay-2">
-                <div class="text-4xl md:text-5xl font-bold mb-2">5</div>
-                <div class="text-lg opacity-90">Năm Kinh Nghiệm</div>
-            </div>
-            <div class="fade-in-up delay-3">
-                <div class="text-4xl md:text-5xl font-bold mb-2">24/7</div>
-                <div class="text-lg opacity-90">Hỗ Trợ Khách Hàng</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Newsletter Section -->
-<section class="py-20 relative">
-    <div class="absolute inset-0 bg-gradient-to-br from-purple-100 to-pink-100"></div>
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="max-w-2xl mx-auto text-center">
-            <h2 class="text-4xl font-bold mb-4 text-gradient">Đăng Ký Nhận Tin</h2>
-            <p class="text-xl text-gray-600 mb-8">Nhận thông tin về các ưu đãi đặc biệt và sản phẩm mới nhất</p>
-            <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                <input type="email"
-                       placeholder="Nhập email của bạn"
-                       class="flex-1 px-6 py-4 rounded-full border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors" />
-                <button class="magnetic-btn px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-105">
-                    <i class="fas fa-paper-plane mr-2"></i>
-                    Đăng Ký
-                </button>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Login Modal -->
-<div id="login-modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300 z-50">
-    <div class="modal-content glass-dark rounded-2xl w-11/12 max-w-md p-8 relative transform scale-95 transition-transform duration-300">
-        <button id="close-login" class="absolute top-4 right-4 w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-colors">
-            <i class="fas fa-times"></i>
-        </button>
-        <h2 class="text-3xl font-bold mb-6 text-white text-center">Đăng Nhập</h2>
-        <form class="space-y-4">
-            <div class="relative">
-                <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="email" placeholder="Email" class="w-full pl-12 pr-4 py-4 glass rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
-            </div>
-            <div class="relative">
-                <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="password" placeholder="Mật khẩu" class="w-full pl-12 pr-4 py-4 glass rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
-            </div>
-            <button type="submit" class="magnetic-btn w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300">
-                <i class="fas fa-sign-in-alt mr-2"></i>
-                Đăng Nhập
-            </button>
-        </form>
-        <p class="text-center mt-6 text-gray-300">
-            Chưa có tài khoản?
-            <button id="open-signup" class="text-purple-400 hover:text-purple-300 font-semibold">Đăng Ký</button>
-        </p>
-    </div>
-</div>
-
-<!-- Sign Up Modal -->
-<div id="signup-modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300 z-50">
-    <div class="modal-content glass-dark rounded-2xl w-11/12 max-w-md p-8 relative transform scale-95 transition-transform duration-300">
-        <button id="close-signup" class="absolute top-4 right-4 w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-colors">
-            <i class="fas fa-times"></i>
-        </button>
-        <h2 class="text-3xl font-bold mb-6 text-white text-center">Đăng Ký</h2>
-        <form class="space-y-4">
-            <div class="relative">
-                <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="text" placeholder="Họ và tên" class="w-full pl-12 pr-4 py-4 glass rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
-            </div>
-            <div class="relative">
-                <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="email" placeholder="Email" class="w-full pl-12 pr-4 py-4 glass rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
-            </div>
-            <div class="relative">
-                <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="password" placeholder="Mật khẩu" class="w-full pl-12 pr-4 py-4 glass rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
-            </div>
-            <div class="relative">
-                <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                <input type="password" placeholder="Xác nhận mật khẩu" class="w-full pl-12 pr-4 py-4 glass rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
-            </div>
-            <button type="submit" class="magnetic-btn w-full py-4 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl font-semibold hover:from-green-600 hover:to-blue-600 transition-all duration-300">
-                <i class="fas fa-user-plus mr-2"></i>
-                Đăng Ký
-            </button>
-        </form>
-    </div>
-</div>
-
-<!-- Cart Modal -->
-<div id="cart-modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300 z-50">
-    <div class="modal-content glass-dark rounded-2xl w-11/12 max-w-lg p-8 relative transform scale-95 transition-transform duration-300">
-        <button id="close-cart" class="absolute top-4 right-4 w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-colors">
-            <i class="fas fa-times"></i>
-        </button>
-        <h2 class="text-3xl font-bold mb-6 text-white text-center">
-            <i class="fas fa-shopping-cart mr-3"></i>
-            Giỏ Hàng
-        </h2>
-        <div class="cart-items text-center text-gray-300 py-8">
-            <i class="fas fa-shopping-bag text-6xl mb-4 opacity-50"></i>
-            <p class="text-xl">Giỏ hàng của bạn đang trống</p>
-            <p class="text-sm mt-2">Hãy thêm một số sản phẩm tuyệt vời!</p>
-        </div>
-        <button class="magnetic-btn w-full py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl font-semibold hover:from-gray-700 hover:to-gray-800 transition-all duration-300">
-            <i class="fas fa-credit-card mr-2"></i>
-            Thanh Toán
-        </button>
-    </div>
-</div>
-
-<!-- Footer -->
-<footer class="relative py-20 overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 to-black"></div>
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-white">
-            <div class="md:col-span-2">
-                <div class="flex items-center mb-6">
-                    <img src="https://img.upanh.tv/2025/06/08/hihihi.png" alt="FurryFriends Logo" class="h-12 mr-3">
-                    <span class="text-2xl font-bold text-gradient">FurryFriends</span>
-                </div>
-                <p class="text-gray-300 mb-6 leading-relaxed">
-                    Chúng tôi cam kết mang đến những sản phẩm chất lượng cao nhất cho thú cưng của bạn.
-                    Với nhiều năm kinh nghiệm, FurryFriends là lựa chọn tin cậy của hàng nghìn gia đình.
-                </p>
-                <div class="flex space-x-4">
-                    <a href="#" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors hover:scale-110 transform">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors hover:scale-110 transform">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors hover:scale-110 transform">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors hover:scale-110 transform">
-                        <i class="fab fa-youtube"></i>
-                    </a>
-                </div>
-            </div>
-
-            <div>
-                <h3 class="text-xl font-bold mb-6 text-gradient">Liên Kết Nhanh</h3>
-                <ul class="space-y-3">
-                    <li><a href="index.html" class="text-gray-300 hover:text-white transition-colors hover:translate-x-2 transform inline-block">Trang Chủ</a></li>
-                    <li><a href="#categories" class="text-gray-300 hover:text-white transition-colors hover:translate-x-2 transform inline-block">Danh Mục</a></li>
-                    <li><a href="#products" class="text-gray-300 hover:text-white transition-colors hover:translate-x-2 transform inline-block">Sản Phẩm</a></li>
-                    <li><a href="@Url.Action("About", "Home")" class="text-gray-300 hover:text-white transition-colors hover:translate-x-2 transform inline-block">Giới Thiệu</a></li>
-                    <li><a href="@Url.Action("Contact", "Home")" class="text-gray-300 hover:text-white transition-colors hover:translate-x-2 transform inline-block">Liên Hệ</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h3 class="text-xl font-bold mb-6 text-gradient">Liên Hệ</h3>
-                <div class="space-y-4">
-                    <div class="flex items-center">
-                        <i class="fas fa-phone w-5 h-5 mr-3 text-purple-400"></i>
-                        <span class="text-gray-300">+84-34984089</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-envelope w-5 h-5 mr-3 text-purple-400"></i>
-                        <span class="text-gray-300">furryfriends@gmail.com</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-map-marker-alt w-5 h-5 mr-3 text-purple-400"></i>
-                        <span class="text-gray-300">Hà Nội, Việt Nam</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="border-t border-gray-700 mt-12 pt-8 text-center">
-            <p class="text-gray-400">
-                © 2024 <span class="text-gradient font-semibold">FurryFriends</span>. Tất cả quyền được bảo lưu.
-            </p>
-        </div>
-    </div>
-</footer>
-
-<!-- Custom JavaScript -->
-<script>
-    // Mobile menu toggle
-    // Elements
-    const mobileMenuButton = document.getElementById('mobile-menu-button');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
-    const hamburger = document.getElementById('hamburger');
-    const header = document.getElementById('header') || document.querySelector('header');
-    const openLoginBtn = document.getElementById('open-login');
-    const openCartBtn = document.getElementById('open-cart');
-    const openLoginBtnmb = document.getElementById('open-login-mobile');
-    const openCartBtnmb = document.getElementById('open-cart-mobile');
-    // Cart State
-    let cartItems = [];
-    let cartCount = 0;
-    openLoginBtnmb?.addEventListener('click', () => {
-        window.location.href = 'auth.html';  // chuyển sang trang auth.html
-    });
-
-    openCartBtnmb?.addEventListener('click', () => {
-        window.location.href = 'cart.html';  // chuyển sang trang cart.html
-    });
-    // Mobile Menu Functions
-    function toggleMobileMenu() {
-        if (!mobileMenuButton || !mobileMenu || !mobileMenuBackdrop) return;
-
-        const isOpen = mobileMenu.classList.contains('open');
-
-        if (!isOpen) {
-            mobileMenu.classList.add('open');
-            mobileMenuBackdrop.classList.add('open');
-            hamburger?.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        } else {
-            closeMobileMenu();
-        }
-    }
-
-    function closeMobileMenu() {
-        mobileMenu?.classList.remove('open');
-        mobileMenuBackdrop?.classList.remove('open');
-        hamburger?.classList.remove('open');
-        document.body.style.overflow = '';
-    }
-
-    function initializeMobileMenu() {
-        if (!mobileMenuButton || !mobileMenu) return;
-
-        mobileMenuButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleMobileMenu();
-        });
-
-        mobileMenuBackdrop?.addEventListener('click', closeMobileMenu);
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeMobileMenu();
-        });
-
-        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
-        mobileMenuLinks.forEach(link => {
-            link.addEventListener('click', closeMobileMenu);
-        });
-    }
-
-    // Helper Functions
-    function updateCartBadge() {
-        const cartBadges = document.querySelectorAll('.cart-badge span');
-        cartBadges.forEach(badge => {
-            badge.textContent = cartCount.toString();
-        });
-    }
-
-    function showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `fixed top-20 right-4 px-6 py-3 rounded-lg text-white z-50 transform translate-x-full transition-transform duration-300 ${type === 'success' ? 'bg-green-500' : 'bg-blue-500'
-            }`;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-        setTimeout(() => notification.classList.remove('translate-x-full'), 100);
-        setTimeout(() => {
-            notification.classList.add('translate-x-full');
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-    }
-
-    // Initialize when DOM is loaded
-    document.addEventListener('DOMContentLoaded', () => {
-        initializeMobileMenu();
-        updateCartBadge();
-
-        // Scroll effect for header
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 100) {
-                header?.classList.add('bg-white', 'bg-opacity-95');
-                header?.classList.remove('glass');
-            } else {
-                header?.classList.remove('bg-white', 'bg-opacity-95');
-                header?.classList.add('glass');
-            }
-        });
-
-
-
-        // Switch between login and signup
-        const openSignupBtn = document.getElementById('open-signup');
-        if (openSignupBtn) {
-            openSignupBtn.addEventListener('click', () => {
-                const loginModal = document.getElementById('login-modal');
-                const signupModal = document.getElementById('signup-modal');
-                if (loginModal && signupModal) {
-                    loginModal.classList.add('opacity-0', 'pointer-events-none');
-                    signupModal.classList.remove('opacity-0', 'pointer-events-none');
-                    signupModal.classList.add('opacity-100');
-                }
-            });
-        }
-        openLoginBtn?.addEventListener('click', () => {
-            window.location.href = 'auth.html';  // chuyển sang trang auth.html
-        });
-
-        openCartBtn?.addEventListener('click', () => {
-            window.location.href = 'cart.html';  // chuyển sang trang cart.html
-        });
-
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-
-        // Intersection Observer animation
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('fade-in-up');
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        });
-
-        document.querySelectorAll('.hover-card, .fade-in-up').forEach(el => observer.observe(el));
-
-        // Add to cart button logic
-        const cartBadges = document.querySelectorAll('.cart-badge span');
-        document.querySelectorAll('.btn-primary, .magnetic-btn').forEach(btn => {
-            if (btn.textContent.includes('Thêm Vào Giỏ')) {
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    cartCount++;
-                    cartBadges.forEach(badge => {
-                        badge.textContent = cartCount;
-                        badge.classList.add('animate-pulse');
-                        setTimeout(() => badge.classList.remove('animate-pulse'), 1000);
-                    });
-                    showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
-                });
-            }
-        });
-
-        // Parallax scroll effect
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const parallaxElements = document.querySelectorAll('.parallax');
-            parallaxElements.forEach(element => {
-                const speed = element.dataset.speed || 0.5;
-                element.style.transform = `translateY(${scrolled * speed}px)`;
-            });
-        });
-    });
-
-</script>
 <style>
     @@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
 
@@ -1007,6 +328,39 @@
         }
     }
 
+    /* ✅ Product Grid Layout - Giống hệt SanPhamKhachHang */
+    .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+        align-items: stretch;
+    }
+
+    /* ✅ Grid Layout - Đảm bảo card đồng kích thước */
+    .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.xl\\:grid-cols-5 {
+        align-items: stretch; /* Đảm bảo tất cả item có cùng chiều cao */
+    }
+
+    /* ✅ Đảm bảo tất cả section có cùng layout */
+    .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3 {
+        align-items: stretch; /* Đảm bảo tất cả item có cùng chiều cao */
+    }
+
+    /* ✅ Đảm bảo tất cả grid container có cùng kích thước */
+    .grid {
+        grid-auto-rows: 1fr; /* Đảm bảo tất cả row có cùng chiều cao */
+    }
+
+    /* ✅ Đảm bảo tất cả section có cùng spacing */
+    section {
+        padding: 5rem 0; /* Đảm bảo tất cả section có cùng padding */
+    }
+
+    section .container {
+        max-width: 1200px; /* Đảm bảo tất cả container có cùng max-width */
+    }
+
     /* ✅ Product Card Styles - Giống hệt SanPhamKhachHang */
     .product-card {
         background: white;
@@ -1016,6 +370,9 @@
         transition: all 0.3s ease;
         position: relative;
         cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
     }
 
     .product-card:hover {
@@ -1039,8 +396,26 @@
         transform: scale(1.05);
     }
 
+    /* Smart overlay for discount badge */
+    .product-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 140px;
+        height: 140px;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.02) 100%);
+        border-radius: 0 0 140px 0;
+        z-index: 5;
+        pointer-events: none;
+        backdrop-filter: blur(0.5px);
+    }
+
     .product-info {
         padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
     }
 
     .product-header {
@@ -1080,6 +455,7 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        min-height: 2.625rem; /* 2 lines * 1.5 line-height * 0.875rem font-size */
     }
         
     .product-price {
@@ -1087,6 +463,10 @@
         font-weight: 800;
         color: #10b981;
         margin-bottom: 1rem;
+        min-height: 3.5rem; /* Đảm bảo chiều cao tối thiểu cho phần giá */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     .price-value {
@@ -1107,6 +487,7 @@
         gap: 0.5rem;
         margin-bottom: 1rem;
         flex-wrap: wrap;
+        min-height: 2rem; /* Đảm bảo chiều cao tối thiểu cho variants */
     }
 
     .variant-badge {
@@ -1133,6 +514,7 @@
         align-items: center;
         justify-content: center;
         gap: 0.5rem;
+        margin-top: auto; /* Đẩy button xuống dưới cùng */
     }
 
     .add-to-cart-btn:hover {
@@ -1142,6 +524,267 @@
 
     .add-to-cart-btn:active {
         transform: translateY(0);
+    }
+
+    .price-with-discount {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        height: 100%;
+        justify-content: center;
+    }
+
+    .original-price {
+        font-size: 1rem;
+        color: #6b7280;
+        text-decoration: line-through;
+        font-weight: 500;
+    }
+
+    .discounted-price {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #ef4444;
+    }
+
+    .discount-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        align-self: flex-start;
+    }
+
+    .discount-badge-top {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(239, 68, 68, 0.6);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        color: white;
+        padding: 0.6rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 10;
+        box-shadow: 0 4px 20px rgba(239, 68, 68, 0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+        max-width: 130px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .discount-badge-top:hover {
+        background: rgba(239, 68, 68, 0.7);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(239, 68, 68, 0.25);
+    }
+
+    .discount-text {
+        font-size: 0.7rem;
+        opacity: 0.9;
+    }
+
+    .discount-percentage {
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    /* Countdown Timer Styles */
+    .countdown-section {
+        margin-top: 0.5rem;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+        border-radius: 8px;
+        padding: 0.3rem;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .countdown-label {
+        font-size: 0.6rem;
+        opacity: 0.9;
+        margin-bottom: 0.25rem;
+        font-weight: 500;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
+
+    .countdown-timer {
+        font-size: 0.65rem;
+        font-weight: 700;
+        display: flex;
+        justify-content: center;
+        gap: 0.15rem;
+        flex-wrap: wrap;
+    }
+
+    .countdown-timer span {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(1px);
+        -webkit-backdrop-filter: blur(1px);
+        padding: 0.15rem 0.25rem;
+        border-radius: 4px;
+        min-width: 1.4rem;
+        text-align: center;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Sales Count Badge */
+    .absolute.top-3.right-3.z-20 {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        z-index: 20;
+    }
+    
+    .absolute.top-3.right-3.z-20 .bg-gradient-to-r {
+        background: rgba(34, 197, 94, 0.6) !important;
+        backdrop-filter: blur(6px) !important;
+        -webkit-backdrop-filter: blur(6px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        box-shadow: 0 4px 15px rgba(34, 197, 94, 0.2) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .absolute.top-3.right-3.z-20 .bg-gradient-to-r:hover {
+        background: rgba(34, 197, 94, 0.7) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(34, 197, 94, 0.25) !important;
+    }
+
+    /* Countdown Animation */
+    @@keyframes countdownPulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
+    }
+
+    /* Customer Card Styles */
+    .customer-card {
+        position: relative;
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .customer-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #10b981, #059669, #047857);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .customer-card:hover::before {
+        opacity: 1;
+    }
+
+    .customer-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* VIP Badge Animation */
+    .customer-card:nth-child(1) {
+        animation: vipGlow 2s ease-in-out infinite alternate;
+    }
+
+    .customer-card:nth-child(2) {
+        animation: vipGlow 2s ease-in-out infinite alternate 0.5s;
+    }
+
+    .customer-card:nth-child(3) {
+        animation: vipGlow 2s ease-in-out infinite alternate 1s;
+    }
+
+    @@keyframes vipGlow {
+        0% {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        100% {
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+        }
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .product-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .discount-badge-top {
+            max-width: 100px;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.7rem;
+        }
+        
+        .countdown-timer {
+            font-size: 0.6rem;
+            gap: 0.1rem;
+        }
+        
+        .countdown-timer span {
+            min-width: 1.2rem;
+            padding: 0.1rem 0.2rem;
+        }
+        
+        .product-card::before {
+            width: 120px;
+            height: 120px;
+        }
+    }
+    
+    @@media (max-width: 480px) {
+        .discount-badge-top {
+            max-width: 90px;
+            padding: 0.3rem 0.5rem;
+            font-size: 0.65rem;
+        }
+        
+        .countdown-section {
+            padding: 0.2rem;
+        }
+        
+        .countdown-timer {
+            font-size: 0.55rem;
+        }
+        
+        .product-card::before {
+            width: 100px;
+            height: 100px;
+        }
+        
+        .customer-card {
+            padding: 1rem;
+        }
+        
+        .customer-card .w-16.h-16 {
+            width: 3rem;
+            height: 3rem;
+            font-size: 1.25rem;
+        }
     }
 
     /* ✅ Modal Styles - Giống hệt SanPhamKhachHang */
@@ -1388,7 +1031,7 @@
     }
 
     /* ✅ Discount Badge Styles - Giống hệt SanPhamKhachHang */
-    .discount-badge-top {
+    .discount-badge-overlay {
         position: absolute;
         top: 1rem;
         left: 1rem;
@@ -1400,6 +1043,26 @@
         font-weight: 600;
         z-index: 10;
         box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        min-width: 120px;
+        max-width: 140px;
+    }
+
+    .discount-info {
+        text-align: center;
+        margin-bottom: 0.25rem;
+    }
+
+    .discount-info .discount-text {
+        display: block;
+        font-size: 0.75rem;
+        opacity: 0.9;
+        margin-bottom: 0.125rem;
+    }
+
+    .discount-info .discount-percentage {
+        display: block;
+        font-size: 1rem;
+        font-weight: 700;
     }
 
     .discount-text {
@@ -1418,6 +1081,20 @@
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
+        height: 100%;
+        justify-content: center;
+        min-height: 4rem; /* Đảm bảo chiều cao tối thiểu */
+    }
+
+    .price-without-discount {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #10b981;
+        min-height: 4rem; /* Đảm bảo chiều cao tối thiểu */
     }
 
     .original-price {
@@ -1431,8 +1108,1193 @@
         color: #ef4444;
         font-size: 1.5rem;
         font-weight: 800;
+
+    }
+
+    /* Sales count badge styles */
+    .product-card .bg-gradient-to-r.from-green-500.to-emerald-600 {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 20;
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+        animation: pulse 2s infinite;
+        font-size: 0.75rem;
+        min-width: 60px;
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    @@keyframes countdownPulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.7;
+        }
+    }
+
+    /* Countdown Section Styles */
+    .countdown-section {
+        margin-top: 0.25rem;
+        padding-top: 0.25rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        text-align: center;
+    }
+
+    .countdown-label {
+        display: block;
+        font-size: 0.5rem;
+        opacity: 0.9;
+        margin-bottom: 0.125rem;
+        font-weight: 500;
+    }
+
+    .countdown-timer {
+        display: flex;
+        justify-content: center;
+        gap: 0.125rem;
+        font-weight: 700;
+        font-size: 0.625rem;
+    }
+
+    .countdown-timer span {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.125rem 0.25rem;
+        border-radius: 3px;
+        min-width: 1rem;
+        text-align: center;
+        display: inline-block;
+    }
+
+    /* Responsive for new sections */
+    @@media (max-width: 768px) {
+        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.xl\\:grid-cols-5 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .product-card .bg-gradient-to-r.from-green-500.to-emerald-600 {
+            font-size: 0.625rem;
+            min-width: 50px;
+            padding: 0.25rem 0.5rem;
+        }
+
+        .product-card {
+            min-height: 550px; /* Tăng chiều cao tối thiểu trên mobile */
+            max-height: 550px; /* Giới hạn chiều cao tối đa trên mobile */
+        }
+
+        .product-info {
+            min-height: 350px; /* Giảm chiều cao phần info trên mobile */
+        }
+
+        .product-image-container {
+            height: 200px; /* Giảm chiều cao ảnh trên mobile */
+        }
+
+        .discount-badge-overlay {
+            min-width: 100px;
+            padding: 0.375rem 0.75rem;
+            max-width: 120px;
+        }
+
+        .discount-info .discount-text {
+            font-size: 0.625rem;
+        }
+
+        .discount-info .discount-percentage {
+            font-size: 0.875rem;
+        }
+
+        .countdown-section {
+            margin-top: 0.25rem;
+            padding-top: 0.25rem;
+        }
+
+        .countdown-label {
+            font-size: 0.375rem;
+        }
+
+        .countdown-timer {
+            font-size: 0.5rem;
+            gap: 0.125rem;
+        }
+
+        .countdown-timer span {
+            min-width: 0.875rem;
+            padding: 0.125rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.xl\\:grid-cols-5 {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem 2rem;
+        border-radius: 20px 20px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .modal-close {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+    }
+
+    .modal-body {
+        padding: 2rem;
+    }
+
+    .product-preview {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f8fafc;
+        border-radius: 15px;
+    }
+
+    .preview-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .preview-info h4 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    .preview-info p {
+        margin: 0;
+        color: #64748b;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+
+    .variant-options {
+        margin-bottom: 2rem;
+    }
+
+    .variant-option {
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .variant-option:hover {
+        border-color: #667eea;
+        background: #f8fafc;
+    }
+
+    .variant-option.selected {
+        border-color: #667eea;
+        background: #f0f4ff;
+    }
+
+    .variant-option input[type="radio"] {
+        display: none;
+    }
+
+    .variant-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .variant-specs {
+        display: flex;
+        gap: 1rem;
+        font-size: 0.875rem;
+        color: #64748b;
+    }
+
+    .variant-spec {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .variant-price {
+        font-weight: 700;
+        color: #10b981;
+        font-size: 1.125rem;
+    }
+
+    .quantity-section {
+        margin-bottom: 2rem;
+    }
+
+    .quantity-label {
+        display: block;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 0.5rem;
+    }
+
+    .quantity-input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .quantity-input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .modal-footer {
+        padding: 1.5rem 2rem;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-cancel {
+        flex: 1;
+        padding: 0.75rem 1.5rem;
+        border: 2px solid #e5e7eb;
+        background: white;
+        color: #64748b;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancel:hover {
+        background: #f8fafc;
+        border-color: #d1d5db;
+    }
+
+    .btn-add-cart {
+        flex: 2;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-add-cart:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-add-cart:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Loading animation */
+    .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+    }
+
+    @@keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Responsive Modal */
+    @@media (max-width: 768px) {
+        .modal-content {
+            margin: 1rem;
+            max-height: calc(100vh - 2rem);
+        }
+
+        .product-preview {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .preview-image {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+        }
+
+        .modal-footer {
+            flex-direction: column;
+        }
     }
 </style>
+<!-- Hero Section -->
+<section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Animated background -->
+    <div class="absolute inset-0 gradient-animated"></div>
+    <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+
+    <!-- Floating particles -->
+    <div class="absolute inset-0 overflow-hidden">
+        <div class="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full opacity-60 float-animation"></div>
+        <div class="absolute top-1/3 right-1/4 w-3 h-3 bg-white rounded-full opacity-40 float-animation" style="animation-delay: -1s;"></div>
+        <div class="absolute bottom-1/4 left-1/3 w-1.5 h-1.5 bg-white rounded-full opacity-50 float-animation" style="animation-delay: -2s;"></div>
+        <div class="absolute bottom-1/3 right-1/3 w-2.5 h-2.5 bg-white rounded-full opacity-30 float-animation" style="animation-delay: -0.5s;"></div>
+    </div>
+
+    <div class="relative container mx-auto px-4 text-center text-white z-10">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-6xl md:text-7xl font-bold mb-6 fade-in-up leading-tight">
+                Chào Mừng Đến Với
+                <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600">
+                    FuryFriend
+                </span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 fade-in-up delay-1 opacity-90 leading-relaxed">
+                Cửa hàng thú cưng hiện đại với những sản phẩm chất lượng cao cho người bạn lông xù của bạn
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center fade-in-up delay-2">
+                <a href="@Url.Action("Index", "SanPhamKhachHang")" class="magnetic-btn px-8 py-4 bg-white text-gray-900 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+                    <i class="fas fa-shopping-bag mr-2"></i>
+                    Mua Sắm Ngay
+                </a>
+                <a href="#top-selling" class="magnetic-btn px-8 py-4 glass text-white rounded-full font-semibold hover:bg-white hover:bg-opacity-20 transition-all duration-300 hover:scale-105">
+                    <i class="fas fa-play mr-2"></i>
+                    Khám Phá Sản Phẩm
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Top 5 sản phẩm bán chạy -->
+<section id="top-selling" class="py-20 relative">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gradient">🏆 Top 5 Sản Phẩm Bán Chạy</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Những sản phẩm được khách hàng yêu thích nhất</p>
+        </div>
+
+        <div class="product-grid">
+            @if (ViewBag.TopSellingProducts != null && ((IEnumerable<FurryFriends.Web.ViewModels.SanPhamViewModel>)ViewBag.TopSellingProducts).Any())
+            {
+                var topProducts = (IEnumerable<FurryFriends.Web.ViewModels.SanPhamViewModel>)ViewBag.TopSellingProducts;
+                int rank = 1;
+                
+                @foreach (var sanPham in topProducts)
+                {
+                    <div class="product-card" data-product-id="@sanPham.SanPhamId" onclick="goToProductDetail('@sanPham.SanPhamId')" style="cursor: pointer;" title="Click để xem chi tiết sản phẩm" data-name="@sanPham.TenSanPham" data-brand="@sanPham.TenThuongHieu" data-min-price="@(sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Min(c=>c.GiaBan) : 0)" data-max-price="@(sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Max(c=>c.GiaBan) : 0)">
+                        <!-- Sales count badge -->
+                        <div class="absolute top-3 right-3 z-20">
+                            <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center justify-center shadow-lg">
+                                <i class="fas fa-shopping-cart mr-1"></i>
+                                @(ViewBag.ProductSalesCount?.ContainsKey(sanPham.SanPhamId) == true ? ViewBag.ProductSalesCount[sanPham.SanPhamId] : 0)
+                            </div>
+                        </div>
+                        
+                        @{
+                            var (coGiamGia, minGiaSauGiam, maxGiaSauGiam) = DiscountService.CalculateSafeDiscountRange(sanPham.ChiTietList);
+                        }
+                        @if (coGiamGia)
+                        {
+                            <div class="discount-badge-top">
+                                <span class="discount-text">Đang giảm giá</span>
+                                <span class="discount-percentage">-@(sanPham.PhanTramGiamGia?.ToString("0") ?? "0")%</span>
+                                @if (sanPham.NgayKetThucGiamGia.HasValue)
+                                {
+                                    <div class="countdown-section" data-end-date="@sanPham.NgayKetThucGiamGia.Value.ToString("yyyy-MM-ddTHH:mm:ss")">
+                                        <div class="countdown-label">Kết thúc sau:</div>
+                                        <div class="countdown-timer">
+                                            <span class="countdown-days">00</span>d
+                                            <span class="countdown-hours">00</span>h
+                                            <span class="countdown-minutes">00</span>m
+                                            <span class="countdown-seconds">00</span>s
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        <img src="@($"https://localhost:7289/images/{System.IO.Path.GetFileName(sanPham.AnhDaiDienUrl)}")"
+                             class="product-image"
+                             alt="@sanPham.TenSanPham" />
+
+                        <div class="product-info">
+                            <div class="product-header">
+                                <h3 class="product-title">@sanPham.TenSanPham</h3>
+                                <div class="view-detail-indicator">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </div>
+                            </div>
+                            <p class="product-description">@sanPham.MoTa</p>
+
+                            <div class="product-meta">
+                                @if (!string.IsNullOrEmpty(sanPham.TenThuongHieu))
+                                {
+                                    <span><strong>Thương hiệu:</strong> @sanPham.TenThuongHieu</span>
+                                }
+                                <span>@(sanPham.ChiTietList?.Sum(c => c.SoLuongTon) ?? 0) còn hàng</span>
+                            </div>
+
+                            <div class="product-variants">
+                                @if (sanPham.ChiTietList?.Any() == true)
+                                {
+                                    @foreach (var chiTiet in sanPham.ChiTietList.Take(3))
+                                    {
+                                        <span class="variant-badge">@chiTiet.MauSac - @chiTiet.KichCo</span>
+                                    }
+                                    @if (sanPham.ChiTietList.Count > 3)
+                                    {
+                                        <span class="variant-badge">+@(sanPham.ChiTietList.Count - 3) khác</span>
+                                    }
+                                }
+                            </div>
+
+                            <div class="product-price">
+                                @{
+                                    var minPrice = sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Min(c => c.GiaBan) : 0;
+                                    var maxPrice = sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Max(c => c.GiaBan) : 0;
+                                }
+                                @if (coGiamGia)
+                                {
+                                    <div class="price-with-discount">
+                                        <span class="original-price">
+                                            @if (minPrice == maxPrice)
+                                            {
+                                                @(minPrice.ToString("N0") + " VNĐ")
+                                            }
+                                            else
+                                            {
+                                                @(minPrice.ToString("N0") + " VNĐ - " + maxPrice.ToString("N0") + " VNĐ")
+                                            }
+                                        </span>
+                                        <span class="discounted-price">
+                                            @if (minGiaSauGiam == maxGiaSauGiam)
+                                            {
+                                                @(minGiaSauGiam?.ToString("N0") + " VNĐ")
+                                            }
+                                            else
+                                            {
+                                                @(minGiaSauGiam?.ToString("N0") + " VNĐ - " + maxGiaSauGiam?.ToString("N0") + " VNĐ")
+                                            }
+                                        </span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @if (minPrice == maxPrice)
+                                    {
+                                        @(minPrice.ToString("N0") + " VNĐ")
+                                    }
+                                    else
+                                    {
+                                        @(minPrice.ToString("N0") + " VNĐ - " + maxPrice.ToString("N0") + " VNĐ")
+                                    }
+                                }
+                            </div>
+
+                           <button class="add-to-cart-btn" onclick="event.stopPropagation(); openVariantModal('@sanPham.SanPhamId', '@sanPham.TenSanPham')">
+                                <i class="fas fa-cart-plus"></i>
+                                Mua hàng
+                            </button>
+                        </div>
+                    </div>
+                    rank++;
+                }
+            }
+            else
+            {
+                <div class="col-span-full text-center py-20">
+                    <div class="text-6xl mb-4">📊</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Chưa có dữ liệu bán chạy</h3>
+                    <p class="text-gray-600">Hãy mua sắm để tạo ra những sản phẩm bán chạy!</p>
+            </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="py-20 relative">
+    <div class="absolute inset-0 bg-gradient-to-br from-red-50 to-pink-50"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gradient">🔥 Sản Phẩm Đang Giảm Giá</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Những ưu đãi hấp dẫn không thể bỏ qua cho thú cưng của bạn</p>
+        </div>
+
+        <div class="product-grid">
+            @if (ViewBag.DiscountedProducts != null && ((IEnumerable<FurryFriends.Web.ViewModels.SanPhamViewModel>)ViewBag.DiscountedProducts).Any())
+            {
+                var discountedProducts = (IEnumerable<FurryFriends.Web.ViewModels.SanPhamViewModel>)ViewBag.DiscountedProducts;
+                
+                @foreach (var sanPham in discountedProducts)
+                {
+                    <div class="product-card" data-product-id="@sanPham.SanPhamId" onclick="goToProductDetail('@sanPham.SanPhamId')" style="cursor: pointer;" title="Click để xem chi tiết sản phẩm" data-name="@sanPham.TenSanPham" data-brand="@sanPham.TenThuongHieu" data-min-price="@(sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Min(c=>c.GiaBan) : 0)" data-max-price="@(sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Max(c=>c.GiaBan) : 0)">
+                        @{
+                            var (coGiamGia, minGiaSauGiam, maxGiaSauGiam) = DiscountService.CalculateSafeDiscountRange(sanPham.ChiTietList);
+                        }
+                        @if (coGiamGia)
+                        {
+                            <div class="discount-badge-top">
+                                <span class="discount-text">Đang giảm giá</span>
+                                <span class="discount-percentage">-@(sanPham.PhanTramGiamGia?.ToString("0") ?? "0")%</span>
+                                @if (sanPham.NgayKetThucGiamGia.HasValue)
+                                {
+                                    <div class="countdown-section" data-end-date="@sanPham.NgayKetThucGiamGia.Value.ToString("yyyy-MM-ddTHH:mm:ss")">
+                                        <div class="countdown-label">Kết thúc sau:</div>
+                                        <div class="countdown-timer">
+                                            <span class="countdown-days">00</span>d
+                                            <span class="countdown-hours">00</span>h
+                                            <span class="countdown-minutes">00</span>m
+                                            <span class="countdown-seconds">00</span>s
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        <img src="@($"https://localhost:7289/images/{System.IO.Path.GetFileName(sanPham.AnhDaiDienUrl)}")"
+                             class="product-image"
+                             alt="@sanPham.TenSanPham" />
+                        
+                        <div class="product-info">
+                            <div class="product-header">
+                                <h3 class="product-title">@sanPham.TenSanPham</h3>
+                                <div class="view-detail-indicator">
+                                    <i class="fas fa-external-link-alt"></i>
+                                </div>
+                            </div>
+                            <p class="product-description">@sanPham.MoTa</p>
+
+                            <div class="product-meta">
+                                @if (!string.IsNullOrEmpty(sanPham.TenThuongHieu))
+                                {
+                                    <span><strong>Thương hiệu:</strong> @sanPham.TenThuongHieu</span>
+                                }
+                                <span>@(sanPham.ChiTietList?.Sum(c => c.SoLuongTon) ?? 0) còn hàng</span>
+                            </div>
+
+                            <div class="product-variants">
+                                @if (sanPham.ChiTietList?.Any() == true)
+                                {
+                                    @foreach (var chiTiet in sanPham.ChiTietList.Take(3))
+                                    {
+                                        <span class="variant-badge">@chiTiet.MauSac - @chiTiet.KichCo</span>
+                                    }
+                                    @if (sanPham.ChiTietList.Count > 3)
+                                    {
+                                        <span class="variant-badge">+@(sanPham.ChiTietList.Count - 3) khác</span>
+                                    }
+                                }
+                            </div>
+
+                            <div class="product-price">
+                                @{
+                                    var minPrice = sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Min(c => c.GiaBan) : 0;
+                                    var maxPrice = sanPham.ChiTietList?.Any() == true ? sanPham.ChiTietList.Max(c => c.GiaBan) : 0;
+                                }
+                                @if (coGiamGia)
+                                {
+                                    <div class="price-with-discount">
+                                        <span class="original-price">
+                                            @if (minPrice == maxPrice)
+                                            {
+                                                @(minPrice.ToString("N0") + " VNĐ")
+                                            }
+                                            else
+                                            {
+                                                @(minPrice.ToString("N0") + " VNĐ - " + maxPrice.ToString("N0") + " VNĐ")
+                                            }
+                                        </span>
+                                        <span class="discounted-price">
+                                            @if (minGiaSauGiam == maxGiaSauGiam)
+                                            {
+                                                @(minGiaSauGiam?.ToString("N0") + " VNĐ")
+                                            }
+                                            else
+                                            {
+                                                @(minGiaSauGiam?.ToString("N0") + " VNĐ - " + maxGiaSauGiam?.ToString("N0") + " VNĐ")
+                                            }
+                                        </span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @if (minPrice == maxPrice)
+                                    {
+                                        @(minPrice.ToString("N0") + " VNĐ")
+                                    }
+                                    else
+                                    {
+                                        @(minPrice.ToString("N0") + " VNĐ - " + maxPrice.ToString("N0") + " VNĐ")
+                                    }
+                                }
+                            </div>
+
+                           <button class="add-to-cart-btn" onclick="event.stopPropagation(); openVariantModal('@sanPham.SanPhamId', '@sanPham.TenSanPham')">
+                                <i class="fas fa-cart-plus"></i>
+                                Mua hàng
+                            </button>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-span-full text-center py-20">
+                    <div class="text-6xl mb-4">🎉</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Hiện tại không có sản phẩm giảm giá</h3>
+                    <p class="text-gray-600">Hãy quay lại sau để xem những ưu đãi mới nhất!</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+<!-- Login Modal -->
+<div id="login-modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+    <div class="modal-content glass-dark rounded-2xl w-11/12 max-w-md p-8 relative transform scale-95 transition-transform duration-300">
+        <button id="close-login" class="absolute top-4 right-4 w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-colors">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 class="text-3xl font-bold mb-6 text-white text-center">Đăng Nhập</h2>
+        <form class="space-y-4">
+            <div class="relative">
+                <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="email" placeholder="Email" class="w-full pl-12 pr-4 py-4 glass rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+            </div>
+            <div class="relative">
+                <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="password" placeholder="Mật khẩu" class="w-full pl-12 pr-4 py-4 glass rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+            </div>
+            <button type="submit" class="magnetic-btn w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300">
+                <i class="fas fa-sign-in-alt mr-2"></i>
+                Đăng Nhập
+            </button>
+        </form>
+        <p class="text-center mt-6 text-gray-300">
+            Chưa có tài khoản?
+            <button id="open-signup" class="text-purple-400 hover:text-purple-300 font-semibold">Đăng Ký</button>
+        </p>
+    </div>
+</div>
+
+<!-- Sign Up Modal -->
+<div id="signup-modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+    <div class="modal-content glass-dark rounded-2xl w-11/12 max-w-md p-8 relative transform scale-95 transition-transform duration-300">
+        <button id="close-signup" class="absolute top-4 right-4 w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-colors">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 class="text-3xl font-bold mb-6 text-white text-center">Đăng Ký</h2>
+        <form class="space-y-4">
+            <div class="relative">
+                <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="text" placeholder="Họ và tên" class="w-full pl-12 pr-4 py-4 glass rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+            </div>
+            <div class="relative">
+                <i class="fas fa-envelope absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="email" placeholder="Email" class="w-full pl-12 pr-4 py-4 glass rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+            </div>
+            <div class="relative">
+                <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="password" placeholder="Mật khẩu" class="w-full pl-12 pr-4 py-4 glass rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+            </div>
+            <div class="relative">
+                <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                <input type="password" placeholder="Xác nhận mật khẩu" class="w-full pl-12 pr-4 py-4 glass rounded-xl text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+            </div>
+            <button type="submit" class="magnetic-btn w-full py-4 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl font-semibold hover:from-green-600 hover:to-blue-600 transition-all duration-300">
+                <i class="fas fa-user-plus mr-2"></i>
+                Đăng Ký
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Cart Modal -->
+<div id="cart-modal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+    <div class="modal-content glass-dark rounded-2xl w-11/12 max-w-lg p-8 relative transform scale-95 transition-transform duration-300">
+        <button id="close-cart" class="absolute top-4 right-4 w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white hover:bg-opacity-30 transition-colors">
+            <i class="fas fa-times"></i>
+        </button>
+        <h2 class="text-3xl font-bold mb-6 text-white text-center">
+            <i class="fas fa-shopping-cart mr-3"></i>
+            Giỏ Hàng
+        </h2>
+        <div class="cart-items text-center text-gray-300 py-8">
+            <i class="fas fa-shopping-bag text-6xl mb-4 opacity-50"></i>
+            <p class="text-xl">Giỏ hàng của bạn đang trống</p>
+            <p class="text-sm mt-2">Hãy thêm một số sản phẩm tuyệt vời!</p>
+        </div>
+        <button class="magnetic-btn w-full py-4 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-xl font-semibold hover:from-gray-700 hover:to-gray-800 transition-all duration-300">
+            <i class="fas fa-credit-card mr-2"></i>
+            Thanh Toán
+        </button>
+    </div>
+</div>
+
+<!-- Top 10 Khách Hàng Mua Nhiều Sản Phẩm -->
+<section class="py-20 relative">
+    <div class="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-50"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gradient">👑 Top 5 Khách Hàng VIP</h2>
+            <p class="text-xl text-gray-600 max-w-2xl mx-auto">Những khách hàng thân thiết đã mua nhiều sản phẩm nhất</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+            @if (ViewBag.TopCustomers != null && ((IEnumerable<dynamic>)ViewBag.TopCustomers).Any())
+            {
+                var topCustomers = (IEnumerable<dynamic>)ViewBag.TopCustomers;
+                int rank = 1;
+                
+                @foreach (var customer in topCustomers)
+                {
+                    <div class="customer-card bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 relative overflow-hidden">
+                        <!-- Rank Badge -->
+                        <div class="absolute top-4 right-4">
+                            @if (rank == 1)
+                            {
+                                <div class="w-8 h-8 bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                    <i class="fas fa-crown"></i>
+                                </div>
+                            }
+                            else if (rank == 2)
+                            {
+                                <div class="w-8 h-8 bg-gradient-to-r from-gray-400 to-gray-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                    <i class="fas fa-medal"></i>
+                                </div>
+                            }
+                            else if (rank == 3)
+                            {
+                                <div class="w-8 h-8 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                    <i class="fas fa-award"></i>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="w-8 h-8 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                                    @rank
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Customer Avatar -->
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-3 shadow-lg">
+                                @(customer.TenKhachHang?.Substring(0, 1).ToUpper() ?? "K")
+                            </div>
+                        </div>
+
+                        <!-- Customer Info -->
+                        <div class="text-center">
+                            <h3 class="text-lg font-bold text-gray-800 mb-2 truncate" title="@customer.TenKhachHang">
+                                @customer.TenKhachHang
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-3">
+                                @{
+                                    var phone = customer.SoDienThoai?.ToString() ?? "";
+                                    if (phone.Length >= 4)
+                                    {
+                                        var maskedPhone = phone.Substring(0, phone.Length - 4) + "****";
+                                        @maskedPhone
+                                    }
+                                    else
+                                    {
+                                        @phone
+                                    }
+                                }
+                            </p>
+                            
+                            <!-- Purchase Stats -->
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-3 mb-3">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm text-gray-600">Đã mua:</span>
+                                    <span class="text-lg font-bold text-green-600">@customer.TongSoSanPham sản phẩm</span>
+                                </div>
+                                <div class="flex justify-between items-center mt-1">
+                                    <span class="text-sm text-gray-600">Tổng tiền:</span>
+                                    <span class="text-sm font-semibold text-green-600">@(customer.TongTien?.ToString("N0") ?? "0") VNĐ</span>
+                                </div>
+                            </div>
+
+                            <!-- Achievement Badge -->
+                            <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+                                @(customer.TongSoSanPham >= 50 ? "bg-purple-100 text-purple-800" :
+                                  customer.TongSoSanPham >= 30 ? "bg-blue-100 text-blue-800" :
+                                  customer.TongSoSanPham >= 20 ? "bg-green-100 text-green-800" :
+                                  customer.TongSoSanPham >= 10 ? "bg-yellow-100 text-yellow-800" :
+                                  "bg-gray-100 text-gray-800")">
+                                <i class="fas fa-star mr-1"></i>
+                                @(customer.TongSoSanPham >= 50 ? "VIP Diamond" :
+                                  customer.TongSoSanPham >= 30 ? "VIP Gold" :
+                                  customer.TongSoSanPham >= 20 ? "VIP Silver" :
+                                  customer.TongSoSanPham >= 10 ? "VIP Bronze" :
+                                  "Khách hàng mới")
+                            </div>
+                        </div>
+                    </div>
+                    rank++;
+                }
+            }
+            else
+            {
+                <div class="col-span-full text-center py-20">
+                    <div class="text-6xl mb-4">👥</div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Chưa có dữ liệu khách hàng</h3>
+                    <p class="text-gray-600">Hãy mua sắm để trở thành khách hàng VIP!</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-20 relative overflow-hidden">
+    <div class="absolute inset-0 gradient-animated"></div>
+    <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
+            <div class="fade-in-up">
+                <div class="text-4xl md:text-5xl font-bold mb-2">29999+</div>
+                <div class="text-lg opacity-90">Khách Hàng Hài Lòng</div>
+            </div>
+            <div class="fade-in-up delay-1">
+                <div class="text-4xl md:text-5xl font-bold mb-2">@(ViewBag.TotalProducts ?? 500)+</div>
+                <div class="text-lg opacity-90">Sản Phẩm Chất Lượng</div>
+            </div>
+            <div class="fade-in-up delay-2">
+                <div class="text-4xl md:text-5xl font-bold mb-2">5</div>
+                <div class="text-lg opacity-90">Năm Kinh Nghiệm</div>
+            </div>
+            <div class="fade-in-up delay-3">
+                <div class="text-4xl md:text-5xl font-bold mb-2">24/7</div>
+                <div class="text-lg opacity-90">Hỗ Trợ Khách Hàng</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="py-20 relative">
+    <div class="absolute inset-0 bg-gradient-to-br from-purple-100 to-pink-100"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-2xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-4 text-gradient">Đăng Ký Nhận Tin</h2>
+            <p class="text-xl text-gray-600 mb-8">Nhận thông tin về các ưu đãi đặc biệt và sản phẩm mới nhất</p>
+            <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                <input type="email"
+                       placeholder="Nhập email của bạn"
+                       class="flex-1 px-6 py-4 rounded-full border-2 border-gray-200 focus:border-purple-500 focus:outline-none transition-colors" />
+                <button class="magnetic-btn px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-semibold hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-105">
+                    <i class="fas fa-paper-plane mr-2"></i>
+                    Đăng Ký
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="relative py-20 overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-900 to-black"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-white">
+            <div class="md:col-span-2">
+                <div class="flex items-center mb-6">
+                    <span class="text-2xl font-bold text-gradient">FuryFriend</span>
+                </div>
+                <p class="text-gray-300 mb-6 leading-relaxed">
+                    Chúng tôi cam kết mang đến những sản phẩm chất lượng cao nhất cho thú cưng của bạn.
+                    Với nhiều năm kinh nghiệm, FuryFriend là lựa chọn tin cậy của hàng nghìn gia đình.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="https://www.facebook.com/furyfriend" target="_blank" class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors hover:scale-110 transform">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/furyfriend" target="_blank" class="w-10 h-10 bg-pink-600 rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors hover:scale-110 transform">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://twitter.com/furyfriend" target="_blank" class="w-10 h-10 bg-blue-400 rounded-full flex items-center justify-center hover:bg-blue-500 transition-colors hover:scale-110 transform">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="https://www.youtube.com/furyfriend" target="_blank" class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors hover:scale-110 transform">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-bold mb-6 text-gradient">Liên Kết Nhanh</h3>
+                <ul class="space-y-3">
+                    <li><a href="@Url.Action("Index", "Home")" class="text-gray-300 hover:text-white transition-colors hover:translate-x-2 transform inline-block">Trang Chủ</a></li>
+                    <li><a href="@Url.Action("Index", "SanPhamKhachHang")" class="text-gray-300 hover:text-white transition-colors hover:translate-x-2 transform inline-block">Sản Phẩm</a></li>
+                    <li><a href="@Url.Action("About", "Home")" class="text-gray-300 hover:text-white transition-colors hover:translate-x-2 transform inline-block">Giới Thiệu</a></li>
+                    <li><a href="@Url.Action("Contact", "Home")" class="text-gray-300 hover:text-white transition-colors hover:translate-x-2 transform inline-block">Liên Hệ</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-bold mb-6 text-gradient">Liên Hệ</h3>
+                <div class="space-y-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-phone w-5 h-5 mr-3 text-purple-400"></i>
+                        <span class="text-gray-300">+84-34984089</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-envelope w-5 h-5 mr-3 text-purple-400"></i>
+                        <span class="text-gray-300">furyfriend@gmail.com</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-map-marker-alt w-5 h-5 mr-3 text-purple-400"></i>
+                        <span class="text-gray-300">Hà Nội, Việt Nam</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-700 mt-12 pt-8 text-center">
+            <p class="text-gray-400">
+                © 2024 <span class="text-gradient font-semibold">FuryFriend</span>. Tất cả quyền được bảo lưu.
+            </p>
+        </div>
+    </div>
+</footer>
+
+<!-- Custom JavaScript -->
+<script>
+    // Mobile menu toggle
+    // Elements
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+    const hamburger = document.getElementById('hamburger');
+    const header = document.getElementById('header') || document.querySelector('header');
+    const openLoginBtn = document.getElementById('open-login');
+    const openCartBtn = document.getElementById('open-cart');
+    const openLoginBtnmb = document.getElementById('open-login-mobile');
+    const openCartBtnmb = document.getElementById('open-cart-mobile');
+    // Cart State
+    let cartItems = [];
+    let cartCount = 0;
+    openLoginBtnmb?.addEventListener('click', () => {
+        window.location.href = 'auth.html';  // chuyển sang trang auth.html
+    });
+
+    openCartBtnmb?.addEventListener('click', () => {
+        window.location.href = 'cart.html';  // chuyển sang trang cart.html
+    });
+    // Mobile Menu Functions
+    function toggleMobileMenu() {
+        if (!mobileMenuButton || !mobileMenu || !mobileMenuBackdrop) return;
+
+        const isOpen = mobileMenu.classList.contains('open');
+
+        if (!isOpen) {
+            mobileMenu.classList.add('open');
+            mobileMenuBackdrop.classList.add('open');
+            hamburger?.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        } else {
+            closeMobileMenu();
+        }
+    }
+
+    function closeMobileMenu() {
+        mobileMenu?.classList.remove('open');
+        mobileMenuBackdrop?.classList.remove('open');
+        hamburger?.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    function initializeMobileMenu() {
+        if (!mobileMenuButton || !mobileMenu) return;
+
+        mobileMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMobileMenu();
+        });
+
+        mobileMenuBackdrop?.addEventListener('click', closeMobileMenu);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeMobileMenu();
+        });
+
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', closeMobileMenu);
+        });
+    }
+
+    // Helper Functions
+    function updateCartBadge() {
+        const cartBadges = document.querySelectorAll('.cart-badge span');
+        cartBadges.forEach(badge => {
+            badge.textContent = cartCount.toString();
+        });
+    }
+
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-20 right-4 px-6 py-3 rounded-lg text-white z-50 transform translate-x-full transition-transform duration-300 ${type === 'success' ? 'bg-green-500' : 'bg-blue-500'
+            }`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        setTimeout(() => notification.classList.remove('translate-x-full'), 100);
+        setTimeout(() => {
+            notification.classList.add('translate-x-full');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        initializeMobileMenu();
+        updateCartBadge();
+            initializeCountdownTimers();
+
+        // Scroll effect for header
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                header?.classList.add('bg-white', 'bg-opacity-95');
+                header?.classList.remove('glass');
+            } else {
+                header?.classList.remove('bg-white', 'bg-opacity-95');
+                header?.classList.add('glass');
+            }
+        });
+
+
+
+        // Switch between login and signup
+        const openSignupBtn = document.getElementById('open-signup');
+        if (openSignupBtn) {
+            openSignupBtn.addEventListener('click', () => {
+                const loginModal = document.getElementById('login-modal');
+                const signupModal = document.getElementById('signup-modal');
+                if (loginModal && signupModal) {
+                    loginModal.classList.add('opacity-0', 'pointer-events-none');
+                    signupModal.classList.remove('opacity-0', 'pointer-events-none');
+                    signupModal.classList.add('opacity-100');
+                }
+            });
+        }
+        openLoginBtn?.addEventListener('click', () => {
+            window.location.href = 'auth.html';  // chuyển sang trang auth.html
+        });
+
+        openCartBtn?.addEventListener('click', () => {
+            window.location.href = 'cart.html';  // chuyển sang trang cart.html
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Intersection Observer animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-up');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.hover-card, .fade-in-up').forEach(el => observer.observe(el));
+
+        // Add to cart button logic
+        const cartBadges = document.querySelectorAll('.cart-badge span');
+        document.querySelectorAll('.btn-primary, .magnetic-btn').forEach(btn => {
+            if (btn.textContent.includes('Thêm Vào Giỏ')) {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    cartCount++;
+                    cartBadges.forEach(badge => {
+                        badge.textContent = cartCount;
+                        badge.classList.add('animate-pulse');
+                        setTimeout(() => badge.classList.remove('animate-pulse'), 1000);
+                    });
+                    showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
+                });
+            }
+        });
+
+        // Parallax scroll effect
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.parallax');
+            parallaxElements.forEach(element => {
+                const speed = element.dataset.speed || 0.5;
+                element.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+    });
+
+</script>
+
 
 <div id="pet-chat-toggle" onclick="showPetChat()">
     <div class="chat-tooltip">Bạn cần hỗ trợ?</div>
@@ -1441,13 +2303,13 @@
 
 <div id="pet-chat-widget">
     <div class="chat-header">
-        🐾 Trợ lý ảo FurryFriends 🐾
+                        🐾 Trợ lý ảo FuryFriend 🐾
         <div class="pet-close" onclick="hidePetChat()"></div>
     </div>
 
     <div class="chat-messages" id="pet-chat-messages">
         <div class="welcome-message">
-            🐕 Xin chào! Tôi là trợ lý ảo của FurryFriends. Hãy hỏi tôi về thú cưng nhé! 🐱
+                            🐕 Xin chào! Tôi là trợ lý ảo của FuryFriend. Hãy hỏi tôi về thú cưng nhé! 🐱
         </div>
     </div>
 
@@ -1639,182 +2501,400 @@
 @section Scripts {
     <script>
         // Global variables
-        let selectedVariant = null;
         let currentProductId = null;
-        let currentProductName = '';
+        let selectedVariantId = null;
+        let productData = {};
 
-        // Modal functions
-        function openVariantModal(productId, productName) {
-            currentProductId = productId;
-            currentProductName = productName;
-            
-            // Set modal content
-            document.getElementById('modalProductName').textContent = productName;
-            
-            // Get product image from the product card
-            const productCard = document.querySelector(`[data-product-id="${productId}"]`);
-            const productImage = productCard.querySelector('.product-image');
-            if (productImage) {
-                document.getElementById('modalProductImage').src = productImage.src;
-                document.getElementById('modalProductImage').alt = productName;
+        // Function to go to product detail page
+        function goToProductDetail(productId) {
+            window.location.href = `/SanPhamKhachHang/ChiTiet/${productId}`;
+        }
+
+        // Initialize product data when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Initialize product data for Discounted Products
+            @if (ViewBag.DiscountedProducts != null)
+            {
+                var discountedProducts = (IEnumerable<FurryFriends.Web.ViewModels.SanPhamViewModel>)ViewBag.DiscountedProducts;
+                foreach (var sanPham in discountedProducts)
+                {
+                    <text>
+                    productData['@sanPham.SanPhamId'] = {
+                        id: '@sanPham.SanPhamId',
+                        name: '@Html.Raw(JavaScriptStringEncode(sanPham.TenSanPham))',
+                        description: '@Html.Raw(JavaScriptStringEncode(sanPham.MoTa))',
+                        imageUrl: '@($"https://localhost:7289/images/{System.IO.Path.GetFileName(sanPham.AnhDaiDienUrl)}")',
+                        variants: [
+                            @if (sanPham.ChiTietList?.Any() == true)
+                            {
+                                foreach (var chiTiet in sanPham.ChiTietList)
+                                {
+                                    <text>
+                                    {
+                                        id: '@chiTiet.SanPhamChiTietId',
+                                        color: '@chiTiet.MauSac',
+                                        size: '@chiTiet.KichCo',
+                                        price: @chiTiet.GiaBan,
+                                        hasDiscount: @chiTiet.CoGiamGia.ToString().ToLower(),
+                                        discountPrice: @((chiTiet.GiaSauGiam ?? chiTiet.GiaBan)),
+                                        stock: @chiTiet.SoLuongTon,
+                                        available: @chiTiet.SoLuongTon.ToString().ToLower()
+                                    },
+                                    </text>
+                                }
+                            }
+                        ]
+                    };
+                    </text>
+                }
             }
+
+            // Initialize product data for Top Selling Products
+            @if (ViewBag.TopSellingProducts != null)
+            {
+                var topProducts = (IEnumerable<FurryFriends.Web.ViewModels.SanPhamViewModel>)ViewBag.TopSellingProducts;
+                foreach (var sanPham in topProducts)
+                {
+                    <text>
+                    productData['@sanPham.SanPhamId'] = {
+                        id: '@sanPham.SanPhamId',
+                        name: '@Html.Raw(JavaScriptStringEncode(sanPham.TenSanPham))',
+                        description: '@Html.Raw(JavaScriptStringEncode(sanPham.MoTa))',
+                        imageUrl: '@($"https://localhost:7289/images/{System.IO.Path.GetFileName(sanPham.AnhDaiDienUrl)}")',
+                        variants: [
+                            @if (sanPham.ChiTietList?.Any() == true)
+                            {
+                                foreach (var chiTiet in sanPham.ChiTietList)
+                                {
+                                    <text>
+                                    {
+                                        id: '@chiTiet.SanPhamChiTietId',
+                                        color: '@chiTiet.MauSac',
+                                        size: '@chiTiet.KichCo',
+                                        price: @chiTiet.GiaBan,
+                                        hasDiscount: @chiTiet.CoGiamGia.ToString().ToLower(),
+                                        discountPrice: @((chiTiet.GiaSauGiam ?? chiTiet.GiaBan)),
+                                        stock: @chiTiet.SoLuongTon,
+                                        available: @chiTiet.SoLuongTon.ToString().ToLower()
+                                    },
+                                    </text>
+                                }
+                            }
+                        ]
+                    };
+                    </text>
+                }
+            }
+
+            // Initialize event listeners
+            initializeEventListeners();
+            initializeCounters();
+        });
+
+        // Counter Animation Function
+        function initializeCounters() {
+            const counters = document.querySelectorAll('.counter');
             
-            // Load variants
-            loadVariants(productId);
-            
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 2000; // 2 seconds
+                const increment = target / (duration / 16); // 60fps
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                
+                // Start animation when element is in viewport
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            updateCounter();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+                
+                observer.observe(counter);
+            });
+        }
+
+        function formatCurrency(n) { try { return Number(n).toLocaleString('vi-VN'); } catch { return n; } }
+
+        // Global functions
+        function openVariantModal(productId, productName) {
+            console.log('Opening modal for product:', productId);
+            currentProductId = productId;
+            const product = productData[productId];
+
+            if (!product) {
+                console.error('Product not found:', productId);
+                return;
+            }
+
+            // Update modal content
+            document.getElementById('modalProductImage').src = product.imageUrl;
+            document.getElementById('modalProductName').textContent = product.name;
+            document.getElementById('modalProductDescription').textContent = product.description;
+
+            // Generate variant options
+            const variantsList = document.getElementById('variantOptionsList');
+            variantsList.innerHTML = '';
+
+            product.variants.forEach(variant => {
+                const variantDiv = document.createElement('div');
+                variantDiv.className = 'variant-option';
+                variantDiv.onclick = () => selectVariant(variant.id, variantDiv);
+
+                const priceHtml = variant.hasDiscount
+                    ? `<span class="line-through text-gray-400 mr-2">${formatCurrency(variant.price)} VNĐ</span>
+                       <span class="text-green-600 font-bold">${formatCurrency(variant.discountPrice)} VNĐ</span>`
+                    : `${formatCurrency(variant.price)} VNĐ`;
+
+                variantDiv.innerHTML = `
+                    <input type="radio" name="variant" value="${variant.id}" id="variant-${variant.id}" />
+                    <div class="variant-details">
+                        <div class="variant-specs">
+                            <div class="variant-spec">
+                                <i class="fas fa-palette"></i>
+                                <span>${variant.color}</span>
+                        </div>
+                            <div class="variant-spec">
+                                <i class="fas fa-rulers"></i>
+                                <span>${variant.size}</span>
+                    </div>
+                            <div class="variant-spec">
+                                <i class="fas fa-box"></i>
+                                <span>${variant.stock} còn</span>
+                            </div>
+                        </div>
+                        <div class="variant-price">${priceHtml}</div>
+                    </div>
+                `;
+
+                variantsList.appendChild(variantDiv);
+            });
+
             // Show modal
             document.getElementById('variantModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeVariantModal() {
             document.getElementById('variantModal').classList.remove('show');
-            selectedVariant = null;
+            document.body.style.overflow = '';
+            selectedVariantId = null;
             document.getElementById('addToCartBtn').disabled = true;
-            document.getElementById('quantityInput').value = 1;
         }
 
-        function loadVariants(productId) {
-            // Lấy dữ liệu thật từ product card
-            const variantOptionsList = document.getElementById('variantOptionsList');
-            variantOptionsList.innerHTML = '';
-            
-            // Get product data from the page
-            const productCard = document.querySelector(`[data-product-id="${productId}"]`);
-            if (!productCard) return;
-            
-            // Lấy giá min-max từ data attributes
-            const minPrice = parseInt(productCard.dataset.minPrice) || 0;
-            const maxPrice = parseInt(productCard.dataset.maxPrice) || 0;
-            
-            // Create variant options based on available data
-            const variants = [];
-            const variantBadges = productCard.querySelectorAll('.variant-badge');
-            
-            variantBadges.forEach((badge, index) => {
-                if (!badge.textContent.includes('+') && !badge.textContent.includes('khác')) {
-                    const variantText = badge.textContent;
-                    const [color, size] = variantText.split(' - ');
-                    
-                    // Sử dụng giá thật từ database
-                    const variant = {
-                        id: index,
-                        color: color,
-                        size: size,
-                        price: minPrice === maxPrice ? minPrice : Math.floor(Math.random() * (maxPrice - minPrice)) + minPrice,
-                        stock: Math.floor(Math.random() * 20) + 1 // Random stock
-                    };
-                    variants.push(variant);
-                }
-            });
-            
-            // If no variants found, create a default one
-            if (variants.length === 0) {
-                variants.push({
-                    id: 0,
-                    color: 'Mặc định',
-                    size: 'M',
-                    price: minPrice || 150000,
-                    stock: 10
-                });
-            }
-            
-            // Render variants
-            variants.forEach(variant => {
-                const variantOption = document.createElement('div');
-                variantOption.className = 'variant-option';
-                variantOption.onclick = () => selectVariant(variant);
-                
-                variantOption.innerHTML = `
-                    <div class="variant-option-header">
-                        <div class="variant-info">
-                            <div class="variant-color" style="background-color: ${getRandomColor(variant.color)}"></div>
-                            <span class="variant-size">${variant.color} - ${variant.size}</span>
-                        </div>
-                        <div class="variant-price">${variant.price.toLocaleString()} VNĐ</div>
-                    </div>
-                    <div class="variant-stock">Còn ${variant.stock} sản phẩm</div>
-                `;
-                
-                variantOptionsList.appendChild(variantOption);
-            });
-        }
-
-        function selectVariant(variant) {
+        function selectVariant(variantId, element) {
             // Remove previous selection
             document.querySelectorAll('.variant-option').forEach(opt => {
                 opt.classList.remove('selected');
             });
             
-            // Add selection to clicked option
-            event.target.closest('.variant-option').classList.add('selected');
+            // Add selection to clicked element
+            element.classList.add('selected');
             
-            selectedVariant = variant;
+            // Update radio button
+            document.getElementById(`variant-${variantId}`).checked = true;
+
+            selectedVariantId = variantId;
             document.getElementById('addToCartBtn').disabled = false;
         }
 
         function addToCart() {
-            if (!selectedVariant) {
-                alert('Vui lòng chọn biến thể sản phẩm!');
+            if (!selectedVariantId || !currentProductId) {
+                alert('Vui lòng chọn biến thể sản phẩm');
                 return;
             }
             
             const quantity = parseInt(document.getElementById('quantityInput').value);
             if (quantity < 1) {
-                alert('Số lượng phải lớn hơn 0!');
+                alert('Số lượng phải lớn hơn 0');
                 return;
             }
             
-            // Here you would typically send data to your cart API
-            alert(`Đã thêm ${quantity} sản phẩm "${currentProductName}" (${selectedVariant.color} - ${selectedVariant.size}) vào giỏ hàng!`);
-            
-            // Close modal
-            closeVariantModal();
+            // Get the selected product
+            const product = productData[currentProductId];
+            if (!product) {
+                alert('Sản phẩm không tồn tại');
+                return;
+            }
+
+            // Get the selected variant
+            const variant = product.variants.find(v => v.id === selectedVariantId);
+            if (!variant) {
+                alert('Không tìm thấy biến thể đã chọn');
+                return;
+            }
+
+            if (quantity > variant.stock) {
+                alert(`Chỉ còn ${variant.stock} sản phẩm trong kho`);
+                return;
+            }
+
+            // Create form data
+            const formData = new FormData();
+            formData.append('SanPhamId', currentProductId);
+            formData.append('SanPhamChiTietId', selectedVariantId);
+            formData.append('SoLuong', quantity);
+
+            // Show loading state
+            const btn = document.getElementById('addToCartBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="loading"></span> Đang thêm...';
+            btn.disabled = true;
+
+            // Submit form
+            fetch('/GioHangs/AddToCart', {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                body: formData
+            })
+            .then(async response => {
+                const data = await response.json().catch(() => ({}));
+
+                if (!response.ok || data.success === false) {
+                    // Kiểm tra nếu cần chuyển hướng đến trang đăng nhập
+                    if (response.status === 401 && data.redirectToLogin) {
+                        window.location.href = '/KhachHangLogin/DangNhap';
+                        return null; // Return null để không thực hiện .then() tiếp theo
+                    }
+                    
+                    let msg = data.message || "Có lỗi xảy ra";
+                    msg = msg.replace(/^API lỗi: 400 -\s*/i, "");
+                    throw new Error(msg);
+                }
+
+                return data;
+            })
+            .then(data => {
+                // Chỉ thực hiện nếu data không null (không phải trường hợp redirect)
+                if (data) {
+                    console.log("Thêm vào giỏ thành công", data);
+                    showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
+                    closeVariantModal();
+                    if (window.refreshCartCount) window.refreshCartCount();
+                }
+            })
+            .catch(error => {
+                alert(error.message);
+            })
+            .finally(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
         }
 
-        function getRandomColor(colorName) {
-            const colors = {
-                'Đỏ': '#ef4444',
-                'Xanh': '#3b82f6',
-                'Xanh Lá': '#10b981',
-                'Vàng': '#f59e0b',
-                'Đen': '#1f2937',
-                'Trắng': '#f3f4f6',
-                'Nâu': '#92400e',
-                'Hồng': '#ec4899',
-                'Tím': '#8b5cf6',
-                'Cam': '#f97316',
-                'Mặc định': '#6b7280'
-            };
-            
-            return colors[colorName] || colors['Mặc định'];
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white z-50 transform translate-x-full transition-transform duration-300 ${
+                type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+            }`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => notification.classList.remove('translate-x-full'), 100);
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
 
+        function initializeEventListeners() {
         // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
             const modal = document.getElementById('variantModal');
-            if (event.target === modal) {
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
                 closeVariantModal();
             }
         });
-
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
-            const modal = document.getElementById('variantModal');
-            if (event.target === modal) {
-                closeVariantModal();
             }
-        });
 
         // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
                 closeVariantModal();
             }
         });
+        }
 
-        // Function để chuyển đến trang chi tiết sản phẩm - giống hệt SanPhamKhachHang
-        function goToProductDetail(productId) {
-            window.location.href = `/SanPhamKhachHang/Details/${productId}`;
+        // Countdown Timer Functions
+        function initializeCountdownTimers() {
+            const countdownSections = document.querySelectorAll('.countdown-section');
+            
+            countdownSections.forEach(section => {
+                const endDate = new Date(section.dataset.endDate);
+                const timer = section.querySelector('.countdown-timer');
+                
+                if (timer && endDate) {
+                    updateCountdown(timer, endDate);
+                    
+                    // Update every second
+                    setInterval(() => {
+                        updateCountdown(timer, endDate);
+                    }, 1000);
+                }
+            });
+        }
+
+        function updateCountdown(timer, endDate) {
+            const now = new Date().getTime();
+            const distance = endDate.getTime() - now;
+            
+            if (distance < 0) {
+                // Countdown has ended
+                timer.innerHTML = '<span style="color: #ff6b6b;">Đã kết thúc</span>';
+                return;
+            }
+            
+            // Calculate time units
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            // Update timer display
+            const daysSpan = timer.querySelector('.countdown-days');
+            const hoursSpan = timer.querySelector('.countdown-hours');
+            const minutesSpan = timer.querySelector('.countdown-minutes');
+            const secondsSpan = timer.querySelector('.countdown-seconds');
+            
+            if (daysSpan) daysSpan.textContent = days.toString().padStart(2, '0');
+            if (hoursSpan) hoursSpan.textContent = hours.toString().padStart(2, '0');
+            if (minutesSpan) minutesSpan.textContent = minutes.toString().padStart(2, '0');
+            if (secondsSpan) secondsSpan.textContent = seconds.toString().padStart(2, '0');
+            
+            // Add urgency effect when less than 1 hour remaining
+            if (distance < 3600000) { // Less than 1 hour
+                timer.style.color = '#ffeb3b';
+                timer.style.animation = 'countdownPulse 1s infinite';
+            }
         }
     </script>
+
+    @functions {
+        public static string JavaScriptStringEncode(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return string.Empty;
+
+            return value.Replace("\\", "\\\\")
+                       .Replace("'", "\\'")
+                       .Replace("\"", "\\\"")
+                       .Replace("\r", "\\r")
+                       .Replace("\n", "\\n")
+                       .Replace("\t", "\\t");
+        }
+    }
+}
 }

@@ -19,7 +19,7 @@ namespace FurryFriends.Web.Services
         /// <param name="sanPhamChiTietId">ID sản phẩm chi tiết</param>
         /// <param name="giaBan">Giá bán gốc</param>
         /// <returns>Thông tin giảm giá</returns>
-        public async Task<(bool coGiamGia, decimal? phanTramGiamGia, decimal? giaSauGiam)> CalculateDiscountForProduct(Guid sanPhamChiTietId, decimal giaBan)
+        public async Task<(bool coGiamGia, decimal? phanTramGiamGia, decimal? giaSauGiam, DateTime? ngayKetThuc)> CalculateDiscountForProduct(Guid sanPhamChiTietId, decimal giaBan)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace FurryFriends.Web.Services
                 var allGiamGia = await _giamGiaService.GetAllAsync();
                 
                 // Tìm các chương trình giảm giá có chứa sản phẩm này
-                var applicableDiscounts = new List<decimal>();
+                var applicableDiscounts = new List<(decimal phanTram, DateTime ngayKetThuc)>();
                 
                 foreach (var giamGia in allGiamGia)
                 {
@@ -38,7 +38,7 @@ namespace FurryFriends.Web.Services
                         var now = DateTime.UtcNow;
                         if (giamGia.NgayBatDau <= now && giamGia.NgayKetThuc >= now && giamGia.TrangThai)
                         {
-                            applicableDiscounts.Add(giamGia.PhanTramKhuyenMai);
+                            applicableDiscounts.Add((giamGia.PhanTramKhuyenMai, giamGia.NgayKetThuc));
                         }
                     }
                 }
@@ -46,20 +46,20 @@ namespace FurryFriends.Web.Services
                 // Nếu không có giảm giá nào
                 if (!applicableDiscounts.Any())
                 {
-                    return (false, null, null);
+                    return (false, null, null, null);
                 }
 
-                // Lấy % giảm giá cao nhất
-                var maxDiscountPercentage = applicableDiscounts.Max();
-                var giaSauGiam = giaBan * (1 - maxDiscountPercentage / 100);
+                // Lấy % giảm giá cao nhất và ngày kết thúc tương ứng
+                var maxDiscount = applicableDiscounts.OrderByDescending(x => x.phanTram).First();
+                var giaSauGiam = giaBan * (1 - maxDiscount.phanTram / 100);
 
-                return (true, maxDiscountPercentage, giaSauGiam);
+                return (true, maxDiscount.phanTram, giaSauGiam, maxDiscount.ngayKetThuc);
             }
             catch (Exception ex)
             {
                 // Log lỗi nếu cần
                 Console.WriteLine($"Lỗi khi tính toán giảm giá cho sản phẩm {sanPhamChiTietId}: {ex.Message}");
-                return (false, null, null);
+                return (false, null, null, null);
             }
         }
 
@@ -74,11 +74,12 @@ namespace FurryFriends.Web.Services
 
             foreach (var chiTiet in chiTietList)
             {
-                var (coGiamGia, phanTramGiamGia, giaSauGiam) = await CalculateDiscountForProduct(chiTiet.SanPhamChiTietId, chiTiet.GiaBan);
+                var (coGiamGia, phanTramGiamGia, giaSauGiam, ngayKetThuc) = await CalculateDiscountForProduct(chiTiet.SanPhamChiTietId, chiTiet.GiaBan);
                 
                 chiTiet.CoGiamGia = coGiamGia;
                 chiTiet.PhanTramGiamGia = phanTramGiamGia;
                 chiTiet.GiaSauGiam = giaSauGiam;
+                chiTiet.NgayKetThucGiamGia = ngayKetThuc;
 
                 updatedList.Add(chiTiet);
             }
@@ -97,7 +98,9 @@ namespace FurryFriends.Web.Services
             sanPham.ChiTietList = await UpdateDiscountInfo(sanPham.ChiTietList);
 
             // Tính toán tổng quan giảm giá cho sản phẩm
-            return DiscountService.CalculateProductDiscount(sanPham);
+            var updatedSanPham = DiscountService.CalculateProductDiscount(sanPham);
+            
+            return updatedSanPham;
         }
     }
 }

@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FurryFriends - Đăng ký</title>
+    <title>FuryFriend - Đăng ký</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="~/css/dangkystyle.css" rel="stylesheet" />
     <style>
@@ -302,7 +302,7 @@
 
     <div class="signup-container">
         <div class="logo-section">
-            <div class="logo">FurryFriends</div>
+                            <div class="logo">FuryFriend</div>
             <div class="subtitle">Cửa hàng thú cưng yêu thương</div>
         </div>
         <center><div class="welcome-text">Tạo tài khoản mới</div></center>
@@ -377,7 +377,7 @@
                 @Html.CheckBoxFor(m => m.AgreeTerms, new Dictionary<string, object> { { "class", "form-check-input" } })
                 <label for="terms">
                     Tôi đồng ý với <a href="#" onclick="showTerms()">Điều khoản dịch vụ</a> và
-                    <a href="#" onclick="showPrivacy()">Chính sách bảo mật</a> của FurryFriends
+                    <a href="#" onclick="showPrivacy()">Chính sách bảo mật</a> của FuryFriend
                 </label>
                 @Html.ValidationMessageFor(m => m.AgreeTerms, "", new Dictionary<string, object> { { "class", "field-validation-error" } })
             </div>

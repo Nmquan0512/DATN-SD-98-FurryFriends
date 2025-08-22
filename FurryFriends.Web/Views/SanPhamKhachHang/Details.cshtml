@@ -2,7 +2,7 @@
 @using FurryFriends.Web.Services
 
 @{
-    ViewData["Title"] = $"{Model.TenSanPham} - FurryFriends";
+    ViewData["Title"] = $"{Model.TenSanPham} - FuryFriend";
 }
 
 @section Styles {
@@ -1022,8 +1022,8 @@
             
             // Update modal content
             document.getElementById('modalProductImage').src = '@($"https://localhost:7289/images/{System.IO.Path.GetFileName(Model.AnhDaiDienUrl ?? "default.png")}")';
-            document.getElementById('modalProductName').textContent = '@Model.TenSanPham';
-            document.getElementById('modalProductDescription').textContent = '@Model.MoTa';
+            document.getElementById('modalProductName').textContent = '@Html.Raw(JavaScriptStringEncode(Model.TenSanPham))';
+            document.getElementById('modalProductDescription').textContent = '@Html.Raw(JavaScriptStringEncode(Model.MoTa))';
             
             // Update variant info
             document.getElementById('modalVariantColor').textContent = color;
@@ -1082,13 +1082,32 @@
                 if (response.ok) {
                     try { return await response.json(); } catch { return { success: true }; }
                 }
+                
+                // Kiểm tra nếu cần chuyển hướng đến trang đăng nhập
+                if (response.status === 401) {
+                    try {
+                        const data = await response.json();
+                        if (data.redirectToLogin) {
+                            window.location.href = '/KhachHangLogin/DangNhap';
+                            return null; // Return null để không thực hiện .then() tiếp theo
+                        }
+                    } catch {
+                        // Nếu không parse được JSON, vẫn chuyển hướng
+                        window.location.href = '/KhachHangLogin/DangNhap';
+                        return null; // Return null để không thực hiện .then() tiếp theo
+                    }
+                }
+                
                 const text = await response.text();
                 throw new Error(text || 'Network response was not ok');
             })
             .then(data => {
-                showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
-                closeVariantModal();
-                if (window.refreshCartCount) window.refreshCartCount();
+                // Chỉ thực hiện nếu data không null (không phải trường hợp redirect)
+                if (data) {
+                    showNotification('Đã thêm sản phẩm vào giỏ hàng!', 'success');
+                    closeVariantModal();
+                    if (window.refreshCartCount) window.refreshCartCount();
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -1115,4 +1134,19 @@
             }, 3000);
         }
     </script>
+}
+
+@functions {
+    public static string JavaScriptStringEncode(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return string.Empty;
+
+        return value.Replace("\\", "\\\\")
+                   .Replace("'", "\\'")
+                   .Replace("\"", "\\\"")
+                   .Replace("\r", "\\r")
+                   .Replace("\n", "\\n")
+                   .Replace("\t", "\\t");
+    }
 }

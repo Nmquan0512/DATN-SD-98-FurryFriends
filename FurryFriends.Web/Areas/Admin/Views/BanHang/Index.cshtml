@@ -17,13 +17,13 @@
     var today = DateTime.Now.Date; // Lấy ngày hiện tại của server
     var successfulToday = lichSuHoaDon.Count(h => 
         h.TrangThai == "Offline DaThanhToan" && // ✅ Chỉ trạng thái 7 - hoàn thành
-        h.NgayTao.ToLocalTime().Date == today
+        h.NgayTao.Date == today
     );
-    var cancelledToday = lichSuHoaDon.Count(h => h.TrangThai == "Offline DaHuy" && h.NgayTao.ToLocalTime().Date == today); // ✅ Chỉ trạng thái 10 - hủy
+    var cancelledToday = lichSuHoaDon.Count(h => h.TrangThai == "Offline DaHuy" && h.NgayTao.Date == today); // ✅ Chỉ trạng thái 10 - hủy
     
     // ✅ Tính doanh thu dựa trên lịch sử giao dịch: Chỉ trạng thái 7
     var revenueToday = lichSuHoaDon.Where(h => 
-        h.NgayTao.ToLocalTime().Date == today &&
+        h.NgayTao.Date == today &&
         h.TrangThai == "Offline DaThanhToan" // ✅ Chỉ trạng thái 7
     ).Sum(h => h.ThanhTien);
 }
@@ -118,11 +118,11 @@
         <div class="card-body p-4">
             <!-- Bộ lọc -->
             <div class="row g-2 mb-3 align-items-end">
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-6 col-12 mb-2">
                     <label for="searchInput" class="form-label small">Tìm theo mã HĐ, tên KH</label>
                     <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Nhập từ khóa...">
                 </div>
-                <div class="col-md-2">
+                <div class="col-lg-2 col-md-6 col-12 mb-2">
                     <label for="statusFilter" class="form-label small">Trạng thái</label>
                     <select id="statusFilter" class="form-select form-select-sm">
                         <option value="">Tất cả trạng thái</option>
@@ -130,7 +130,7 @@
                         <option value="Offline DaHuy">Đã hủy (Tại Quầy)</option>
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-lg-4 col-md-6 col-12 mb-2">
                     <label class="form-label small">Khoảng ngày tạo</label>
                     <div class="input-group input-group-sm">
                         <input type="date" id="startDate" class="form-control">
@@ -138,7 +138,7 @@
                         <input type="date" id="endDate" class="form-control">
                     </div>
                 </div>
-                <div class="col-md-1 d-grid">
+                <div class="col-lg-1 col-md-6 col-12 mb-2 d-grid">
                     <button id="resetFilters" class="btn btn-sm btn-outline-secondary">Reset</button>
                 </div>
             </div>
@@ -248,7 +248,160 @@
             box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
         }
 
-
+        /* Responsive cho mobile */
+        @@media (max-width: 768px) {
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .row.g-2 {
+                margin: 0;
+            }
+            
+            .col-lg-3, .col-lg-2, .col-lg-4, .col-lg-1,
+            .col-md-6, .col-12 {
+                padding: 0.25rem;
+            }
+            
+            .form-label.small {
+                font-size: 0.875rem;
+                margin-bottom: 0.25rem;
+            }
+            
+            .form-control-sm, .form-select-sm {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+            }
+            
+            .input-group-sm .form-control {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+            }
+            
+            .input-group-text {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.875rem;
+            }
+            
+            .btn-sm {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+            
+            /* DataTable responsive cho mobile */
+            .table-responsive {
+                font-size: 0.875rem;
+                overflow-x: auto;
+            }
+            
+            .table td, .table th {
+                padding: 0.5rem;
+                white-space: nowrap;
+                min-width: 100px;
+            }
+            
+            /* Ẩn một số cột không quan trọng trên mobile */
+            .table th:nth-child(3),
+            .table td:nth-child(3) {
+                display: none;
+            }
+            
+            /* DataTable controls responsive */
+            .dataTables_wrapper .dataTables_length,
+            .dataTables_wrapper .dataTables_filter {
+                margin-bottom: 0.5rem;
+            }
+            
+            .dataTables_wrapper .dataTables_length select,
+            .dataTables_wrapper .dataTables_filter input {
+                font-size: 0.875rem;
+                padding: 0.25rem 0.5rem;
+            }
+            
+            .dataTables_wrapper .dataTables_info,
+            .dataTables_wrapper .dataTables_paginate {
+                font-size: 0.875rem;
+                margin-top: 0.5rem;
+            }
+            
+            .dataTables_wrapper .dataTables_paginate .paginate_button {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.875rem;
+            }
+        }
+        
+        @@media (max-width: 576px) {
+            .card-body {
+                padding: 0.75rem;
+            }
+            
+            .form-control-sm, .form-select-sm {
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+            
+            .input-group-sm .form-control {
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+            
+            .input-group-text {
+                padding: 0.75rem;
+                font-size: 1rem;
+            }
+            
+            .btn-sm {
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+            }
+            
+            /* DataTable responsive cho mobile nhỏ */
+            .table-responsive {
+                font-size: 0.8rem;
+            }
+            
+            .table td, .table th {
+                padding: 0.25rem;
+                min-width: 80px;
+            }
+            
+            /* Ẩn thêm cột trên mobile nhỏ */
+            .table th:nth-child(4),
+            .table td:nth-child(4),
+            .table th:nth-child(5),
+            .table td:nth-child(5) {
+                display: none;
+            }
+            
+            /* DataTable controls cho mobile nhỏ */
+            .dataTables_wrapper .dataTables_length,
+            .dataTables_wrapper .dataTables_filter {
+                text-align: center;
+                margin-bottom: 0.5rem;
+            }
+            
+            .dataTables_wrapper .dataTables_length select,
+            .dataTables_wrapper .dataTables_filter input {
+                width: 100%;
+                max-width: 200px;
+                margin: 0 auto;
+            }
+            
+            .dataTables_wrapper .dataTables_info {
+                text-align: center;
+                margin-bottom: 0.5rem;
+            }
+            
+            .dataTables_wrapper .dataTables_paginate {
+                text-align: center;
+            }
+            
+            .dataTables_wrapper .dataTables_paginate .paginate_button {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.8rem;
+                margin: 0 0.1rem;
+            }
+        }
     </style>
 }
 
