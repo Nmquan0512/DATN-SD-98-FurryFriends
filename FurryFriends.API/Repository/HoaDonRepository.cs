@@ -318,11 +318,14 @@ namespace FurryFriends.API.Repository
                 AddModernInfoRow(rightInfoTable, "Email:", hoaDon.EmailCuaKhachHang ?? "N/A", normalFont, boldFont);
                 
                 // Thêm thông tin địa chỉ giao hàng từ DiaChiGiaoHang
-                var diaChiGiaoHang = "N/A";
-                if (hoaDon.LoaiHoaDon == "BanTaiQuay" && hoaDon.DiaChiGiaoHang == null)
+                var diaChiGiaoHang = "Bán tại quầy không giao hàng";
+                
+                // ✅ Ưu tiên hiển thị snapshot địa chỉ giao hàng lúc mua
+                if (!string.IsNullOrWhiteSpace(hoaDon.DiaChiGiaoHangLucMua))
                 {
-                    diaChiGiaoHang = "Không giao hàng";
+                    diaChiGiaoHang = hoaDon.DiaChiGiaoHangLucMua;
                 }
+                // Kiểm tra nếu có DiaChiGiaoHang thì hiển thị địa chỉ
                 else if (hoaDon.DiaChiGiaoHang != null)
                 {
                     var diaChi = hoaDon.DiaChiGiaoHang;
@@ -337,8 +340,27 @@ namespace FurryFriends.API.Repository
                     if (!string.IsNullOrWhiteSpace(diaChi.ThanhPho))
                         diaChiParts.Add(diaChi.ThanhPho);
                     
-                    diaChiGiaoHang = string.Join(", ", diaChiParts);
+                    if (diaChiParts.Count > 0)
+                    {
+                        diaChiGiaoHang = string.Join(", ", diaChiParts);
+                    }
+                    else
+                    {
+                        // Nếu có DiaChiGiaoHang nhưng không có thông tin địa chỉ
+                        diaChiGiaoHang = "Địa chỉ không đầy đủ";
+                    }
                 }
+                else if (hoaDon.LoaiHoaDon == "BanTaiQuay")
+                {
+                    // Bán tại quầy và không có địa chỉ giao hàng
+                    diaChiGiaoHang = "Không giao hàng";
+                }
+                else
+                {
+                    // Online/GiaoHang nhưng không có địa chỉ
+                    diaChiGiaoHang = "Chưa cập nhật địa chỉ";
+                }
+                
                 AddModernInfoRow(rightInfoTable, "Địa chỉ:", diaChiGiaoHang, normalFont, boldFont);
 
                 var rightCell = new PdfPCell(rightInfoTable);

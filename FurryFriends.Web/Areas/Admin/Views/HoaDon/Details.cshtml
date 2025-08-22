@@ -59,16 +59,8 @@
                                 <th class="bg-light">Địa chỉ</th>
                                 <td>
                                     @{
-                                        // ✅ Logic mới: Nếu BanTaiQuay và không có địa chỉ thì hiển thị "Không giao hàng"
-                                        if (Model.LoaiHoaDon == "BanTaiQuay" && Model.DiaChiGiaoHang == null)
-                                        {
-                                            <div class="text-info">
-                                                <i class="fas fa-store me-1"></i>
-                                                <strong>Không giao hàng</strong>
-                                            </div>
-                                        }
                                         // ✅ Ưu tiên hiển thị snapshot địa chỉ giao hàng lúc mua
-                                        else if (!string.IsNullOrWhiteSpace(Model.DiaChiGiaoHangLucMua))
+                                        if (!string.IsNullOrWhiteSpace(Model.DiaChiGiaoHangLucMua))
                                         {
                                             <div class="text-success">
                                                 <i class="fas fa-check-circle me-1"></i>
@@ -89,7 +81,7 @@
                                         {
                                             <div class="text-warning">
                                                 <i class="fas fa-exclamation-triangle me-1"></i>
-                                                <span class="text-muted">Chưa cập nhật địa chỉ giao hàng</span>
+                                                <span class="text-muted">Bán tại quầy không giao hàng</span>
                                             </div>
                                         }
                                     }
@@ -113,30 +105,21 @@
                             <tr>
                                 <th class="bg-light">Loại hóa đơn</th>
                                 <td>
-                                    @{
-                                        string loaiHoaDonText = Model.LoaiHoaDon switch
-                                        {
-                                            "BanTaiQuay" => "Bán Tại Quầy",
-                                            "Online" => "Bán Online",
-                                            "GiaoHang" => "Giao Hàng",
-                                            _ => Model.LoaiHoaDon ?? "Không xác định"
-                                        };
-                                    }
                                     @if (Model.LoaiHoaDon == "BanTaiQuay")
                                     {
-                                        <span class="badge bg-primary">@loaiHoaDonText</span>
+                                        <span class="badge bg-primary">Bán tại quầy</span>
                                     }
                                     else if (Model.LoaiHoaDon == "Online")
                                     {
-                                        <span class="badge bg-success">@loaiHoaDonText</span>
+                                        <span class="badge bg-success">Online</span>
                                     }
                                     else if (Model.LoaiHoaDon == "GiaoHang")
                                     {
-                                        <span class="badge bg-info">@loaiHoaDonText</span>
+                                        <span class="badge bg-info">Giao hàng</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">@loaiHoaDonText</span>
+                                        <span class="badge bg-secondary">@Model.LoaiHoaDon</span>
                                     }
                                 </td>
                             </tr>
