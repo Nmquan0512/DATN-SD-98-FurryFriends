@@ -28,12 +28,18 @@
                     </select>
                     <span asp-validation-for="MauSacId" class="text-danger"></span>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <label class="form-label">Giá bán <span class="text-danger">*</span></label>
-                    <input asp-for="GiaBan" type="number" class="form-control" min="0" required />
+                    <input asp-for="GiaBan" type="number" class="form-control price-input" min="0" required id="giaBan" />
                     <span asp-validation-for="GiaBan" class="text-danger"></span>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <label class="form-label">Giá nhập</label>
+                    <input asp-for="GiaNhap" type="number" class="form-control price-input" min="0" id="giaNhap" />
+                    <span asp-validation-for="GiaNhap" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4">
                     <label class="form-label">Số lượng tồn <span class="text-danger">*</span></label>
                     <input asp-for="SoLuongTon" type="number" class="form-control" min="0" required />
                     <span asp-validation-for="SoLuongTon" class="text-danger"></span>
@@ -118,5 +124,124 @@
             var modal = bootstrap.Modal.getInstance(document.getElementById('anhModal'));
             modal.hide();
         }
+
+                 // Tính toán lợi nhuận real-time với tooltip
+         function calculateProfit() {
+             const giaBan = parseFloat(document.getElementById('giaBan').value) || 0;
+             const giaNhap = parseFloat(document.getElementById('giaNhap').value) || 0;
+             const giaBanInput = document.getElementById('giaBan');
+
+             // Xóa tooltip cũ nếu có
+             const existingTooltip = document.querySelector('.profit-tooltip');
+             if (existingTooltip) {
+                 existingTooltip.remove();
+             }
+
+             // Chỉ hiển thị tooltip khi có giá trị
+             if (giaBan > 0 && giaNhap > 0) {
+                 const loiNhuan = giaBan - giaNhap;
+                 const loiNhuanPhanTram = (loiNhuan / giaNhap) * 100;
+                 
+                 const profitClass = loiNhuan >= 0 ? 'text-success' : 'text-danger';
+                 const sign = loiNhuan >= 0 ? '+' : '';
+                 
+                 const tooltip = document.createElement('div');
+                 tooltip.className = 'profit-tooltip';
+                 tooltip.innerHTML = `
+                     <div class="text-dark fw-bold" style="font-size: 0.875rem;">
+                         Lợi nhuận: ${sign}${loiNhuan.toLocaleString('vi-VN')} đ
+                     </div>
+                     <small class="${profitClass}">
+                         ${sign}${loiNhuanPhanTram.toFixed(1)}% / 1 sản phẩm
+                     </small>
+                 `;
+                 
+                 // Tính toán vị trí chính xác
+                 const rect = giaBanInput.getBoundingClientRect();
+                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                 const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                 
+                 tooltip.style.cssText = `
+                     position: absolute;
+                     top: ${rect.bottom + scrollTop + 5}px;
+                     left: ${rect.left + scrollLeft}px;
+                     background: white;
+                     border: 2px solid #007bff;
+                     border-radius: 0.5rem;
+                     padding: 0.75rem;
+                     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                     z-index: 99999;
+                     min-width: 150px;
+                     pointer-events: none;
+                     font-size: 0.875rem;
+                     max-width: 200px;
+                 `;
+                 
+                 document.body.appendChild(tooltip);
+             } else if (giaBan > 0) {
+                 const tooltip = document.createElement('div');
+                 tooltip.className = 'profit-tooltip';
+                 tooltip.innerHTML = `
+                     <div class="text-warning fw-bold" style="font-size: 0.875rem;">
+                         Chưa có giá nhập
+                     </div>
+                     <small class="text-muted">
+                         Nhập giá nhập để tính lợi nhuận / 1 sản phẩm
+                     </small>
+                 `;
+                 
+                 // Tính toán vị trí chính xác
+                 const rect = giaBanInput.getBoundingClientRect();
+                 const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                 const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                 
+                 tooltip.style.cssText = `
+                     position: absolute;
+                     top: ${rect.bottom + scrollTop + 5}px;
+                     left: ${rect.left + scrollLeft}px;
+                     background: white;
+                     border: 2px solid #ffc107;
+                     border-radius: 0.5rem;
+                     padding: 0.75rem;
+                     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                     z-index: 99999;
+                     min-width: 150px;
+                     pointer-events: none;
+                     font-size: 0.875rem;
+                     max-width: 200px;
+                 `;
+                 
+                 document.body.appendChild(tooltip);
+             }
+         }
+
+                 // Thêm event listeners
+         document.addEventListener('DOMContentLoaded', function() {
+             const giaBanInput = document.getElementById('giaBan');
+             const giaNhapInput = document.getElementById('giaNhap');
+
+             giaBanInput.addEventListener('input', calculateProfit);
+             giaNhapInput.addEventListener('input', calculateProfit);
+
+             // Ẩn tooltip khi scroll hoặc click ra ngoài
+             document.addEventListener('scroll', function() {
+                 const tooltip = document.querySelector('.profit-tooltip');
+                 if (tooltip) {
+                     tooltip.remove();
+                 }
+             });
+
+             document.addEventListener('click', function(e) {
+                 if (!e.target.closest('.price-input')) {
+                     const tooltip = document.querySelector('.profit-tooltip');
+                     if (tooltip) {
+                         tooltip.remove();
+                     }
+                 }
+             });
+
+             // Tính toán ban đầu nếu có giá trị
+             calculateProfit();
+         });
     </script>
 } 

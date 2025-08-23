@@ -105,6 +105,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     KichCoId = chiTietVM.KichCoId,
                     SoLuong = chiTietVM.SoLuongTon,
                     Gia = chiTietVM.GiaBan,
+                    GiaNhap = chiTietVM.GiaNhap,
                     MoTa = chiTietVM.MoTa,
                     AnhId = chiTietVM.AnhId
                 };
@@ -135,7 +136,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             if (sanPham == null) return NotFound();
 
             var allChiTiet = await _chiTietService.GetAllAsync();
-            var chiTietList = allChiTiet?
+                            var chiTietList = allChiTiet?
                 .Where(x => x.SanPhamId == id)
                 .Select(x => new SanPhamChiTietCreateViewModel
                 {
@@ -144,6 +145,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     KichCoId = x.KichCoId,
                     SoLuongTon = x.SoLuong,
                     GiaBan = x.Gia,
+                    GiaNhap = x.GiaNhap,
                     MoTa = x.MoTa,
                     AnhId = x.AnhId,
                     DuongDan = x.DuongDan
@@ -245,6 +247,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     KichCoId = submittedVariant.KichCoId,
                     SoLuong = submittedVariant.SoLuongTon,
                     Gia = submittedVariant.GiaBan,
+                    GiaNhap = submittedVariant.GiaNhap,
                     MoTa = submittedVariant.MoTa,
                     AnhId = submittedVariant.AnhId,
                     TrangThai = 1
