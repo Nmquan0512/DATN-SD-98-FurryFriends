@@ -26,9 +26,10 @@ try
             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             options.JsonSerializerOptions.WriteIndented = true;
         });
-    
-    // Thêm validation services từ nhánh HEAD
-    builder.Services.Configure<ApiBehaviorOptions>(options =>
+	
+
+	// Thêm validation services từ nhánh HEAD
+	builder.Services.Configure<ApiBehaviorOptions>(options =>
     {
         options.SuppressModelStateInvalidFilter = true; // Cho phép parameters optional
     });
@@ -98,9 +99,11 @@ try
     builder.Services.AddScoped<IGioHangRepository, GioHangRepository>();
     builder.Services.AddScoped<IHinhThucThanhToanRepository, HinhThucThanhToanRepository>();
     builder.Services.AddScoped<VoucherCalculationService>();
-    
-    // ✅ Đăng ký Background Service để tự động hủy hóa đơn
-    builder.Services.AddHostedService<InvoiceCleanupService>();
+    builder.Services.AddScoped<IPhieuHoanTraRepository, PhieuHoanTraRepository>();
+	builder.Services.AddScoped<IPhieuHoanTraService, PhieuHoanTraService>();
+
+	// ✅ Đăng ký Background Service để tự động hủy hóa đơn
+	builder.Services.AddHostedService<InvoiceCleanupService>();
 
     // Add CORS policy cho phép web admin truy cập API
     builder.Services.AddCors(options =>

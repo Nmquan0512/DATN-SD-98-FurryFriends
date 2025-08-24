@@ -1,0 +1,139 @@
+﻿@model FurryFriends.Web.ViewModels.PhieuHoanTraViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Tạo phiếu hoàn";
+    // Controller đang truyền hoaDonId vào thuộc tính HoaDonChiTietId của model (theo code bạn).
+}
+@section Styles {
+    <style>
+        .wrap {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,.12);
+            overflow: hidden
+        }
+
+        .head {
+            background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+            color: #fff;
+            padding: 2rem
+        }
+
+            .head h2 {
+                margin: 0;
+                font-weight: 800
+            }
+
+        .body {
+            padding: 1.25rem
+        }
+
+        .card {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1rem
+        }
+
+        .label {
+            font-weight: 800;
+            margin-bottom: .35rem
+        }
+
+        .badge-tip {
+            background: #ecfeff;
+            color: #0e7490;
+            border: 1px solid #a5f3fc;
+            border-radius: 999px;
+            padding: .25rem .55rem;
+            font-weight: 700
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+            border: none;
+            font-weight: 800
+        }
+    </style>
+}
+<div class="wrap">
+    <div class="head">
+        <h2><i class="fas fa-rotate-left"></i> Tạo phiếu hoàn</h2>
+        <div class="opacity-75">Chọn sản phẩm và điền lý do để gửi yêu cầu.</div>
+    </div>
+    <div class="body">
+        <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+
+        <form asp-action="Create" method="post" enctype="multipart/form-data" id="frm">
+            @Html.AntiForgeryToken()
+            <!-- theo controller: Index redirect lại cần hoaDonId = model.HoaDonChiTietId -->
+            <input type="hidden" asp-for="HoaDonChiTietId" />
+
+            <div class="card mb-3">
+                <div class="label"><i class="fas fa-box"></i> Sản phẩm</div>
+                <!-- Nếu bạn có dropdown danh sách sản phẩm thuộc hóa đơn, bind vào đây.
+                     Nếu model đã chứa sẵn TenSanPham thì hiển thị read-only. -->
+                @if (!string.IsNullOrWhiteSpace(Model?.TenSanPham))
+                {
+                    <input class="form-control" asp-for="TenSanPham" readonly />
+                }
+                else
+                {
+                    <input class="form-control" asp-for="TenSanPham" placeholder="Nhập tên sản phẩm (hoặc chọn ở bước trước)" />
+                }
+                <span asp-validation-for="TenSanPham" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="label"><i class="fas fa-sort-numeric-up-alt"></i> Số lượng hoàn</div>
+                        <input class="form-control" asp-for="SoLuongHoan" type="number" min="1" value="1" />
+                        <span asp-validation-for="SoLuongHoan" class="text-danger"></span>
+                        <div class="mt-2"><span class="badge-tip"><i class="fas fa-info-circle"></i> Không vượt quá số lượng đã mua</span></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card mb-3">
+                        <div class="label"><i class="fas fa-calendar"></i> Ngày yêu cầu</div>
+                        <input class="form-control" asp-for="NgayHoanTra" type="date" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        <span asp-validation-for="NgayHoanTra" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="label"><i class="fas fa-comment-alt"></i> Lý do hoàn</div>
+                <select class="form-select" asp-for="LyDoHoanTra">
+                    <option value="">— Chọn lý do —</option>
+                    <option>Sản phẩm lỗi/thiếu</option>
+                    <option>Giao sai mẫu/size</option>
+                    <option>Không như mô tả</option>
+                    <option>Đổi ý (chưa sử dụng)</option>
+                </select>
+                <span asp-validation-for="LyDoHoanTra" class="text-danger"></span>
+                <textarea class="form-control mt-2" asp-for="LyDoHoanTra" placeholder="Mô tả bổ sung (không bắt buộc)" rows="3"></textarea>
+            </div>
+
+            <div class="card mb-3">
+                <div class="label"><i class="fas fa-paperclip"></i> Ảnh/video minh chứng (tuỳ chọn)</div>
+                <input class="form-control" type="file" name="AnhMinhChung" multiple />
+                <div class="form-text">Tối đa 5 file, mỗi file &lt; 5MB.</div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <a class="btn btn-outline-secondary" asp-action="Index" asp-route-hoaDonId="@Model.HoaDonChiTietId">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </a>
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-paper-plane"></i> Gửi yêu cầu
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -28,6 +28,12 @@ builder.Services.AddScoped<AuthHeaderHandler>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<IEmailNotificationService, EmailNotificationService>();
 builder.Services.AddScoped<DiscountCalculationService>();
+builder.Services.AddScoped<IPhieuHoanTraService, PhieuHoanTraService>();
+
+builder.Services.AddHttpClient<IPhieuHoanTraService, PhieuHoanTraService>(client =>
+{
+	client.BaseAddress = new Uri("https://localhost:7289/"); // URL API của bạn
+});
 
 builder.Services.AddHttpClient<IHoaDonService, HoaDonService>(client =>
 {

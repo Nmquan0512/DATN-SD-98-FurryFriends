@@ -13,7 +13,7 @@ namespace FurryFriends.API.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DELL\\SQLEXPRESS;Database=DATN1;Trusted_Connection=True;TrustServerCertificate=True");
+                optionsBuilder.UseSqlServer("Server=ANH2005\\SQLEXPRESS;Database=DATN12;Trusted_Connection=True;TrustServerCertificate=True");
             }
         }
 
@@ -43,9 +43,10 @@ namespace FurryFriends.API.Data
         public DbSet<SanPhamChatLieu> SanPhamChatLieus { get; set; }
         public DbSet<LichSuTrangThaiHoaDon> LichSuTrangThaiHoaDons { get; set; }
         public DbSet<ThongBao> ThongBaos { get; set; }
+		public DbSet<PhieuHoanTra> PhieuHoanTras { get; set; }
 
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
@@ -56,9 +57,10 @@ namespace FurryFriends.API.Data
             ConfigureHoaDon(modelBuilder);
             ConfigureDotGiamGiaSanPham(modelBuilder);
             ConfigureSanPhamThanhPhanChatLieu(modelBuilder);
+            ConfigurePhieuHoanTra(modelBuilder);
 
-            // Seed admin account
-            modelBuilder.Entity<TaiKhoan>().HasData(new TaiKhoan
+			// Seed admin account
+			modelBuilder.Entity<TaiKhoan>().HasData(new TaiKhoan
             {
                 TaiKhoanId = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                 UserName = "admin",
@@ -110,9 +112,16 @@ namespace FurryFriends.API.Data
                     MoTa = "Thanh toán trực tuyến qua cổng thanh toán VNPay"
                 }
             );
-        }
+		}
 
-        private void ConfigureTaiKhoan(ModelBuilder modelBuilder)
+        private void ConfigurePhieuHoanTra(ModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<PhieuHoanTra>()
+		   .HasOne(p => p.HoaDonChiTiet)
+		   .WithMany(hdct => hdct.PhieuHoanTras)
+		   .HasForeignKey(p => p.HoaDonChiTietId);
+		}
+		private void ConfigureTaiKhoan(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<NhanVien>()
                 .HasOne(nv => nv.TaiKhoan)

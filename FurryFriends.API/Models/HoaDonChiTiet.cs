@@ -51,7 +51,8 @@ namespace FurryFriends.API.Models
 
         [ForeignKey("SanPhamChiTietId")]
         public virtual SanPhamChiTiet SanPhamChiTiet { get; set; }
+		public virtual ICollection<PhieuHoanTra> PhieuHoanTras { get; set; }
 
-    }
+	}
 
 }
