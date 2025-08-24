@@ -1,10 +1,12 @@
 ﻿using FurryFriends.Web.Services.IService;
 using FurryFriends.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
 	[Area("Admin")]
+	[AuthorizeAdminOnly]
 	public class PhieuHoanTraAdminController : Controller
     {
 		private readonly IPhieuHoanTraService _phieuHoanTraService;

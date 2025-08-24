@@ -103,13 +103,8 @@ namespace FurryFriends.API.Migrations
                         {
                             ChucVuId = new Guid("22222222-2222-2222-2222-222222222222"),
                             MoTaChucVu = "Quản trị viên hệ thống",
-<<<<<<< HEAD
-                            NgayCapNhat = new DateTime(2025, 8, 24, 3, 8, 47, 725, DateTimeKind.Utc).AddTicks(560),
-                            NgayTao = new DateTime(2025, 8, 24, 3, 8, 47, 725, DateTimeKind.Utc).AddTicks(559),
-=======
-                            NgayCapNhat = new DateTime(2025, 8, 23, 14, 21, 48, 466, DateTimeKind.Utc).AddTicks(9270),
-                            NgayTao = new DateTime(2025, 8, 23, 14, 21, 48, 466, DateTimeKind.Utc).AddTicks(9268),
->>>>>>> e09e773858edd5d97dcd80d5b1645d8661d66654
+                            NgayCapNhat = new DateTime(2025, 8, 24, 8, 4, 9, 447, DateTimeKind.Utc).AddTicks(106),
+                            NgayTao = new DateTime(2025, 8, 24, 8, 4, 9, 447, DateTimeKind.Utc).AddTicks(105),
                             TenChucVu = "admin",
                             TrangThai = true
                         });
@@ -664,15 +659,9 @@ namespace FurryFriends.API.Migrations
                             Email = "admin@furryfriends.local",
                             GioiTinh = "Nam",
                             HoVaTen = "Admin hệ thống",
-<<<<<<< HEAD
-                            NgayCapNhat = new DateTime(2025, 8, 24, 3, 8, 47, 725, DateTimeKind.Utc).AddTicks(593),
+                            NgayCapNhat = new DateTime(2025, 8, 24, 8, 4, 9, 447, DateTimeKind.Utc).AddTicks(169),
                             NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayTao = new DateTime(2025, 8, 24, 3, 8, 47, 725, DateTimeKind.Utc).AddTicks(592),
-=======
-                            NgayCapNhat = new DateTime(2025, 8, 23, 14, 21, 48, 466, DateTimeKind.Utc).AddTicks(9502),
-                            NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayTao = new DateTime(2025, 8, 23, 14, 21, 48, 466, DateTimeKind.Utc).AddTicks(9500),
->>>>>>> e09e773858edd5d97dcd80d5b1645d8661d66654
+                            NgayTao = new DateTime(2025, 8, 24, 8, 4, 9, 447, DateTimeKind.Utc).AddTicks(168),
                             SDT = "0123456789",
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
                             TrangThai = true
@@ -815,11 +804,7 @@ namespace FurryFriends.API.Migrations
                         new
                         {
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
-<<<<<<< HEAD
-                            NgayTaoTaiKhoan = new DateTime(2025, 8, 24, 3, 8, 47, 725, DateTimeKind.Utc).AddTicks(340),
-=======
-                            NgayTaoTaiKhoan = new DateTime(2025, 8, 23, 14, 21, 48, 466, DateTimeKind.Utc).AddTicks(9010),
->>>>>>> e09e773858edd5d97dcd80d5b1645d8661d66654
+                            NgayTaoTaiKhoan = new DateTime(2025, 8, 24, 8, 4, 9, 446, DateTimeKind.Utc).AddTicks(9677),
                             Password = "123456",
                             TrangThai = true,
                             UserName = "admin"
