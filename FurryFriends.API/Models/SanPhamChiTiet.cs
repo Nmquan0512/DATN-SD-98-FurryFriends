@@ -30,6 +30,9 @@ public class SanPhamChiTiet
 	[Required]
 	public decimal Gia { get; set; }
 
+	// ✅ Thêm trường giá nhập (nullable)
+	public decimal? GiaNhap { get; set; }
+
 	[Required]
 	public DateTime NgayTao { get; set; }
 

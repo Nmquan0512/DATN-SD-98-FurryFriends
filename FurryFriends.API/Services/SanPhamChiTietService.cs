@@ -33,6 +33,7 @@ namespace FurryFriends.API.Services
                 MauSacId = x.MauSacId,
                 TenMau = x.MauSac?.TenMau,
                 Gia = x.Gia,
+                GiaNhap = x.GiaNhap, // ✅ Thêm mapping cho GiaNhap
                 SoLuong = x.SoLuong,
                 MoTa = x.MoTa,
                 AnhId = x.AnhId,
@@ -60,6 +61,7 @@ namespace FurryFriends.API.Services
                 MauSacId = item.MauSacId,
                 TenMau = item.MauSac?.TenMau,
                 Gia = item.Gia,
+                GiaNhap = item.GiaNhap, // ✅ Thêm mapping cho GiaNhap
                 SoLuong = item.SoLuong,
                 MoTa = item.MoTa,
                 AnhId = item.AnhId,
@@ -79,6 +81,7 @@ namespace FurryFriends.API.Services
                 KichCoId = dto.KichCoId,
                 MauSacId = dto.MauSacId,
                 Gia = dto.Gia,
+                GiaNhap = dto.GiaNhap, // ✅ Thêm mapping cho GiaNhap
                 SoLuong = dto.SoLuong,
                 MoTa = dto.MoTa,
                 AnhId = dto.AnhId, // chỉ lưu Id, không upload ảnh
@@ -100,6 +103,7 @@ namespace FurryFriends.API.Services
                 KichCoId = dto.KichCoId,
                 MauSacId = dto.MauSacId,
                 Gia = dto.Gia,
+                GiaNhap = dto.GiaNhap, // ✅ Thêm mapping cho GiaNhap
                 SoLuong = dto.SoLuong,
                 MoTa = dto.MoTa,
                 AnhId = dto.AnhId,
@@ -118,6 +122,7 @@ namespace FurryFriends.API.Services
                 KichCoId = entity.KichCoId,
                 MauSacId = entity.MauSacId,
                 Gia = entity.Gia,
+                GiaNhap = entity.GiaNhap, // ✅ Thêm mapping cho GiaNhap
                 SoLuong = entity.SoLuong,
                 MoTa = entity.MoTa,
                 AnhId = entity.AnhId,
@@ -134,6 +139,7 @@ namespace FurryFriends.API.Services
             entity.KichCoId = dto.KichCoId;
             entity.MauSacId = dto.MauSacId;
             entity.Gia = dto.Gia;
+            entity.GiaNhap = dto.GiaNhap; // ✅ Thêm mapping cho GiaNhap
             entity.SoLuong = dto.SoLuong;
             entity.MoTa = dto.MoTa;
             entity.AnhId = dto.AnhId; // cập nhật ảnh nếu có

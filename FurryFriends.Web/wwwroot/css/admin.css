@@ -487,6 +487,9 @@ body {
 .card-icon.warning { background: #ffc107; }
 .card-icon.info { background: #1976d2; }
 .card-icon.danger { background: #d32f2f; }
+.card-icon.revenue { background: #9c27b0; }
+.card-icon.monthly { background: #ff9800; }
+.card-icon.profit { background: #4caf50; }
 
 .card-title {
     font-size: 14px;

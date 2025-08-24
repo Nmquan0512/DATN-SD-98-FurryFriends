@@ -22,6 +22,10 @@ namespace FurryFriends.API.Models.DTO
         [Range(0.01, double.MaxValue, ErrorMessage = "Giá bán phải là số dương")]
         public decimal Gia { get; set; }
 
+        // ✅ Thêm trường giá nhập (nullable)
+        [Range(0, double.MaxValue, ErrorMessage = "Giá nhập phải là số dương hoặc bằng 0")]
+        public decimal? GiaNhap { get; set; }
+
         [Range(0, int.MaxValue, ErrorMessage = "Số lượng phải là số dương hoặc bằng 0")]
         public int SoLuong { get; set; }
 
@@ -52,6 +56,12 @@ namespace FurryFriends.API.Models.DTO
             if (KichCoId == Guid.Empty)
             {
                 results.Add(new ValidationResult("Kích cỡ không được để trống", new[] { nameof(KichCoId) }));
+            }
+
+            // ✅ Thêm validation: Giá nhập không được lớn hơn giá bán
+            if (GiaNhap.HasValue && GiaNhap.Value > Gia)
+            {
+                results.Add(new ValidationResult("Giá nhập không được lớn hơn giá bán", new[] { nameof(GiaNhap) }));
             }
 
             return results;

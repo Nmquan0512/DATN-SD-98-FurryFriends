@@ -88,6 +88,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 ViewBag.MonthlyOrders = monthlyOrders;
                 ViewBag.MonthlyRevenueGrowth = monthlyRevenueGrowth;
 
+                // ✅ Thêm tính lợi nhuận
+                var todayProfit = await GetTodayProfitAsync();
+                var monthlyProfit = await GetMonthlyProfitAsync();
+                var todayProfitGrowth = await GetTodayProfitGrowthAsync();
+                var monthlyProfitGrowth = await GetMonthlyProfitGrowthAsync();
+                
+                ViewBag.TodayProfit = todayProfit;
+                ViewBag.MonthlyProfit = monthlyProfit;
+                ViewBag.TodayProfitGrowth = todayProfitGrowth;
+                ViewBag.MonthlyProfitGrowth = monthlyProfitGrowth;
+
                 return View();
             }
             catch (Exception ex)
@@ -106,6 +117,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 ViewBag.RevenueByMonth = new List<object>();
                 ViewBag.OrdersByStatus = new List<object>();
                 ViewBag.RecentOrders = new List<object>();
+                
+                // ✅ Fallback data cho lợi nhuận
+                ViewBag.TodayProfit = 0;
+                ViewBag.MonthlyProfit = 0;
+                ViewBag.TodayProfitGrowth = 0;
+                ViewBag.MonthlyProfitGrowth = 0;
                 
                 return View();
             }
@@ -590,6 +607,186 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error calculating monthly revenue growth");
+                return 0;
+            }
+        }
+
+        // ✅ Tính lợi nhuận hôm nay (Giá bán - Giá nhập)
+        private async Task<decimal> GetTodayProfitAsync()
+        {
+            try
+            {
+                var allOrders = await _hoaDonService.GetHoaDonListAsync();
+                var today = DateTime.Now.Date;
+                
+                decimal totalProfit = 0;
+                
+                foreach (var order in allOrders.Where(h => h.NgayTao.Date == today && (h.TrangThai == 3 || h.TrangThai == 7)))
+                {
+                    foreach (var item in order.HoaDonChiTiets ?? Enumerable.Empty<HoaDonChiTiet>())
+                    {
+                        // Lấy giá nhập từ sản phẩm chi tiết
+                        var giaNhap = item.SanPhamChiTiet?.GiaNhap ?? 0;
+                        var giaBan = item.Gia; // Giá bán thực tế trong hóa đơn
+                        
+                        // Lợi nhuận = (Giá bán - Giá nhập) * Số lượng
+                        var profit = (giaBan - giaNhap) * item.SoLuongSanPham;
+                        totalProfit += profit;
+                    }
+                }
+                
+                return totalProfit;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calculating today profit");
+                return 0;
+            }
+        }
+
+        // ✅ Tính lợi nhuận tháng này
+        private async Task<decimal> GetMonthlyProfitAsync()
+        {
+            try
+            {
+                var allOrders = await _hoaDonService.GetHoaDonListAsync();
+                var currentMonth = DateTime.Now.Month;
+                var currentYear = DateTime.Now.Year;
+                
+                decimal totalProfit = 0;
+                
+                foreach (var order in allOrders.Where(h => h.NgayTao.Month == currentMonth && 
+                                                          h.NgayTao.Year == currentYear && 
+                                                          (h.TrangThai == 3 || h.TrangThai == 7)))
+                {
+                    foreach (var item in order.HoaDonChiTiets ?? Enumerable.Empty<HoaDonChiTiet>())
+                    {
+                        // Lấy giá nhập từ sản phẩm chi tiết
+                        var giaNhap = item.SanPhamChiTiet?.GiaNhap ?? 0;
+                        var giaBan = item.Gia; // Giá bán thực tế trong hóa đơn
+                        
+                        // Lợi nhuận = (Giá bán - Giá nhập) * Số lượng
+                        var profit = (giaBan - giaNhap) * item.SoLuongSanPham;
+                        totalProfit += profit;
+                    }
+                }
+                
+                return totalProfit;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calculating monthly profit");
+                return 0;
+            }
+        }
+
+        // ✅ Tính % tăng trưởng lợi nhuận hôm nay so với hôm qua
+        private async Task<decimal> GetTodayProfitGrowthAsync()
+        {
+            try
+            {
+                var todayProfit = await GetTodayProfitAsync();
+                var yesterdayProfit = await GetYesterdayProfitAsync();
+                
+                if (yesterdayProfit == 0)
+                {
+                    if (todayProfit > 0) return 100;
+                    return 0;
+                }
+                
+                return Math.Round(((todayProfit - yesterdayProfit) / yesterdayProfit) * 100, 1);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calculating today profit growth");
+                return 0;
+            }
+        }
+
+        // ✅ Tính % tăng trưởng lợi nhuận tháng này so với tháng trước
+        private async Task<decimal> GetMonthlyProfitGrowthAsync()
+        {
+            try
+            {
+                var currentMonthProfit = await GetMonthlyProfitAsync();
+                var previousMonthProfit = await GetPreviousMonthProfitAsync();
+                
+                if (previousMonthProfit == 0)
+                {
+                    if (currentMonthProfit > 0) return 100;
+                    return 0;
+                }
+                
+                return Math.Round(((currentMonthProfit - previousMonthProfit) / previousMonthProfit) * 100, 1);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calculating monthly profit growth");
+                return 0;
+            }
+        }
+
+        // ✅ Tính lợi nhuận hôm qua
+        private async Task<decimal> GetYesterdayProfitAsync()
+        {
+            try
+            {
+                var allOrders = await _hoaDonService.GetHoaDonListAsync();
+                var yesterday = DateTime.Now.Date.AddDays(-1);
+                
+                decimal totalProfit = 0;
+                
+                foreach (var order in allOrders.Where(h => h.NgayTao.Date == yesterday && (h.TrangThai == 3 || h.TrangThai == 7)))
+                {
+                    foreach (var item in order.HoaDonChiTiets ?? Enumerable.Empty<HoaDonChiTiet>())
+                    {
+                        var giaNhap = item.SanPhamChiTiet?.GiaNhap ?? 0;
+                        var giaBan = item.Gia;
+                        var profit = (giaBan - giaNhap) * item.SoLuongSanPham;
+                        totalProfit += profit;
+                    }
+                }
+                
+                return totalProfit;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calculating yesterday profit");
+                return 0;
+            }
+        }
+
+        // ✅ Tính lợi nhuận tháng trước
+        private async Task<decimal> GetPreviousMonthProfitAsync()
+        {
+            try
+            {
+                var allOrders = await _hoaDonService.GetHoaDonListAsync();
+                var currentMonth = DateTime.Now.Month;
+                var currentYear = DateTime.Now.Year;
+                var previousMonth = currentMonth == 1 ? 12 : currentMonth - 1;
+                var previousYear = currentMonth == 1 ? currentYear - 1 : currentYear;
+                
+                decimal totalProfit = 0;
+                
+                foreach (var order in allOrders.Where(h => h.NgayTao.Month == previousMonth && 
+                                                          h.NgayTao.Year == previousYear && 
+                                                          (h.TrangThai == 3 || h.TrangThai == 7)))
+                {
+                    foreach (var item in order.HoaDonChiTiets ?? Enumerable.Empty<HoaDonChiTiet>())
+                    {
+                        var giaNhap = item.SanPhamChiTiet?.GiaNhap ?? 0;
+                        var giaBan = item.Gia;
+                        var profit = (giaBan - giaNhap) * item.SoLuongSanPham;
+                        totalProfit += profit;
+                    }
+                }
+                
+                return totalProfit;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error calculating previous month profit");
                 return 0;
             }
         }

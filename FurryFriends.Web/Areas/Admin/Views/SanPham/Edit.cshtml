@@ -9,6 +9,22 @@
     var chiTietListJson = JsonConvert.SerializeObject(Model.ChiTietList);
 }
 
+<style>
+    .profit-tooltip {
+        position: absolute !important;
+        background: white !important;
+        border: 2px solid #007bff !important;
+        border-radius: 0.5rem !important;
+        padding: 0.75rem !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+        z-index: 99999 !important;
+        min-width: 150px !important;
+        max-width: 200px !important;
+        pointer-events: none !important;
+        font-size: 0.875rem !important;
+    }
+</style>
+
 <div class="top-bar" style="padding-left: 50px;">
     <h1>@ViewData["Title"]</h1>
     <div class="top-bar-actions">
@@ -102,7 +118,7 @@
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover">
-                        <thead class="table-light"><tr><th>Kích cỡ <span class="text-danger">*</span></th><th>Màu sắc <span class="text-danger">*</span></th><th>Giá bán <span class="text-danger">*</span></th><th>Số lượng <span class="text-danger">*</span></th><th>Mô tả</th><th>Ảnh</th><th></th></tr></thead>
+                        <thead class="table-light"><tr><th>Kích cỡ <span class="text-danger">*</span></th><th>Màu sắc <span class="text-danger">*</span></th><th>Giá bán <span class="text-danger">*</span></th><th>Giá nhập</th><th>Số lượng <span class="text-danger">*</span></th><th>Mô tả</th><th>Ảnh</th><th></th></tr></thead>
                         <tbody id="chiTietBody"></tbody>
                     </table>
                 </div>
@@ -174,6 +190,7 @@
                 const kichCoId = chiTietData?.KichCoId || '';
                 const mauSacId = chiTietData?.MauSacId || '';
                 const giaBan = chiTietData?.GiaBan || 0;
+                const giaNhap = chiTietData?.GiaNhap || 0;
                 const soLuong = chiTietData?.SoLuongTon || 0;
                 const moTa = chiTietData?.MoTa || '';
                 const anhId = chiTietData?.AnhId || '';
@@ -187,7 +204,8 @@
                     <input type="hidden" name="ChiTietList[${currentIndex}].SanPhamChiTietId" value="${sanPhamChiTietId}" />
                     <td><select name="ChiTietList[${currentIndex}].KichCoId" class="form-select form-select-sm" data-val="true" data-val-required="Vui lòng chọn kích cỡ.">${kichCoOptions}</select><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].KichCoId"></span></td>
                     <td><select name="ChiTietList[${currentIndex}].MauSacId" class="form-select form-select-sm" data-val="true" data-val-required="Vui lòng chọn màu sắc.">${mauSacOptions}</select><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].MauSacId"></span></td>
-                    <td><div class="input-group input-group-sm"><input name="ChiTietList[${currentIndex}].GiaBan" type="number" class="form-control" value="${giaBan}" min="0" data-val="true" data-val-required="Giá bán là bắt buộc." data-val-range="Giá bán phải lớn hơn hoặc bằng 0." data-val-range-min="0" /><span class="input-group-text">VNĐ</span></div><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].GiaBan"></span></td>
+                    <td><div class="input-group input-group-sm"><input name="ChiTietList[${currentIndex}].GiaBan" type="number" class="form-control price-input" value="${giaBan}" min="0" data-val="true" data-val-required="Giá bán là bắt buộc." data-val-range="Giá bán phải lớn hơn hoặc bằng 0." data-val-range-min="0" oninput="calculateProfitForRow(this)" /><span class="input-group-text">VNĐ</span></div><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].GiaBan"></span></td>
+                    <td><div class="input-group input-group-sm"><input name="ChiTietList[${currentIndex}].GiaNhap" type="number" class="form-control price-input" value="${giaNhap}" min="0" data-val="true" data-val-range="Giá nhập phải lớn hơn hoặc bằng 0." data-val-range-min="0" oninput="calculateProfitForRow(this)" /><span class="input-group-text">VNĐ</span></div><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].GiaNhap"></span></td>
                     <td><input name="ChiTietList[${currentIndex}].SoLuongTon" type="number" class="form-control form-control-sm" value="${soLuong}" min="0" data-val="true" data-val-required="Số lượng là bắt buộc." data-val-range="Số lượng phải lớn hơn hoặc bằng 0." data-val-range-min="0" /><span class="text-danger small" data-valmsg-for="ChiTietList[${currentIndex}].SoLuongTon"></span></td>
                     <td><input name="ChiTietList[${currentIndex}].MoTa" class="form-control form-control-sm" value="${moTa}" /></td>
                     <td>
@@ -258,6 +276,99 @@
                 document.getElementById('chatLieuSection').style.display = (loaiSanPham === 'DoDung') ? 'block' : 'none';
             }
 
+                         // HÀM TÍNH TOÁN LỢI NHUẬN CHO TỪNG HÀNG
+             window.calculateProfitForRow = function(input) {
+                 const row = input.closest('tr');
+                 const giaBanInput = row.querySelector('input[name*="GiaBan"]');
+                 const giaNhapInput = row.querySelector('input[name*="GiaNhap"]');
+
+                 const giaBan = parseFloat(giaBanInput.value) || 0;
+                 const giaNhap = parseFloat(giaNhapInput.value) || 0;
+
+                 // Xóa tooltip cũ nếu có
+                 const existingTooltip = document.querySelector('.profit-tooltip');
+                 if (existingTooltip) {
+                     existingTooltip.remove();
+                 }
+
+                 // Chỉ hiển thị tooltip khi có giá trị
+                 if (giaBan > 0 && giaNhap > 0) {
+                     const loiNhuan = giaBan - giaNhap;
+                     const loiNhuanPhanTram = (loiNhuan / giaNhap) * 100;
+                     
+                     const profitClass = loiNhuan >= 0 ? 'text-success' : 'text-danger';
+                     const sign = loiNhuan >= 0 ? '+' : '';
+                     
+                     const tooltip = document.createElement('div');
+                     tooltip.className = 'profit-tooltip';
+                     tooltip.innerHTML = `
+                         <div class="text-dark fw-bold" style="font-size: 0.875rem;">
+                             Lợi nhuận: ${sign}${loiNhuan.toLocaleString('vi-VN')} đ
+                         </div>
+                         <small class="${profitClass}">
+                             ${sign}${loiNhuanPhanTram.toFixed(1)}% / 1 sản phẩm
+                         </small>
+                     `;
+                     
+                     // Tính toán vị trí chính xác
+                     const rect = giaBanInput.getBoundingClientRect();
+                     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                     
+                     tooltip.style.cssText = `
+                         position: absolute;
+                         top: ${rect.bottom + scrollTop + 5}px;
+                         left: ${rect.left + scrollLeft}px;
+                         background: white;
+                         border: 2px solid #007bff;
+                         border-radius: 0.5rem;
+                         padding: 0.75rem;
+                         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                         z-index: 99999;
+                         min-width: 150px;
+                         pointer-events: none;
+                         font-size: 0.875rem;
+                         max-width: 200px;
+                     `;
+                     
+                     document.body.appendChild(tooltip);
+                 } else if (giaBan > 0) {
+                     const tooltip = document.createElement('div');
+                     tooltip.className = 'profit-tooltip';
+                     tooltip.innerHTML = `
+                         <div class="text-warning fw-bold" style="font-size: 0.875rem;">
+                             Chưa có giá nhập
+                         </div>
+                         <small class="text-muted">
+                             Nhập giá nhập để tính lợi nhuận / 1 sản phẩm
+                         </small>
+                     `;
+                     
+                     // Tính toán vị trí chính xác
+                     const rect = giaBanInput.getBoundingClientRect();
+                     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                     const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+                     
+                     tooltip.style.cssText = `
+                         position: absolute;
+                         top: ${rect.bottom + scrollTop + 5}px;
+                         left: ${rect.left + scrollLeft}px;
+                         background: white;
+                         border: 2px solid #ffc107;
+                         border-radius: 0.5rem;
+                         padding: 0.75rem;
+                         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                         z-index: 99999;
+                         min-width: 150px;
+                         pointer-events: none;
+                         font-size: 0.875rem;
+                         max-width: 200px;
+                     `;
+                     
+                     document.body.appendChild(tooltip);
+                 }
+             };
+
             // HÀM ĐỂ LOAD CÁC BIẾN THỂ ĐÃ CÓ
             function loadExistingVariants() {
                 if (existingChiTietData && existingChiTietData.length > 0) {
@@ -267,27 +378,52 @@
                 }
             }
 
-            // CÁC THIẾT LẬP BAN ĐẦU
-            document.getElementById('addVariantBtn').addEventListener('click', () => addChiTietRow(null));
+                         // CÁC THIẾT LẬP BAN ĐẦU
+             document.getElementById('addVariantBtn').addEventListener('click', () => addChiTietRow(null));
 
-            form.addEventListener('submit', (e) => {
-                const variantErrorDiv = document.getElementById('variantError');
-                if (chiTietBody.rows.length === 0) {
-                    variantErrorDiv.textContent = "Phải có ít nhất một biến thể.";
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Lỗi',
-                        text: 'Vui lòng thêm ít nhất một biến thể sản phẩm.'
-                    });
-                } else {
-                    variantErrorDiv.textContent = "";
-                }
-            });
+             form.addEventListener('submit', (e) => {
+                 const variantErrorDiv = document.getElementById('variantError');
+                 if (chiTietBody.rows.length === 0) {
+                     variantErrorDiv.textContent = "Phải có ít nhất một biến thể.";
+                     e.preventDefault();
+                     Swal.fire({
+                         icon: 'error',
+                         title: 'Lỗi',
+                         text: 'Vui lòng thêm ít nhất một biến thể sản phẩm.'
+                     });
+                 } else {
+                     variantErrorDiv.textContent = "";
+                 }
+             });
 
-            // Khởi tạo trạng thái và dữ liệu ban đầu
-            toggleProperties();
-            loadExistingVariants();
+             // Ẩn tooltip khi scroll hoặc click ra ngoài
+             document.addEventListener('scroll', function() {
+                 const tooltip = document.querySelector('.profit-tooltip');
+                 if (tooltip) {
+                     tooltip.remove();
+                 }
+             });
+
+             document.addEventListener('click', function(e) {
+                 if (!e.target.closest('.price-input')) {
+                     const tooltip = document.querySelector('.profit-tooltip');
+                     if (tooltip) {
+                         tooltip.remove();
+                     }
+                 }
+             });
+
+             // Khởi tạo trạng thái và dữ liệu ban đầu
+             toggleProperties();
+             loadExistingVariants();
+
+             // Tính toán lợi nhuận ban đầu cho các biến thể đã có
+             setTimeout(() => {
+                 const priceInputs = document.querySelectorAll('.price-input');
+                 priceInputs.forEach(input => {
+                     calculateProfitForRow(input);
+                 });
+             }, 100);
         });
     </script>
 }

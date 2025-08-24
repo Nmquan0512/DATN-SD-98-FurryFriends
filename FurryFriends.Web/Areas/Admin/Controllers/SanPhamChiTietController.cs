@@ -87,6 +87,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 KichCoId = model.KichCoId,
                 SoLuong = model.SoLuongTon,
                 Gia = model.GiaBan,
+                GiaNhap = model.GiaNhap, // ✅ Thêm mapping cho GiaNhap
                 AnhId = model.AnhId,
                 MoTa = model.MoTa
             };
@@ -125,6 +126,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 KichCoId = model.KichCoId,
                 SoLuong = model.SoLuongTon,
                 Gia = model.GiaBan,
+                GiaNhap = model.GiaNhap, // ✅ Thêm mapping cho GiaNhap
                 MoTa = model.MoTa,
                 AnhId = model.AnhId,
                 TrangThai = model.TrangThai
@@ -219,6 +221,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 KichCoId = chiTiet.KichCoId,
                 SoLuongTon = chiTiet.SoLuong,
                 GiaBan = chiTiet.Gia,
+                GiaNhap = chiTiet.GiaNhap, // ✅ Thêm mapping cho GiaNhap
                 MoTa = chiTiet.MoTa,
                 AnhId = chiTiet.AnhId,
                 TrangThai = chiTiet.TrangThai ?? 1,
