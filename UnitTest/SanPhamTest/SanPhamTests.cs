@@ -8,6 +8,7 @@ using FurryFriends.API.Services;
 using FurryFriends.API.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.InMemory;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
@@ -603,7 +604,15 @@ namespace UnitTest.SanPhamTest
             [Fact]
             public async Task CapNhatSanPhamVoiIdHopLe_ShouldUpdateProduct()
             {
-                // Arrange
+                // Arrange - Sử dụng InMemoryDatabase
+                var options = new DbContextOptionsBuilder<AppDbContext>()
+                    .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                    .Options;
+
+                using var context = new AppDbContext(options);
+                var repository = new SanPhamRepository(context);
+                var service = new SanPhamService(repository, context);
+
                 var id = Guid.NewGuid();
                 var dto = new SanPhamDTO
                 {
@@ -620,36 +629,50 @@ namespace UnitTest.SanPhamTest
                     SanPhamChatLieus = new List<SanPhamChatLieu>()
                 };
 
-                _mockRepository.Setup(x => x.GetByIdAsync(id))
-                              .ReturnsAsync(existingProduct);
-                _mockRepository.Setup(x => x.UpdateAsync(It.IsAny<SanPham>()))
-                              .Returns(Task.CompletedTask);
+                // Thêm sản phẩm vào database
+                context.SanPhams.Add(existingProduct);
+                await context.SaveChangesAsync();
 
                 // Act
-                await _service.UpdateAsync(id, dto);
+                await service.UpdateAsync(id, dto);
 
                 // Assert
-                _mockRepository.Verify(x => x.UpdateAsync(It.IsAny<SanPham>()), Times.Once);
+                var updatedProduct = await context.SanPhams.FindAsync(id);
+                updatedProduct.Should().NotBeNull();
+                updatedProduct.TenSanPham.Should().Be("Hạt Royal Canin cho mèo con");
             }
 
             [Fact]
             public async Task XoaSanPhamVoiIdHopLe_ShouldDeleteProduct()
             {
-                // Arrange
-                var id = Guid.NewGuid();
+                // Arrange - Sử dụng InMemoryDatabase
+                var options = new DbContextOptionsBuilder<AppDbContext>()
+                    .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                    .Options;
 
-                _mockContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
-                           .ReturnsAsync(1);
-                _mockRepository.Setup(x => x.ExistsAsync(id))
-                              .ReturnsAsync(true);
-                _mockRepository.Setup(x => x.DeleteAsync(id))
-                              .Returns(Task.CompletedTask);
+                using var context = new AppDbContext(options);
+                var repository = new SanPhamRepository(context);
+                var service = new SanPhamService(repository, context);
+
+                var id = Guid.NewGuid();
+                var product = new SanPham 
+                { 
+                    SanPhamId = id, 
+                    TenSanPham = "Test Product",
+                    SanPhamThanhPhans = new List<SanPhamThanhPhan>(),
+                    SanPhamChatLieus = new List<SanPhamChatLieu>()
+                };
+
+                // Thêm sản phẩm vào database
+                context.SanPhams.Add(product);
+                await context.SaveChangesAsync();
 
                 // Act
-                await _service.DeleteAsync(id);
+                await service.DeleteAsync(id);
 
                 // Assert
-                _mockRepository.Verify(x => x.DeleteAsync(id), Times.Once);
+                var deletedProduct = await context.SanPhams.FindAsync(id);
+                deletedProduct.Should().BeNull();
             }
         }
 
