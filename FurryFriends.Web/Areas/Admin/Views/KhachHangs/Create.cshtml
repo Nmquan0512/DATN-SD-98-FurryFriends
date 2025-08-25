@@ -30,7 +30,17 @@
         </div>
         <div class="card-body p-4">
             <form asp-action="Create" method="post" id="createForm">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" style="display: none;"></div>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
 
                 <div class="row g-4">
                     <!-- Tên khách hàng -->
@@ -83,7 +93,9 @@
                             <label asp-for="TaiKhoanId" class="form-label fw-semibold">
                                 <i class="fas fa-user-shield me-2 text-primary"></i>Tài khoản liên kết
                             </label>
-                            <select id="TaiKhoanId" name="TaiKhoanId" class="form-control"></select>
+                            <select asp-for="TaiKhoanId" class="form-control form-control-lg" asp-items="ViewBag.TaiKhoanId" id="TaiKhoanIdSelect">
+                                <option value="">-- Chọn tài khoản --</option>
+                            </select>
                             <span asp-validation-for="TaiKhoanId" class="text-danger small"></span>
                         </div>
                     </div>
@@ -96,7 +108,6 @@
                             </label>
                             <select asp-for="TrangThai" class="form-control form-control-lg">
                                 <option value="">-- Chọn trạng thái --</option>
-                                <option value="0">Chưa kích hoạt</option>
                                 <option value="1">Đang hoạt động</option>
                                 <option value="2">Đã khóa</option>
                             </select>
@@ -125,32 +136,15 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
     <script>
-        let provinceData = {};
-        let wardData = {};
         $(document).ready(function () {
-            $('#TaiKhoanId').select2({
-                placeholder: 'Chọn tài khoản',
-                minimumInputLength: 2,
-                ajax: {
-                    url: 'https://localhost:7289/api/TaiKhoanApi/search',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return { keyword: params.term };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data.map(function (item) {
-                                return { id: item.taiKhoanId, text: item.userName };
-                            })
-                        };
-                    }
-                }
+            // Select2 cho tài khoản
+            $('#TaiKhoanIdSelect').select2({
+                placeholder: 'Tìm tài khoản...',
+                allowClear: true,
+                width: '100%'
             });
         });
     </script>

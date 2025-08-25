@@ -48,6 +48,10 @@ namespace FurryFriends.API.Repository
             {
                 throw new ArgumentException("KhachHangId does not exist.");
             }
+            if (taiKhoan.NhanVienId.HasValue && !await _context.NhanViens.AnyAsync(nv => nv.NhanVienId == taiKhoan.NhanVienId))
+            {
+                throw new ArgumentException("NhanVienId does not exist.");
+            }
 
             taiKhoan.TaiKhoanId = Guid.NewGuid();
             taiKhoan.NgayTaoTaiKhoan = DateTime.Now;
@@ -60,7 +64,11 @@ namespace FurryFriends.API.Repository
 
         public async Task UpdateAsync(TaiKhoan taiKhoan)
         {
-            var existing = await _context.TaiKhoans.FindAsync(taiKhoan.TaiKhoanId);
+            var existing = await _context.TaiKhoans
+                .Include(tk => tk.NhanVien)
+                .Include(tk => tk.KhachHang)
+                .FirstOrDefaultAsync(tk => tk.TaiKhoanId == taiKhoan.TaiKhoanId);
+                
             if (existing == null)
             {
                 throw new KeyNotFoundException("Tài khoản không tồn tại.");
@@ -81,12 +89,17 @@ namespace FurryFriends.API.Repository
             {
                 throw new ArgumentException("KhachHangId does not exist.");
             }
+            if (taiKhoan.NhanVienId.HasValue && !await _context.NhanViens.AnyAsync(nv => nv.NhanVienId == taiKhoan.NhanVienId))
+            {
+                throw new ArgumentException("NhanVienId does not exist.");
+            }
 
             existing.UserName = taiKhoan.UserName;
             // TODO: Mã hóa Password
             existing.Password = taiKhoan.Password;
             existing.TrangThai = taiKhoan.TrangThai;
             existing.KhachHangId = taiKhoan.KhachHangId;
+            existing.NhanVienId = taiKhoan.NhanVienId;
             existing.NgayCapNhatCuoiCung = DateTime.Now;
 
             await _context.SaveChangesAsync();

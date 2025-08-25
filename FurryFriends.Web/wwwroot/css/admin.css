@@ -1259,6 +1259,25 @@ body {
     position: relative;
 }
 
+/* Ensure dropdown is not active by default */
+.nav-dropdown:not(.active) .nav-dropdown-menu {
+    max-height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Ensure dropdown toggle is not highlighted by default */
+.nav-dropdown:not(.active) .nav-dropdown-toggle {
+    background: transparent !important;
+    color: var(--text-secondary) !important;
+    border-left: 3px solid transparent !important;
+}
+
+.nav-dropdown:not(.active) .nav-dropdown-toggle:hover {
+    background: var(--primary-light) !important;
+    color: var(--primary) !important;
+    border-left: 3px solid var(--primary) !important;
+}
+
 .nav-dropdown-toggle {
     display: flex;
     align-items: center;
@@ -1289,7 +1308,27 @@ body {
 }
 
 .nav-dropdown.active .nav-dropdown-menu {
-    max-height: 500px;
+    max-height: 400px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.nav-dropdown-menu::-webkit-scrollbar {
+    width: 4px;
+}
+
+.nav-dropdown-menu::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+.nav-dropdown-menu::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 2px;
+}
+
+.nav-dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
 }
 
 .nav-dropdown-menu .nav-link {
@@ -1310,6 +1349,8 @@ body {
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scroll-behavior: smooth;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -1333,6 +1374,34 @@ body {
     font-size: 14px;
     width: 16px;
     height: 16px;
+}
+
+/* Ensure dropdown menu items are properly spaced */
+.nav-dropdown-menu li {
+    margin: 0;
+    padding: 0;
+}
+
+.nav-dropdown-menu .nav-link {
+    padding: 10px 24px 10px 48px;
+    font-size: 14px;
+    border-left: none;
+    border-radius: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Fix for mobile devices */
+@media (max-width: 768px) {
+    .nav-dropdown-menu {
+        max-height: 300px !important;
+    }
+    
+    .nav-dropdown-menu .nav-link {
+        padding: 12px 24px 12px 48px;
+        font-size: 15px;
+    }
 }
 
 @media (max-width: 768px) {

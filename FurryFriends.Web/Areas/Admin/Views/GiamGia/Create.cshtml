@@ -40,12 +40,12 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label asp-for="NgayBatDau" class="form-label fw-semibold">Ngày bắt đầu <span class="text-danger">*</span></label>
-                                <input asp-for="NgayBatDau" class="form-control" type="datetime-local" value="@Model.NgayBatDau.ToLocalTime().ToString("yyyy-MM-ddTHH:mm")" />
+                                <input asp-for="NgayBatDau" class="form-control" type="datetime-local" value="@Model.NgayBatDau.ToString("yyyy-MM-ddTHH:mm")" />
                                 <span asp-validation-for="NgayBatDau" class="text-danger small"></span>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label asp-for="NgayKetThuc" class="form-label fw-semibold">Ngày kết thúc <span class="text-danger">*</span></label>
-                                <input asp-for="NgayKetThuc" class="form-control" type="datetime-local" value="@Model.NgayKetThuc.ToLocalTime().ToString("yyyy-MM-ddTHH:mm")" />
+                                <input asp-for="NgayKetThuc" class="form-control" type="datetime-local" value="@Model.NgayKetThuc.ToString("yyyy-MM-ddTHH:mm")" />
                                 <span asp-validation-for="NgayKetThuc" class="text-danger small"></span>
                             </div>
                         </div>

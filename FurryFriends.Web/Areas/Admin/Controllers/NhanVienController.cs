@@ -33,9 +33,19 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Create()
         {
             // Lấy tất cả tài khoản và chỉ chọn tài khoản CHƯA được gán
-            var taiKhoanChuaPhanLoai = (await _taiKhoanService.GetAllAsync())
+            var allTaiKhoans = await _taiKhoanService.GetAllAsync();
+            var taiKhoanChuaPhanLoai = allTaiKhoans
                                         .Where(t => t.NhanVien == null && t.KhachHangId == null)
                                         .ToList();
+
+            Console.WriteLine($"=== NHAN VIEN CREATE DEBUG ===");
+            Console.WriteLine($"Total TaiKhoans: {allTaiKhoans.Count()}");
+            Console.WriteLine($"Filtered TaiKhoans: {taiKhoanChuaPhanLoai.Count()}");
+            foreach (var tk in allTaiKhoans)
+            {
+                Console.WriteLine($"TaiKhoan: {tk.UserName}, KhachHangId: {tk.KhachHangId}, NhanVienId: {tk.NhanVienId}");
+            }
+            Console.WriteLine($"=== END DEBUG ===");
 
             ViewBag.TaiKhoanId = new SelectList(taiKhoanChuaPhanLoai, "TaiKhoanId", "UserName");
             ViewBag.ChucVuId = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu");
@@ -52,6 +62,32 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 try
                 {
                     await _nhanVienService.AddAsync(nhanVien);
+                    
+                    // Cập nhật tài khoản nếu có liên kết
+                    if (nhanVien.TaiKhoanId.HasValue)
+                    {
+                        try
+                        {
+                            var taiKhoan = await _taiKhoanService.GetByIdAsync(nhanVien.TaiKhoanId.Value);
+                            if (taiKhoan != null)
+                            {
+                                taiKhoan.NhanVienId = nhanVien.NhanVienId;
+                                taiKhoan.KhachHangId = null; // Clear khách hàng nếu có
+                                
+                                // Cập nhật trạng thái tài khoản dựa trên trạng thái nhân viên
+                                taiKhoan.TrangThai = nhanVien.TrangThai;
+                                
+                                await _taiKhoanService.UpdateAsync(taiKhoan);
+                                Console.WriteLine($"Updated TaiKhoan link and status: {taiKhoan.UserName}, Active: {nhanVien.TrangThai}");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            // Log lỗi nhưng không fail toàn bộ operation
+                            Console.WriteLine($"Error updating TaiKhoan: {ex.Message}");
+                        }
+                    }
+                    
                     TempData["Success"] = "Nhân viên đã được tạo thành công.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -79,7 +115,14 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             var nhanVien = await _nhanVienService.GetByIdAsync(id);
             if (nhanVien == null)
                 return NotFound();
-            ViewBag.TaiKhoanId = new SelectList(await _taiKhoanService.GetAllAsync(), "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
+            
+            // Lấy tất cả tài khoản chưa được liên kết và tài khoản hiện tại của nhân viên này
+            var allTaiKhoans = await _taiKhoanService.GetAllAsync();
+            var taiKhoanChuaPhanLoai = allTaiKhoans
+                .Where(t => (t.NhanVien == null && t.KhachHangId == null) || t.TaiKhoanId == nhanVien.TaiKhoanId)
+                .ToList();
+
+            ViewBag.TaiKhoanId = new SelectList(taiKhoanChuaPhanLoai, "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
             ViewBag.ChucVuId = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu", nhanVien.ChucVuId);
             return View(nhanVien);
         }
@@ -96,7 +139,60 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             {
                 try
                 {
+                    // Lấy thông tin nhân viên cũ trước khi cập nhật
+                    var oldNhanVien = await _nhanVienService.GetByIdAsync(nhanVien.NhanVienId);
+                    var oldTaiKhoanId = oldNhanVien?.TaiKhoanId;
+                    
                     await _nhanVienService.UpdateAsync(nhanVien);
+                    
+                    // Cập nhật trạng thái tài khoản liên kết dựa trên trạng thái nhân viên
+                    if (nhanVien.TaiKhoanId.HasValue)
+                    {
+                        try
+                        {
+                            var taiKhoan = await _taiKhoanService.GetByIdAsync(nhanVien.TaiKhoanId.Value);
+                            if (taiKhoan != null)
+                            {
+                                // Cập nhật NhanVienId
+                                taiKhoan.NhanVienId = nhanVien.NhanVienId;
+                                
+                                // Cập nhật trạng thái tài khoản dựa trên trạng thái nhân viên
+                                // Trạng thái nhân viên: true = Hoạt động, false = Không hoạt động
+                                taiKhoan.TrangThai = nhanVien.TrangThai;
+                                
+                                await _taiKhoanService.UpdateAsync(taiKhoan);
+                                Console.WriteLine($"Updated TaiKhoan link and status: {taiKhoan.UserName}, Active: {nhanVien.TrangThai}");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error updating TaiKhoan: {ex.Message}");
+                        }
+                    }
+                    
+                    // Nếu có thay đổi về TaiKhoanId
+                    if (oldTaiKhoanId != nhanVien.TaiKhoanId)
+                    {
+                        // Clear liên kết cũ nếu có
+                        if (oldTaiKhoanId.HasValue)
+                        {
+                            try
+                            {
+                                var oldTaiKhoan = await _taiKhoanService.GetByIdAsync(oldTaiKhoanId.Value);
+                                if (oldTaiKhoan != null)
+                                {
+                                    oldTaiKhoan.NhanVienId = null;
+                                    await _taiKhoanService.UpdateAsync(oldTaiKhoan);
+                                    Console.WriteLine($"Cleared old TaiKhoan link: {oldTaiKhoan.UserName}");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error clearing old TaiKhoan link: {ex.Message}");
+                            }
+                        }
+                    }
+                    
                     TempData["Success"] = "Nhân viên đã được cập nhật thành công.";
                     return RedirectToAction(nameof(Index));
                 }
@@ -113,7 +209,13 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     ModelState.AddModelError("", $"Lỗi: {ex.Message}");
                 }
             }
-            ViewBag.TaiKhoanId = new SelectList(await _taiKhoanService.GetAllAsync(), "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
+            // Lấy tất cả tài khoản chưa được liên kết và tài khoản hiện tại của nhân viên này
+            var allTaiKhoans = await _taiKhoanService.GetAllAsync();
+            var taiKhoanChuaPhanLoai = allTaiKhoans
+                .Where(t => (t.NhanVien == null && t.KhachHangId == null) || t.TaiKhoanId == nhanVien.TaiKhoanId)
+                .ToList();
+
+            ViewBag.TaiKhoanId = new SelectList(taiKhoanChuaPhanLoai, "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
             ViewBag.ChucVuId = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu", nhanVien.ChucVuId);
             return View(nhanVien);
         }

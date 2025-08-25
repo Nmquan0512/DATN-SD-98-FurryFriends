@@ -3,7 +3,7 @@
 
 @{
     ViewData["Title"] = "Quản lý chương trình giảm giá";
-    var now = DateTime.UtcNow;
+    var now = DateTime.Now; // Sử dụng thời gian local thay vì UTC
 }
 
 <div class="container-fluid py-4">
@@ -94,9 +94,9 @@
                                     <td class="fw-semibold">@item.TenGiamGia</td>
                                     <td class="text-center text-danger fw-bold">@item.PhanTramKhuyenMai.ToString("F0")%</td>
                                     <td>
-                                        @item.NgayBatDau.ToLocalTime().ToString("dd/MM/yy HH:mm")
+                                        @item.NgayBatDau.ToString("dd/MM/yyyy HH:mm")
                                         <i class="fas fa-arrow-right mx-1 text-muted small"></i>
-                                        @item.NgayKetThuc.ToLocalTime().ToString("dd/MM/yy HH:mm")
+                                        @item.NgayKetThuc.ToString("dd/MM/yyyy HH:mm")
                                     </td>
                                     <td class="text-center">
                                         <span class="badge bg-primary rounded-pill">@item.SoLuongSanPhamApDung</span>

@@ -93,13 +93,10 @@ namespace FurryFriends.Web.Services
 
         public async Task UpdateAsync(TaiKhoan taiKhoan)
         {
-            var response = await _httpClient.PutAsJsonAsync($"TaiKhoanApi/{taiKhoan.TaiKhoanId}", taiKhoan);
             if (taiKhoan == null)
                 throw new ArgumentNullException(nameof(taiKhoan));
 
-            taiKhoan.NhanVien = null;
-            taiKhoan.KhachHang = null;
-      
+            var response = await _httpClient.PutAsJsonAsync($"TaiKhoanApi/{taiKhoan.TaiKhoanId}", taiKhoan);
 
             if (!response.IsSuccessStatusCode)
             {

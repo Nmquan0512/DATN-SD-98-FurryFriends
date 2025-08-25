@@ -355,28 +355,77 @@
             if (!isActive) {
                 dropdown.classList.add('active');
                 
-                // Scroll to dropdown smoothly
+                // Scroll to dropdown smoothly and ensure it's visible
                 setTimeout(() => {
-                    dropdown.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'nearest',
-                        inline: 'nearest'
-                    });
-                }, 100);
+                    const sidebar = document.getElementById('sidebar');
+                    const dropdownRect = dropdown.getBoundingClientRect();
+                    const sidebarRect = sidebar.getBoundingClientRect();
+                    
+                    // Check if dropdown is fully visible in sidebar
+                    if (dropdownRect.bottom > sidebarRect.bottom) {
+                        dropdown.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'end',
+                            inline: 'nearest'
+                        });
+                    } else if (dropdownRect.top < sidebarRect.top) {
+                        dropdown.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                            inline: 'nearest'
+                        });
+                    }
+                }, 150);
             }
         }
         
         function initializeDropdowns() {
             // Auto-expand dropdown if current page is in dropdown menu
             const currentController = '@ViewContext.RouteData.Values["Controller"]?.ToString()';
-            const dropdownControllers = ['ChatLieu', 'ThuongHieu', 'MauSac', 'KichCo', 'ThanhPhan'];
+            const dropdownControllers = ['ChatLieu', 'ThuongHieu', 'MauSac', 'KichCo', 'ThanhPhan', 'Anh'];
             
+            console.log('Current Controller:', currentController);
+            console.log('Dropdown Controllers:', dropdownControllers);
+            console.log('Should expand dropdown:', dropdownControllers.includes(currentController));
+            
+            // Chỉ mở dropdown nếu controller hiện tại thực sự nằm trong danh sách
             if (dropdownControllers.includes(currentController)) {
                 const dropdown = document.querySelector('.nav-dropdown');
                 if (dropdown) {
                     dropdown.classList.add('active');
+                    console.log('Dropdown expanded for controller:', currentController);
+                    
+                    // Ensure dropdown is visible in sidebar
+                    setTimeout(() => {
+                        const sidebar = document.getElementById('sidebar');
+                        const dropdownRect = dropdown.getBoundingClientRect();
+                        const sidebarRect = sidebar.getBoundingClientRect();
+                        
+                        if (dropdownRect.bottom > sidebarRect.bottom) {
+                            dropdown.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'end',
+                                inline: 'nearest'
+                            });
+                        }
+                    }, 200);
+                }
+            } else {
+                // Đảm bảo dropdown đóng nếu không phải controller trong danh sách
+                const dropdown = document.querySelector('.nav-dropdown');
+                if (dropdown) {
+                    dropdown.classList.remove('active');
+                    console.log('Dropdown closed for controller:', currentController);
                 }
             }
+            
+            // Add touch support for mobile devices
+            const dropdownMenus = document.querySelectorAll('.nav-dropdown-menu');
+            dropdownMenus.forEach(menu => {
+                menu.addEventListener('touchstart', function(e) {
+                    e.stopPropagation();
+                }, { passive: true });
+            });
         }
     </script>
 

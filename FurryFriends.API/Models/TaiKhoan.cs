@@ -27,6 +27,8 @@ namespace FurryFriends.API.Models
         [ForeignKey("KhachHangId")]
         public virtual KhachHang? KhachHang { get; set; }
 
+        public Guid? NhanVienId { get; set; }  // Cho phép null
+        [ForeignKey("NhanVienId")]
         public virtual NhanVien? NhanVien { get; set; }
 
         public TaiKhoan()

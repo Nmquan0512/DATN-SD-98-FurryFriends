@@ -136,13 +136,52 @@ namespace FurryFriends.API.Controllers
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(keyword) || keyword.Length < 2)
-                {
-                    return Ok(new List<object>()); // Không trả về gì nếu chưa đủ ký tự
-                }
                 var all = await _taiKhoanRepository.GetAllAsync();
                 var result = all
-                    .Where(tk => !string.IsNullOrEmpty(tk.UserName) && tk.UserName.ToLower().Contains(keyword.ToLower()))
+                    .Where(tk => !string.IsNullOrEmpty(tk.UserName) && 
+                                (string.IsNullOrWhiteSpace(keyword) || tk.UserName.ToLower().Contains(keyword.ToLower())) &&
+                                tk.KhachHang == null) // Chỉ trả về tài khoản chưa được liên kết với khách hàng
+                    .Select(tk => new { taiKhoanId = tk.TaiKhoanId, userName = tk.UserName })
+                    .Take(20)
+                    .ToList();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("search-all")]
+        public async Task<IActionResult> SearchAll([FromQuery] string keyword)
+        {
+            try
+            {
+                var all = await _taiKhoanRepository.GetAllAsync();
+                var result = all
+                    .Where(tk => !string.IsNullOrEmpty(tk.UserName) && 
+                                (string.IsNullOrWhiteSpace(keyword) || tk.UserName.ToLower().Contains(keyword.ToLower())))
+                    .Select(tk => new { taiKhoanId = tk.TaiKhoanId, userName = tk.UserName })
+                    .Take(20)
+                    .ToList();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpGet("search-for-edit")]
+        public async Task<IActionResult> SearchForEdit([FromQuery] string keyword, [FromQuery] Guid? currentTaiKhoanId = null)
+        {
+            try
+            {
+                var all = await _taiKhoanRepository.GetAllAsync();
+                var result = all
+                    .Where(tk => !string.IsNullOrEmpty(tk.UserName) && 
+                                (string.IsNullOrWhiteSpace(keyword) || tk.UserName.ToLower().Contains(keyword.ToLower())) &&
+                                (tk.KhachHang == null || tk.TaiKhoanId == currentTaiKhoanId)) // Chỉ trả về tài khoản chưa liên kết HOẶC tài khoản hiện tại
                     .Select(tk => new { taiKhoanId = tk.TaiKhoanId, userName = tk.UserName })
                     .Take(20)
                     .ToList();

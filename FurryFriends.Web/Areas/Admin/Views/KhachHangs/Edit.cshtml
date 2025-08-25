@@ -20,6 +20,18 @@
             <form asp-action="Edit" method="post">
                 <input type="hidden" asp-for="KhachHangId" />
 
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        </ul>
+                    </div>
+                }
+
                 <div class="mb-3">
                     <label asp-for="TenKhachHang" class="form-label">Tên khách hàng</label>
                     <input asp-for="TenKhachHang" class="form-control" />
@@ -41,14 +53,15 @@
                     <span asp-validation-for="DiemKhachHang" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
-                    <label for="TaiKhoanId" class="form-label">Tài khoản liên kết</label>
-                    <select id="TaiKhoanId" name="TaiKhoanId" class="form-control"></select>
+                    <label asp-for="TaiKhoanId" class="form-label">Tài khoản liên kết</label>
+                    <select asp-for="TaiKhoanId" class="form-control form-control-lg" asp-items="ViewBag.TaiKhoanId" id="TaiKhoanIdSelect">
+                        <option value="">-- Chọn tài khoản --</option>
+                    </select>
                     <span asp-validation-for="TaiKhoanId" class="text-danger"></span>
                 </div>
                 <div class="mb-3">
                     <label asp-for="TrangThai" class="form-label">Trạng thái</label>
                     <select asp-for="TrangThai" class="form-select">
-                        <option value="0">Chưa kích hoạt</option>
                         <option value="1">Đang hoạt động</option>
                         <option value="2">Đã khóa</option>
                     </select>
@@ -69,158 +82,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script>
-        let provinceData = {};
-        let wardData = {};
-        $(document).ready(function () {
-            var selectedId = '@Model.TaiKhoanId';
-            var selectedText = '@(ViewBag.SelectedTaiKhoanText ?? "")';
-
-            // Nếu có tài khoản đã chọn thì thêm option đó vào trước khi khởi tạo select2
-            if (selectedId && selectedText) {
-                var option = new Option(selectedText, selectedId, true, true);
-                $('#TaiKhoanId').append(option);
-            }
-
-            $('#TaiKhoanId').select2({
-                placeholder: "Chọn tài khoản", // chỉ dùng nếu chưa chọn
-                minimumInputLength: 2,
-                ajax: {
-                    url: 'https://localhost:7289/api/TaiKhoanApi/search',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return { keyword: params.term };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data.map(function (item) {
-                                return { id: item.taiKhoanId, text: item.userName };
-                            })
-                        };
-                    }
-                }
-            });
-
-            if (selectedId && selectedText) {
-                $('#TaiKhoanId').val(selectedId).trigger('change');
-            }
-            $.getJSON('/json/province.json', function (provinces) {
-                provinceData = provinces;
-                $('#tinhThanh').append($('<option>', { value: '', text: '-- Chọn tỉnh/thành phố --' }));
-                $.each(provinces, function (key, value) {
-                    $('#tinhThanh').append($('<option>', { value: value.code, text: value.name_with_type }));
-                });
-                if (window._selectedTinhCode) {
-                    $('#tinhThanh').val(window._selectedTinhCode).trigger('change');
-                }
-            });
-            $.getJSON('/json/ward.json', function (wards) {
-                wardData = wards;
-                if (window._selectedTinhCode && window._selectedPhuongCode) {
-                    setTimeout(function() {
-                        $('#phuongXa').val(window._selectedPhuongCode);
-                    }, 300);
-                }
-            });
-            $('#tinhThanh').on('change', function () {
-                var selectedCode = $(this).val();
-                $('#phuongXa').empty();
-                $('#phuongXa').append($('<option>', { value: '', text: '-- Chọn phường/xã/thị trấn --' }));
-                if (selectedCode && wardData) {
-                    $.each(wardData, function (key, value) {
-                        if (value.parent_code === selectedCode) {
-                            $('#phuongXa').append($('<option>', { value: value.code, text: value.name_with_type }));
-                        }
-                    });
-                }
-            });
-            // Tách địa chỉ hiện tại
-            var diaChiFull = $('#DiaChi').val() || '';
-            var diaChiParts = diaChiFull.split(',').map(function(x){return x.trim();});
-            $('#diaChiCuThe').val(diaChiParts[0] || '');
-            if (diaChiParts.length > 2) {
-                var tinhText = diaChiParts[2];
-                var phuongText = diaChiParts[1];
-                var tinhCode = '';
-                var phuongCode = '';
-                $.getJSON('/json/province.json', function (provinces) {
-                    $.each(provinces, function (key, value) {
-                        if (value.name_with_type === tinhText) {
-                            tinhCode = value.code;
-                            window._selectedTinhCode = tinhCode;
-                            $('#tinhThanh').val(tinhCode).trigger('change');
-                        }
-                    });
-                });
-                $.getJSON('/json/ward.json', function (wards) {
-                    $.each(wards, function (key, value) {
-                        if (value.name_with_type === phuongText) {
-                            phuongCode = value.code;
-                            window._selectedPhuongCode = phuongCode;
-                        }
-                    });
-                });
-            }
-            $('form').on('submit', function(e) {
-                var diaChiCuThe = $('#diaChiCuThe').val();
-                var tinhCode = $('#tinhThanh').val();
-                var phuongCode = $('#phuongXa').val();
-                var tinhText = tinhCode && provinceData[tinhCode] ? provinceData[tinhCode].name_with_type : '';
-                var phuongText = phuongCode && wardData[phuongCode] ? wardData[phuongCode].name_with_type : '';
-                var diaChiFull = diaChiCuThe;
-                if (phuongText) diaChiFull += ', ' + phuongText;
-                if (tinhText) diaChiFull += ', ' + tinhText;
-                $('#DiaChi').val(diaChiFull);
-            });
-        });
-    </script>
 }
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-@* 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script>
-                $(document).ready(function () {
-            var selectedId = '@Model.TaiKhoanId';
-            var selectedText = '@(ViewBag.SelectedTaiKhoanText ?? "")';
-
-            $('#TaiKhoanId').select2({
-                placeholder: selectedText !== "" ? selectedText : "Chọn tài khoản", // 👈 xử lý điều kiện này
-                minimumInputLength: 2,
-                ajax: {
-                    url: 'https://localhost:7289/api/TaiKhoanApi/search',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function (params) {
-                        return { keyword: params.term };
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data.map(function (item) {
-                                return { id: item.taiKhoanId, text: item.userName };
-                            })
-                        };
-                    }
-                }
-            });
-
-            // Set default value if editing
-            if (selectedId && selectedText) {
-                var option = new Option(selectedText, selectedId, true, true);
-                $('#TaiKhoanId').append(option).trigger('change');
-            }
-        });
-
-    </script>
-}
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
- *@
