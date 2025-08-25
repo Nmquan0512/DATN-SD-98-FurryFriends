@@ -45,7 +45,18 @@ namespace FurryFriends.API.Repository
 
             // 2. Dùng _mapper.Map() để ánh xạ trong bộ nhớ. 
             //    AutoMapper sẽ tự động map các trường TongTien, ThanhTien, TienGiam
-            return _mapper.Map<IEnumerable<HoaDonBanHangDto>>(hoaDons);
+            var dtos = _mapper.Map<IEnumerable<HoaDonBanHangDto>>(hoaDons);
+            
+            // ✅ Map thủ công DiaChiGiaoHangLucMua để đảm bảo dữ liệu đúng
+            var hoaDonList = hoaDons.ToList();
+            var dtoList = dtos.ToList();
+            
+            for (int i = 0; i < hoaDonList.Count; i++)
+            {
+                dtoList[i].DiaChiGiaoHangLucMua = hoaDonList[i].DiaChiGiaoHangLucMua;
+            }
+            
+            return dtoList;
         }
 
 
@@ -94,9 +105,12 @@ namespace FurryFriends.API.Repository
             dto.ThanhTien = hoaDon.TongTienSauKhiGiam;
             dto.TienGiam = hoaDon.TongTien - hoaDon.TongTienSauKhiGiam;
             
+            // ✅ Map thủ công DiaChiGiaoHangLucMua để đảm bảo dữ liệu đúng
+            dto.DiaChiGiaoHangLucMua = hoaDon.DiaChiGiaoHangLucMua;
+            
             // ✅ Thêm log để debug dữ liệu
-            _logger.LogInformation("Hóa đơn {HoaDonId}: TongTien={TongTien}, TongTienSauKhiGiam={TongTienSauKhiGiam}, ThanhTien={ThanhTien}", 
-                hoaDon.HoaDonId, dto.TongTien, dto.ThanhTien, dto.TienGiam);
+            _logger.LogInformation("Hóa đơn {HoaDonId}: TongTien={TongTien}, TongTienSauKhiGiam={TongTienSauKhiGiam}, ThanhTien={ThanhTien}, DiaChiGiaoHangLucMua={DiaChiGiaoHangLucMua}", 
+                hoaDon.HoaDonId, dto.TongTien, dto.ThanhTien, dto.TienGiam, dto.DiaChiGiaoHangLucMua);
 
             return dto;
         }
@@ -964,6 +978,10 @@ namespace FurryFriends.API.Repository
             dto.TongTien = hoaDon.TongTien;
             dto.ThanhTien = hoaDon.TongTienSauKhiGiam;
             dto.TienGiam = dto.TongTien - dto.ThanhTien;
+            
+            // ✅ Map thủ công DiaChiGiaoHangLucMua để đảm bảo dữ liệu đúng
+            dto.DiaChiGiaoHangLucMua = hoaDon.DiaChiGiaoHangLucMua;
+            
             return dto;
         }
         public async Task<IEnumerable<SanPhamBanHangDto>> GetSuggestedProductsAsync(int count)

@@ -22,6 +22,9 @@ namespace FurryFriends.API.Models.DTO.BanHang
         public string TenCuaKhachHang { get; set; }
         public string SdtCuaKhachHang { get; set; }
         public string EmailCuaKhachHang { get; set; }
+        
+        // ✅ Thêm địa chỉ giao hàng lúc mua
+        public string DiaChiGiaoHangLucMua { get; set; }
     }
 
     public class ChiTietHoaDonDto

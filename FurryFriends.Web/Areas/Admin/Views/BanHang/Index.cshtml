@@ -7,25 +7,36 @@
     // ✅ Tách biệt danh sách theo yêu cầu mới
     var hoaDonCho = Model?.Where(h => h.TrangThai == "Chua Thanh Toan" || h.TrangThai == "Offline ChuaThanhToan").OrderByDescending(h => h.NgayTao).ToList() ?? new List<HoaDonBanHangDto>();
     
-    // ✅ Lịch sử giao dịch: Chỉ trạng thái 7 và 10
+    // ✅ Lịch sử giao dịch: BanTaiQuay với trạng thái 1,2,3,7,10
     var lichSuHoaDon = Model?.Where(h => 
         h.LoaiHoaDon == "BanTaiQuay" && // ✅ Chỉ BanTaiQuay
-        (h.TrangThai == "Offline DaThanhToan" || h.TrangThai == "Offline DaHuy") // ✅ Chỉ trạng thái 7 và 10
+        (h.TrangThai == "DaThanhToan" || h.TrangThai == "DangGiaoHang" || h.TrangThai == "DaGiaoHang" || 
+         h.TrangThai == "Offline DaThanhToan" || h.TrangThai == "Offline DaHuy") // ✅ Trạng thái 1,2,3,7,10
     ).OrderByDescending(h => h.NgayTao).ToList() ?? new List<HoaDonBanHangDto>();
 
     // ✅ Tính toán thống kê theo trạng thái mới
     var today = DateTime.Now.Date; // Lấy ngày hiện tại của server
     var successfulToday = lichSuHoaDon.Count(h => 
-        h.TrangThai == "Offline DaThanhToan" && // ✅ Chỉ trạng thái 7 - hoàn thành
+        (h.TrangThai == "DaThanhToan" || h.TrangThai == "DangGiaoHang" || h.TrangThai == "DaGiaoHang" || h.TrangThai == "Offline DaThanhToan") && // ✅ Trạng thái 1,2,3,7 - hoàn thành
         h.NgayTao.Date == today
     );
     var cancelledToday = lichSuHoaDon.Count(h => h.TrangThai == "Offline DaHuy" && h.NgayTao.Date == today); // ✅ Chỉ trạng thái 10 - hủy
     
-    // ✅ Tính doanh thu dựa trên lịch sử giao dịch: Chỉ trạng thái 7
+    // ✅ Tính doanh thu dựa trên lịch sử giao dịch: Tất cả trạng thái đã thanh toán (1,2,3,7) trừ hủy
     var revenueToday = lichSuHoaDon.Where(h => 
         h.NgayTao.Date == today &&
-        h.TrangThai == "Offline DaThanhToan" // ✅ Chỉ trạng thái 7
-    ).Sum(h => h.ThanhTien);
+        (h.TrangThai == "DaThanhToan" || h.TrangThai == "DangGiaoHang" || h.TrangThai == "DaGiaoHang" || h.TrangThai == "Offline DaThanhToan") // ✅ Trạng thái 1,2,3,7 - đã thanh toán
+    ).Sum(h => {
+        // ✅ Trừ phí ship nếu có ship và không được freeship
+        decimal phiShip = 0;
+        if (!string.IsNullOrEmpty(h.DiaChiGiaoHangLucMua))
+        {
+            // Logic freeship: Đơn hàng trên 500k được freeship
+            var tongTienHang = h.ThanhTien;
+            phiShip = tongTienHang >= 500000m ? 0m : 30000m;
+        }
+        return h.ThanhTien - phiShip;
+    });
 }
 
 <div class="container-fluid py-4">
@@ -126,6 +137,9 @@
                     <label for="statusFilter" class="form-label small">Trạng thái</label>
                     <select id="statusFilter" class="form-select form-select-sm">
                         <option value="">Tất cả trạng thái</option>
+                        <option value="DaThanhToan">Đã thanh toán</option>
+                        <option value="DangGiaoHang">Đang giao hàng</option>
+                        <option value="DaGiaoHang">Đã giao hàng</option>
                         <option value="Offline DaThanhToan">Đã thanh toán (Tại Quầy)</option>
                         <option value="Offline DaHuy">Đã hủy (Tại Quầy)</option>
                     </select>
@@ -168,14 +182,15 @@
                                     @{
                                         var (badgeClass, trangThaiText, icon) = item.TrangThai switch
                                         {
-                                            "Da Thanh Toan" => ("status-delivered", "Đã thanh toán", "fas fa-check-circle"),
+                                            "DaThanhToan" => ("status-delivered", "Đã thanh toán", "fas fa-check-circle"),
                                             "Offline DaThanhToan" => ("status-delivered", "Đã thanh toán", "fas fa-check-circle"),
-                                            "Dang Giao" => ("status-shipping", "Đang giao", "fas fa-truck"),
-                                            "Da Giao" => ("status-delivered", "Đã giao", "fas fa-home"),
-                                            "Da Huy" => ("status-cancelled", "Đã hủy", "fas fa-times-circle"),
+                                            "DangGiaoHang" => ("status-shipping", "Đang giao hàng", "fas fa-truck"),
+                                            "DaGiaoHang" => ("status-delivered", "Đã giao hàng", "fas fa-home"),
+                                            "DaHuy" => ("status-cancelled", "Đã hủy", "fas fa-times-circle"),
                                             "Offline DaHuy" => ("status-cancelled", "Đã hủy", "fas fa-times-circle"),
+                                            "ChuaThanhToan" => ("status-pending", "Chưa thanh toán", "fas fa-clock"),
                                             "Offline ChuaThanhToan" => ("status-pending", "Chưa thanh toán", "fas fa-clock"),
-                                            _ => ("status-pending", item.TrangThai.Replace("Da ", "").Replace("Toan", "toán").Replace(" Huy", " hủy"), "fas fa-info-circle")
+                                            _ => ("status-pending", item.TrangThai.Replace("Da", "Đã ").Replace("Toan", "toán").Replace("Huy", "hủy").Replace("GiaoHang", "giao hàng"), "fas fa-info-circle")
                                         };
                                     }
                                     <span class="status-badge @badgeClass">

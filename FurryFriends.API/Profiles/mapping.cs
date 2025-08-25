@@ -139,7 +139,9 @@ namespace FurryFriends.API.Profiles
                 // ✅ Thêm mapping cho các trường snapshot khách hàng
                 .ForMember(dest => dest.TenCuaKhachHang, opt => opt.MapFrom(src => src.TenCuaKhachHang))
                 .ForMember(dest => dest.SdtCuaKhachHang, opt => opt.MapFrom(src => src.SdtCuaKhachHang))
-                .ForMember(dest => dest.EmailCuaKhachHang, opt => opt.MapFrom(src => src.EmailCuaKhachHang));
+                .ForMember(dest => dest.EmailCuaKhachHang, opt => opt.MapFrom(src => src.EmailCuaKhachHang))
+                // ✅ Thêm mapping cho địa chỉ giao hàng lúc mua
+                .ForMember(dest => dest.DiaChiGiaoHangLucMua, opt => opt.MapFrom(src => src.DiaChiGiaoHangLucMua));
         }
     }
 }

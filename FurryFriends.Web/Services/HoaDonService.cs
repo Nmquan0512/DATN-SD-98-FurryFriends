@@ -218,17 +218,19 @@ namespace FurryFriends.Web.Services
                 var currentMonth = DateTime.Now.Month;
                 var currentYear = DateTime.Now.Year;
                 
-                // ✅ Chỉ tính doanh thu từ đơn hàng có trạng thái 3 (Đã giao) và 7 (Đã thanh toán)
+                // ✅ Tính doanh thu từ đơn hàng có trạng thái 1,2,3 cho BanTaiQuay và trạng thái 3,7 cho tất cả
                 // ✅ Doanh thu = TongTienSauKhiGiam - PhiShip (nếu có)
                 var monthlyRevenue = allOrders
-                    .Where(h => h.NgayTao.Month == currentMonth && h.NgayTao.Year == currentYear && (h.TrangThai == 3 || h.TrangThai == 7))
+                    .Where(h => h.NgayTao.Month == currentMonth && h.NgayTao.Year == currentYear && 
+                               ((h.LoaiHoaDon == "BanTaiQuay" && (h.TrangThai == 1 || h.TrangThai == 2 || h.TrangThai == 3)) || // ✅ BanTaiQuay: trạng thái 1,2,3
+                                (h.TrangThai == 3 || h.TrangThai == 7))) // ✅ Tất cả: trạng thái 3,7
                     .Sum(h => {
-                        // Tính phí ship nếu có
+                        // ✅ Trừ phí ship nếu có ship và không được freeship
                         decimal phiShip = 0;
-                        if (h.LoaiHoaDon == "GiaoHang" || !string.IsNullOrEmpty(h.DiaChiGiaoHangLucMua))
+                        if (!string.IsNullOrEmpty(h.DiaChiGiaoHangLucMua))
                         {
                             // Logic freeship: Đơn hàng trên 500k được freeship
-                            var tongTienHang = h.TongTien - (h.TongTien - h.TongTienSauKhiGiam); // Tổng tiền sau khi giảm voucher
+                            var tongTienHang = h.TongTienSauKhiGiam;
                             phiShip = tongTienHang >= 500000m ? 0m : 30000m;
                         }
                         return h.TongTienSauKhiGiam - phiShip;
@@ -262,19 +264,21 @@ namespace FurryFriends.Web.Services
                     values[i] = 0;
                 }
                 
-                // ✅ Tính doanh thu theo từng tháng - chỉ tính từ đơn hàng có trạng thái 3 (Đã giao) và 7 (Đã thanh toán)
+                // ✅ Tính doanh thu theo từng tháng - tính từ đơn hàng có trạng thái 1,2,3 cho BanTaiQuay và trạng thái 3,7 cho tất cả
                 // ✅ Doanh thu = TongTienSauKhiGiam - PhiShip (nếu có)
-                foreach (var order in allOrders.Where(h => h.NgayTao.Year == currentYear && (h.TrangThai == 3 || h.TrangThai == 7)))
+                foreach (var order in allOrders.Where(h => h.NgayTao.Year == currentYear && 
+                                                          ((h.LoaiHoaDon == "BanTaiQuay" && (h.TrangThai == 1 || h.TrangThai == 2 || h.TrangThai == 3)) || // ✅ BanTaiQuay: trạng thái 1,2,3
+                                                           (h.TrangThai == 3 || h.TrangThai == 7)))) // ✅ Tất cả: trạng thái 3,7
                 {
                     var monthIndex = order.NgayTao.Month - 1; // Month bắt đầu từ 1, index bắt đầu từ 0
                     if (monthIndex >= 0 && monthIndex < 12)
                     {
-                        // Tính phí ship nếu có
+                        // ✅ Trừ phí ship nếu có ship và không được freeship
                         decimal phiShip = 0;
-                        if (order.LoaiHoaDon == "GiaoHang" || !string.IsNullOrEmpty(order.DiaChiGiaoHangLucMua))
+                        if (!string.IsNullOrEmpty(order.DiaChiGiaoHangLucMua))
                         {
                             // Logic freeship: Đơn hàng trên 500k được freeship
-                            var tongTienHang = order.TongTien - (order.TongTien - order.TongTienSauKhiGiam); // Tổng tiền sau khi giảm voucher
+                            var tongTienHang = order.TongTienSauKhiGiam;
                             phiShip = tongTienHang >= 500000m ? 0m : 30000m;
                         }
                         values[monthIndex] += order.TongTienSauKhiGiam - phiShip;

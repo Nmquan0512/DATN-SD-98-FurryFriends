@@ -486,8 +486,20 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 var today = DateTime.Now.Date;
                 
                 var todayRevenue = allOrders
-                    .Where(h => h.NgayTao.Date == today && (h.TrangThai == 3 || h.TrangThai == 7))
-                    .Sum(h => h.TongTienSauKhiGiam);
+                    .Where(h => h.NgayTao.Date == today && 
+                               ((h.LoaiHoaDon == "BanTaiQuay" && (h.TrangThai == 1 || h.TrangThai == 2 || h.TrangThai == 3)) || // ✅ BanTaiQuay: trạng thái 1,2,3
+                                (h.TrangThai == 3 || h.TrangThai == 7))) // ✅ Tất cả: trạng thái 3,7
+                    .Sum(h => {
+                        // ✅ Trừ phí ship nếu có ship và không được freeship
+                        decimal phiShip = 0;
+                        if (!string.IsNullOrEmpty(h.DiaChiGiaoHangLucMua))
+                        {
+                            // Logic freeship: Đơn hàng trên 500k được freeship
+                            var tongTienHang = h.TongTienSauKhiGiam;
+                            phiShip = tongTienHang >= 500000m ? 0m : 30000m;
+                        }
+                        return h.TongTienSauKhiGiam - phiShip;
+                    });
                 
                 return todayRevenue;
             }
@@ -507,7 +519,9 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 var today = DateTime.Now.Date;
                 
                 var todayOrders = allOrders
-                    .Count(h => h.NgayTao.Date == today && (h.TrangThai == 3 || h.TrangThai == 7));
+                    .Count(h => h.NgayTao.Date == today && 
+                               ((h.LoaiHoaDon == "BanTaiQuay" && (h.TrangThai == 1 || h.TrangThai == 2 || h.TrangThai == 3)) || // ✅ BanTaiQuay: trạng thái 1,2,3
+                                (h.TrangThai == 3 || h.TrangThai == 7))); // ✅ Tất cả: trạng thái 3,7
                 
                 return todayOrders;
             }
@@ -528,12 +542,36 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 var yesterday = today.AddDays(-1);
                 
                 var todayRevenue = allOrders
-                    .Where(h => h.NgayTao.Date == today && (h.TrangThai == 3 || h.TrangThai == 7))
-                    .Sum(h => h.TongTienSauKhiGiam);
+                    .Where(h => h.NgayTao.Date == today && 
+                               ((h.LoaiHoaDon == "BanTaiQuay" && (h.TrangThai == 1 || h.TrangThai == 2 || h.TrangThai == 3)) || // ✅ BanTaiQuay: trạng thái 1,2,3
+                                (h.TrangThai == 3 || h.TrangThai == 7))) // ✅ Tất cả: trạng thái 3,7
+                    .Sum(h => {
+                        // ✅ Trừ phí ship nếu có ship và không được freeship
+                        decimal phiShip = 0;
+                        if (!string.IsNullOrEmpty(h.DiaChiGiaoHangLucMua))
+                        {
+                            // Logic freeship: Đơn hàng trên 500k được freeship
+                            var tongTienHang = h.TongTienSauKhiGiam;
+                            phiShip = tongTienHang >= 500000m ? 0m : 30000m;
+                        }
+                        return h.TongTienSauKhiGiam - phiShip;
+                    });
                 
                 var yesterdayRevenue = allOrders
-                    .Where(h => h.NgayTao.Date == yesterday && (h.TrangThai == 3 || h.TrangThai == 7))
-                    .Sum(h => h.TongTienSauKhiGiam);
+                    .Where(h => h.NgayTao.Date == yesterday && 
+                               ((h.LoaiHoaDon == "BanTaiQuay" && (h.TrangThai == 1 || h.TrangThai == 2 || h.TrangThai == 3)) || // ✅ BanTaiQuay: trạng thái 1,2,3
+                                (h.TrangThai == 3 || h.TrangThai == 7))) // ✅ Tất cả: trạng thái 3,7
+                    .Sum(h => {
+                        // ✅ Trừ phí ship nếu có ship và không được freeship
+                        decimal phiShip = 0;
+                        if (!string.IsNullOrEmpty(h.DiaChiGiaoHangLucMua))
+                        {
+                            // Logic freeship: Đơn hàng trên 500k được freeship
+                            var tongTienHang = h.TongTienSauKhiGiam;
+                            phiShip = tongTienHang >= 500000m ? 0m : 30000m;
+                        }
+                        return h.TongTienSauKhiGiam - phiShip;
+                    });
                 
                 if (yesterdayRevenue == 0)
                 {
@@ -562,7 +600,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 var monthlyOrders = allOrders
                     .Count(h => h.NgayTao.Month == currentMonth && 
                                h.NgayTao.Year == currentYear && 
-                               (h.TrangThai == 3 || h.TrangThai == 7));
+                               ((h.LoaiHoaDon == "BanTaiQuay" && (h.TrangThai == 1 || h.TrangThai == 2 || h.TrangThai == 3)) || // ✅ BanTaiQuay: trạng thái 1,2,3
+                                (h.TrangThai == 3 || h.TrangThai == 7))); // ✅ Tất cả: trạng thái 3,7
                 
                 return monthlyOrders;
             }
@@ -621,7 +660,9 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 
                 decimal totalProfit = 0;
                 
-                foreach (var order in allOrders.Where(h => h.NgayTao.Date == today && (h.TrangThai == 3 || h.TrangThai == 7)))
+                foreach (var order in allOrders.Where(h => h.NgayTao.Date == today && 
+                                                          ((h.LoaiHoaDon == "BanTaiQuay" && (h.TrangThai == 1 || h.TrangThai == 2 || h.TrangThai == 3)) || // ✅ BanTaiQuay: trạng thái 1,2,3
+                                                           (h.TrangThai == 3 || h.TrangThai == 7)))) // ✅ Tất cả: trạng thái 3,7
                 {
                     foreach (var item in order.HoaDonChiTiets ?? Enumerable.Empty<HoaDonChiTiet>())
                     {
@@ -657,7 +698,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 
                 foreach (var order in allOrders.Where(h => h.NgayTao.Month == currentMonth && 
                                                           h.NgayTao.Year == currentYear && 
-                                                          (h.TrangThai == 3 || h.TrangThai == 7)))
+                                                          ((h.LoaiHoaDon == "BanTaiQuay" && (h.TrangThai == 1 || h.TrangThai == 2 || h.TrangThai == 3)) || // ✅ BanTaiQuay: trạng thái 1,2,3
+                                                           (h.TrangThai == 3 || h.TrangThai == 7)))) // ✅ Tất cả: trạng thái 3,7
                 {
                     foreach (var item in order.HoaDonChiTiets ?? Enumerable.Empty<HoaDonChiTiet>())
                     {
@@ -736,7 +778,9 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 
                 decimal totalProfit = 0;
                 
-                foreach (var order in allOrders.Where(h => h.NgayTao.Date == yesterday && (h.TrangThai == 3 || h.TrangThai == 7)))
+                foreach (var order in allOrders.Where(h => h.NgayTao.Date == yesterday && 
+                                                          ((h.LoaiHoaDon == "BanTaiQuay" && (h.TrangThai == 1 || h.TrangThai == 2 || h.TrangThai == 3)) || // ✅ BanTaiQuay: trạng thái 1,2,3
+                                                           (h.TrangThai == 3 || h.TrangThai == 7)))) // ✅ Tất cả: trạng thái 3,7
                 {
                     foreach (var item in order.HoaDonChiTiets ?? Enumerable.Empty<HoaDonChiTiet>())
                     {
@@ -771,7 +815,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 
                 foreach (var order in allOrders.Where(h => h.NgayTao.Month == previousMonth && 
                                                           h.NgayTao.Year == previousYear && 
-                                                          (h.TrangThai == 3 || h.TrangThai == 7)))
+                                                          ((h.LoaiHoaDon == "BanTaiQuay" && (h.TrangThai == 1 || h.TrangThai == 2 || h.TrangThai == 3)) || // ✅ BanTaiQuay: trạng thái 1,2,3
+                                                           (h.TrangThai == 3 || h.TrangThai == 7)))) // ✅ Tất cả: trạng thái 3,7
                 {
                     foreach (var item in order.HoaDonChiTiets ?? Enumerable.Empty<HoaDonChiTiet>())
                     {
