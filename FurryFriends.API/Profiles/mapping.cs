@@ -8,6 +8,19 @@ using FurryFriends.API.Repository;
 
 namespace FurryFriends.API.Profiles
 {
+    public class SanPhamProfile : Profile
+    {
+        public SanPhamProfile()
+        {
+            CreateMap<SanPhamChiTiet, SanPhamChiTietDTO>()
+                .ForMember(dest => dest.TenSanPham,
+                           opt => opt.MapFrom(src => src.SanPham.TenSanPham))
+                .ForMember(dest => dest.TrangThaiSanPham,
+                           opt => opt.MapFrom(src => src.SanPham != null ? (bool?)src.SanPham.TrangThai : null))
+                .ForMember(dest => dest.TrangThai,
+                           opt => opt.MapFrom(src => src.TrangThai));
+        }
+    }
     public class GiamGiaProfile : Profile
     {
         public GiamGiaProfile()

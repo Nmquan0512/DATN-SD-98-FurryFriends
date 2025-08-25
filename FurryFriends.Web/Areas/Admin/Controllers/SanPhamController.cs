@@ -25,11 +25,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         private readonly IMauSacService _mauSacService;
         private readonly IThanhPhanService _thanhPhanService;
         private readonly IChatLieuService _chatLieuService;
+        private readonly IThongBaoService _thongBaoService;
 
         public SanPhamController(
             ISanPhamService sanPhamService, ISanPhamChiTietService chiTietService, IAnhService anhService,
             IThuongHieuService thuongHieuService, IKichCoService kichCoService, IMauSacService mauSacService,
-            IThanhPhanService thanhPhanService, IChatLieuService chatLieuService)
+            IThanhPhanService thanhPhanService, IChatLieuService chatLieuService, IThongBaoService thongBaoService)
         {
             _sanPhamService = sanPhamService;
             _chiTietService = chiTietService;
@@ -39,6 +40,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             _mauSacService = mauSacService;
             _thanhPhanService = thanhPhanService;
             _chatLieuService = chatLieuService;
+            _thongBaoService = thongBaoService;
         }
 
         // ---------------- GET: Hiển thị danh sách sản phẩm ----------------
@@ -126,6 +128,15 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
 
             TempData["Success"] = "Tạo sản phẩm và các biến thể thành công!";
+            await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = $"Thêm sản phẩm: {createdSanPham.TenSanPham}",
+                NoiDung = $"Sản phẩm '{createdSanPham.TenSanPham}' đã được thêm vào hệ thống.",
+                Loai = "SanPham",
+                UserName = "admin",
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
             return RedirectToAction("Index");
         }
 
@@ -169,6 +180,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ReadOnly]
         public async Task<IActionResult> Edit(SanPhamFullCreateViewModel model)
         {
+            var oldSanPham = await _sanPhamService.GetByIdAsync(model.SanPham.SanPhamId);
+            if (oldSanPham == null) return NotFound();
             ValidateChiTietList(model.ChiTietList);
 
             if (!ModelState.IsValid)
@@ -189,6 +202,29 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             await ProcessVariants(model.SanPham.SanPhamId, model.ChiTietList);
 
             TempData["Success"] = "Cập nhật sản phẩm thành công!";
+
+            var changes = new List<string>();
+            if (oldSanPham.TenSanPham != model.SanPham.TenSanPham)
+                changes.Add($"Tên: '{oldSanPham.TenSanPham}' → '{model.SanPham.TenSanPham}'");
+            if (oldSanPham.TrangThai != model.SanPham.TrangThai)
+                changes.Add($"Trạng thái: {(oldSanPham.TrangThai ? "Hoạt động" : "Ngưng")} → {(model.SanPham.TrangThai ? "Hoạt động" : "Ngưng")}");
+
+            // (Bạn có thể bổ sung so sánh biến thể tương tự)
+
+            var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+
+            await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Cập nhật sản phẩm",
+                NoiDung = changes.Any()
+                    ? $"Sản phẩm '{model.SanPham.TenSanPham}' đã được chỉnh sửa: {string.Join(", ", changes)}"
+                    : $"Sản phẩm '{model.SanPham.TenSanPham}' đã được chỉnh sửa.",
+                Loai = "SanPham",
+                UserName = userName,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
+
             return RedirectToAction("Index");
         }
 

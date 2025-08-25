@@ -13,7 +13,8 @@ namespace FurryFriends.Web.Services.IService
         Task DeleteAsync(Guid taiKhoanId);
         Task<IEnumerable<TaiKhoan>> FindByUserNameAsync(string userName);
         Task<IEnumerable<TaiKhoan>> GetAllTaiKhoanAsync();
-        Task<LoginResponse?> DangNhapAdminAsync(LoginRequest model);
-        Task<LoginResponse?> DangNhapKhachHangAsync(LoginRequest model);
+        Task<(LoginResponse? Response, string? ErrorMessage)> DangNhapAdminAsync(LoginRequest model);
+
+        Task<(LoginResponse? Response, string? ErrorMessage)> DangNhapKhachHangAsync(LoginRequest model);
     }
 }

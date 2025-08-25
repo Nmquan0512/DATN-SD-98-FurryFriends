@@ -1,4 +1,4 @@
-﻿@model FurryFriends.API.Models.NhanVien
+@model FurryFriends.API.Models.NhanVien
 
 @{
     ViewData["Title"] = "Chỉnh sửa nhân viên";
@@ -32,7 +32,6 @@
             <form asp-action="Edit" method="post">
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                <!-- Các trường ẩn -->
                 <input type="hidden" asp-for="NhanVienId" />
                 <input type="hidden" asp-for="NgayTao" />
                 <input type="hidden" asp-for="TaiKhoanId" />

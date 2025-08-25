@@ -9,9 +9,10 @@
 <table class="table table-bordered table-hover bg-white rounded shadow-sm">
     <thead class="table-light">
         <tr>
-            <th>Tiêu đề</th>
+@*             <th>Tiêu đề</th> *@
             <th>Nội dung</th>
             <th>Ngày tạo</th>
+            <th>Người dùng</th>
             <th>Đã đọc</th>
         </tr>
     </thead>
@@ -19,9 +20,10 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.TieuDe</td>
+@*                 <td>@item.TieuDe</td> *@
                 <td>@item.NoiDung</td>
                 <td>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@item.UserName</td>
                 <td>
                     @if (item.DaDoc)
                     {

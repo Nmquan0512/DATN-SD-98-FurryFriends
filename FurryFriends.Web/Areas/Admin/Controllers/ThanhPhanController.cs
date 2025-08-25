@@ -1,7 +1,8 @@
 ﻿using FurryFriends.API.Models.DTO;
+using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
-using FurryFriends.Web.Filter;
+using System.Threading.Channels;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -11,10 +12,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     public class ThanhPhanController : Controller
     {
         private readonly IThanhPhanService _thanhPhanService;
+        private readonly IThongBaoService _thongBaoService;
 
-        public ThanhPhanController(IThanhPhanService thanhPhanService)
+        public ThanhPhanController(IThanhPhanService thanhPhanService, IThongBaoService thongBaoService)
         {
             _thanhPhanService = thanhPhanService;
+            _thongBaoService = thongBaoService;
         }
 
         public async Task<IActionResult> Index()
@@ -42,6 +45,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             if (result.Success)
             {
                 TempData["success"] = "Thêm thành phần thành công!";
+                var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Thêm thành phần",
+                    NoiDung = $"Thành phần '{dto.TenThanhPhan}' đã được thêm thành công.",
+                    Loai = "ThanhPhan",
+                    UserName = userName,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 return RedirectToAction("Index");
             }
 
@@ -81,6 +94,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             if (result.Data)
             {
                 TempData["success"] = "Cập nhật thành phần thành công!";
+                var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Cập nhật thành phần",
+                    NoiDung = $"Thành phần '{dto.TenThanhPhan}' đã được cập nhật",
+                    Loai = "ThanhPhan",
+                    UserName = userName,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 return RedirectToAction("Index");
             }
 

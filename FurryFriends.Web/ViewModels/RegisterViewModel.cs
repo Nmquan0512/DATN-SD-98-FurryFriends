@@ -9,7 +9,8 @@ namespace FurryFriends.Web.ViewModels
         public string FullName { get; set; }
 
         [Required(ErrorMessage = "Tài khoản không được để trống")]
-        [MinLength(3, ErrorMessage = "Tài khoản phải có ít nhất 3 ký tự")]
+        [MinLength(6, ErrorMessage = "Tài khoản phải có ít nhất 6 ký tự")]
+        [RegularExpression(@"^[A-Za-z0-9]+$", ErrorMessage = "Tài khoản chỉ được chứa chữ và số")]
         [Display(Name = "Tài khoản")]
         public string UserName { get; set; }
 
@@ -27,6 +28,9 @@ namespace FurryFriends.Web.ViewModels
         [MinLength(6, ErrorMessage = "Mật khẩu phải có ít nhất 6 ký tự")]
         [DataType(DataType.Password)]
         [Display(Name = "Mật khẩu")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':""\|,.<>/?]).{6,}$",
+            ErrorMessage = "Mật khẩu phải có chữ, số và ký tự đặc biệt")]
+
         public string Password { get; set; }
 
         [Required(ErrorMessage = "Xác nhận mật khẩu không được để trống")]

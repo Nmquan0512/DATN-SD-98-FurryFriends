@@ -1,8 +1,10 @@
-﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Channels;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -11,11 +13,14 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     public class TaiKhoanController : Controller
     {
         public readonly ITaiKhoanService _taiKhoanService;
+        private readonly IThongBaoService _thongBaoService;
 
-        public TaiKhoanController(ITaiKhoanService taiKhoanService)
+        public TaiKhoanController(ITaiKhoanService taiKhoanService, IThongBaoService thongBaoService)
         {
             _taiKhoanService = taiKhoanService;
+            _thongBaoService = thongBaoService;
         }
+
         public async Task<IActionResult> Index()
         {
             var taiKhoans = await _taiKhoanService.GetAllAsync();
@@ -45,12 +50,22 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
                     await _taiKhoanService.AddAsync(taiKhoan);
 
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Tạo tài khoản",
+                        NoiDung = $"Tài khoản '{taiKhoan.UserName}' đã được tạo thành công.",
+                        Loai = "TaiKhoan",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
                     TempData["Success"] = "Tài khoản đã được tạo thành công.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ValidationException ex)
                 {
-                    // Parse lỗi JSON
                     var problemDetails = Newtonsoft.Json.JsonConvert.DeserializeObject<ValidationProblemDetails>(ex.Message);
                     if (problemDetails?.Errors != null)
                     {
@@ -75,6 +90,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
             return View(taiKhoan);
         }
+
         public async Task<IActionResult> Edit(Guid id)
         {
             var taiKhoan = await _taiKhoanService.GetByIdAsync(id);
@@ -84,6 +100,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
             return View(taiKhoan);
         }
+
         [HttpPost]
         public async Task<IActionResult> Edit(Guid id, TaiKhoan taiKhoan)
         {
@@ -102,12 +119,22 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
                     await _taiKhoanService.UpdateAsync(taiKhoan);
 
+                    var userNameSession = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Cập nhật tài khoản",
+                        NoiDung = $"Tài khoản '{taiKhoan.UserName}' đã được cập nhật",
+                        Loai = "TaiKhoan",
+                        UserName = userNameSession,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
                     TempData["Success"] = "Tài khoản đã được cập nhật thành công.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ValidationException ex)
                 {
-                    // Parse ValidationProblemDetails
                     var problemDetails = Newtonsoft.Json.JsonConvert.DeserializeObject<ValidationProblemDetails>(ex.Message);
                     if (problemDetails?.Errors != null)
                     {
@@ -129,9 +156,9 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     ModelState.AddModelError("", $"Lỗi: {ex.Message}");
                 }
             }
-
             return View(taiKhoan);
         }
+
         public async Task<IActionResult> Delete(Guid id)
         {
             var taiKhoan = await _taiKhoanService.GetByIdAsync(id);
@@ -141,6 +168,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
             return View(taiKhoan);
         }
+
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
@@ -182,7 +210,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                return View("Index", taiKhoans); // ✅ vì taiKhoans là IEnumerable<TaiKhoan>
+                return View("Index", taiKhoans);
             }
             catch (ArgumentException ex)
             {
@@ -195,7 +223,5 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 return View("Index", new List<TaiKhoan>());
             }
         }
-
-
     }
 }

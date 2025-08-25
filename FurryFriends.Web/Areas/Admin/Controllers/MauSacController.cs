@@ -11,10 +11,11 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     public class MauSacController : Controller
     {
         private readonly IMauSacService _mauSacService;
-
-        public MauSacController(IMauSacService mauSacService)
+        private readonly IThongBaoService _thongBaoService;
+        public MauSacController(IMauSacService mauSacService, IThongBaoService thongBaoService)
         {
             _mauSacService = mauSacService;
+            _thongBaoService = thongBaoService;
         }
 
         // GET: /Admin/MauSac
@@ -43,6 +44,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             var result = await _mauSacService.CreateAsync(dto);
             if (result.Success)
             {
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Màu sắc mới",
+                    NoiDung = $"Đã thêm màu sắc \"{dto.TenMau}\".",
+                    Loai = "MauSac",
+                    UserName = tenNhanVien,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 TempData["success"] = "Thêm màu sắc thành công!";
                 return RedirectToAction("Index");
             }
@@ -84,6 +95,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             var result = await _mauSacService.UpdateAsync(id, dto);
             if (result.Data)
             {
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Cập nhật màu sắc",
+                    NoiDung = $"Đã cập nhật màu sắc \"{dto.TenMau}\" (ID: {dto.MauSacId}).",
+                    Loai = "MauSac",
+                    UserName = tenNhanVien,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 TempData["success"] = "Cập nhật màu sắc thành công!";
                 return RedirectToAction("Index");
             }

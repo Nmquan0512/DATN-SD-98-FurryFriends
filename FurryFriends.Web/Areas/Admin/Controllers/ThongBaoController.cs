@@ -1,13 +1,15 @@
+using FurryFriends.API.Models.DTO;
+using FurryFriends.Web.Filter;
+using FurryFriends.Web.Models;
+using FurryFriends.Web.Services.IService;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using FurryFriends.Web.Models;
-using Newtonsoft.Json;
+using System.Net.Http;
 using System.Text;
-using Microsoft.AspNetCore.Hosting;
-using FurryFriends.Web.Filter;
+using System.Threading.Tasks;
 
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
@@ -16,22 +18,29 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     [AuthorizeAdminOnly]
     public class ThongBaoController : Controller
     {
-        private readonly IHttpClientFactory _clientFactory;
-        private readonly string _apiBase;
-        public ThongBaoController(IHttpClientFactory clientFactory, IWebHostEnvironment env)
+        private readonly IThongBaoService _thongBaoService;
+
+        public ThongBaoController(IThongBaoService thongBaoService)
         {
-            _clientFactory = clientFactory;
-            _apiBase = "https://localhost:7289/api/ThongBao"; // Đã sửa lại đúng cổng API
+            _thongBaoService = thongBaoService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var client = _clientFactory.CreateClient();
-            var res = await client.GetAsync(_apiBase);
-            if (!res.IsSuccessStatusCode) return View(new List<ThongBaoViewModel>());
-            var json = await res.Content.ReadAsStringAsync();
-            var list = JsonConvert.DeserializeObject<List<ThongBaoViewModel>>(json);
-            return View(list);
+            var listDto = await _thongBaoService.GetAllAsync();
+
+            var listVm = listDto.Select(dto => new ThongBaoViewModel
+            {
+                ThongBaoId = dto.ThongBaoId,                // cần có trong ViewModel
+                TieuDe = dto.TieuDe,
+                NoiDung = dto.NoiDung,
+                NgayTao = dto.NgayTao,
+                DaDoc = dto.DaDoc,
+                Loai = dto.Loai,
+                UserName = dto.UserName
+            }).ToList();
+
+            return View(listVm);
         }
 
         public IActionResult Create()
@@ -40,19 +49,23 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ThongBaoViewModel model)
+        public async Task<IActionResult> Create(ThongBaoDTO dto)
         {
-            if (!ModelState.IsValid) return View(model);
-            model.Loai = "Admin";
-            model.UserName = "admin";
-            var client = _clientFactory.CreateClient();
-            var json = JsonConvert.SerializeObject(model);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var res = await client.PostAsync(_apiBase, content);
-            if (res.IsSuccessStatusCode)
-                return RedirectToAction("Index");
-            ModelState.AddModelError("", "Tạo thông báo thất bại");
-            return View(model);
+            if (!ModelState.IsValid) return View(dto);
+
+            dto.Loai = "Admin";
+            dto.UserName = "admin";
+
+            await _thongBaoService.CreateAsync(dto);
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetLatest()
+        {
+            var list = await _thongBaoService.GetAllAsync();
+            return Json(list.Where(x => !x.DaDoc).Take(5));
         }
     }
 } 

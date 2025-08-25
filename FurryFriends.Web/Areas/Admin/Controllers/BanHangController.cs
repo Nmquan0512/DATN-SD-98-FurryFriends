@@ -1,4 +1,5 @@
 ﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Models.DTO.BanHang;
 using FurryFriends.API.Models.DTO.BanHang.Requests;
 using FurryFriends.Web.Services;
@@ -20,12 +21,14 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         private readonly IBanHangService _banHangService;
         private readonly IHinhThucThanhToanService _hinhThucThanhToanService;
         private readonly ILogger<BanHangController> _logger;
+        private readonly IThongBaoService _thongBaoService;
 
-        public BanHangController(IBanHangService banHangService, IHinhThucThanhToanService hinhThucThanhToanService, ILogger<BanHangController> logger)
+        public BanHangController(IBanHangService banHangService, IHinhThucThanhToanService hinhThucThanhToanService, ILogger<BanHangController> logger, IThongBaoService thongBaoService)
         {
             _banHangService = banHangService;
             _hinhThucThanhToanService = hinhThucThanhToanService;
             _logger = logger;
+            _thongBaoService = thongBaoService;
         }
 
         #region Actions trả về View (Giữ nguyên)
@@ -137,6 +140,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 var request = new TaoHoaDonRequest { LaKhachLe = true, GhiChu = "Hóa đơn tại quầy" };
                 var result = await _banHangService.TaoHoaDonAsync(request);
                 TempData["success"] = "Đã tạo hóa đơn chờ mới.";
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Tạo hóa đơn mới",
+                    NoiDung = $"Hóa đơn chờ #{result.MaHoaDon} đã được tạo.",
+                    Loai = "HoaDon",
+                    UserName = tenNhanVien,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 return RedirectToAction(nameof(Details), new { id = result.HoaDonId });
             }
             catch (ApiException ex)
@@ -169,7 +182,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ThemSanPham([FromBody] ThemSanPhamRequest request, Guid hoaDonId)
         {
-            try { var result = await _banHangService.ThemSanPhamVaoHoaDonAsync(hoaDonId, request); return Json(new { success = true, data = result }); }
+            try { var result = await _banHangService.ThemSanPhamVaoHoaDonAsync(hoaDonId, request);
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Thêm sản phẩm vào hóa đơn",
+                NoiDung = $"Sản phẩm {request.SanPhamChiTietId} đã được thêm vào hóa đơn #{hoaDonId}.",
+                Loai = "HoaDon",
+                UserName = tenNhanVien, // bạn có thể lấy từ session / User.Identity.Name nếu cần
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            }); return Json(new { success = true, data = result } ); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
@@ -177,7 +200,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CapNhatSoLuong([FromBody] CapNhatSoLuongRequest request, Guid hoaDonId, Guid sanPhamChiTietId)
         {
-            try { var result = await _banHangService.CapNhatSoLuongSanPhamAsync(hoaDonId, sanPhamChiTietId, request); return Json(new { success = true, data = result }); }
+            try { var result = await _banHangService.CapNhatSoLuongSanPhamAsync(hoaDonId, sanPhamChiTietId, request);
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Cập nhật số lượng sản phẩm",
+                NoiDung = $"Sản phẩm trong hóa đơn #{hoaDonId} đã được cập nhật số lượng thành {request.SoLuongMoi}.",
+                Loai = "HoaDon",
+                UserName = tenNhanVien, // hoặc lấy từ User.Identity.Name nếu có đăng nhập
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            }); return Json(new { success = true, data = result }); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
@@ -185,7 +218,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> XoaSanPham(Guid hoaDonId, Guid sanPhamChiTietId)
         {
-            try { var result = await _banHangService.XoaSanPhamKhoiHoaDonAsync(hoaDonId, sanPhamChiTietId); return Json(new { success = true, data = result }); }
+            try { var result = await _banHangService.XoaSanPhamKhoiHoaDonAsync(hoaDonId, sanPhamChiTietId);
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Cập nhật hóa đơn",
+                NoiDung = $"Đã xóa sản phẩm khỏi hóa đơn #{hoaDonId}",
+                Loai = "HoaDon",
+                UserName = tenNhanVien,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            }); return Json(new { success = true, data = result }); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
@@ -222,7 +265,18 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApDungVoucher([FromBody] ApDungVoucherRequest request, Guid hoaDonId)
         {
-            try { var result = await _banHangService.ApDungVoucherAsync(hoaDonId, request); return Json(new { success = true, data = result }); }
+            try { var result = await _banHangService.ApDungVoucherAsync(hoaDonId, request);
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Áp dụng voucher",
+                NoiDung = $"Đã áp dụng voucher {request.MaVoucher} cho hóa đơn #{hoaDonId}",
+                Loai = "HoaDon",
+                UserName = tenNhanVien,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
+                return Json(new { success = true, data = result }); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
@@ -270,7 +324,18 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GoBoVoucher(Guid hoaDonId)
         {
-            try { var result = await _banHangService.GoBoVoucherAsync(hoaDonId); return Json(new { success = true, data = result }); }
+            try { var result = await _banHangService.GoBoVoucherAsync(hoaDonId);
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Hủy voucher",
+                NoiDung = $"Đã gỡ bỏ voucher khỏi hóa đơn #{hoaDonId}",
+                Loai = "HoaDon",
+                UserName = tenNhanVien,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
+                return Json(new { success = true, data = result }); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 
@@ -282,6 +347,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             try
             {
                 var result = await _banHangService.ThanhToanHoaDonAsync(hoaDonId, request);
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Thanh toán",
+                    NoiDung = $"Hóa đơn #{result.MaHoaDon} đã được thanh toán thành công.",
+                    Loai = "HoaDon",
+                    UserName = tenNhanVien,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 TempData["success"] = "Thanh toán hóa đơn thành công!";
                 return Json(new { success = true, data = result, redirectUrl = Url.Action("Index") });
             }
@@ -297,7 +372,18 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 var error = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault();
                 return Json(new { success = false, message = error?.ErrorMessage ?? "Dữ liệu không hợp lệ." });
             }
-            try { var result = await _banHangService.TaoKhachHangMoiAsync(request); return Json(new { success = true, data = result }); }
+            try { var result = await _banHangService.TaoKhachHangMoiAsync(request);
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Khách hàng mới",
+                NoiDung = $"Khách hàng {request.TenKhachHang} đã được tạo và gán vào hóa đơn",
+                Loai = "KhachHang",
+                UserName = tenNhanVien,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
+                return Json(new { success = true, data = result }); }
             catch (ApiException ex) { return Json(new { success = false, message = ex.Message }); }
         }
 

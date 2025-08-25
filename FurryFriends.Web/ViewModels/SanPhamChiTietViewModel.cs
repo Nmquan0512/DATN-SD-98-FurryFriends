@@ -1,4 +1,4 @@
-﻿namespace FurryFriends.Web.ViewModels
+namespace FurryFriends.Web.ViewModels
 {
     public class SanPhamChiTietViewModel
     {
@@ -15,6 +15,8 @@
         public decimal? PhanTramGiamGia { get; set; }
         public decimal? GiaSauGiam { get; set; }
         public bool CoGiamGia { get; set; } = false;
-        public DateTime? NgayKetThucGiamGia { get; set; } // Thêm ngày kết thúc giảm giá
+
+        public DateTime? NgayKetThucGiamGia { get; set; } // Ngày kết thúc giảm giá
+        public bool TrangThai { get; set; } // Trạng thái sản phẩm (hoạt động/ngừng)
     }
 }
