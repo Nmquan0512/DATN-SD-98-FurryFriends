@@ -69,12 +69,33 @@ namespace FurryFriends.API.Data
                 TrangThai = true
             });
 
+            // Seed nhân viên account
+            modelBuilder.Entity<TaiKhoan>().HasData(new TaiKhoan
+            {
+                TaiKhoanId = Guid.Parse("55555555-5555-5555-5555-555555555555"),
+                UserName = "nhanvien",
+                Password = "123456",
+                NgayTaoTaiKhoan = DateTime.UtcNow,
+                TrangThai = true
+            });
+
             // Seed admin role
             modelBuilder.Entity<ChucVu>().HasData(new ChucVu
             {
                 ChucVuId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
                 TenChucVu = "admin",
                 MoTaChucVu = "Quản trị viên hệ thống",
+                TrangThai = true,
+                NgayTao = DateTime.UtcNow,
+                NgayCapNhat = DateTime.UtcNow
+            });
+
+            // Seed nhân viên role
+            modelBuilder.Entity<ChucVu>().HasData(new ChucVu
+            {
+                ChucVuId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
+                TenChucVu = "nhanvien",
+                MoTaChucVu = "Nhân viên bán hàng tại quầy",
                 TrangThai = true,
                 NgayTao = DateTime.UtcNow,
                 NgayCapNhat = DateTime.UtcNow
@@ -92,6 +113,23 @@ namespace FurryFriends.API.Data
                 Email = "admin@furryfriends.local",
                 GioiTinh = "Nam",
                 ChucVuId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                TrangThai = true,
+                NgayTao = DateTime.UtcNow,
+                NgayCapNhat = DateTime.UtcNow
+            });
+
+            // Seed nhân viên employee
+            modelBuilder.Entity<NhanVien>().HasData(new NhanVien
+            {
+                NhanVienId = Guid.Parse("66666666-6666-6666-6666-666666666666"),
+                TaiKhoanId = Guid.Parse("55555555-5555-5555-5555-555555555555"),
+                HoVaTen = "Nhân viên bán hàng",
+                NgaySinh = new DateTime(1995, 5, 15),
+                DiaChi = "Hà Nội",
+                SDT = "0987654321",
+                Email = "nhanvien@furryfriends.local",
+                GioiTinh = "Nữ",
+                ChucVuId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
                 TrangThai = true,
                 NgayTao = DateTime.UtcNow,
                 NgayCapNhat = DateTime.UtcNow

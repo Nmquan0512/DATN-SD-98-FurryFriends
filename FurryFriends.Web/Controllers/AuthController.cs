@@ -22,6 +22,13 @@ public class AuthController : Controller
         // Xóa TempData cũ để tránh hiển thị thông báo không mong muốn
         TempData.Clear();
         
+        // Kiểm tra thông báo lỗi từ middleware
+        var error = Request.Query["error"].ToString();
+        if (error == "unauthorized")
+        {
+            TempData["Error"] = "Bạn không có quyền truy cập khu vực quản trị. Chỉ admin mới có thể truy cập.";
+        }
+        
         var taiKhoanId = HttpContext.Session.GetString("TaiKhoanId");
         if (!string.IsNullOrEmpty(taiKhoanId))
         {

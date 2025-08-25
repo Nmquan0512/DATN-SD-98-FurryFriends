@@ -1,9 +1,11 @@
 using FurryFriends.API.Models.VNPay;
 using FurryFriends.Web.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
+using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Controllers
 {
+    [AuthorizeAdminOnly]
     public class PaymentController : Controller
     {
         private readonly IVnPayService _vnPayService;

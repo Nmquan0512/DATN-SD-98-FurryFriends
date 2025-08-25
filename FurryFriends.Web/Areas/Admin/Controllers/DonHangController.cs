@@ -9,7 +9,7 @@ using System.Security.Claims;
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AuthorizeAdminOnly]
+    [AuthorizeEmployee]
     public class DonHangController : Controller
     {
         private readonly IHoaDonService _hoaDonService;

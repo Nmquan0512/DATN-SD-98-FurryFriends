@@ -3,6 +3,7 @@ using FurryFriends.API.Models.DTO.BanHang;
 using FurryFriends.API.Models.DTO.BanHang.Requests;
 using FurryFriends.Web.Services;
 using FurryFriends.Web.Services.IService;
+using FurryFriends.Web.Filter;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("Admin/BanHang/[action]")] // Định tuyến tập trung, dễ gọi từ JS
+    [AuthorizeEmployee]
     public class BanHangController : Controller
     {
         private readonly IBanHangService _banHangService;

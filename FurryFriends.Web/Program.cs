@@ -226,6 +226,41 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Middleware kiểm tra quyền truy cập Area Admin
+app.Use(async (context, next) =>
+{
+    var area = context.Request.RouteValues["area"]?.ToString();
+    var controller = context.Request.RouteValues["controller"]?.ToString();
+    var role = context.Session.GetString("Role");
+    
+    // Nếu đang truy cập Area Admin
+    if (area?.ToLower() == "admin")
+    {
+        // Danh sách controller được phép cho nhân viên
+        var allowedControllersForEmployee = new[] { "BanHang", "DonHang", "HoaDon", "KhachHangs", "SanPham" };
+        
+        // Kiểm tra xem có phải admin không
+        if (string.IsNullOrEmpty(role) || role.ToLower() != "admin")
+        {
+            // Nếu không phải admin, kiểm tra xem có được phép truy cập controller này không
+            if (role?.ToLower() == "nhanvien" && controller != null && allowedControllersForEmployee.Contains(controller))
+            {
+                // Nhân viên được phép truy cập các controller này
+                await next();
+                return;
+            }
+            else
+            {
+                // Không có quyền truy cập
+                context.Response.Redirect("/Auth/DangNhap?error=unauthorized");
+                return;
+            }
+        }
+    }
+    
+    await next();
+});
+
 app.UseCookiePolicy(new CookiePolicyOptions
 {
     MinimumSameSitePolicy = SameSiteMode.Lax,

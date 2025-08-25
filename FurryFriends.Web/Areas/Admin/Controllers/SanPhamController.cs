@@ -13,7 +13,7 @@ using FurryFriends.API.Models;
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AuthorizeAdminOnly]
+    [AuthorizeEmployee]
 
     public class SanPhamController : Controller
     {
@@ -74,6 +74,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         // ---------------- POST: Tạo sản phẩm đầy đủ ----------------
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ReadOnly]
         public async Task<IActionResult> Create(SanPhamFullCreateViewModel model)
         {
             ValidateChiTietList(model.ChiTietList);
@@ -165,6 +166,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         // ---------------- POST: Chỉnh sửa sản phẩm đầy đủ ----------------
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ReadOnly]
         public async Task<IActionResult> Edit(SanPhamFullCreateViewModel model)
         {
             ValidateChiTietList(model.ChiTietList);
@@ -201,6 +203,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [ReadOnly]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             try

@@ -1,6 +1,6 @@
 @model IEnumerable<FurryFriends.API.Models.DTO.SanPhamDTO>
-
 @using Microsoft.AspNetCore.Mvc.Rendering
+@using FurryFriends.Web.Helpers
 
 @{
     ViewData["Title"] = "Quản lý sản phẩm";
@@ -42,9 +42,12 @@
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="fw-bold">@ViewData["Title"]</h4>
-        <a asp-area="Admin" asp-controller="SanPham" asp-action="Create" class="btn btn-lg btn-primary shadow">
-            <i class="fas fa-plus me-2"></i>Thêm mới
-        </a>
+        @if (Context.Session.CanCreate())
+        {
+            <a asp-area="Admin" asp-controller="SanPham" asp-action="Create" class="btn btn-lg btn-primary shadow">
+                <i class="fas fa-plus me-2"></i>Thêm mới
+            </a>
+        }
     </div>
 
     <div class="card shadow-sm p-4 mb-4 border-0">
@@ -202,12 +205,18 @@
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <a asp-area="Admin" asp-controller="SanPham" asp-action="Edit" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-primary action-btn" title="Chỉnh sửa">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <a asp-area="Admin" asp-controller="SanPham" asp-action="Delete" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-danger action-btn" title="Xoá">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
+                                        @if (Context.Session.CanEdit())
+                                        {
+                                            <a asp-area="Admin" asp-controller="SanPham" asp-action="Edit" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-primary action-btn" title="Chỉnh sửa">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        }
+                                        @if (Context.Session.CanDelete())
+                                        {
+                                            <a asp-area="Admin" asp-controller="SanPham" asp-action="Delete" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-danger action-btn" title="Xoá">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        }
                                         <a asp-area="Admin" asp-controller="SanPhamChiTiet" asp-action="Index" asp-route-sanPhamId="@item.SanPhamId" class="btn btn-sm btn-outline-secondary" title="Chi tiết sản phẩm">
                                             <i class="fas fa-boxes-stacked"></i>
                                         </a>

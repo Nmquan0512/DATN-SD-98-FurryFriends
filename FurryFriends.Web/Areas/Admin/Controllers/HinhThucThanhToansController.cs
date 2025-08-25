@@ -1,8 +1,11 @@
 ﻿using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
+using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    [AuthorizeAdminOnly]
     public class HinhThucThanhToansController : Controller
     {
         private readonly IHinhThucThanhToanService _hinhThucThanhToanService;

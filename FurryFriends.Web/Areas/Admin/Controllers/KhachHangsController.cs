@@ -10,7 +10,7 @@ using FurryFriends.Web.Filter;
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AuthorizeAdminOnly]
+    [AuthorizeEmployee]
     public class KhachHangsController : Controller
     {
         private readonly IKhachHangService _khachHangService;
@@ -80,6 +80,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         // POST: Admin/KhachHangs/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ReadOnly]
         public async Task<IActionResult> Create(KhachHang khachHang)
         {
             // Xử lý TaiKhoanId từ form
@@ -194,6 +195,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ReadOnly]
         public async Task<IActionResult> Edit(Guid id, KhachHang model)
         {
             // Xử lý TaiKhoanId từ form
@@ -317,6 +319,7 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [ReadOnly]
         public async Task<IActionResult> DeleteConfirmed(Guid KhachHangId)
         {
             await _khachHangService.DeleteAsync(KhachHangId);

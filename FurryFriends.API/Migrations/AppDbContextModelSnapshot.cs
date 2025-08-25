@@ -103,9 +103,18 @@ namespace FurryFriends.API.Migrations
                         {
                             ChucVuId = new Guid("22222222-2222-2222-2222-222222222222"),
                             MoTaChucVu = "Quản trị viên hệ thống",
-                            NgayCapNhat = new DateTime(2025, 8, 25, 10, 38, 45, 644, DateTimeKind.Utc).AddTicks(2760),
-                            NgayTao = new DateTime(2025, 8, 25, 10, 38, 45, 644, DateTimeKind.Utc).AddTicks(2759),
+                            NgayCapNhat = new DateTime(2025, 8, 25, 16, 27, 17, 410, DateTimeKind.Utc).AddTicks(5971),
+                            NgayTao = new DateTime(2025, 8, 25, 16, 27, 17, 410, DateTimeKind.Utc).AddTicks(5970),
                             TenChucVu = "admin",
+                            TrangThai = true
+                        },
+                        new
+                        {
+                            ChucVuId = new Guid("44444444-4444-4444-4444-444444444444"),
+                            MoTaChucVu = "Nhân viên bán hàng tại quầy",
+                            NgayCapNhat = new DateTime(2025, 8, 25, 16, 27, 17, 410, DateTimeKind.Utc).AddTicks(5999),
+                            NgayTao = new DateTime(2025, 8, 25, 16, 27, 17, 410, DateTimeKind.Utc).AddTicks(5999),
+                            TenChucVu = "nhanvien",
                             TrangThai = true
                         });
                 });
@@ -659,11 +668,26 @@ namespace FurryFriends.API.Migrations
                             Email = "admin@furryfriends.local",
                             GioiTinh = "Nam",
                             HoVaTen = "Admin hệ thống",
-                            NgayCapNhat = new DateTime(2025, 8, 25, 10, 38, 45, 644, DateTimeKind.Utc).AddTicks(2815),
+                            NgayCapNhat = new DateTime(2025, 8, 25, 16, 27, 17, 410, DateTimeKind.Utc).AddTicks(6039),
                             NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayTao = new DateTime(2025, 8, 25, 10, 38, 45, 644, DateTimeKind.Utc).AddTicks(2814),
+                            NgayTao = new DateTime(2025, 8, 25, 16, 27, 17, 410, DateTimeKind.Utc).AddTicks(6038),
                             SDT = "0123456789",
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            TrangThai = true
+                        },
+                        new
+                        {
+                            NhanVienId = new Guid("66666666-6666-6666-6666-666666666666"),
+                            ChucVuId = new Guid("44444444-4444-4444-4444-444444444444"),
+                            DiaChi = "Hà Nội",
+                            Email = "nhanvien@furryfriends.local",
+                            GioiTinh = "Nữ",
+                            HoVaTen = "Nhân viên bán hàng",
+                            NgayCapNhat = new DateTime(2025, 8, 25, 16, 27, 17, 410, DateTimeKind.Utc).AddTicks(6069),
+                            NgaySinh = new DateTime(1995, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NgayTao = new DateTime(2025, 8, 25, 16, 27, 17, 410, DateTimeKind.Utc).AddTicks(6068),
+                            SDT = "0987654321",
+                            TaiKhoanId = new Guid("55555555-5555-5555-5555-555555555555"),
                             TrangThai = true
                         });
                 });
@@ -807,10 +831,18 @@ namespace FurryFriends.API.Migrations
                         new
                         {
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            NgayTaoTaiKhoan = new DateTime(2025, 8, 25, 10, 38, 45, 644, DateTimeKind.Utc).AddTicks(2327),
+                            NgayTaoTaiKhoan = new DateTime(2025, 8, 25, 16, 27, 17, 410, DateTimeKind.Utc).AddTicks(5874),
                             Password = "123456",
                             TrangThai = true,
                             UserName = "admin"
+                        },
+                        new
+                        {
+                            TaiKhoanId = new Guid("55555555-5555-5555-5555-555555555555"),
+                            NgayTaoTaiKhoan = new DateTime(2025, 8, 25, 16, 27, 17, 410, DateTimeKind.Utc).AddTicks(5927),
+                            Password = "123456",
+                            TrangThai = true,
+                            UserName = "nhanvien"
                         });
                 });
 
