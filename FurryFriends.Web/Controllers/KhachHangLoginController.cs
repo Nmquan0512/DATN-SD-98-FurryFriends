@@ -1,9 +1,10 @@
+using FurryFriends.API.Models;
 using FurryFriends.Web.Models;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
-using FurryFriends.API.Models;
-using LoginRequest = FurryFriends.API.Models.LoginRequest;
 using Microsoft.Extensions.Logging;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using LoginRequest = FurryFriends.API.Models.LoginRequest;
 
 public class KhachHangLoginController : Controller
 {
@@ -40,13 +41,15 @@ public class KhachHangLoginController : Controller
 
         _logger.LogInformation($"Khách hàng đăng nhập với UserName: {model.UserName}");
 
-        var result = await _taiKhoanService.DangNhapKhachHangAsync(model);
+        var (result, error) = await _taiKhoanService.DangNhapKhachHangAsync(model);
         _logger.LogInformation($"Kết quả đăng nhập khách hàng: {(result != null ? "Thành công" : "Thất bại")}");
 
         if (result == null)
         {
-            TempData["Error"] = "Sai tên đăng nhập hoặc mật khẩu. Vui lòng kiểm tra lại!";
-            return View(model); // Return view instead of redirect
+            TempData["Error"] = string.IsNullOrEmpty(error)
+        ? "Đăng nhập thất bại!"
+        : error;
+            return View(model);
         }
 
         // Lưu session

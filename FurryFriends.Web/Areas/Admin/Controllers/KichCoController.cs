@@ -11,10 +11,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     public class KichCoController : Controller
     {
         private readonly IKichCoService _kichCoService;
+        private readonly IThongBaoService _thongBaoService;
 
-        public KichCoController(IKichCoService kichCoService)
+        public KichCoController(IKichCoService kichCoService, IThongBaoService thongBaoService)
         {
             _kichCoService = kichCoService;
+            _thongBaoService = thongBaoService;
         }
 
         public async Task<IActionResult> Index()
@@ -42,6 +44,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
             if (result.Success)
             {
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Kích cỡ mới",
+                    NoiDung = $"Đã thêm kích cỡ \"{dto.TenKichCo}\".",
+                    Loai = "KichCo",
+                    UserName = tenNhanVien,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 TempData["success"] = "Thêm kích cỡ thành công!";
                 return RedirectToAction("Index");
             }
@@ -81,6 +93,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             var result = await _kichCoService.UpdateAsync(id, dto);
             if (result.Data)
             {
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Cập nhật kích cỡ",
+                    NoiDung = $"Đã cập nhật kích cỡ \"{dto.TenKichCo}\" (ID: {dto.KichCoId}).",
+                    Loai = "KichCo",
+                    UserName = tenNhanVien,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 TempData["success"] = "Cập nhật kích cỡ thành công!";
                 return RedirectToAction("Index");
             }

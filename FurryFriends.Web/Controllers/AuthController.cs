@@ -47,11 +47,16 @@ public class AuthController : Controller
         _logger.LogInformation($"Đăng nhập với UserName: {model.UserName}");
 
         // Thử đăng nhập admin/nhân viên
-        var result = await _taiKhoanService.DangNhapAdminAsync(model);
+        var (result, errorMessage) = await _taiKhoanService.DangNhapAdminAsync(model);
         _logger.LogInformation($"Kết quả đăng nhập admin: {(result != null ? "Thành công" : "Thất bại")}");
 
         if (result != null)
         {
+            if (!result.TrangThai)
+            {
+                TempData["Error"] = "Tài khoản đã dừng hoạt động.";
+                return View(model);
+            }
             HttpContext.Session.SetString("TaiKhoanId", result.TaiKhoanId.ToString());
             HttpContext.Session.SetString("Role", result.Role);
             HttpContext.Session.SetString("HoTen", result.HoTen ?? "");
@@ -72,22 +77,27 @@ public class AuthController : Controller
         }
 
         // Nếu không phải admin/nhân viên, thử đăng nhập khách hàng
-        var khResult = await _taiKhoanService.DangNhapKhachHangAsync(model);
-        _logger.LogInformation($"Kết quả đăng nhập khách hàng: {(khResult != null ? "Thành công" : "Thất bại")}");
+        var (khResult, khError) = await _taiKhoanService.DangNhapKhachHangAsync(model);
 
         if (khResult != null)
         {
-            // Lưu session cho khách hàng
+            if (!khResult.TrangThai) // <- sửa ở đây
+            {
+                TempData["Error"] = "Tài khoản đã dừng hoạt động.";
+                return View(model);
+            }
+
             HttpContext.Session.SetString("TaiKhoanId", khResult.TaiKhoanId.ToString());
             HttpContext.Session.SetString("Role", khResult.Role);
             HttpContext.Session.SetString("HoTen", khResult.HoTen ?? "");
-            
+
             TempData["Warning"] = "Bạn không có quyền truy cập khu vực quản trị. Vui lòng đăng nhập vào trang khách hàng.";
-            return View(model); // Return view instead of redirect
+            return View(model);
         }
 
-        TempData["Error"] = "Sai tài khoản hoặc mật khẩu. Vui lòng kiểm tra lại!";
-        return View(model); // Return view instead of redirect
+        TempData["Error"] = khError ?? "Sai tài khoản hoặc mật khẩu. Vui lòng kiểm tra lại!";
+        return View(model);
+
     }
 
     [HttpGet]

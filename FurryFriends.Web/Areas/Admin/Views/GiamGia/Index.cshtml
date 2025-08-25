@@ -127,14 +127,14 @@
                                             <a asp-action="Edit" asp-route-id="@item.GiamGiaId" class="btn btn-outline-primary" title="Xem chi tiết & Chỉnh sửa">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <button type="button" class="btn btn-outline-danger" title="Xóa"
+@*                                             <button type="button" class="btn btn-outline-danger" title="Xóa"
                                                     data-bs-toggle="modal" data-bs-target="#deleteModal-@item.GiamGiaId">
                                                 <i class="fas fa-trash"></i>
-                                            </button>
+                                            </button> *@
                                         </div>
 
                                         <!-- Modal xóa -->
-                                        <div class="modal fade" id="deleteModal-@item.GiamGiaId" tabindex="-1">
+                                        @* <div class="modal fade" id="deleteModal-@item.GiamGiaId" tabindex="-1">
                                             <div class="modal-dialog modal-dialog-centered">
                                                 <div class="modal-content">
                                                     <div class="modal-header bg-danger text-white">
@@ -154,7 +154,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> *@
                                     </td>
                                 </tr>
                             }

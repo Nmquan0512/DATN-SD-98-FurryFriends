@@ -1,11 +1,12 @@
-using System.Net.Http;
-using System.Text;
 using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
+using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
-using FurryFriends.Web.Filter;
+using System.Net.Http;
+using System.Text;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -16,12 +17,14 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         private readonly IKhachHangService _khachHangService;
         private readonly ITaiKhoanService _taiKhoanService;
         private readonly IHttpClientFactory _clientFactory;
+        private readonly IThongBaoService _thongBaoService;
 
-        public KhachHangsController(IKhachHangService khachHangService, ITaiKhoanService taiKhoanService, IHttpClientFactory clientFactory)
+        public KhachHangsController(IKhachHangService khachHangService, ITaiKhoanService taiKhoanService, IHttpClientFactory clientFactory, IThongBaoService thongBaoService)
         {
             _khachHangService = khachHangService;
             _taiKhoanService = taiKhoanService;
             _clientFactory = clientFactory;
+            _thongBaoService = thongBaoService;
         }
 
         public async Task<IActionResult> Index()
@@ -57,7 +60,13 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Create()
         {
             var taiKhoans = await _taiKhoanService.GetAllTaiKhoanAsync();
-            ViewBag.TaiKhoanList = new SelectList(taiKhoans, "TaiKhoanId", "TenDangNhap");
+            var activeTaiKhoans = taiKhoans.Where(t => t.TrangThai)
+                                   .Select(t => new {
+                                       TaiKhoanId = t.TaiKhoanId,
+                                       TenHienThi = t.UserName
+                                   });
+
+            ViewBag.TaiKhoanList = new SelectList(activeTaiKhoans, "TaiKhoanId", "TenHienThi");
             return View();
         }
 
@@ -67,10 +76,26 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Create(KhachHang khachHang)
         {
             var taiKhoans = await _taiKhoanService.GetAllTaiKhoanAsync();
-            ViewBag.TaiKhoanList = new SelectList(taiKhoans, "TaiKhoanId", "TenDangNhap", khachHang.TaiKhoanId);
+            var activeTaiKhoans = taiKhoans.Where(t => t.TrangThai)
+                                   .Select(t => new {
+                                       TaiKhoanId = t.TaiKhoanId,
+                                       TenHienThi = t.UserName
+                                   });
+
+            ViewBag.TaiKhoanList = new SelectList(activeTaiKhoans, "TaiKhoanId", "TenHienThi", khachHang.TaiKhoanId);
             if (!ModelState.IsValid) return View(khachHang);
 
             var success = await _khachHangService.CreateAsync(khachHang);
+            var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+            await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Khách hàng mới",
+                NoiDung = $"Đã tạo khách hàng \"{khachHang.TenKhachHang}\" (SDT: {khachHang.SDT}).",
+                Loai = "KhachHang",
+                UserName = tenNhanVien,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
             if (success) return RedirectToAction(nameof(Index));
             return View(khachHang);
         }
@@ -89,7 +114,13 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
             // Lấy danh sách tất cả tài khoản (nếu cần dùng cho các mục khác)
             var taiKhoans = await _taiKhoanService.GetAllTaiKhoanAsync();
-            ViewBag.TaiKhoanList = new SelectList(taiKhoans, "TaiKhoanId", "TenDangNhap", khachHang.TaiKhoanId);
+            var activeTaiKhoans = taiKhoans.Where(t => t.TrangThai)
+                                   .Select(t => new {
+                                       TaiKhoanId = t.TaiKhoanId,
+                                       TenHienThi = t.UserName
+                                   });
+
+            ViewBag.TaiKhoanList = new SelectList(activeTaiKhoans, "TaiKhoanId", "TenHienThi", khachHang.TaiKhoanId);
 
             // ✅ Lấy tài khoản đã chọn để hiển thị tên trong select2
             if (khachHang.TaiKhoanId != null)
@@ -107,10 +138,26 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(Guid id, KhachHang model)
         {
             var taiKhoans = await _taiKhoanService.GetAllTaiKhoanAsync();
-            ViewBag.TaiKhoanList = new SelectList(taiKhoans, "TaiKhoanId", "TenDangNhap", model.TaiKhoanId);
+            var taiKhoanSelectList = taiKhoans.Select(t => new {
+                TaiKhoanId = t.TaiKhoanId,
+                TenHienThi = t.TrangThai
+        ? t.UserName
+        : $"{t.UserName} (không hoạt động)"
+            });
+            ViewBag.TaiKhoanList = new SelectList(taiKhoanSelectList, "TaiKhoanId", "TenHienThi");
             if (id != model.KhachHangId) return BadRequest();
             if (!ModelState.IsValid) return View(model);
             await _khachHangService.UpdateAsync(model.KhachHangId, model);
+            var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+            await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Cập nhật khách hàng",
+                NoiDung = $"Đã cập nhật thông tin khách hàng \"{model.TenKhachHang}\" (ID: {model.KhachHangId}).",
+                Loai = "KhachHang",
+                UserName = tenNhanVien,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
             TempData["success"] = "Cập nhật khách hàng thành công!";
             return RedirectToAction(nameof(Index));
         }

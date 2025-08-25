@@ -142,10 +142,12 @@ namespace FurryFriends.API.Controllers
                 }
                 var all = await _taiKhoanRepository.GetAllAsync();
                 var result = all
-                    .Where(tk => !string.IsNullOrEmpty(tk.UserName) && tk.UserName.ToLower().Contains(keyword.ToLower()))
-                    .Select(tk => new { taiKhoanId = tk.TaiKhoanId, userName = tk.UserName })
-                    .Take(20)
-                    .ToList();
+            .Where(tk => tk.TrangThai == true  // ✅ chỉ lấy tài khoản hoạt động
+                      && !string.IsNullOrEmpty(tk.UserName)
+                      && tk.UserName.ToLower().Contains(keyword.ToLower()))
+            .Select(tk => new { taiKhoanId = tk.TaiKhoanId, userName = tk.UserName })
+            .Take(20)
+            .ToList();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -153,6 +155,20 @@ namespace FurryFriends.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpGet("available-for-nhanvien")]
+        public async Task<IActionResult> GetAvailableForNhanVien()
+        {
+            var all = await _taiKhoanRepository.GetAllAsync();
+
+            var result = all
+                .Where(tk => tk.TrangThai == true && tk.NhanVien == null && tk.KhachHang == null)
+                .Select(tk => new { taiKhoanId = tk.TaiKhoanId, userName = tk.UserName })
+                .ToList();
+
+            return Ok(result);
+        }
+
 
         [HttpPost("dang-nhap-admin")]
         public async Task<IActionResult> DangNhapAdmin([FromBody] LoginRequest model)
@@ -201,7 +217,8 @@ namespace FurryFriends.API.Controllers
                 {
                     TaiKhoanId = taiKhoan.TaiKhoanId,
                     Role = taiKhoan.NhanVien.ChucVu?.TenChucVu ?? "NhanVien",
-                    HoTen = taiKhoan.NhanVien.HoVaTen
+                    HoTen = taiKhoan.NhanVien.HoVaTen,
+                    TrangThai = taiKhoan.TrangThai
                 };
 
                 _logger.LogInformation($"API: Đăng nhập admin thành công cho UserName: {model.UserName}, Role: {response.Role}");
@@ -279,7 +296,8 @@ namespace FurryFriends.API.Controllers
                     TaiKhoanId = taiKhoan.TaiKhoanId,
                     KhachHangId = taiKhoan.KhachHang?.KhachHangId ?? Guid.Empty, //sửa cho thêm dòng này
                     Role = actualRole,
-                    HoTen = hoTen
+                    HoTen = hoTen,
+                    TrangThai = taiKhoan.TrangThai
                 };
 
                 _logger.LogInformation($"API: Đăng nhập thành công cho UserName: {model.UserName} với Role: {actualRole}");

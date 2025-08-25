@@ -26,23 +26,32 @@ namespace FurryFriends.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var danhSachSanPhamDTO = await _sanPhamService.GetAllAsync();
-
             var viewModelList = new List<SanPhamViewModel>();
 
-            // Lấy toàn bộ danh sách chi tiết một lần để tránh gọi API nhiều lần
+            // Lấy toàn bộ chi tiết một lần
             var allChiTietListDTO = await _sanPhamChiTietService.GetAllAsync();
 
             foreach (var sp in danhSachSanPhamDTO)
             {
+                // Bỏ qua sản phẩm không hoạt động
+                if (!sp.TrangThai)
+                    continue;
+
+                // Lọc chi tiết theo sản phẩm
                 var chiTietListDTO = allChiTietListDTO
-                                        .Where(ct => ct.SanPhamId == sp.SanPhamId)
-                                        .ToList();
+                    .Where(ct => ct.SanPhamId == sp.SanPhamId
+                              && ct.SoLuong > 0
+                              && ct.TrangThai == 1) // ✅ chỉ lấy chi tiết còn hàng & hoạt động
+                    .ToList();
+
+                if (!chiTietListDTO.Any())
+                    continue; // ✅ nếu không có chi tiết hợp lệ thì bỏ luôn sp
 
                 string? anhDaiDien = chiTietListDTO
-                                        .FirstOrDefault(ct => !string.IsNullOrEmpty(ct.DuongDan))
-                                        ?.DuongDan;
+                    .FirstOrDefault(ct => !string.IsNullOrEmpty(ct.DuongDan))
+                    ?.DuongDan;
 
-                // 👉 Chuyển sang ViewModel với thông tin giảm giá
+                // Chuyển sang ViewModel chi tiết
                 var chiTietVMs = chiTietListDTO.Select(ct => new SanPhamChiTietViewModel
                 {
                     SanPhamChiTietId = ct.SanPhamChiTietId,
@@ -51,8 +60,8 @@ namespace FurryFriends.Web.Controllers
                     SoLuongTon = ct.SoLuong,
                     GiaBan = ct.Gia,
                     DanhSachAnh = ct.DuongDan != null ? new List<string> { ct.DuongDan } : new List<string>(),
-                    
-                    // Thông tin giảm giá sẽ được tính toán sau
+
+                    // Thông tin giảm giá sẽ cập nhật sau
                     CoGiamGia = false,
                     PhanTramGiamGia = null,
                     GiaSauGiam = null
@@ -62,22 +71,20 @@ namespace FurryFriends.Web.Controllers
                 {
                     SanPhamId = sp.SanPhamId,
                     TenSanPham = sp.TenSanPham,
-                    MoTa = sp.TenThuongHieu ?? "", // Đây là mô tả, không phải tên thương hiệu
+                    MoTa = sp.TenThuongHieu, // ✅ sửa lại đúng mô tả
                     TrangThai = sp.TrangThai,
                     AnhDaiDienUrl = anhDaiDien,
-                    SanPhamChiTietId = chiTietListDTO.FirstOrDefault()?.SanPhamChiTietId ?? Guid.Empty,
-                    GiaBan = chiTietListDTO.FirstOrDefault()?.Gia ?? 0,
-                    SoLuongTon = chiTietListDTO.FirstOrDefault()?.SoLuong ?? 0,
+                    SanPhamChiTietId = chiTietListDTO.First().SanPhamChiTietId, // luôn có vì đã check Any()
+                    GiaBan = chiTietListDTO.Min(ct => ct.Gia), // lấy min hoặc max thay vì FirstOrDefault
+                    SoLuongTon = chiTietListDTO.Sum(ct => ct.SoLuong), // tổng số lượng tồn
 
-                    // Thông tin thương hiệu
-                    TenThuongHieu = sp.TenThuongHieu, // Tên thương hiệu
+                    TenThuongHieu = sp.TenThuongHieu,
                     ThuongHieuId = sp.ThuongHieuId,
 
-                    // 🔥 Bổ sung đầy đủ danh sách chi tiết
                     ChiTietList = chiTietVMs
                 };
 
-                // Áp dụng logic giảm giá với % cao nhất
+                // Áp dụng logic giảm giá
                 sanPhamVM = await _discountCalculationService.UpdateProductDiscount(sanPhamVM);
 
                 viewModelList.Add(sanPhamVM);

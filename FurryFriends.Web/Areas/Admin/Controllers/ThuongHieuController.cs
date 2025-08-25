@@ -1,7 +1,8 @@
 ﻿using FurryFriends.API.Models.DTO;
+using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
-using FurryFriends.Web.Filter;
+using System.Threading.Channels;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -11,10 +12,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     public class ThuongHieuController : Controller
     {
         private readonly IThuongHieuService _thuongHieuService;
+        private readonly IThongBaoService _thongBaoService;
 
-        public ThuongHieuController(IThuongHieuService thuongHieuService)
+        public ThuongHieuController(IThuongHieuService thuongHieuService, IThongBaoService thongBaoService)
         {
             _thuongHieuService = thuongHieuService;
+            _thongBaoService = thongBaoService;
         }
 
         // GET: /ThuongHieu
@@ -41,6 +44,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             if (result.Success)
             {
                 TempData["success"] = "Thêm thương hiệu thành công!";
+                var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Thêm thương hiệu",
+                    NoiDung = $"Thương hiệu '{dto.TenThuongHieu}' đã được thêm thành công.",
+                    Loai = "ThuongHieu",
+                    UserName = userName,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 return RedirectToAction("Index");
             }
 
@@ -78,6 +91,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             if (result.Data)
             {
                 TempData["success"] = "Cập nhật thương hiệu thành công!";
+                var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Cập nhật thương hiệu",
+                    NoiDung = $"Thương hiệu '{dto.TenThuongHieu}' đã được cập nhật",
+                    Loai = "ThuongHieu",
+                    UserName = userName,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 return RedirectToAction("Index");
             }
 

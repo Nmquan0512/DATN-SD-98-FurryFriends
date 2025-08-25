@@ -138,18 +138,44 @@ namespace FurryFriends.Web.Services
             return await GetAllAsync();
         }
 
-        public async Task<LoginResponse?> DangNhapAdminAsync(LoginRequest model)
+        public async Task<(LoginResponse? Response, string? ErrorMessage)> DangNhapAdminAsync(LoginRequest model)
         {
             var response = await _httpClient.PostAsJsonAsync("TaiKhoanApi/dang-nhap-admin", model);
-            if (!response.IsSuccessStatusCode) return null;
-            return await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                return (result, null);
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return (null, errorContent); // trả lỗi xuống controller
+            }
         }
 
-        public async Task<LoginResponse?> DangNhapKhachHangAsync(LoginRequest model)
+
+        public async Task<(LoginResponse? Response, string? ErrorMessage)> DangNhapKhachHangAsync(LoginRequest model)
         {
+            if (string.IsNullOrWhiteSpace(model.UserName) || string.IsNullOrWhiteSpace(model.Password))
+                return (null, "Tên đăng nhập và mật khẩu không được để trống.");
+
             var response = await _httpClient.PostAsJsonAsync("TaiKhoanApi/dang-nhap-khachhang", model);
-            if (!response.IsSuccessStatusCode) return null;
-            return await response.Content.ReadFromJsonAsync<LoginResponse>();
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                if (result != null && result.TaiKhoanId != Guid.Empty)
+                    return (result, null);
+                else
+                    return (null, "Tài khoản không hợp lệ hoặc bị khóa.");
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                return (null, errorContent); // API trả lỗi chi tiết từ backend
+            }
         }
+
     }
 }

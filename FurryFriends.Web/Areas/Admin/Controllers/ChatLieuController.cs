@@ -11,11 +11,14 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     public class ChatLieuController : Controller
     {
         private readonly IChatLieuService _chatLieuService;
+        private readonly IThongBaoService _thongBaoService; // 👈 thêm
 
-        public ChatLieuController(IChatLieuService chatLieuService)
+        public ChatLieuController(IChatLieuService chatLieuService, IThongBaoService thongBaoService)
         {
             _chatLieuService = chatLieuService;
+            _thongBaoService = thongBaoService; // 👈 gán
         }
+
 
         // GET: /ChatLieu
         public async Task<IActionResult> Index()
@@ -47,6 +50,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             if (result.Success)
             {
                 TempData["success"] = "Thêm chất liệu thành công!";
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Thêm chất liệu",
+                    NoiDung = $"Chất liệu '{dto.TenChatLieu}' đã được thêm vào hệ thống.",
+                    Loai = "ChatLieu",
+                    UserName = tenNhanVien,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 return RedirectToAction("Index");
             }
 
@@ -91,6 +104,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             if (result.Data)
             {
                 TempData["success"] = "Cập nhật chất liệu thành công!";
+                var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Cập nhật chất liệu",
+                    NoiDung = $"Chất liệu '{dto.TenChatLieu}' đã được chỉnh sửa.",
+                    Loai = "ChatLieu",
+                    UserName = tenNhanVien,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 return RedirectToAction("Index");
             }
 

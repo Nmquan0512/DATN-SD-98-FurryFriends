@@ -1,9 +1,11 @@
 ﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Channels;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -12,10 +14,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     public class VouchersController : Controller
     {
         private readonly IVoucherService _voucherService;
+        private readonly IThongBaoService _thongBaoService;
 
-        public VouchersController(IVoucherService voucherService)
+        public VouchersController(IVoucherService voucherService, IThongBaoService thongBaoService)
         {
             _voucherService = voucherService;
+            _thongBaoService = thongBaoService;
         }
 
         // GET: Admin/Voucher
@@ -59,6 +63,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             try
             {
                 await _voucherService.CreateAsync(voucher);
+                var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Thêm voucher",
+                    NoiDung = $"Voucher '{voucher.TenVoucher}' đã được tạo.",
+                    Loai = "Voucher",
+                    UserName = userName,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
+
                 return RedirectToAction(nameof(Index));
             }
             catch (ValidationException ex)
@@ -114,6 +129,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             try
             {
                 await _voucherService.UpdateAsync(id, voucher);
+                var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Cập nhật voucher",
+                    NoiDung = $"Voucher '{voucher.TenVoucher}' đã được cập nhật",
+                    Loai = "Voucher",
+                    UserName = userName,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
                 return RedirectToAction(nameof(Index));
             }
             catch (ValidationException ex)

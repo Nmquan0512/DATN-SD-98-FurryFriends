@@ -4,6 +4,7 @@ $(document).ready(function () {
     let dropdown = null;
     let notifications = [];
 
+    // 🔹 Lấy danh sách thông báo từ API
     function fetchNotifications() {
         $.get('https://localhost:7289/api/ThongBao', function (data) {
             notifications = data.filter(n => !n.daDoc);
@@ -11,6 +12,7 @@ $(document).ready(function () {
         });
     }
 
+    // 🔹 Cập nhật số lượng trên badge
     function updateBadge() {
         if (notifications.length > 0) {
             badge.text(notifications.length).show();
@@ -19,10 +21,13 @@ $(document).ready(function () {
         }
     }
 
+    // 🔹 Hiển thị danh sách khi click bell
     function showDropdown() {
         if (dropdown) dropdown.remove();
+
         dropdown = $('<div class="notification-dropdown card shadow" style="position:absolute; right:0; top:40px; min-width:320px; z-index:2000;"></div>');
         let html = '<div class="card-body p-2">';
+
         if (notifications.length === 0) {
             html += '<div class="text-center text-muted py-3">Không có thông báo mới</div>';
         } else {
@@ -37,20 +42,24 @@ $(document).ready(function () {
                 </div>`;
             });
         }
+
         html += '</div>';
         dropdown.html(html);
         bell.parent().append(dropdown);
     }
 
+    // 🔹 Event: click chuông
     bell.on('click', function (e) {
         e.stopPropagation();
         showDropdown();
     });
 
+    // 🔹 Click ngoài thì đóng dropdown
     $(document).on('click', function () {
         if (dropdown) dropdown.remove();
     });
 
+    // 🔹 Đánh dấu đã đọc
     $(document).on('click', '.mark-read', function (e) {
         e.stopPropagation();
         const id = $(this).closest('.notification-item').data('id');
@@ -61,7 +70,7 @@ $(document).ready(function () {
         });
     });
 
-    // Initial fetch and polling
+    // 🔹 Load ban đầu + polling
     fetchNotifications();
-    setInterval(fetchNotifications, 15000);
-}); 
+    setInterval(fetchNotifications, 10000);
+});

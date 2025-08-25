@@ -122,6 +122,14 @@ builder.Services.AddHttpClient<ISanPhamService, SanPhamService>(client =>
     client.BaseAddress = new Uri("https://localhost:7289/");
 });
 
+builder.Services.AddHttpClient<IThongBaoService, ThongBaoService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7289/");
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+
 // Sử dụng AddHttpMessageHandler để thêm AuthHeaderHandler
 builder.Services.AddHttpClient<IBanHangService, BanHangService>(client =>
 {

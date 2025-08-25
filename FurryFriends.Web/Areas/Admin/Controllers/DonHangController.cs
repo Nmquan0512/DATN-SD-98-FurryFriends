@@ -1,9 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
-using FurryFriends.Web.Services.IService;
 using FurryFriends.API.Models;
-using FurryFriends.Web.ViewModels;
-using FurryFriends.Web.Services;
+using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.Filter;
+using FurryFriends.Web.Services;
+using FurryFriends.Web.Services.IService;
+using FurryFriends.Web.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
@@ -15,12 +16,14 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         private readonly IHoaDonService _hoaDonService;
         private readonly IEmailNotificationService _emailNotificationService;
         private readonly ILogger<DonHangController> _logger;
+        private readonly IThongBaoService _thongBaoService;
 
-        public DonHangController(IHoaDonService hoaDonService, IEmailNotificationService emailNotificationService, ILogger<DonHangController> logger)
+        public DonHangController(IHoaDonService hoaDonService, IEmailNotificationService emailNotificationService, ILogger<DonHangController> logger, IThongBaoService thongBaoService)
         {
             _hoaDonService = hoaDonService;
             _emailNotificationService = emailNotificationService;
             _logger = logger;
+            _thongBaoService = thongBaoService;
         }
 
         // GET: Admin/DonHang
@@ -106,6 +109,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 
                 if (result.Success)
                 {
+                    var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Duyệt đơn hàng",
+                        NoiDung = $"Đơn hàng #{hoaDon.HoaDonId} đã được duyệt.",
+                        Loai = "HoaDon",
+                        UserName = tenNhanVien,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
                     return Json(new { success = true, message = "Duyệt đơn hàng thành công!" });
                 }
                 else
@@ -174,7 +187,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                         _logger.LogError($"❌ Error details: {ex}");
                         // Không throw exception để không ảnh hưởng đến luồng cập nhật trạng thái
                     }
-                    
+                    var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Cập nhật trạng thái hóa đơn",
+                        NoiDung = $"Đơn hàng #{hoaDon.HoaDonId} đã đổi trạng thái: {trangThaiCuText} → {trangThaiMoiText}",
+                        Loai = "HoaDon",
+                        UserName = tenNhanVien,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
                     return Json(new { success = true, message = $"Cập nhật trạng thái thành công: {trangThaiMoiText}" });
                 }
                 else
@@ -242,7 +265,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                         _logger.LogError($"❌ Error details: {ex}");
                         // Không throw exception để không ảnh hưởng đến luồng hủy đơn
                     }
-                    
+                    var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Hủy đơn hàng",
+                        NoiDung = $"Đơn hàng #{hoaDon.HoaDonId} đã bị hủy.",
+                        Loai = "HoaDon",
+                        UserName = tenNhanVien,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
                     return Json(new { success = true, message = "Hủy đơn hàng thành công!" });
                 }
                 else
@@ -313,7 +346,17 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                         _logger.LogError($"❌ Error details: {ex}");
                         // Không throw exception để không ảnh hưởng đến luồng cập nhật trạng thái
                     }
-                    
+                    var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Cập nhật trạng thái hóa đơn",
+                        NoiDung = $"Đơn hàng #{hoaDon.HoaDonId} đã chuyển trạng thái: {trangThaiCuText} → {trangThaiMoiText}",
+                        Loai = "HoaDon",
+                        UserName = tenNhanVien,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
                     return Json(new { success = true, message = $"Tăng trạng thái thành công: {trangThaiMoiText}" });
                 }
                 else

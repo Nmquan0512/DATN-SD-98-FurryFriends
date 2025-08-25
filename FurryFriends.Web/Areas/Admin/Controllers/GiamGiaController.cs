@@ -16,13 +16,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     {
         private readonly IGiamGiaService _giamGiaService;
         private readonly ISanPhamChiTietService _sanPhamChiTietService;
+        private readonly IThongBaoService _thongBaoService;
 
         public GiamGiaController(
             IGiamGiaService giamGiaService,
-            ISanPhamChiTietService sanPhamChiTietService)
+            ISanPhamChiTietService sanPhamChiTietService,
+            IThongBaoService thongBaoService)
         {
             _giamGiaService = giamGiaService;
             _sanPhamChiTietService = sanPhamChiTietService;
+            _thongBaoService = thongBaoService;
         }
 
         // GET: /Admin/GiamGia
@@ -46,7 +49,11 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             // Lấy các sản phẩm đang hoạt động để người dùng chọn
             var allProducts = await _sanPhamChiTietService.GetAllAsync();
-            ViewBag.Products = allProducts.Where(p => p.TrangThai == 1).ToList();
+            ViewBag.Products = allProducts
+    .Where(p => p.TrangThaiSanPham == true   // SP đang hoạt động
+             && p.TrangThai == 1)            // SPCT đang hoạt động
+    .ToList();
+
 
             // Tạo một DTO mới với các giá trị mặc định
             return View(new GiamGiaDTO
@@ -69,6 +76,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 try
                 {
                     var result = await _giamGiaService.CreateAsync(dto);
+                    var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Chương trình giảm giá mới",
+                        NoiDung = $"Đã tạo chương trình giảm giá \"{dto.TenGiamGia}\" từ {dto.NgayBatDau:dd/MM/yyyy} đến {dto.NgayKetThuc:dd/MM/yyyy}.",
+                        Loai = "GiamGia",
+                        UserName = tenNhanVien,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
                     TempData["success"] = "Tạo chương trình giảm giá thành công!";
                     return RedirectToAction(nameof(Index));
                 }
@@ -86,7 +103,11 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
             // Nếu có lỗi, tải lại danh sách sản phẩm và hiển thị lại form
             var allProducts = await _sanPhamChiTietService.GetAllAsync();
-            ViewBag.Products = allProducts.Where(p => p.TrangThai == 1).ToList();
+            ViewBag.Products = allProducts
+    .Where(p => p.TrangThaiSanPham == true   // SP đang hoạt động
+             && p.TrangThai == 1)            // SPCT đang hoạt động
+    .ToList();
+
             return View(dto);
         }
 
@@ -104,7 +125,11 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
             // 2. Lấy TẤT CẢ các sản phẩm đang hoạt động để hiển thị
             var allProducts = await _sanPhamChiTietService.GetAllAsync();
-            ViewBag.Products = allProducts.Where(p => p.TrangThai == 1).ToList();
+            ViewBag.Products = allProducts
+    .Where(p => p.TrangThaiSanPham == true   // SP đang hoạt động
+             && p.TrangThai == 1)            // SPCT đang hoạt động
+    .ToList();
+
 
             // 3. Truyền DTO của chương trình giảm giá vào View
             // DTO này đã chứa SanPhamChiTietIds, View sẽ dựa vào đó để biết sản phẩm nào đã được chọn
@@ -126,6 +151,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 try
                 {
                     await _giamGiaService.UpdateAsync(id, dto);
+                    var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Cập nhật chương trình giảm giá",
+                        NoiDung = $"Đã cập nhật chương trình giảm giá \"{dto.TenGiamGia}\" (hiệu lực {dto.NgayBatDau:dd/MM/yyyy} - {dto.NgayKetThuc:dd/MM/yyyy}).",
+                        Loai = "GiamGia",
+                        UserName = tenNhanVien,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
                     TempData["success"] = "Cập nhật chương trình giảm giá thành công!";
                     return RedirectToAction(nameof(Index));
                 }
@@ -137,7 +172,11 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
             // Nếu có lỗi, tải lại danh sách sản phẩm và hiển thị lại form
             var allProducts = await _sanPhamChiTietService.GetAllAsync();
-            ViewBag.Products = allProducts.Where(p => p.TrangThai == 1).ToList();
+            ViewBag.Products = allProducts
+    .Where(p => p.TrangThaiSanPham == true   // SP đang hoạt động
+             && p.TrangThai == 1)            // SPCT đang hoạt động
+    .ToList();
+
             return View(dto);
         }
 

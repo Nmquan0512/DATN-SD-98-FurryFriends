@@ -18,20 +18,22 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         private readonly ISanPhamService _sanPhamService;
         private readonly IKichCoService _kichCoService; // Thêm
         private readonly IMauSacService _mauSacService; // Thêm
+        private readonly IThongBaoService _thongBaoService; // Thêm
 
         public SanPhamChiTietController(
             ISanPhamChiTietService chiTietService, 
-            IAnhService anhService, 
+            IAnhService anhService,
             ISanPhamService sanPhamService,
             IKichCoService kichCoService, // Thêm
-            IMauSacService mauSacService // Thêm
-        )
+            IMauSacService mauSacService, // Thêm
+            IThongBaoService thongBaoService)
         {
             _chiTietService = chiTietService;
             _anhService = anhService;
             _sanPhamService = sanPhamService;
             _kichCoService = kichCoService; // Thêm
             _mauSacService = mauSacService; // Thêm
+            _thongBaoService = thongBaoService;
         }
 
         // ------------ GET: Tạo chi tiết sản phẩm cho sản phẩm đã có ------------
@@ -98,7 +100,21 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 ViewBag.SanPhamId = sanPhamId;
                 return View(model);
             }
+            var sanPham = await _sanPhamService.GetByIdAsync(sanPhamId);
 
+            // Tạo thông báo cho việc thêm chi tiết sản phẩm
+            var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+            await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Thêm biến thể sản phẩm",
+                NoiDung = $"Đã thêm biến thể mới cho sản phẩm '{sanPham?.TenSanPham ?? ""}': " +
+                          $"Màu sắc: '{model.MauSacId}', Kích cỡ: '{model.KichCoId}', " +
+                          $"Giá: {model.GiaBan}, Số lượng: {model.SoLuongTon}, Mô tả: '{model.MoTa}'",
+                Loai = "SanPhamChiTiet",
+                UserName = userName,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
             return RedirectToAction("Index", new { sanPhamId = sanPhamId });
         }
 
@@ -144,6 +160,38 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 return View(model);
             }
 
+            var sanPham = await _sanPhamService.GetByIdAsync(model.SanPhamId);
+            var oldChiTiet = await _chiTietService.GetByIdAsync(id);
+            var changes = new List<string>();
+            if (oldChiTiet.MauSacId != model.MauSacId)
+                changes.Add($"Màu sắc: '{oldChiTiet.MauSacId}' → '{model.MauSacId}'");
+            if (oldChiTiet.KichCoId != model.KichCoId)
+                changes.Add($"Kích cỡ: '{oldChiTiet.KichCoId}' → '{model.KichCoId}'");
+            if (oldChiTiet.Gia != model.GiaBan)
+                changes.Add($"Giá: {oldChiTiet.Gia} → {model.GiaBan}");
+            if (oldChiTiet.SoLuong != model.SoLuongTon)
+                changes.Add($"Số lượng: {oldChiTiet.SoLuong} → {model.SoLuongTon}");
+            if (oldChiTiet.MoTa != model.MoTa)
+                changes.Add($"Mô tả: '{oldChiTiet.MoTa}' → '{model.MoTa}'");
+            if (oldChiTiet.TrangThai != model.TrangThai)
+                changes.Add($"Trạng thái: {(oldChiTiet.TrangThai == 1 ? "Hoạt động" : "Ngưng")} → {(model.TrangThai == 1 ? "Hoạt động" : "Ngưng")}");
+            if (oldChiTiet.AnhId != model.AnhId)
+                changes.Add($"Ảnh: '{oldChiTiet.AnhId}' → '{model.AnhId}'");
+
+            // Tạo thông báo nếu có thay đổi
+            if (changes.Any())
+            {
+                var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Cập nhật biến thể sản phẩm",
+                    NoiDung = $"Biến thể của sản phẩm '{sanPham?.TenSanPham ?? ""}' đã được chỉnh sửa: {string.Join(", ", changes)}",
+                    Loai = "SanPhamChiTiet",
+                    UserName = userName,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
+            }
             return RedirectToAction("Index", new { sanPhamId = model.SanPhamId });
         }
 

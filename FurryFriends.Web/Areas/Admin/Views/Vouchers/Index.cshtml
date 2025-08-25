@@ -67,7 +67,7 @@
                     <option value="Không hoạt động">Không hoạt động</option>
                 </select>
             </div>
-            <div class="col-md-3">
+            @* <div class="col-md-3">
                 <label class="form-label mb-1">Phần trăm giảm (%)</label>
                 <div class="d-flex align-items-center gap-2">
                     <div class="custom-range-slider">
@@ -75,7 +75,7 @@
                     </div>
                     <span id="phanTramValue" class="fw-bold text-primary" style="min-width:32px;">0</span>
                 </div>
-            </div>
+            </div> *@
             <div class="col-md-3">
                 <label for="filterNgayBatDauTu" class="form-label mb-1">Ngày bắt đầu từ</label>
                 <input type="date" id="filterNgayBatDauTu" class="form-control" />
@@ -150,7 +150,7 @@
                                 </td>
                                 <td>
                                     <a asp-action="Edit" asp-route-id="@item.VoucherId" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                    <a asp-action="Delete" asp-route-id="@item.VoucherId" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                                   @*  <a asp-action="Delete" asp-route-id="@item.VoucherId" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a> *@
                                 </td>
                             </tr>
                         }

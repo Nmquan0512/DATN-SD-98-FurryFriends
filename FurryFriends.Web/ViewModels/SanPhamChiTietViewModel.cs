@@ -15,5 +15,7 @@
         public decimal? PhanTramGiamGia { get; set; }
         public decimal? GiaSauGiam { get; set; }
         public bool CoGiamGia { get; set; } = false;
+
+        public bool TrangThai { get; set; }
     }
 }

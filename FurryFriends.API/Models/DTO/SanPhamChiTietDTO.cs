@@ -37,7 +37,7 @@ namespace FurryFriends.API.Models.DTO
 
         public DateTime? NgaySua { get; set; }
 
-
+        public bool? TrangThaiSanPham { get; set; }
         public int? TrangThai { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

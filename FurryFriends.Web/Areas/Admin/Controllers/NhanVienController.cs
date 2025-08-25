@@ -1,8 +1,10 @@
 ﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
+using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using FurryFriends.Web.Filter;
+using System.Threading.Channels;
 
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
@@ -16,11 +18,13 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         private readonly INhanVienService _nhanVienService;
         private readonly ITaiKhoanService _taiKhoanService;
         private readonly IChucVuService _chucVuService;
-        public NhanVienController(INhanVienService nhanVienService, ITaiKhoanService taiKhoanService, IChucVuService chucVuService)
+        private readonly IThongBaoService _thongBaoService;
+        public NhanVienController(INhanVienService nhanVienService, ITaiKhoanService taiKhoanService, IChucVuService chucVuService, IThongBaoService thongBaoService)
         {
             _nhanVienService = nhanVienService;
             _taiKhoanService = taiKhoanService;
             _chucVuService = chucVuService;
+            _thongBaoService = thongBaoService;
         }
         public async Task<IActionResult> Index()
         {
@@ -34,8 +38,8 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             // Lấy tất cả tài khoản và chỉ chọn tài khoản CHƯA được gán
             var taiKhoanChuaPhanLoai = (await _taiKhoanService.GetAllAsync())
-                                        .Where(t => t.NhanVien == null && t.KhachHangId == null)
-                                        .ToList();
+                                .Where(t => t.TrangThai && t.NhanVien == null && t.KhachHangId == null)
+                                .ToList();
 
             ViewBag.TaiKhoanId = new SelectList(taiKhoanChuaPhanLoai, "TaiKhoanId", "UserName");
             ViewBag.ChucVuId = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu");
@@ -65,11 +69,22 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 }
             }
             var taiKhoanChuaPhanLoai = (await _taiKhoanService.GetAllAsync())
-                                        .Where(t => t.NhanVien == null && t.KhachHangId == null)
-                                        .ToList();
+                                .Where(t => t.TrangThai && t.NhanVien == null && t.KhachHangId == null)
+                                .ToList();
 
-            ViewBag.TaiKhoanId = new SelectList(taiKhoanChuaPhanLoai, "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
+            ViewBag.TaiKhoanId = new SelectList(taiKhoanChuaPhanLoai, "TaiKhoanId", "UserName");
             ViewBag.ChucVuId = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu", nhanVien.ChucVuId);
+
+            var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+            await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Tạo nhân viên",
+                NoiDung = $"Nhân viên '{nhanVien.HoVaTen}' đã được tạo.",
+                Loai = "NhanVien",
+                UserName = userName,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
             return View(nhanVien);
         }
 
@@ -79,7 +94,19 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             var nhanVien = await _nhanVienService.GetByIdAsync(id);
             if (nhanVien == null)
                 return NotFound();
-            ViewBag.TaiKhoanId = new SelectList(await _taiKhoanService.GetAllAsync(), "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
+            var allTaiKhoan = await _taiKhoanService.GetAllAsync();
+
+            // Lấy các tài khoản có thể chọn:
+            var taiKhoanOptions = allTaiKhoan
+                .Where(t => (t.NhanVien == null && t.KhachHangId == null) || t.TaiKhoanId == nhanVien.TaiKhoanId)
+                .Select(t => new
+                {
+                    t.TaiKhoanId,
+                    DisplayName = t.TrangThai ? t.UserName : $"{t.UserName} (Không hoạt động)"
+                })
+                .ToList();
+
+            ViewBag.TaiKhoanId = new SelectList(taiKhoanOptions, "TaiKhoanId", "DisplayName", nhanVien.TaiKhoanId);
             ViewBag.ChucVuId = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu", nhanVien.ChucVuId);
             return View(nhanVien);
         }
@@ -113,8 +140,30 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     ModelState.AddModelError("", $"Lỗi: {ex.Message}");
                 }
             }
-            ViewBag.TaiKhoanId = new SelectList(await _taiKhoanService.GetAllAsync(), "TaiKhoanId", "UserName", nhanVien.TaiKhoanId);
+            var allTaiKhoan = await _taiKhoanService.GetAllAsync();
+
+            // Lấy các tài khoản có thể chọn:
+            var taiKhoanOptions = allTaiKhoan
+                .Where(t => (t.NhanVien == null && t.KhachHangId == null) || t.TaiKhoanId == nhanVien.TaiKhoanId)
+                .Select(t => new
+                {
+                    t.TaiKhoanId,
+                    DisplayName = t.TrangThai ? t.UserName : $"{t.UserName} (Không hoạt động)"
+                })
+                .ToList();
+
+            ViewBag.TaiKhoanId = new SelectList(taiKhoanOptions, "TaiKhoanId", "DisplayName", nhanVien.TaiKhoanId);
             ViewBag.ChucVuId = new SelectList(await _chucVuService.GetAllAsync(), "ChucVuId", "TenChucVu", nhanVien.ChucVuId);
+            var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+            await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Cập nhật nhân viên",
+                NoiDung = $"Nhân viên '{nhanVien.HoVaTen}' đã được chỉnh sửa",
+                Loai = "NhanVien",
+                UserName = userName,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
             return View(nhanVien);
         }
 

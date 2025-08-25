@@ -1,8 +1,10 @@
 ﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.Filter;
 using FurryFriends.Web.Services.IService;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Channels;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -11,10 +13,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     public class TaiKhoanController : Controller
     {
         public readonly ITaiKhoanService _taiKhoanService;
+        private readonly IThongBaoService _thongBaoService;
 
-        public TaiKhoanController(ITaiKhoanService taiKhoanService)
+        public TaiKhoanController(ITaiKhoanService taiKhoanService, IThongBaoService thongBaoService)
         {
             _taiKhoanService = taiKhoanService;
+            _thongBaoService = thongBaoService;
         }
         public async Task<IActionResult> Index()
         {
@@ -73,6 +77,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                 }
             }
 
+            var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+            await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Tạo tài khoản",
+                NoiDung = $"Tài khoản '{taiKhoan.UserName}' đã được tạo thành công.",
+                Loai = "TaiKhoan",
+                UserName = userName,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
             return View(taiKhoan);
         }
         public async Task<IActionResult> Edit(Guid id)
@@ -129,7 +143,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                     ModelState.AddModelError("", $"Lỗi: {ex.Message}");
                 }
             }
-
+            var userNameSession = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+            await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Cập nhật tài khoản",
+                NoiDung = $"Tài khoản '{taiKhoan.UserName}' đã được cập nhật",
+                Loai = "TaiKhoan",
+                UserName = userNameSession,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
             return View(taiKhoan);
         }
         public async Task<IActionResult> Delete(Guid id)

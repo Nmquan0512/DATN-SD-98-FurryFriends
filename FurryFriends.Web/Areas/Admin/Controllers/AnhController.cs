@@ -14,10 +14,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     public class AnhController : Controller
     {
         private readonly IAnhService _anhService;
+        private readonly IThongBaoService _thongBaoService;
 
-        public AnhController(IAnhService anhService)
+        public AnhController(IAnhService anhService, IThongBaoService thongBaoService)
         {
             _anhService = anhService;
+            _thongBaoService = thongBaoService;
         }
 
         // GET: /Admin/Anh
@@ -71,6 +73,16 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
 
             Console.WriteLine("✅ Upload ảnh thành công!");
+            var tenNhanVien = HttpContext.Session.GetString("HoTen") ?? "Unknown";
+            await _thongBaoService.CreateAsync(new ThongBaoDTO
+            {
+                TieuDe = "Thêm ảnh mới",
+                NoiDung = $"Ảnh '{result.TenAnh}' đã được tải lên hệ thống.",
+                Loai = "Anh",
+                UserName = tenNhanVien,
+                NgayTao = DateTime.Now,
+                DaDoc = false
+            });
             return Ok(new
             {
                 success = true,

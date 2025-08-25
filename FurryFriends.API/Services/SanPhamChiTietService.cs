@@ -39,7 +39,8 @@ namespace FurryFriends.API.Services
                 DuongDan = x.Anh?.DuongDan,
                 NgayTao = x.NgayTao,
                 NgaySua = x.NgaySua,
-                TrangThai = x.TrangThai
+                TrangThai = x.TrangThai,
+                TrangThaiSanPham = x.SanPham?.TrangThai
             });
         }
 
