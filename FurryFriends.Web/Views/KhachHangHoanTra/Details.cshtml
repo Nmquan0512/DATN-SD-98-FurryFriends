@@ -1,76 +1,692 @@
 ﻿@model FurryFriends.Web.ViewModels.PhieuHoanTraViewModel
 @{
-    ViewData["Title"] = "Chi tiết phiếu hoàn";
-    string StatusText(int s) => s switch { 0 => "Yêu cầu", 1 => "Đã duyệt", 2 => "Từ chối", 3 => "Hoàn tất", _ => "Không xác định" };
-    string StatusBadge(int s) => s switch { 0 => "warning", 1 => "primary", 2 => "danger", 3 => "success", _ => "secondary" };
+    ViewData["Title"] = "Chi tiết phiếu hoàn trả";
+    Layout = "_Layout";
+    
+    string StatusText(int s) => s switch { 
+        0 => "Đang chờ duyệt", 
+        1 => "Đã duyệt", 
+        2 => "Bị từ chối", 
+        3 => "Hoàn tất", 
+        _ => "Không xác định" 
+    };
+    
+    string StatusClass(int s) => s switch { 
+        0 => "status-pending", 
+        1 => "status-approved", 
+        2 => "status-rejected", 
+        3 => "status-completed", 
+        _ => "status-unknown" 
+    };
+    
+    string StatusIcon(int s) => s switch { 
+        0 => "fas fa-clock", 
+        1 => "fas fa-check-circle", 
+        2 => "fas fa-times-circle", 
+        3 => "fas fa-check-double", 
+        _ => "fas fa-question-circle" 
+    };
+    
+    string Img(string? p)
+    {
+        if (string.IsNullOrWhiteSpace(p)) return "";
+        if (p.StartsWith("http", StringComparison.OrdinalIgnoreCase)) return p;
+        if (p.Contains("/")) return "https://localhost:7289/" + p.TrimStart('/');
+        return $"https://localhost:7289/images/{System.IO.Path.GetFileName(p)}";
+    }
 }
 
 <div class="container py-4">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <h3 class="fw-semibold m-0">@ViewData["Title"]</h3>
-        <span class="badge text-bg-@StatusBadge(Model.TrangThai) px-3 py-2">@StatusText(Model.TrangThai)</span>
+    <!-- Header Section -->
+    <div class="return-header mb-4">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <div class="return-icon">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <div>
+                    <h1 class="mb-1">Chi tiết phiếu hoàn trả</h1>
+                    <p class="text-muted mb-0">Thông tin chi tiết về yêu cầu hoàn trả</p>
+                </div>
+            </div>
+            <div class="status-display">
+                <span class="status-badge @StatusClass(Model.TrangThai)">
+                    <i class="@StatusIcon(Model.TrangThai) me-2"></i>
+                    @StatusText(Model.TrangThai)
+                </span>
+            </div>
+        </div>
     </div>
 
-    <div class="card fancy-shadow border-0 mb-4">
-        <div class="card-body">
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="rounded-3 bg-light overflow-hidden" style="width:100%;max-height:280px;">
-                        @if (!string.IsNullOrEmpty(Model?.AnhSanPham))
+    <!-- Main Content -->
+    <div class="content-grid">
+        <!-- Product Information -->
+        <div class="product-section">
+            <div class="section-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-box-open me-2"></i>Thông tin sản phẩm
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="product-display">
+                        <div class="product-image">
+                            @if (!string.IsNullOrEmpty(Model?.AnhSanPham))
+                            {
+                                <img src="@Img(Model.AnhSanPham)" alt="@Model.TenSanPham" />
+                            }
+                            else
+                            {
+                                <div class="no-image">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                            }
+                        </div>
+                        <div class="product-details">
+                            <h4 class="product-name">@(!string.IsNullOrWhiteSpace(Model?.TenSanPham) ? Model.TenSanPham : "Sản phẩm")</h4>
+                            <div class="product-meta">
+                                @if (!string.IsNullOrWhiteSpace(Model?.MauSac) || !string.IsNullOrWhiteSpace(Model?.KichCo))
+                                {
+                                    <span class="badge bg-light text-dark me-2">
+                                        <i class="fas fa-palette me-1"></i>@Model.MauSac
+                                    </span>
+                                    <span class="badge bg-light text-dark me-2">
+                                        <i class="fas fa-ruler me-1"></i>Size @Model.KichCo
+                                    </span>
+                                }
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(Model?.MoTaSanPham))
+                            {
+                                <p class="product-description">@Model.MoTaSanPham</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Return Information -->
+        <div class="return-section">
+            <div class="section-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Thông tin hoàn trả
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-hashtag me-2"></i>Mã phiếu
+                            </div>
+                            <div class="info-value">@Model.PhieuHoanTraId</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-calendar me-2"></i>Ngày gửi yêu cầu
+                            </div>
+                            <div class="info-value">@Model.NgayHoanTra.ToString("dd/MM/yyyy HH:mm")</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-sort-numeric-up me-2"></i>Số lượng hoàn trả
+                            </div>
+                            <div class="info-value highlight">@Model.SoLuongHoan sản phẩm</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="fas fa-receipt me-2"></i>Mã chi tiết hóa đơn
+                            </div>
+                            <div class="info-value">@Model.HoaDonChiTietId</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Return Reason -->
+            <div class="section-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-comment-alt me-2"></i>Lý do hoàn trả
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="reason-content">
+                        @if (!string.IsNullOrWhiteSpace(Model.LyDoHoanTra))
                         {
-                            <img src="@Model.AnhSanPham" class="w-100" style="object-fit:cover;max-height:280px;" />
+                            <p class="reason-text">@Model.LyDoHoanTra</p>
                         }
                         else
                         {
-
-                            <div class="w-100 d-flex align-items-center justify-content-center" style="height:280px;">🛍️</div>
+                            <p class="reason-text text-muted">Không có lý do được cung cấp</p>
                         }
                     </div>
                 </div>
+            </div>
 
-                <div class="col-md-8">
-                    <h5 class="mb-1">@(!string.IsNullOrWhiteSpace(Model?.TenSanPham) ? Model.TenSanPham : "Sản phẩm")</h5>
-                    <div class="text-muted small mb-3">
-                        @if (!string.IsNullOrWhiteSpace(Model?.MauSac) || !string.IsNullOrWhiteSpace(Model?.KichCo))
+            <!-- Status Timeline -->
+            <div class="section-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-timeline me-2"></i>Tiến trình xử lý
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item completed">
+                            <div class="timeline-icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>Yêu cầu đã gửi</h6>
+                                <p>@Model.NgayHoanTra.ToString("dd/MM/yyyy HH:mm")</p>
+                            </div>
+                        </div>
+                        
+                        @if (Model.TrangThai >= 1)
                         {
-                            <span>Phân loại: @Model.MauSac@(string.IsNullOrWhiteSpace(Model?.KichCo) ? "" : $" · Size {Model.KichCo}")</span>
+                            <div class="timeline-item completed">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h6>Đã được duyệt</h6>
+                                    <p>Yêu cầu đã được xem xét và chấp thuận</p>
+                                </div>
+                            </div>
                         }
-                    </div>
-
-                    <div class="row g-3">
-                        <div class="col-sm-6">
-                            <div class="info-tile">
-                                <div class="text-muted small">Mã phiếu</div>
-                                <div class="fw-semibold small">@Model.PhieuHoanTraId</div>
+                        else if (Model.TrangThai == 2)
+                        {
+                            <div class="timeline-item rejected">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h6>Bị từ chối</h6>
+                                    <p>Yêu cầu không được chấp thuận</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="info-tile">
-                                <div class="text-muted small">Ngày gửi</div>
-                                <div class="fw-semibold">@Model.NgayHoanTra.ToString("dd/MM/yyyy HH:mm")</div>
+                        }
+                        else
+                        {
+                            <div class="timeline-item pending">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h6>Đang chờ duyệt</h6>
+                                    <p>Yêu cầu đang được xem xét</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="info-tile">
-                                <div class="text-muted small">Số lượng hoàn</div>
-                                <div class="fw-semibold">@Model.SoLuongHoan</div>
+                        }
+                        
+                        @if (Model.TrangThai == 3)
+                        {
+                            <div class="timeline-item completed">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-check-double"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h6>Hoàn tất</h6>
+                                    <p>Quá trình hoàn trả đã hoàn thành</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-sm-6">
-                            <div class="info-tile">
-                                <div class="text-muted small">Mã chi tiết hóa đơn</div>
-                                <div class="fw-semibold small">@Model.HoaDonChiTietId</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-3">
-                        <div class="text-muted small mb-1">Lý do hoàn trả</div>
-                        <div class="rounded-3 border bg-light p-3">@(!string.IsNullOrWhiteSpace(Model.LyDoHoanTra) ? Model.LyDoHoanTra : "—")</div>
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <di
+    <!-- Action Buttons -->
+    <div class="action-section">
+        <div class="action-buttons">
+            <a href="/KhachHangHoanTra" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+            </a>
+            <a href="/KhachHang/LichSuDonHang" class="btn btn-outline-primary">
+                <i class="fas fa-shopping-bag me-2"></i>Xem lịch sử đơn hàng
+            </a>
+            @if (Model.TrangThai == 0)
+            {
+                <button class="btn btn-warning" onclick="cancelRequest()">
+                    <i class="fas fa-times me-2"></i>Hủy yêu cầu
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+<style>
+    /* Header Styles */
+    .return-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .return-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+    }
+
+    .return-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .return-header h1 {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-weight: 800;
+        font-size: 2rem;
+    }
+
+    .return-header p {
+        position: relative;
+        z-index: 1;
+        opacity: 0.9;
+    }
+
+    .status-display {
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .status-pending {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+    }
+
+    .status-approved {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+
+    .status-rejected {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+    }
+
+    .status-completed {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+    }
+
+    .status-unknown {
+        background: #6b7280;
+        color: white;
+    }
+
+    /* Content Grid */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Section Cards */
+    .section-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        border: 1px solid #f1f5f9;
+    }
+
+    .section-card .card-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-bottom: 1px solid #e2e8f0;
+        padding: 1rem 1.5rem;
+    }
+
+    .section-card .card-header h5 {
+        margin: 0;
+        font-weight: 600;
+        color: #374151;
+    }
+
+    .section-card .card-body {
+        padding: 1.5rem;
+    }
+
+    /* Product Display */
+    .product-display {
+        display: flex;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+
+    .product-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 12px;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #e2e8f0;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .no-image {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        color: #adb5bd;
+    }
+
+    .product-details {
+        flex: 1;
+    }
+
+    .product-name {
+        font-weight: 700;
+        margin: 0 0 1rem 0;
+        color: #1f2937;
+        font-size: 1.5rem;
+    }
+
+    .product-meta {
+        margin-bottom: 1rem;
+    }
+
+    .product-description {
+        color: #6b7280;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* Info Grid */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .info-item {
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .info-label {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1f2937;
+        word-break: break-all;
+    }
+
+    .info-value.highlight {
+        color: #10b981;
+    }
+
+    /* Reason Content */
+    .reason-content {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 1.5rem;
+        border: 1px solid #e2e8f0;
+    }
+
+    .reason-text {
+        margin: 0;
+        line-height: 1.6;
+        color: #374151;
+        font-size: 1rem;
+    }
+
+    /* Timeline */
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 1rem;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #e2e8f0;
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 2rem;
+        padding-left: 2rem;
+    }
+
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .timeline-icon {
+        position: absolute;
+        left: -1.5rem;
+        top: 0;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        color: white;
+        z-index: 1;
+    }
+
+    .timeline-item.completed .timeline-icon {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .timeline-item.pending .timeline-icon {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .timeline-item.rejected .timeline-icon {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    .timeline-content h6 {
+        margin: 0 0 0.5rem 0;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .timeline-content p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+
+    /* Action Section */
+    .action-section {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid #f1f5f9;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .btn-outline-secondary {
+        border-color: #6b7280;
+        color: #6b7280;
+    }
+
+    .btn-outline-secondary:hover {
+        background: #6b7280;
+        border-color: #6b7280;
+        transform: translateY(-2px);
+    }
+
+    .btn-outline-primary {
+        border-color: #667eea;
+        color: #667eea;
+    }
+
+    .btn-outline-primary:hover {
+        background: #667eea;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+
+    .btn-warning {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        border: none;
+        color: white;
+    }
+
+    .btn-warning:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .return-header {
+            padding: 1.5rem;
+        }
+
+        .return-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .content-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .product-display {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .product-image {
+            align-self: center;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+}
+
+@section Scripts {
+<script>
+    // Add smooth animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate timeline items
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        timelineItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(-20px)';
+            
+            setTimeout(() => {
+                item.style.transition = 'all 0.5s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateX(0)';
+            }, index * 200);
+        });
+
+        // Animate info items
+        const infoItems = document.querySelectorAll('.info-item');
+        infoItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                item.style.transition = 'all 0.5s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+
+    // Cancel request function
+    function cancelRequest() {
+        if (confirm('Bạn có chắc muốn hủy yêu cầu hoàn trả này?')) {
+            // Add your cancel logic here
+            alert('Chức năng hủy yêu cầu đang được phát triển');
+        }
+    }
+</script>
+}

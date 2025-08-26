@@ -11,14 +11,25 @@
         3 => "Hoàn thành",
         _ => "Không xác định"
     };
+    
     string StatusClass(int s) => s switch
     {
-        0 => "badge bg-warning text-dark",
-        1 => "badge bg-info text-dark",
-        2 => "badge bg-danger",
-        3 => "badge bg-success",
-        _ => "badge bg-secondary"
+        0 => "status-pending",
+        1 => "status-approved",
+        2 => "status-rejected",
+        3 => "status-completed",
+        _ => "status-unknown"
     };
+    
+    string StatusIcon(int s) => s switch
+    {
+        0 => "fas fa-clock",
+        1 => "fas fa-check-circle",
+        2 => "fas fa-times-circle",
+        3 => "fas fa-check-double",
+        _ => "fas fa-question-circle"
+    };
+    
     string Img(string? p)
     {
         if (string.IsNullOrWhiteSpace(p)) return "";
@@ -32,113 +43,634 @@
                  .ToList();
 }
 
-<section class="container py-4">
-    <h2 class="mb-4"><i class="bi bi-arrow-counterclockwise"></i> Yêu cầu hoàn trả của tôi</h2>
+<div class="container py-4">
+    <!-- Header Section -->
+    <div class="return-header mb-4">
+        <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="return-icon">
+                <i class="fas fa-undo-alt"></i>
+            </div>
+            <div>
+                <h1 class="mb-1">Yêu cầu hoàn trả của tôi</h1>
+                <p class="text-muted mb-0">Theo dõi trạng thái các yêu cầu hoàn trả</p>
+            </div>
+        </div>
+        
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clipboard-list"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">@groups.Count</div>
+                    <div class="stat-label">Sản phẩm đã yêu cầu</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">@groups.Count(g => g.Any(x => x.TrangThai == 0))</div>
+                    <div class="stat-label">Đang chờ duyệt</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">@groups.Count(g => g.Any(x => x.TrangThai == 1))</div>
+                    <div class="stat-label">Đã được duyệt</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number">@groups.Count(g => g.Any(x => x.TrangThai == 2))</div>
+                    <div class="stat-label">Bị từ chối</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     @if (!groups.Any())
     {
-        <div class="alert alert-info">Bạn chưa có yêu cầu hoàn trả nào.</div>
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-inbox"></i>
+            </div>
+            <h3>Chưa có yêu cầu hoàn trả nào</h3>
+            <p class="text-muted">Bạn chưa gửi yêu cầu hoàn trả nào. Khi có yêu cầu, chúng sẽ xuất hiện ở đây.</p>
+            <a href="/KhachHang/LichSuDonHang" class="btn btn-primary">
+                <i class="fas fa-shopping-bag me-2"></i>Xem lịch sử đơn hàng
+            </a>
+        </div>
     }
     else
     {
-        <div class="table-responsive shadow-sm rounded bg-white">
-            <table class="table align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th style="width:72px;"></th>
-                        <th>Sản phẩm</th>
-                        <th class="text-center">Đã mua</th>
-                        <th class="text-center">Đã hoàn</th>
-                        <th class="text-center">Còn lại</th>
-                        <th>Phiếu gần nhất</th>
-                        <th class="text-center">Chi tiết</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var g in groups)
-                    {
-                        // lấy 1 item đại diện để show thông tin snapshot (tên/màu/size/ảnh)
-                        var any = g.OrderByDescending(x => x.NgayHoanTra).First();
-                        var img = Img(any.AnhSanPham);
+        <!-- Products List -->
+        <div class="products-grid">
+            @foreach (var g in groups)
+            {
+                // lấy 1 item đại diện để show thông tin snapshot (tên/màu/size/ảnh)
+                var any = g.OrderByDescending(x => x.NgayHoanTra).First();
+                var img = Img(any.AnhSanPham);
 
-                        // Tổng mua lấy từ API DTO (đã thêm)
-                        var tongMua = any.TongSoLuongMua;
+                // Tổng mua lấy từ API DTO (đã thêm)
+                var tongMua = any.TongSoLuongMua;
 
-                        // Đã hoàn: sum các phiếu KHÔNG bị từ chối
-                        var daHoan = g.Where(x => x.TrangThai != 2).Sum(x => x.SoLuongHoan);
+                // Đã hoàn: sum các phiếu KHÔNG bị từ chối
+                var daHoan = g.Where(x => x.TrangThai != 2).Sum(x => x.SoLuongHoan);
 
-                        var conLai = Math.Max(0, tongMua - daHoan);
+                var conLai = Math.Max(0, tongMua - daHoan);
 
-                        <tr>
-                            <td>
-                                @if (!string.IsNullOrEmpty(img))
-                                {
-                                    <img src="@img" class="rounded" style="width:56px;height:56px;object-fit:cover;border:1px solid #eee;" />
-                                }
-                            </td>
-                            <td>
-                                <div class="fw-semibold">@any.TenSanPham</div>
-                                <small class="text-muted">Màu: @any.MauSac • Size: @any.KichCo</small>
-                            </td>
-                            <td class="text-center fw-semibold">@tongMua</td>
-                            <td class="text-center">@daHoan</td>
-                            <td class="text-center fw-bold text-success">@conLai</td>
-                            <td>
-                                @* Hiển thị phiếu mới nhất để người dùng nắm trạng thái gần đây *@
-                                <div class="@StatusClass(any.TrangThai)">@StatusText(any.TrangThai)</div>
-                                <small class="text-muted d-block mt-1">@any.NgayHoanTra.ToString("dd/MM/yyyy HH:mm")</small>
-                            </td>
-                            <td class="text-center">
-                                <a asp-controller="KhachHangHoanTra"
-                                   asp-action="Details"
-                                   asp-route-id="@any.PhieuHoanTraId"
-                                   class="btn btn-sm btn-outline-primary">
-                                    Xem phiếu mới nhất
-                                </a>
-                            </td>
-                        </tr>
-
-                        @* Nếu muốn show các phiếu con của cùng sản phẩm ngay dưới, mở comment block dưới *@
-                        
-                    <tr>
-                        <td></td>
-                        <td colspan="6">
-                            <div class="border rounded p-2 bg-light">
-                                <div class="fw-semibold mb-2">Các phiếu đã gửi cho sản phẩm này</div>
-                                <div class="table-responsive">
-                                    <table class="table table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th>Mã phiếu</th>
-                                                <th>Ngày</th>
-                                                <th class="text-center">SL hoàn</th>
-                                                <th>Trạng thái</th>
-                                                <th></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach (var p in g.OrderByDescending(x => x.NgayHoanTra))
-                                        {
-                                            <tr>
-                                                <td class="text-monospace">@p.PhieuHoanTraId</td>
-                                                <td>@p.NgayHoanTra.ToString("dd/MM/yyyy HH:mm")</td>
-                                                <td class="text-center">@p.SoLuongHoan</td>
-                                                <td><span class="@StatusClass(p.TrangThai)">@StatusText(p.TrangThai)</span></td>
-                                                <td class="text-end">
-                                                    <a asp-controller="KhachHangHoanTra" asp-action="Details" asp-route-id="@p.PhieuHoanTraId" class="btn btn-sm btn-outline-secondary">Chi tiết</a>
-                                                </td>
-                                            </tr>
-                                        }
-                                        </tbody>
-                                    </table>
+                <div class="product-card">
+                    <div class="product-header">
+                        <div class="product-image">
+                            @if (!string.IsNullOrEmpty(img))
+                            {
+                                <img src="@img" alt="@any.TenSanPham" />
+                            }
+                            else
+                            {
+                                <div class="no-image">
+                                    <i class="fas fa-box"></i>
                                 </div>
+                            }
+                        </div>
+                        <div class="product-info">
+                            <h5 class="product-name">@any.TenSanPham</h5>
+                            <div class="product-meta">
+                                @if (!string.IsNullOrWhiteSpace(any.MauSac) || !string.IsNullOrWhiteSpace(any.KichCo))
+                                {
+                                    <span class="badge bg-light text-dark me-2">
+                                        <i class="fas fa-palette me-1"></i>@any.MauSac
+                                    </span>
+                                    <span class="badge bg-light text-dark me-2">
+                                        <i class="fas fa-ruler me-1"></i>Size @any.KichCo
+                                    </span>
+                                }
                             </div>
-                        </td>
-                    </tr>
-                   
-                    }
-                </tbody>
-            </table>
+                        </div>
+                        <div class="product-status">
+                            <span class="status-badge @StatusClass(any.TrangThai)">
+                                <i class="@StatusIcon(any.TrangThai) me-1"></i>
+                                @StatusText(any.TrangThai)
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="product-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Đã mua</div>
+                            <div class="stat-value">@tongMua</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Đã hoàn</div>
+                            <div class="stat-value">@daHoan</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Còn lại</div>
+                            <div class="stat-value highlight">@conLai</div>
+                        </div>
+                    </div>
+
+                    <div class="product-actions">
+                        <a asp-controller="KhachHangHoanTra"
+                           asp-action="Details"
+                           asp-route-id="@any.PhieuHoanTraId"
+                           class="btn btn-primary btn-sm">
+                            <i class="fas fa-eye me-1"></i>Xem chi tiết
+                        </a>
+                        @if (conLai > 0)
+                        {
+                            <a href="/KhachHangHoanTra/Create?hoaDonChiTietId=@any.HoaDonChiTietId" 
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i>Yêu cầu thêm
+                            </a>
+                        }
+                    </div>
+
+                    <!-- Return History -->
+                    <div class="return-history">
+                        <div class="history-header">
+                            <h6 class="mb-2">
+                                <i class="fas fa-history me-2"></i>Lịch sử yêu cầu
+                            </h6>
+                        </div>
+                        <div class="history-list">
+                            @foreach (var p in g.OrderByDescending(x => x.NgayHoanTra).Take(3))
+                            {
+                                <div class="history-item">
+                                    <div class="history-info">
+                                        <div class="history-date">
+                                            <i class="fas fa-calendar me-1"></i>
+                                            @p.NgayHoanTra.ToString("dd/MM/yyyy HH:mm")
+                                        </div>
+                                        <div class="history-details">
+                                            <span class="history-id">#@p.PhieuHoanTraId.ToString().Substring(0, 8)...</span>
+                                            <span class="history-quantity">@p.SoLuongHoan sản phẩm</span>
+                                        </div>
+                                    </div>
+                                    <div class="history-status">
+                                        <span class="status-badge @StatusClass(p.TrangThai)">
+                                            <i class="@StatusIcon(p.TrangThai) me-1"></i>
+                                            @StatusText(p.TrangThai)
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                            @if (g.Count() > 3)
+                            {
+                                <div class="history-more">
+                                    <small class="text-muted">
+                                        <i class="fas fa-ellipsis-h me-1"></i>
+                                        Và @(g.Count() - 3) yêu cầu khác
+                                    </small>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     }
-</section>
+</div>
+
+@section Styles {
+<style>
+    /* Header Styles */
+    .return-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .return-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.3;
+    }
+
+    .return-icon {
+        width: 60px;
+        height: 60px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .return-header h1 {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        font-weight: 800;
+        font-size: 2rem;
+    }
+
+    .return-header p {
+        position: relative;
+        z-index: 1;
+        opacity: 0.9;
+    }
+
+    /* Statistics Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 800;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: #adb5bd;
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-state h3 {
+        color: #495057;
+        margin-bottom: 1rem;
+    }
+
+    /* Products Grid */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border: 1px solid #f1f5f9;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .product-header {
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .product-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 12px;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .no-image {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #adb5bd;
+    }
+
+    .product-info {
+        flex: 1;
+    }
+
+    .product-name {
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+        color: #1f2937;
+        font-size: 1.1rem;
+    }
+
+    .product-meta {
+        margin-bottom: 0.5rem;
+    }
+
+    .product-status {
+        flex-shrink: 0;
+    }
+
+    /* Status Badges */
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .status-pending {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+    }
+
+    .status-approved {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+
+    .status-rejected {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+    }
+
+    .status-completed {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+    }
+
+    .status-unknown {
+        background: #6b7280;
+        color: white;
+    }
+
+    /* Product Stats */
+    .product-stats {
+        padding: 1rem 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+        background: #f8fafc;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+    }
+
+    .stat-value.highlight {
+        color: #10b981;
+    }
+
+    /* Product Actions */
+    .product-actions {
+        padding: 1rem 1.5rem;
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+
+    .btn {
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-outline-primary {
+        border: 2px solid #667eea;
+        color: #667eea;
+    }
+
+    .btn-outline-primary:hover {
+        background: #667eea;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+
+    /* Return History */
+    .return-history {
+        padding: 1rem 1.5rem;
+        background: #f8fafc;
+    }
+
+    .history-header h6 {
+        color: #374151;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .history-info {
+        flex: 1;
+    }
+
+    .history-date {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-bottom: 0.25rem;
+    }
+
+    .history-details {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .history-id {
+        font-family: monospace;
+        font-size: 0.8rem;
+        color: #374151;
+        font-weight: 600;
+    }
+
+    .history-quantity {
+        font-size: 0.8rem;
+        color: #6b7280;
+    }
+
+    .history-status {
+        flex-shrink: 0;
+    }
+
+    .history-more {
+        text-align: center;
+        padding: 0.5rem;
+    }
+
+    /* Responsive */
+    @@media (max-width: 768px) {
+        .return-header {
+            padding: 1.5rem;
+        }
+
+        .return-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .products-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .product-header {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .product-stats {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+        }
+
+        .product-actions {
+            flex-direction: column;
+        }
+
+        .history-item {
+            flex-direction: column;
+            gap: 0.5rem;
+            text-align: center;
+        }
+    }
+</style>
+}
+
+@section Scripts {
+<script>
+    // Add smooth animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate cards on load
+        const cards = document.querySelectorAll('.product-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Add hover effects for stat cards
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    });
+</script>
+}

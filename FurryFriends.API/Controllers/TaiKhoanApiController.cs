@@ -1,4 +1,4 @@
-﻿using FurryFriends.API.Models;
+﻿﻿using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Repository.IRepository;
 using FurryFriends.API.Services.IServices;
@@ -453,7 +453,7 @@ namespace FurryFriends.API.Controllers
             if (DateTime.UtcNow > expiry)
             {
                 _logger.LogWarning($"Mã xác nhận đã hết hạn cho email: {request.Email}");
-                _resetCodes.Remove(emailKey);
+                    _resetCodes.Remove(emailKey);
                 return BadRequest(new { message = "Mã xác nhận đã hết hạn." });
             }
 
@@ -479,7 +479,7 @@ namespace FurryFriends.API.Controllers
                 await _taiKhoanRepository.UpdatePasswordAsync(account.TaiKhoanId, request.NewPassword);
                 
                 // 4. Xóa mã xác nhận đã sử dụng
-                _resetCodes.Remove(emailKey);
+            _resetCodes.Remove(emailKey);
 
                 _logger.LogInformation($"Đã cập nhật mật khẩu thành công cho tài khoản: {account.TaiKhoanId}");
                 _logger.LogInformation($"=== HOÀN THÀNH XỬ LÝ RESET PASSWORD ===");
