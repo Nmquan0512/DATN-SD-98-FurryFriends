@@ -1,0 +1,145 @@
+@model FurryFriends.API.Models.DTO.GiamGiaDTO
+
+@{
+    ViewData["Title"] = "Xóa chương trình giảm giá";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        Xác nhận vô hiệu hóa chương trình giảm giá
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning" role="alert">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Cảnh báo!
+                        </h5>
+                        <p class="mb-0">
+                            Bạn có chắc chắn muốn vô hiệu hóa chương trình giảm giá này không? 
+                            Hành động này sẽ đổi trạng thái chương trình giảm giá thành "Không hoạt động".
+                        </p>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Tên chương trình:</dt>
+                                <dd class="col-sm-8">
+                                    <strong class="text-primary">@Model.TenGiamGia</strong>
+                                </dd>
+
+                                <dt class="col-sm-4">Phần trăm giảm:</dt>
+                                <dd class="col-sm-8">
+                                    <span class="badge bg-success fs-6">@Model.PhanTramKhuyenMai%</span>
+                                </dd>
+
+                                <dt class="col-sm-4">Ngày bắt đầu:</dt>
+                                <dd class="col-sm-8">
+                                    <i class="fas fa-calendar-alt me-1 text-info"></i>
+                                    @Model.NgayBatDau.ToString("dd/MM/yyyy HH:mm")
+                                </dd>
+
+                                <dt class="col-sm-4">Ngày kết thúc:</dt>
+                                <dd class="col-sm-8">
+                                    <i class="fas fa-calendar-alt me-1 text-info"></i>
+                                    @Model.NgayKetThuc.ToString("dd/MM/yyyy HH:mm")
+                                </dd>
+
+                                <dt class="col-sm-4">Trạng thái hiện tại:</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.TrangThai)
+                                    {
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check-circle me-1"></i>
+                                            Đang hoạt động
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-times-circle me-1"></i>
+                                            Không hoạt động
+                                        </span>
+                                    }
+                                </dd>
+
+                                <dt class="col-sm-4">Ngày bắt đầu:</dt>
+                                <dd class="col-sm-8">
+                                    <i class="fas fa-calendar-alt me-1 text-info"></i>
+                                    @Model.NgayBatDau.ToString("dd/MM/yyyy HH:mm")
+                                </dd>
+
+                                <dt class="col-sm-4">Ngày kết thúc:</dt>
+                                <dd class="col-sm-8">
+                                    <i class="fas fa-calendar-alt me-1 text-info"></i>
+                                    @Model.NgayKetThuc.ToString("dd/MM/yyyy HH:mm")
+                                </dd>
+                            </dl>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-header">
+                                    <h6 class="mb-0">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Thông tin bổ sung
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <p class="text-muted small">
+                                        <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                                        <strong>Lưu ý:</strong> Khi vô hiệu hóa chương trình giảm giá này:
+                                    </p>
+                                    <ul class="text-muted small">
+                                        <li>Chương trình sẽ không còn áp dụng cho các đơn hàng mới</li>
+                                        <li>Các đơn hàng đã áp dụng giảm giá vẫn giữ nguyên</li>
+                                        <li>Có thể kích hoạt lại chương trình này trong tương lai</li>
+                                        <li>Dữ liệu chương trình sẽ được bảo toàn</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="GiamGiaId" />
+                        
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-1"></i>
+                                Quay lại danh sách
+                            </a>
+                            
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-ban me-1"></i>
+                                Vô hiệu hóa chương trình
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Thêm hiệu ứng loading khi submit form
+            $('form').submit(function() {
+                var btn = $(this).find('button[type="submit"]');
+                btn.prop('disabled', true);
+                btn.html('<i class="fas fa-spinner fa-spin me-1"></i>Đang xử lý...');
+            });
+        });
+    </script>
+}

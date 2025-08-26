@@ -25,11 +25,11 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         // GET: Admin/Voucher
         public async Task<IActionResult> Index()
         {
-            var vouchers = await _voucherService.GetAllAsync();
-            ViewBag.TotalCount = vouchers.Count();
-            ViewBag.ActiveCount = vouchers.Count(x => x.TrangThai == 1);
-            ViewBag.InactiveCount = vouchers.Count(x => x.TrangThai == 0);
-            return View(vouchers);
+            var allVouchers = await _voucherService.GetAllAsync();
+            ViewBag.TotalCount = allVouchers.Count();
+            ViewBag.ActiveCount = allVouchers.Count(x => x.TrangThai == 1);
+            ViewBag.InactiveCount = allVouchers.Count(x => x.TrangThai == 0);
+            return View(allVouchers);
         }
 
         // GET: Admin/Voucher/Details/{id}
@@ -169,6 +169,55 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             }
         }
 
+        // POST: /Vouchers/ToggleStatus/{id}
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus(Guid id)
+        {
+            try
+            {
+                var voucher = await _voucherService.GetByIdAsync(id);
+                if (voucher == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy voucher." });
+                }
+
+                // Toggle trạng thái (chuyển từ int sang bool)
+                voucher.TrangThai = voucher.TrangThai == 1 ? 0 : 1;
+                var updateResult = await _voucherService.UpdateAsync(id, voucher);
+                
+                if (updateResult)
+                {
+                    var action = voucher.TrangThai == 1 ? "kích hoạt" : "vô hiệu hóa";
+                    var message = $"Voucher '{voucher.TenVoucher}' đã được {action} thành công.";
+
+                    // 🔔 Thêm thông báo
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = voucher.TrangThai == 1 ? "Kích hoạt voucher" : "Vô hiệu hóa voucher",
+                        NoiDung = $"Voucher '{voucher.TenVoucher}' đã được {action}",
+                        Loai = "Voucher",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
+                    return Json(new { 
+                        success = true, 
+                        message = message,
+                        newStatus = voucher.TrangThai == 1,
+                        statusText = voucher.TrangThai == 1 ? "Đang hoạt động" : "Không hoạt động",
+                        statusClass = voucher.TrangThai == 1 ? "bg-success" : "bg-secondary"
+                    });
+                }
+
+                return Json(new { success = false, message = "Cập nhật trạng thái thất bại!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
+            }
+        }
 
         // GET: Admin/Voucher/Delete/{id}
         public async Task<IActionResult> Delete(Guid id)
@@ -187,21 +236,38 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             try
             {
-                var success = await _voucherService.DeleteAsync(id);
-                if (success)
+                var voucher = await _voucherService.GetByIdAsync(id);
+                if (voucher == null)
                 {
-                    TempData["success"] = "Xóa voucher thành công!";
+                    TempData["Error"] = "Không tìm thấy voucher.";
+                    return RedirectToAction(nameof(Index));
                 }
-                else
+
+                // Xóa mềm - đổi trạng thái thành không hoạt động
+                voucher.TrangThai = 0; // 0 = Không hoạt động
+                await _voucherService.UpdateAsync(id, voucher);
+
+                TempData["Success"] = "Voucher đã được vô hiệu hóa thành công.";
+
+                // 🔔 Thêm thông báo
+                var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
                 {
-                    TempData["error"] = "Có lỗi xảy ra khi xóa voucher.";
-                }
+                    TieuDe = "Vô hiệu hóa voucher",
+                    NoiDung = $"Voucher '{voucher.TenVoucher}' đã được vô hiệu hóa",
+                    Loai = "Voucher",
+                    UserName = userName,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
+
+                return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                TempData["error"] = $"Có lỗi xảy ra: {ex.Message}";
+                TempData["Error"] = $"Lỗi: {ex.Message}";
+                return RedirectToAction(nameof(Index));
             }
-            return RedirectToAction(nameof(Index), new { area = "Admin" });
         }
     }
 }

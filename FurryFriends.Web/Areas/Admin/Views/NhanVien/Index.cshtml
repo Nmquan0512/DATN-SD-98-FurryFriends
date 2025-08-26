@@ -129,7 +129,7 @@
                         <td>@item.GioiTinh</td>
                         <td>@(item.ChucVu != null ? item.ChucVu.TenChucVu : "N/A")</td>
                         <td>@(item.TaiKhoan != null ? item.TaiKhoan.UserName : "N/A")</td>
-                        <td>
+                        <td class="status-cell">
                             @if (item.TrangThai)
                             {
                                 <span class="badge bg-success">Hoạt động</span>
@@ -141,7 +141,14 @@
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.NhanVienId" class="btn btn-sm btn-warning me-1 action-btn"><i class="fas fa-edit"></i></a>
-@*                             <a asp-action="Delete" asp-route-id="@item.NhanVienId" class="btn btn-sm btn-danger action-btn"><i class="fas fa-trash"></i></a> *@
+                            <button type="button" class="btn btn-sm btn-warning action-btn toggle-status-btn" 
+                                    data-id="@item.NhanVienId" 
+                                    data-controller="NhanVien"
+                                    data-area="Admin"
+                                    data-current-status="@item.TrangThai.ToString().ToLower()"
+                                    title="@(item.TrangThai ? "Vô hiệu hóa" : "Kích hoạt")">
+                                <i class="@(item.TrangThai ? "fas fa-ban" : "fas fa-check")"></i>
+                            </button>
                         </td>
                     </tr>
                 }
@@ -151,6 +158,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/admin-toggle-status.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>

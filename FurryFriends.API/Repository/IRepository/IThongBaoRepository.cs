@@ -13,5 +13,6 @@ namespace FurryFriends.API.Repository.IRepository
         Task UpdateAsync(ThongBao thongBao);
         Task DeleteAsync(Guid id);
         Task MarkAsReadAsync(Guid id);
+        Task MarkAllAsReadAsync();
     }
 } 

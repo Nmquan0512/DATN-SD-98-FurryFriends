@@ -138,7 +138,7 @@
                                 <td>@item.NgayBatDau.ToString("dd/MM/yyyy")</td>
                                 <td>@item.NgayKetThuc.ToString("dd/MM/yyyy")</td>
                                 <td>@item.SoLuong</td>
-                                <td>
+                                <td class="status-cell">
                                     @if (item.TrangThai == 1)
                                     {
                                         <span class="badge bg-success">Hoạt động</span>
@@ -150,7 +150,14 @@
                                 </td>
                                 <td>
                                     <a asp-action="Edit" asp-route-id="@item.VoucherId" class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
-                                   @*  <a asp-action="Delete" asp-route-id="@item.VoucherId" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a> *@
+                                    <button type="button" class="btn btn-warning btn-sm toggle-status-btn" 
+                                            data-id="@item.VoucherId" 
+                                            data-controller="Vouchers"
+                                            data-area="Admin"
+                                            data-current-status="@(item.TrangThai == 1 ? "true" : "false")"
+                                            title="@(item.TrangThai == 1 ? "Vô hiệu hóa" : "Kích hoạt")">
+                                        <i class="@(item.TrangThai == 1 ? "fas fa-ban" : "fas fa-check")"></i>
+                                    </button>
                                 </td>
                             </tr>
                         }
@@ -162,6 +169,7 @@
     </div>
 </div>
 @section Scripts {
+    <script src="~/js/admin-toggle-status.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
@@ -223,11 +231,7 @@
                 responsive: true,
                 order: [[1, 'desc']]
             });
-            // Slider phần trăm giảm
-            $('#filterPhanTram').on('input change', function () {
-                $('#phanTramValue').text($(this).val());
-                table.draw();
-            });
+
             // Filter
             $('#filterTrangThai, #filterNgayBatDauTu, #filterNgayKetThucDen').on('change', function () {
                 table.draw();
@@ -235,17 +239,13 @@
             // Custom search logic
             $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
                 var trangThai = $('#filterTrangThai').val();
-                var phanTram = parseInt($('#filterPhanTram').val() || '0');
                 var ngayBatDauTu = $('#filterNgayBatDauTu').val();
                 var ngayKetThucDen = $('#filterNgayKetThucDen').val();
-                var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(5)').text().trim();
-                var rowPhanTram = parseInt(data[1]);
-                var rowNgayBatDau = data[2].split('/').reverse().join('-');
-                var rowNgayKetThuc = data[3].split('/').reverse().join('-');
+                var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(8)').text().trim();
+                var rowNgayBatDau = data[5].split('/').reverse().join('-');
+                var rowNgayKetThuc = data[6].split('/').reverse().join('-');
                 // Trạng thái
                 if (trangThai && !rowTrangThai.includes(trangThai)) return false;
-                // Phần trăm giảm
-                if (rowPhanTram < phanTram) return false;
                 // Ngày bắt đầu
                 if (ngayBatDauTu && rowNgayBatDau < ngayBatDauTu) return false;
                 // Ngày kết thúc

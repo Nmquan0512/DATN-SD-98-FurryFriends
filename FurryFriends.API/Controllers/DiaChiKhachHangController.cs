@@ -41,8 +41,8 @@ namespace FurryFriends.API.Controllers
         public async Task<IActionResult> Create([FromBody] DiaChiKhachHang diaChi)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            diaChi.NgayTao = DateTime.UtcNow;
-            diaChi.NgayCapNhat = DateTime.UtcNow;
+            diaChi.NgayTao = DateTime.Now;
+            diaChi.NgayCapNhat = DateTime.Now;
             await _repository.AddAsync(diaChi);
             return CreatedAtAction(nameof(GetById), new { id = diaChi.DiaChiId }, diaChi);
         }
@@ -51,7 +51,7 @@ namespace FurryFriends.API.Controllers
         public async Task<IActionResult> Update(Guid id, [FromBody] DiaChiKhachHang diaChi)
         {
             if (id != diaChi.DiaChiId) return BadRequest();
-            diaChi.NgayCapNhat = DateTime.UtcNow;
+            diaChi.NgayCapNhat = DateTime.Now;
             await _repository.UpdateAsync(diaChi);
             return NoContent();
         }

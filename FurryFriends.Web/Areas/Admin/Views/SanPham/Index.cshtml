@@ -193,7 +193,7 @@
                                     }
                                 </td>
                                 <td>@item.NgayTao.ToString("dd/MM/yyyy")</td>
-                                <td>
+                                <td class="status-cell">
                                     @if (item.TrangThai)
                                     {
                                         <span class="badge bg-success">Đang hoạt động</span>
@@ -209,12 +209,6 @@
                                         {
                                             <a asp-area="Admin" asp-controller="SanPham" asp-action="Edit" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-primary action-btn" title="Chỉnh sửa">
                                                 <i class="fas fa-edit"></i>
-                                            </a>
-                                        }
-                                        @if (Context.Session.CanDelete())
-                                        {
-                                            <a asp-area="Admin" asp-controller="SanPham" asp-action="Delete" asp-route-id="@item.SanPhamId" class="btn btn-sm btn-outline-danger action-btn" title="Xoá">
-                                                <i class="fas fa-trash"></i>
                                             </a>
                                         }
                                         <a asp-area="Admin" asp-controller="SanPhamChiTiet" asp-action="Index" asp-route-sanPhamId="@item.SanPhamId" class="btn btn-sm btn-outline-secondary" title="Chi tiết sản phẩm">

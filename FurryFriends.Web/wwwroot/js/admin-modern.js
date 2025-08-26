@@ -9,7 +9,7 @@ class ModernAdmin {
         this.setupEventListeners();
         this.initializeAnimations();
         this.setupCharts();
-        this.setupNotifications();
+
         this.setupThemeToggle();
         this.setupSearch();
         this.setupKeyboardShortcuts();
@@ -110,91 +110,7 @@ class ModernAdmin {
         }
     }
 
-    setupNotifications() {
-        // Create notification system
-        this.notificationContainer = document.createElement('div');
-        this.notificationContainer.className = 'notification-container';
-        this.notificationContainer.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        `;
-        document.body.appendChild(this.notificationContainer);
-    }
 
-    showNotification(message, type = 'info', duration = 5000) {
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.style.cssText = `
-            background: ${this.getNotificationColor(type)};
-            color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            max-width: 300px;
-            word-wrap: break-word;
-        `;
-        
-        notification.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <i class="fas ${this.getNotificationIcon(type)}"></i>
-                <span>${message}</span>
-            </div>
-        `;
-
-        this.notificationContainer.appendChild(notification);
-
-        // Animate in
-        setTimeout(() => {
-            notification.style.transform = 'translateX(0)';
-        }, 100);
-
-        // Auto remove
-        setTimeout(() => {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }, duration);
-
-        // Click to dismiss
-        notification.addEventListener('click', () => {
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        });
-    }
-
-    getNotificationColor(type) {
-        const colors = {
-            success: 'linear-gradient(135deg, #43e97b, #38f9d7)',
-            error: 'linear-gradient(135deg, #f093fb, #f5576c)',
-            warning: 'linear-gradient(135deg, #fa709a, #fee140)',
-            info: 'linear-gradient(135deg, #4facfe, #00f2fe)'
-        };
-        return colors[type] || colors.info;
-    }
-
-    getNotificationIcon(type) {
-        const icons = {
-            success: 'fa-check-circle',
-            error: 'fa-exclamation-circle',
-            warning: 'fa-exclamation-triangle',
-            info: 'fa-info-circle'
-        };
-        return icons[type] || icons.info;
-    }
 
     setupThemeToggle() {
         // Create theme toggle button
@@ -239,11 +155,11 @@ class ModernAdmin {
         if (isDark) {
             body.classList.remove('dark-theme');
             localStorage.setItem('theme', 'light');
-            this.showNotification('Chuyển sang chế độ sáng', 'info');
+    
         } else {
             body.classList.add('dark-theme');
             localStorage.setItem('theme', 'dark');
-            this.showNotification('Chuyển sang chế độ tối', 'info');
+    
         }
     }
 
@@ -273,7 +189,7 @@ class ModernAdmin {
     performSearch(query) {
         // Implement search functionality
         console.log('Searching for:', query);
-        this.showNotification(`Đang tìm kiếm: ${query}`, 'info');
+
     }
 
     showSearchSuggestions() {
@@ -426,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Show welcome notification
     setTimeout(() => {
-        window.modernAdmin.showNotification('Chào mừng đến với Furry Friends Admin!', 'success');
+
     }, 1000);
 });
 

@@ -22,11 +22,11 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var list = await _thanhPhanService.GetAllAsync();
-            ViewBag.TotalCount = list.Count();
-            ViewBag.ActiveCount = list.Count(x => x.TrangThai);
-            ViewBag.InactiveCount = list.Count(x => !x.TrangThai);
-            return View(list);
+            var allThanhPhans = await _thanhPhanService.GetAllAsync();
+            ViewBag.TotalCount = allThanhPhans.Count();
+            ViewBag.ActiveCount = allThanhPhans.Count(x => x.TrangThai);
+            ViewBag.InactiveCount = allThanhPhans.Count(x => !x.TrangThai);
+            return View(allThanhPhans);
         }
 
         public IActionResult Create()
@@ -123,7 +123,57 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             return View(dto);
         }
 
+        // POST: /ThanhPhan/ToggleStatus/{id}
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus(Guid id)
+        {
+            try
+            {
+                var thanhPhan = await _thanhPhanService.GetByIdAsync(id);
+                if (thanhPhan == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy thành phần." });
+                }
 
+                // Toggle trạng thái
+                thanhPhan.TrangThai = !thanhPhan.TrangThai;
+                var updateResult = await _thanhPhanService.UpdateAsync(id, thanhPhan);
+                
+                if (updateResult.Data)
+                {
+                    var action = thanhPhan.TrangThai ? "kích hoạt" : "vô hiệu hóa";
+                    var message = $"Thành phần '{thanhPhan.TenThanhPhan}' đã được {action} thành công.";
+
+                    // 🔔 Thêm thông báo
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = thanhPhan.TrangThai ? "Kích hoạt thành phần" : "Vô hiệu hóa thành phần",
+                        NoiDung = $"Thành phần '{thanhPhan.TenThanhPhan}' đã được {action}",
+                        Loai = "ThanhPhan",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
+                    return Json(new { 
+                        success = true, 
+                        message = message,
+                        newStatus = thanhPhan.TrangThai,
+                        statusText = thanhPhan.TrangThai ? "Đang hoạt động" : "Không hoạt động",
+                        statusClass = thanhPhan.TrangThai ? "bg-success" : "bg-secondary"
+                    });
+                }
+
+                return Json(new { success = false, message = "Cập nhật trạng thái thất bại!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
+            }
+        }
+
+        // GET: /ThanhPhan/Delete/{id}
         public async Task<IActionResult> Delete(Guid id)
         {
             var item = await _thanhPhanService.GetByIdAsync(id);
@@ -137,12 +187,46 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var success = await _thanhPhanService.DeleteAsync(id);
-            if (success)
-                return RedirectToAction("Index");
+            try
+            {
+                var thanhPhan = await _thanhPhanService.GetByIdAsync(id);
+                if (thanhPhan == null)
+                {
+                    TempData["Error"] = "Không tìm thấy thành phần.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            ModelState.AddModelError("", "Xóa thất bại!");
-            return RedirectToAction("Delete", new { id });
+                // Xóa mềm - đổi trạng thái thành không hoạt động
+                thanhPhan.TrangThai = false;
+                var updateResult = await _thanhPhanService.UpdateAsync(id, thanhPhan);
+                
+                if (updateResult.Data)
+                {
+                    TempData["Success"] = "Thành phần đã được vô hiệu hóa thành công.";
+
+                    // 🔔 Thêm thông báo
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Vô hiệu hóa thành phần",
+                        NoiDung = $"Thành phần '{thanhPhan.TenThanhPhan}' đã được vô hiệu hóa",
+                        Loai = "ThanhPhan",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
+                    return RedirectToAction(nameof(Index));
+                }
+
+                TempData["Error"] = "Vô hiệu hóa thất bại!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Lỗi: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

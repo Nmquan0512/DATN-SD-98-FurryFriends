@@ -112,6 +112,18 @@
         let provinceData = {};
         let wardData = {};
         $(document).ready(function () {
+            // Tách địa chỉ hiện tại trước
+            var diaChiFull = $('#DiaChi').val() || '';
+            var diaChiParts = diaChiFull.split(',').map(function(x){return x.trim();});
+            $('#diaChiCuThe').val(diaChiParts[0] || '');
+            
+            var tinhText = '';
+            var phuongText = '';
+            if (diaChiParts.length > 2) {
+                tinhText = diaChiParts[2];
+                phuongText = diaChiParts[1];
+            }
+            
             // Load province.json
             $.getJSON('/json/province.json', function (provinces) {
                 provinceData = provinces;
@@ -119,62 +131,45 @@
                 $.each(provinces, function (key, value) {
                     $('#tinhThanh').append($('<option>', { value: value.code, text: value.name_with_type }));
                 });
-                // Nếu có sẵn tỉnh thì set lại dropdown
-                if (window._selectedTinhCode) {
-                    $('#tinhThanh').val(window._selectedTinhCode).trigger('change');
+                
+                // Tìm và set tỉnh hiện tại
+                if (tinhText) {
+                    $.each(provinces, function (key, value) {
+                        if (value.name_with_type === tinhText) {
+                            $('#tinhThanh').val(value.code).trigger('change');
+                        }
+                    });
                 }
             });
-            // Load ward.json trước để dùng sau
+            
+            // Load ward.json
             $.getJSON('/json/ward.json', function (wards) {
                 wardData = wards;
-                // Nếu có sẵn phường thì set lại dropdown
-                if (window._selectedTinhCode && window._selectedPhuongCode) {
-                    setTimeout(function() {
-                        $('#phuongXa').val(window._selectedPhuongCode);
-                    }, 300);
-                }
             });
+            
             // Khi chọn tỉnh/thành phố, load phường/xã/thị trấn
             $('#tinhThanh').on('change', function () {
                 var selectedCode = $(this).val();
                 $('#phuongXa').empty();
                 $('#phuongXa').append($('<option>', { value: '', text: '-- Chọn phường/xã/thị trấn --' }));
+                
                 if (selectedCode && wardData) {
                     $.each(wardData, function (key, value) {
                         if (value.parent_code === selectedCode) {
                             $('#phuongXa').append($('<option>', { value: value.code, text: value.name_with_type }));
                         }
                     });
+                    
+                    // Tìm và set phường hiện tại
+                    if (phuongText) {
+                        $.each(wardData, function (key, value) {
+                            if (value.name_with_type === phuongText && value.parent_code === selectedCode) {
+                                $('#phuongXa').val(value.code);
+                            }
+                        });
+                    }
                 }
             });
-            // Tách địa chỉ hiện tại
-            var diaChiFull = $('#DiaChi').val() || '';
-            var diaChiParts = diaChiFull.split(',').map(function(x){return x.trim();});
-            $('#diaChiCuThe').val(diaChiParts[0] || '');
-            // Tìm code tỉnh và phường từ text
-            if (diaChiParts.length > 2) {
-                var tinhText = diaChiParts[2];
-                var phuongText = diaChiParts[1];
-                var tinhCode = '';
-                var phuongCode = '';
-                $.getJSON('/json/province.json', function (provinces) {
-                    $.each(provinces, function (key, value) {
-                        if (value.name_with_type === tinhText) {
-                            tinhCode = value.code;
-                            window._selectedTinhCode = tinhCode;
-                            $('#tinhThanh').val(tinhCode).trigger('change');
-                        }
-                    });
-                });
-                $.getJSON('/json/ward.json', function (wards) {
-                    $.each(wards, function (key, value) {
-                        if (value.name_with_type === phuongText) {
-                            phuongCode = value.code;
-                            window._selectedPhuongCode = phuongCode;
-                        }
-                    });
-                });
-            }
             // Gộp địa chỉ khi submit
             $('form').on('submit', function(e) {
                 var diaChiCuThe = $('#diaChiCuThe').val();

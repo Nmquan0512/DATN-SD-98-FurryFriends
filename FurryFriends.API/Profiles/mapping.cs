@@ -42,7 +42,7 @@ namespace FurryFriends.API.Profiles
                 .ForMember(dest => dest.DotGiamGiaSanPhams, opt => opt.Ignore())
 
                 // Luôn cập nhật ngày tháng khi có thay đổi
-                .ForMember(dest => dest.NgayCapNhat, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.NgayCapNhat, opt => opt.MapFrom(src => DateTime.Now))
 
                 // ==========================================================
                 // ĐÂY LÀ PHẦN QUAN TRỌNG NHẤT

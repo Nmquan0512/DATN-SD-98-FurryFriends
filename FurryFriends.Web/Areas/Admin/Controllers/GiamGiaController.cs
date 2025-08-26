@@ -180,29 +180,95 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             return View(dto);
         }
 
-        // POST: /Admin/GiamGia/Delete/{id}
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        // GET: /Admin/GiamGia/Delete/{id}
         public async Task<IActionResult> Delete(Guid id)
+        {
+            var giamGia = await _giamGiaService.GetByIdAsync(id);
+            if (giamGia == null) return NotFound();
+            return View(giamGia);
+        }
+
+        // POST: /Admin/GiamGia/Delete/{id} - XÓA MỀM (Vô hiệu hóa vĩnh viễn)
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             try
             {
-                var success = await _giamGiaService.DeleteAsync(id);
-                if (success)
+                var giamGia = await _giamGiaService.GetByIdAsync(id);
+                if (giamGia == null)
                 {
-                    TempData["success"] = "Xóa chương trình giảm giá thành công.";
+                    TempData["Error"] = "Không tìm thấy chương trình giảm giá.";
+                    return RedirectToAction(nameof(Index));
                 }
-                else
-                {
-                    TempData["error"] = "Không tìm thấy chương trình giảm giá để xóa.";
-                }
-            }
-            catch (ApiException ex)
-            {
-                TempData["error"] = $"Lỗi khi xóa: {ex.Message}";
-            }
 
-            return RedirectToAction(nameof(Index));
+                // Xóa mềm - đổi trạng thái thành không hoạt động
+                giamGia.TrangThai = false;
+                await _giamGiaService.UpdateAsync(id, giamGia);
+
+                TempData["Success"] = "Chương trình giảm giá đã được vô hiệu hóa thành công.";
+
+                // 🔔 Thêm thông báo
+                var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = "Vô hiệu hóa chương trình giảm giá",
+                    NoiDung = $"Chương trình giảm giá '{giamGia.TenGiamGia}' đã được vô hiệu hóa",
+                    Loai = "GiamGia",
+                    UserName = userName,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Lỗi: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        // POST: /Admin/GiamGia/ToggleStatus/{id} - CHUYỂN ĐỔI TRẠNG THÁI (Hoạt động ↔ Không hoạt động)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleStatus(Guid id)
+        {
+            try
+            {
+                var giamGia = await _giamGiaService.GetByIdAsync(id);
+                if (giamGia == null)
+                {
+                    TempData["Error"] = "Không tìm thấy chương trình giảm giá.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Chuyển đổi trạng thái
+                giamGia.TrangThai = !giamGia.TrangThai;
+                await _giamGiaService.UpdateAsync(id, giamGia);
+
+                var statusText = giamGia.TrangThai ? "kích hoạt" : "tạm dừng";
+                TempData["Success"] = $"Chương trình giảm giá đã được {statusText} thành công.";
+
+                // 🔔 Thêm thông báo
+                var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = $"Chuyển đổi trạng thái chương trình giảm giá",
+                    NoiDung = $"Chương trình giảm giá '{giamGia.TenGiamGia}' đã được {statusText}",
+                    Loai = "GiamGia",
+                    UserName = userName,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Lỗi: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
         // Hàm hỗ trợ chung để xử lý lỗi từ API và thêm vào ModelState

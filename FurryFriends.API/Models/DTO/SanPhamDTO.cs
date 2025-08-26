@@ -29,7 +29,7 @@ namespace FurryFriends.API.Models.DTO
         public string? TenThuongHieu { get; set; }
         public List<string>? TenChatLieus { get; set; }
         public List<string>? TenThanhPhans { get; set; }
-        public DateTime NgayTao { get; set; } = DateTime.UtcNow;
+        public DateTime NgayTao { get; set; } = DateTime.Now;
         public DateTime? NgaySua { get; set; }
         public bool TrangThai { get; set; } = true;
 

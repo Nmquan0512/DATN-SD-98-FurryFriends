@@ -8,7 +8,6 @@ namespace FurryFriends.API.Repository.IRepository
 		Task<KhachHang> GetByIdAsync(Guid id);                 // Lấy 1 khách hàng theo ID
 		Task AddAsync(KhachHang khachHang);                    // Thêm mới
 		Task UpdateAsync(KhachHang khachHang);                 // Cập nhật
-		Task DeleteAsync(Guid id);
 		Task<KhachHang?> FindByEmailAsync(string email);       // Tìm theo email
 		Task<KhachHang?> FindByPhoneAsync(string phone);       // Tìm theo số điện thoại
 		Task<IEnumerable<KhachHang>> GetAllIncludingDeletedAsync(); // Lấy tất cả (bao gồm đã xóa)

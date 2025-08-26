@@ -57,7 +57,7 @@ namespace FurryFriends.API.Repositories
 
         public void Update(GiamGia entity)
         {
-            entity.NgayCapNhat = DateTime.UtcNow;
+            entity.NgayCapNhat = DateTime.Now;
             // Đánh dấu đối tượng là đã bị thay đổi, không cần Save
             _context.Entry(entity).State = EntityState.Modified;
         }

@@ -213,6 +213,9 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddHttpContextAccessor();
 
+// Đăng ký filter
+builder.Services.AddScoped<FurryFriends.Web.Filter.AccountStatusFilter>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

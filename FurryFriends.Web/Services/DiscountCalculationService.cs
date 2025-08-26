@@ -35,7 +35,7 @@ namespace FurryFriends.Web.Services
                     if (giamGia.SanPhamChiTietIds?.Contains(sanPhamChiTietId) == true)
                     {
                         // Kiểm tra thời gian hiệu lực
-                        var now = DateTime.UtcNow;
+                        var now = DateTime.Now;
                         if (giamGia.NgayBatDau <= now && giamGia.NgayKetThuc >= now && giamGia.TrangThai)
                         {
                             applicableDiscounts.Add((giamGia.PhanTramKhuyenMai, giamGia.NgayKetThuc));

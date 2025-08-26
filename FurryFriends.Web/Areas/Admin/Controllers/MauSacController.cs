@@ -21,11 +21,11 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         // GET: /Admin/MauSac
         public async Task<IActionResult> Index()
         {
-            var list = await _mauSacService.GetAllAsync();
-            ViewBag.TotalCount = list.Count();
-            ViewBag.ActiveCount = list.Count(x => x.TrangThai);
-            ViewBag.InactiveCount = list.Count(x => !x.TrangThai);
-            return View(list);
+            var allMauSacs = await _mauSacService.GetAllAsync();
+            ViewBag.TotalCount = allMauSacs.Count();
+            ViewBag.ActiveCount = allMauSacs.Count(x => x.TrangThai);
+            ViewBag.InactiveCount = allMauSacs.Count(x => !x.TrangThai);
+            return View(allMauSacs);
         }
 
         // GET: /Admin/MauSac/Create
@@ -125,6 +125,55 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             return View(dto);
         }
 
+        // POST: /Admin/MauSac/ToggleStatus/{id}
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus(Guid id)
+        {
+            try
+            {
+                var mauSac = await _mauSacService.GetByIdAsync(id);
+                if (mauSac == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy màu sắc." });
+                }
+
+                // Toggle trạng thái
+                mauSac.TrangThai = !mauSac.TrangThai;
+                var updateResult = await _mauSacService.UpdateAsync(id, mauSac);
+                
+                if (updateResult.Data)
+                {
+                    var action = mauSac.TrangThai ? "kích hoạt" : "vô hiệu hóa";
+                    var message = $"Màu sắc '{mauSac.TenMau}' đã được {action} thành công.";
+
+                    // 🔔 Thêm thông báo
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = mauSac.TrangThai ? "Kích hoạt màu sắc" : "Vô hiệu hóa màu sắc",
+                        NoiDung = $"Màu sắc '{mauSac.TenMau}' đã được {action}",
+                        Loai = "MauSac",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
+                    return Json(new { 
+                        success = true, 
+                        message = message,
+                        newStatus = mauSac.TrangThai,
+                        statusText = mauSac.TrangThai ? "Đang hoạt động" : "Không hoạt động",
+                        statusClass = mauSac.TrangThai ? "bg-success" : "bg-secondary"
+                    });
+                }
+
+                return Json(new { success = false, message = "Cập nhật trạng thái thất bại!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
+            }
+        }
 
         // GET: /Admin/MauSac/Delete/{id}
         public async Task<IActionResult> Delete(Guid id)
@@ -141,12 +190,46 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var success = await _mauSacService.DeleteAsync(id);
-            if (success)
-                return RedirectToAction("Index");
+            try
+            {
+                var mauSac = await _mauSacService.GetByIdAsync(id);
+                if (mauSac == null)
+                {
+                    TempData["Error"] = "Không tìm thấy màu sắc.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            ModelState.AddModelError("", "Xóa thất bại!");
-            return RedirectToAction("Delete", new { id });
+                // Xóa mềm - đổi trạng thái thành không hoạt động
+                mauSac.TrangThai = false;
+                var updateResult = await _mauSacService.UpdateAsync(id, mauSac);
+                
+                if (updateResult.Data)
+                {
+                    TempData["Success"] = "Màu sắc đã được vô hiệu hóa thành công.";
+
+                    // 🔔 Thêm thông báo
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Vô hiệu hóa màu sắc",
+                        NoiDung = $"Màu sắc '{mauSac.TenMau}' đã được vô hiệu hóa",
+                        Loai = "MauSac",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
+                    return RedirectToAction(nameof(Index));
+                }
+
+                TempData["Error"] = "Vô hiệu hóa thất bại!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Lỗi: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

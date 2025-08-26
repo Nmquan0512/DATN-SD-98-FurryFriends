@@ -43,18 +43,7 @@ namespace FurryFriends.API.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(Guid id)
-        {
-            var khachHang = await _context.KhachHangs.FindAsync(id);
-            if (khachHang != null)
-            {
-                // Soft delete: Thay đổi trạng thái thay vì xóa thực sự
-                khachHang.TrangThai = 0; // 0 = Đã xóa/Inactive
-                khachHang.NgayCapNhatCuoiCung = DateTime.Now;
-                _context.KhachHangs.Update(khachHang);
-                await _context.SaveChangesAsync();
-            }
-        }
+
 
         public async Task<KhachHang?> FindByEmailAsync(string email)
         {

@@ -60,6 +60,18 @@ namespace FurryFriends.API.Repository
 
             _context.TaiKhoans.Add(taiKhoan);
             await _context.SaveChangesAsync();
+
+            // 🔄 Cập nhật liên kết ngược: Cập nhật KhachHang.TaiKhoanId
+            if (taiKhoan.KhachHangId.HasValue)
+            {
+                var khachHang = await _context.KhachHangs.FindAsync(taiKhoan.KhachHangId.Value);
+                if (khachHang != null)
+                {
+                    khachHang.TaiKhoanId = taiKhoan.TaiKhoanId;
+                    khachHang.NgayCapNhatCuoiCung = DateTime.Now;
+                    await _context.SaveChangesAsync();
+                }
+            }
         }
 
         public async Task UpdateAsync(TaiKhoan taiKhoan)
@@ -94,6 +106,9 @@ namespace FurryFriends.API.Repository
                 throw new ArgumentException("NhanVienId does not exist.");
             }
 
+            // Lưu KhachHangId cũ để xử lý liên kết
+            var oldKhachHangId = existing.KhachHangId;
+
             existing.UserName = taiKhoan.UserName;
             // TODO: Mã hóa Password
             existing.Password = taiKhoan.Password;
@@ -103,6 +118,34 @@ namespace FurryFriends.API.Repository
             existing.NgayCapNhatCuoiCung = DateTime.Now;
 
             await _context.SaveChangesAsync();
+
+            // 🔄 Cập nhật liên kết ngược: Xử lý thay đổi KhachHangId
+            if (oldKhachHangId != taiKhoan.KhachHangId)
+            {
+                // Xóa liên kết cũ
+                if (oldKhachHangId.HasValue)
+                {
+                    var oldKhachHang = await _context.KhachHangs.FindAsync(oldKhachHangId.Value);
+                    if (oldKhachHang != null)
+                    {
+                        oldKhachHang.TaiKhoanId = null;
+                        oldKhachHang.NgayCapNhatCuoiCung = DateTime.Now;
+                    }
+                }
+
+                // Tạo liên kết mới
+                if (taiKhoan.KhachHangId.HasValue)
+                {
+                    var newKhachHang = await _context.KhachHangs.FindAsync(taiKhoan.KhachHangId.Value);
+                    if (newKhachHang != null)
+                    {
+                        newKhachHang.TaiKhoanId = taiKhoan.TaiKhoanId;
+                        newKhachHang.NgayCapNhatCuoiCung = DateTime.Now;
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task DeleteAsync(Guid id)
@@ -115,6 +158,17 @@ namespace FurryFriends.API.Repository
             if (taiKhoan.NhanVien != null)
             {
                 throw new InvalidOperationException("Không thể xóa tài khoản vì nó đang liên kết với nhân viên.");
+            }
+
+            // 🔄 Xóa liên kết với khách hàng trước khi xóa tài khoản
+            if (taiKhoan.KhachHangId.HasValue)
+            {
+                var khachHang = await _context.KhachHangs.FindAsync(taiKhoan.KhachHangId.Value);
+                if (khachHang != null)
+                {
+                    khachHang.TaiKhoanId = null;
+                    khachHang.NgayCapNhatCuoiCung = DateTime.Now;
+                }
             }
 
             _context.TaiKhoans.Remove(taiKhoan);

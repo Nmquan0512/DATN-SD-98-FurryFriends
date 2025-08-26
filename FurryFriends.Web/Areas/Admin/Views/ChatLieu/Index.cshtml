@@ -78,7 +78,7 @@
                                 <td>@stt</td>
                                 <td>@item.TenChatLieu</td>
                                 <td>@(string.IsNullOrEmpty(item.MoTa) ? "Không có mô tả" : item.MoTa)</td>
-                                <td>
+                                <td class="status-cell">
                                     @if (item.TrangThai)
                                     {
                                         <span class="badge bg-success">Đang hoạt động</span>
@@ -93,9 +93,14 @@
                                         <a asp-area="Admin" asp-action="Edit" asp-controller="ChatLieu" asp-route-id="@item.ChatLieuId" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        @* <a asp-area="Admin" asp-action="Delete" asp-controller="ChatLieu" asp-route-id="@item.ChatLieuId" class="btn btn-sm btn-outline-danger" title="Xóa">
-                                            <i class="fas fa-trash"></i>
-                                        </a> *@
+                                        <button type="button" class="btn btn-sm btn-outline-warning toggle-status-btn" 
+                                                data-id="@item.ChatLieuId" 
+                                                data-controller="ChatLieu"
+                                                data-area="Admin"
+                                                data-current-status="@item.TrangThai.ToString().ToLower()"
+                                                title="@(item.TrangThai ? "Vô hiệu hóa" : "Kích hoạt")">
+                                            <i class="@(item.TrangThai ? "fas fa-ban" : "fas fa-check")"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -109,6 +114,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/admin-toggle-status.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>

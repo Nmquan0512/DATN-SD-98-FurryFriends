@@ -21,10 +21,10 @@ namespace FurryFriends.API.Models
         public bool TrangThai { get; set; } = true;
 
         [Required]
-        public DateTime NgayTao { get; set; } = DateTime.UtcNow;
+        public DateTime NgayTao { get; set; } = DateTime.Now;
 
         [Required]
-        public DateTime NgayCapNhat { get; set; } = DateTime.UtcNow;
+        public DateTime NgayCapNhat { get; set; } = DateTime.Now;
 
         // Navigation properties
         [ForeignKey("GiamGiaId")]

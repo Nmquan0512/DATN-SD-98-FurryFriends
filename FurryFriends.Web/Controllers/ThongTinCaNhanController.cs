@@ -8,9 +8,11 @@ using System;
 using System.Collections.Generic;
 using FurryFriends.API.Services.IServices;
 using WebThongTinCaNhanService = FurryFriends.Web.Services.IService.IThongTinCaNhanService;
+using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Controllers
 {
+    [ServiceFilter(typeof(AccountStatusFilter))]
     public class ThongTinCaNhanController : Controller
     {
 		private readonly WebThongTinCaNhanService _thongTinCaNhanService;

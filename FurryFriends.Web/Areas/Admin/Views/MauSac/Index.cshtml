@@ -92,7 +92,7 @@
                                     }
                                 </td>
                                 <td>@(string.IsNullOrEmpty(item.MoTa) ? "Không có mô tả" : item.MoTa)</td>
-                                <td>
+                                <td class="status-cell">
                                     @if (item.TrangThai)
                                     {
                                         <span class="badge bg-success">Đang hoạt động</span>
@@ -107,9 +107,14 @@
                                         <a asp-area="Admin" asp-action="Edit" asp-controller="MauSac" asp-route-id="@item.MauSacId" class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        @* <a asp-area="Admin" asp-action="Delete" asp-controller="MauSac" asp-route-id="@item.MauSacId" class="btn btn-sm btn-outline-danger" title="Xóa">
-                                            <i class="fas fa-trash"></i>
-                                        </a> *@
+                                        <button type="button" class="btn btn-sm btn-outline-warning toggle-status-btn" 
+                                                data-id="@item.MauSacId" 
+                                                data-controller="MauSac"
+                                                data-area="Admin"
+                                                data-current-status="@item.TrangThai.ToString().ToLower()"
+                                                title="@(item.TrangThai ? "Vô hiệu hóa" : "Kích hoạt")">
+                                            <i class="@(item.TrangThai ? "fas fa-ban" : "fas fa-check")"></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -126,6 +131,7 @@
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.js"></script>
 @section Scripts {
+    <script src="~/js/admin-toggle-status.js"></script>
     <script>
         $(document).ready(function () {
             if (window.adminLoading) {

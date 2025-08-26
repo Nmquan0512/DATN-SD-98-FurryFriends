@@ -18,11 +18,24 @@ namespace FurryFriends.Web.Services
 
         public async Task<IEnumerable<ThongBaoDTO>> GetAllAsync()
         {
-            var res = await _client.GetAsync(_baseUrl);
-            if (!res.IsSuccessStatusCode) return new List<ThongBaoDTO>();
+            try
+            {
+                var res = await _client.GetAsync(_baseUrl);
+                if (!res.IsSuccessStatusCode) 
+                {
+                    System.Diagnostics.Debug.WriteLine($"ThongBaoService GetAllAsync failed: {res.StatusCode} - {res.ReasonPhrase}");
+                    return new List<ThongBaoDTO>();
+                }
 
-            var json = await res.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<ThongBaoDTO>>(json);
+                var json = await res.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<List<ThongBaoDTO>>(json);
+                return result ?? new List<ThongBaoDTO>();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"ThongBaoService GetAllAsync exception: {ex.Message}");
+                return new List<ThongBaoDTO>();
+            }
         }
 
         public async Task CreateAsync(ThongBaoDTO dto)
@@ -31,6 +44,24 @@ namespace FurryFriends.Web.Services
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _client.PostAsync(_baseUrl, content);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task MarkAsReadAsync(Guid id)
+        {
+            var response = await _client.PutAsync($"{_baseUrl}/mark-as-read/{id}", null);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task MarkAllAsReadAsync()
+        {
+            var response = await _client.PutAsync($"{_baseUrl}/mark-all-as-read", null);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var response = await _client.DeleteAsync($"{_baseUrl}/{id}");
             response.EnsureSuccessStatusCode();
         }
     }

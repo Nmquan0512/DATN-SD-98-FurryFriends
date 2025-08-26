@@ -23,11 +23,11 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         // GET: /ChatLieu
         public async Task<IActionResult> Index()
         {
-            var list = await _chatLieuService.GetAllAsync();
-            ViewBag.TotalCount = list.Count();
-            ViewBag.ActiveCount = list.Count(x => x.TrangThai);
-            ViewBag.InactiveCount = list.Count(x => !x.TrangThai);
-            return View(list);
+            var allChatLieus = await _chatLieuService.GetAllAsync();
+            ViewBag.TotalCount = allChatLieus.Count();
+            ViewBag.ActiveCount = allChatLieus.Count(x => x.TrangThai);
+            ViewBag.InactiveCount = allChatLieus.Count(x => !x.TrangThai);
+            return View(allChatLieus);
         }
 
         // GET: /ChatLieu/Create
@@ -133,6 +133,55 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             return View(dto);
         }
 
+        // POST: /ChatLieu/ToggleStatus/{id}
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus(Guid id)
+        {
+            try
+            {
+                var chatLieu = await _chatLieuService.GetByIdAsync(id);
+                if (chatLieu == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy chất liệu." });
+                }
+
+                // Toggle trạng thái
+                chatLieu.TrangThai = !chatLieu.TrangThai;
+                var updateResult = await _chatLieuService.UpdateAsync(id, chatLieu);
+                
+                if (updateResult.Data)
+                {
+                    var action = chatLieu.TrangThai ? "kích hoạt" : "vô hiệu hóa";
+                    var message = $"Chất liệu '{chatLieu.TenChatLieu}' đã được {action} thành công.";
+
+                    // 🔔 Thêm thông báo
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = chatLieu.TrangThai ? "Kích hoạt chất liệu" : "Vô hiệu hóa chất liệu",
+                        NoiDung = $"Chất liệu '{chatLieu.TenChatLieu}' đã được {action}",
+                        Loai = "ChatLieu",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
+                    return Json(new { 
+                        success = true, 
+                        message = message,
+                        newStatus = chatLieu.TrangThai,
+                        statusText = chatLieu.TrangThai ? "Đang hoạt động" : "Không hoạt động",
+                        statusClass = chatLieu.TrangThai ? "bg-success" : "bg-secondary"
+                    });
+                }
+
+                return Json(new { success = false, message = "Cập nhật trạng thái thất bại!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
+            }
+        }
 
         // GET: /ChatLieu/Delete/{id}
         public async Task<IActionResult> Delete(Guid id)
@@ -149,15 +198,46 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var success = await _chatLieuService.DeleteAsync(id);
-            if (success)
+            try
             {
-                TempData["success"] = "Xóa chất liệu thành công!";
-                return RedirectToAction("Index");
-            }
+                var chatLieu = await _chatLieuService.GetByIdAsync(id);
+                if (chatLieu == null)
+                {
+                    TempData["Error"] = "Không tìm thấy chất liệu.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            TempData["error"] = "Xóa thất bại!";
-            return RedirectToAction("Delete", new { id });
+                // Xóa mềm - đổi trạng thái thành không hoạt động
+                chatLieu.TrangThai = false;
+                var updateResult = await _chatLieuService.UpdateAsync(id, chatLieu);
+                
+                if (updateResult.Data)
+                {
+                    TempData["Success"] = "Chất liệu đã được vô hiệu hóa thành công.";
+
+                    // 🔔 Thêm thông báo
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Vô hiệu hóa chất liệu",
+                        NoiDung = $"Chất liệu '{chatLieu.TenChatLieu}' đã được vô hiệu hóa",
+                        Loai = "ChatLieu",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
+                    return RedirectToAction(nameof(Index));
+                }
+
+                TempData["Error"] = "Vô hiệu hóa thất bại!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Lỗi: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

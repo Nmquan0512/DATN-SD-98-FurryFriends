@@ -22,13 +22,6 @@ public class AuthController : Controller
         // Xóa TempData cũ để tránh hiển thị thông báo không mong muốn
         TempData.Clear();
         
-        // Kiểm tra thông báo lỗi từ middleware
-        var error = Request.Query["error"].ToString();
-        if (error == "unauthorized")
-        {
-            TempData["Error"] = "Bạn không có quyền truy cập khu vực quản trị. Chỉ admin mới có thể truy cập.";
-        }
-        
         var taiKhoanId = HttpContext.Session.GetString("TaiKhoanId");
         if (!string.IsNullOrEmpty(taiKhoanId))
         {
@@ -54,16 +47,11 @@ public class AuthController : Controller
         _logger.LogInformation($"Đăng nhập với UserName: {model.UserName}");
 
         // Thử đăng nhập admin/nhân viên
-        var (result, errorMessage) = await _taiKhoanService.DangNhapAdminAsync(model);
+        var result = await _taiKhoanService.DangNhapAdminAsync(model);
         _logger.LogInformation($"Kết quả đăng nhập admin: {(result != null ? "Thành công" : "Thất bại")}");
 
         if (result != null)
         {
-            if (!result.TrangThai)
-            {
-                TempData["Error"] = "Tài khoản đã dừng hoạt động.";
-                return View(model);
-            }
             HttpContext.Session.SetString("TaiKhoanId", result.TaiKhoanId.ToString());
             HttpContext.Session.SetString("Role", result.Role);
             HttpContext.Session.SetString("HoTen", result.HoTen ?? "");
@@ -84,27 +72,22 @@ public class AuthController : Controller
         }
 
         // Nếu không phải admin/nhân viên, thử đăng nhập khách hàng
-        var (khResult, khError) = await _taiKhoanService.DangNhapKhachHangAsync(model);
+        var khResult = await _taiKhoanService.DangNhapKhachHangAsync(model);
+        _logger.LogInformation($"Kết quả đăng nhập khách hàng: {(khResult != null ? "Thành công" : "Thất bại")}");
 
         if (khResult != null)
         {
-            if (!khResult.TrangThai) // <- sửa ở đây
-            {
-                TempData["Error"] = "Tài khoản đã dừng hoạt động.";
-                return View(model);
-            }
-
+            // Lưu session cho khách hàng
             HttpContext.Session.SetString("TaiKhoanId", khResult.TaiKhoanId.ToString());
             HttpContext.Session.SetString("Role", khResult.Role);
             HttpContext.Session.SetString("HoTen", khResult.HoTen ?? "");
-
+            
             TempData["Warning"] = "Bạn không có quyền truy cập khu vực quản trị. Vui lòng đăng nhập vào trang khách hàng.";
-            return View(model);
+            return View(model); // Return view instead of redirect
         }
 
-        TempData["Error"] = khError ?? "Sai tài khoản hoặc mật khẩu. Vui lòng kiểm tra lại!";
-        return View(model);
-
+        TempData["Error"] = "Sai tài khoản hoặc mật khẩu. Vui lòng kiểm tra lại!";
+        return View(model); // Return view instead of redirect
     }
 
     [HttpGet]

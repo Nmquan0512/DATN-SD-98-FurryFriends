@@ -57,7 +57,7 @@ namespace FurryFriends.API.Controllers
                     return BadRequest(ModelState);
 
                 voucher.VoucherId = Guid.NewGuid();
-                voucher.NgayTao = DateTime.UtcNow;
+                voucher.NgayTao = DateTime.Now;
                 await _repository.AddAsync(voucher);
                 return CreatedAtAction(nameof(GetById), new { id = voucher.VoucherId }, voucher);
             }
@@ -76,7 +76,7 @@ namespace FurryFriends.API.Controllers
                 if (id != voucher.VoucherId)
                     return BadRequest();
 
-                voucher.NgayCapNhat = DateTime.UtcNow;
+                voucher.NgayCapNhat = DateTime.Now;
                 await _repository.UpdateAsync(voucher);
                 return NoContent();
             }

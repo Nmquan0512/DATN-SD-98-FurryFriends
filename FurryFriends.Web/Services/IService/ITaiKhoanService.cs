@@ -1,4 +1,4 @@
-﻿using FurryFriends.API.Models;
+﻿﻿using FurryFriends.API.Models;
 using LoginRequest = FurryFriends.API.Models.LoginRequest;
 using LoginResponse = FurryFriends.API.Models.LoginResponse;
 
@@ -13,8 +13,7 @@ namespace FurryFriends.Web.Services.IService
         Task DeleteAsync(Guid taiKhoanId);
         Task<IEnumerable<TaiKhoan>> FindByUserNameAsync(string userName);
         Task<IEnumerable<TaiKhoan>> GetAllTaiKhoanAsync();
-        Task<(LoginResponse? Response, string? ErrorMessage)> DangNhapAdminAsync(LoginRequest model);
-
-        Task<(LoginResponse? Response, string? ErrorMessage)> DangNhapKhachHangAsync(LoginRequest model);
+        Task<LoginResponse?> DangNhapAdminAsync(LoginRequest model);
+        Task<LoginResponse?> DangNhapKhachHangAsync(LoginRequest model);
     }
 }

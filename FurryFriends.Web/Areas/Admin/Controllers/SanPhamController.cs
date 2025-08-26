@@ -48,9 +48,9 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             try
             {
-                var result = await _sanPhamService.GetAllAsync();
+                var allSanPhams = await _sanPhamService.GetAllAsync();
                 await LoadDropdownData();
-                return View(result);
+                return View(allSanPhams);
             }
             catch (Exception ex)
             {
@@ -244,20 +244,43 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         {
             try
             {
-                var result = await _sanPhamService.DeleteAsync(id);
-                if (result.Success)
+                var sanPham = await _sanPhamService.GetByIdAsync(id);
+                if (sanPham == null)
                 {
-                    TempData["Success"] = "Xóa sản phẩm thành công!";
+                    TempData["Error"] = "Không tìm thấy sản phẩm.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Xóa mềm - đổi trạng thái thành không hoạt động
+                sanPham.TrangThai = false;
+                var updateResult = await _sanPhamService.UpdateAsync(id, sanPham);
+                
+                if (updateResult.Success)
+                {
+                    TempData["Success"] = "Sản phẩm đã được vô hiệu hóa thành công.";
+
+                    // 🔔 Thêm thông báo
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Vô hiệu hóa sản phẩm",
+                        NoiDung = $"Sản phẩm '{sanPham.TenSanPham}' đã được vô hiệu hóa",
+                        Loai = "SanPham",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
                     return RedirectToAction(nameof(Index));
                 }
                 
-                var errorMessage = result.Errors?.FirstOrDefault().Value.FirstOrDefault() ?? "Xóa sản phẩm thất bại!";
+                var errorMessage = updateResult.Errors?.FirstOrDefault().Value.FirstOrDefault() ?? "Vô hiệu hóa sản phẩm thất bại!";
                 TempData["Error"] = errorMessage;
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                TempData["Error"] = $"Lỗi khi xóa sản phẩm: {ex.Message}";
+                TempData["Error"] = $"Lỗi khi vô hiệu hóa sản phẩm: {ex.Message}";
                 return RedirectToAction(nameof(Index));
             }
         }

@@ -7,5 +7,8 @@ namespace FurryFriends.Web.Services.IService
     {
         Task<IEnumerable<ThongBaoDTO>> GetAllAsync();
         Task CreateAsync(ThongBaoDTO dto);
+        Task MarkAsReadAsync(Guid id);
+        Task MarkAllAsReadAsync();
+        Task DeleteAsync(Guid id);
     }
 }

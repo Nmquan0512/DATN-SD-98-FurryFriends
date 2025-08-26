@@ -1,40 +1,266 @@
-@model IEnumerable<FurryFriends.Web.Models.ThongBaoViewModel>
+@model IEnumerable<FurryFriends.API.Models.DTO.ThongBaoDTO>
 @{
-    ViewData["Title"] = "Quản lý thông báo";
+    ViewData["Title"] = "Thông báo";
 }
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2 class="mb-0">Quản lý thông báo</h2>
-    <a href="@Url.Action("Create")" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Thêm mới</a>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-dark">
+                            <i class="fas fa-bell me-2 text-primary"></i>
+                            Thông báo hệ thống
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <button id="markAllReadBtn" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-check-double me-1"></i>
+                                Đánh dấu tất cả đã đọc
+                            </button>
+                            <button id="refreshBtn" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-sync-alt me-1"></i>
+                                Làm mới
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="notificationsContainer">
+                        @if (Model.Any())
+                        {
+                            <div class="list-group list-group-flush">
+                                @foreach (var notification in Model)
+                                {
+                                    <div class="list-group-item border-0 py-3 px-4 notification-item @(!notification.DaDoc ? "unread" : "")" 
+                                         data-id="@notification.ThongBaoId">
+                                        <div class="d-flex align-items-start">
+                                            <div class="flex-shrink-0 me-3">
+                                                @if (!notification.DaDoc)
+                                                {
+                                                    <div class="unread-indicator bg-primary rounded-circle" style="width: 8px; height: 8px;"></div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="read-indicator bg-light rounded-circle" style="width: 8px; height: 8px;"></div>
+                                                }
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                                    <h6 class="mb-0 fw-semibold @(!notification.DaDoc ? "text-dark" : "text-muted")">
+                                                        @notification.TieuDe
+                                                    </h6>
+                                                    <div class="d-flex gap-1">
+                                                        <button class="btn btn-sm btn-outline-primary mark-read-btn" 
+                                                                data-id="@notification.ThongBaoId" 
+                                                                style="display: @(!notification.DaDoc ? "block" : "none")">
+                                                            <i class="fas fa-check"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-1 text-muted small">
+                                                    @notification.NoiDung
+                                                </p>
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div class="d-flex gap-3">
+                                                        <span class="badge bg-light text-dark">
+                                                            <i class="fas fa-tag me-1"></i>
+                                                            @notification.Loai
+                                                        </span>
+                                                        <span class="text-muted small">
+                                                            <i class="fas fa-user me-1"></i>
+                                                            @notification.UserName
+                                                        </span>
+                                                    </div>
+                                                    <span class="text-muted small">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        @notification.NgayTao.ToString("dd/MM/yyyy HH:mm")
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center py-5">
+                                <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">Không có thông báo nào</h5>
+                                <p class="text-muted">Tất cả thông báo đã được xem hoặc chưa có thông báo mới.</p>
+                            </div>
+                        }
+                    </div>
 </div>
-<table class="table table-bordered table-hover bg-white rounded shadow-sm">
-    <thead class="table-light">
-        <tr>
-@*             <th>Tiêu đề</th> *@
-            <th>Nội dung</th>
-            <th>Ngày tạo</th>
-            <th>Người dùng</th>
-            <th>Đã đọc</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-@*                 <td>@item.TieuDe</td> *@
-                <td>@item.NoiDung</td>
-                <td>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>@item.UserName</td>
-                <td>
-                    @if (item.DaDoc)
-                    {
-                        <span class="badge bg-success">Đã đọc</span>
+                
+                @if (ViewBag.TotalPages > 1)
+                {
+                    <div class="card-footer bg-white border-top">
+                        <nav aria-label="Thông báo phân trang">
+                            <ul class="pagination justify-content-center mb-0">
+                                @if (ViewBag.CurrentPage > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1 })">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                }
+                                
+                                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                                {
+                                    if (i == ViewBag.CurrentPage)
+                                    {
+                                        <li class="page-item active">
+                                            <span class="page-link">@i</span>
+                                        </li>
                     }
                     else
                     {
-                        <span class="badge bg-warning text-dark">Chưa đọc</span>
-                    }
-                </td>
-            </tr>
+                                        <li class="page-item">
+                                            <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                                        </li>
+                                    }
+                                }
+                                
+                                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1 })">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .notification-item {
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
         }
-    </tbody>
-</table> 
+        
+        .notification-item:hover {
+            background-color: #f8f9fa;
+            border-left-color: #0d6efd;
+        }
+        
+        .notification-item.unread {
+            background-color: #f0f8ff;
+            border-left-color: #0d6efd;
+        }
+        
+        .unread-indicator {
+            animation: pulse 2s infinite;
+        }
+        
+        @@keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .badge {
+            font-size: 0.75rem;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Mark as read
+            $('.mark-read-btn').click(function() {
+                var btn = $(this);
+                var notificationId = btn.data('id');
+                var notificationItem = btn.closest('.notification-item');
+                
+                $.ajax({
+                    url: `https://localhost:7289/api/ThongBao/mark-as-read/${notificationId}`,
+                    type: 'PUT',
+                    success: function(response) {
+                        notificationItem.removeClass('unread');
+                        btn.hide();
+                        notificationItem.find('.unread-indicator').removeClass('bg-primary').addClass('bg-light');
+                        notificationItem.find('h6').removeClass('text-dark').addClass('text-muted');
+                        updateNotificationCount();
+                    },
+                    error: function() {
+                        showAlert('Có lỗi xảy ra khi đánh dấu đã đọc', 'danger');
+                    }
+                });
+            });
+            
+
+            
+            // Mark all as read
+            $('#markAllReadBtn').click(function() {
+                $.ajax({
+                    url: 'https://localhost:7289/api/ThongBao/mark-all-as-read',
+                    type: 'PUT',
+                    success: function(response) {
+                        $('.notification-item').removeClass('unread');
+                        $('.mark-read-btn').hide();
+                        $('.unread-indicator').removeClass('bg-primary').addClass('bg-light');
+                        $('.notification-item h6').removeClass('text-dark').addClass('text-muted');
+                        updateNotificationCount();
+                        showAlert('Đã đánh dấu tất cả thông báo là đã đọc', 'success');
+                    },
+                    error: function() {
+                        showAlert('Có lỗi xảy ra', 'danger');
+                    }
+                });
+            });
+            
+            // Refresh
+            $('#refreshBtn').click(function() {
+                location.reload();
+            });
+            
+            function updateNotificationCount() {
+                $.get('https://localhost:7289/api/ThongBao')
+                    .done(function(response) {
+                        if (response && Array.isArray(response)) {
+                            var unreadCount = response.filter(tb => !tb.daDoc).length;
+                            var displayCount = unreadCount > 100 ? "99+" : unreadCount.toString();
+                            
+                            // Update notification count in header
+                            var badge = $('.admin-header .badge');
+                            if (unreadCount > 0) {
+                                badge.text(displayCount).show();
+                            } else {
+                                badge.hide();
+                            }
+                        }
+                    });
+            }
+            
+            function showAlert(message, type) {
+                var alertHtml = `
+                    <div class="alert alert-${type} alert-dismissible fade show position-fixed" 
+                         style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                $('body').append(alertHtml);
+                setTimeout(function() {
+                    $('.alert').alert('close');
+                }, 3000);
+            }
+        });
+    </script>
+} 

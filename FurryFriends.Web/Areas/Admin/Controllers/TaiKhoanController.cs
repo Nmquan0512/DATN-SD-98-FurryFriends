@@ -14,20 +14,28 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
     {
         public readonly ITaiKhoanService _taiKhoanService;
         private readonly IThongBaoService _thongBaoService;
+        private readonly IKhachHangService _khachHangService;
+        private readonly INhanVienService _nhanVienService;
 
-        public TaiKhoanController(ITaiKhoanService taiKhoanService, IThongBaoService thongBaoService)
+        public TaiKhoanController(
+            ITaiKhoanService taiKhoanService, 
+            IThongBaoService thongBaoService,
+            IKhachHangService khachHangService,
+            INhanVienService nhanVienService)
         {
             _taiKhoanService = taiKhoanService;
             _thongBaoService = thongBaoService;
+            _khachHangService = khachHangService;
+            _nhanVienService = nhanVienService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var taiKhoans = await _taiKhoanService.GetAllAsync();
-            ViewBag.TotalCount = taiKhoans.Count();
-            ViewBag.ActiveCount = taiKhoans.Count(x => x.TrangThai);
-            ViewBag.InactiveCount = taiKhoans.Count(x => !x.TrangThai);
-            return View(taiKhoans);
+            var allTaiKhoans = await _taiKhoanService.GetAllAsync();
+            ViewBag.TotalCount = allTaiKhoans.Count();
+            ViewBag.ActiveCount = allTaiKhoans.Count(x => x.TrangThai);
+            ViewBag.InactiveCount = allTaiKhoans.Count(x => !x.TrangThai);
+            return View(allTaiKhoans);
         }
 
         public IActionResult Create()
@@ -117,7 +125,94 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
                         taiKhoan.Password = taiKhoanCu.Password;
                     }
 
+                    // Giữ nguyên liên kết cũ khi chỉ thay đổi trạng thái
+                    if (taiKhoan.TrangThai != taiKhoanCu.TrangThai) // Chỉ thay đổi trạng thái
+                    {
+                        // Giữ nguyên KhachHangId và NhanVienId cũ
+                        taiKhoan.KhachHangId = taiKhoanCu.KhachHangId;
+                        taiKhoan.NhanVienId = taiKhoanCu.NhanVienId;
+                    }
+
+                    // Logic mới: Khi khóa tài khoản thì cũng khóa luôn khách hàng/nhân viên liên kết
+                    if (!taiKhoan.TrangThai && taiKhoanCu.TrangThai) // Đang khóa tài khoản
+                    {
+                        // Khóa khách hàng liên kết
+                        if (taiKhoanCu.KhachHangId.HasValue)
+                        {
+                            try
+                            {
+                                var khachHang = await _khachHangService.GetByIdAsync(taiKhoanCu.KhachHangId.Value);
+                                if (khachHang != null)
+                                {
+                                    khachHang.TrangThai = 2; // 2 = Đã khóa
+                                    await _khachHangService.UpdateAsync(khachHang.KhachHangId, khachHang);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error updating KhachHang status: {ex.Message}");
+                            }
+                        }
+
+                        // Khóa nhân viên liên kết
+                        if (taiKhoanCu.NhanVienId.HasValue)
+                        {
+                            try
+                            {
+                                var nhanVien = await _nhanVienService.GetByIdAsync(taiKhoanCu.NhanVienId.Value);
+                                if (nhanVien != null)
+                                {
+                                    nhanVien.TrangThai = false;
+                                    await _nhanVienService.UpdateAsync(nhanVien);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error updating NhanVien status: {ex.Message}");
+                            }
+                        }
+                    }
+
                     await _taiKhoanService.UpdateAsync(taiKhoan);
+
+                    // Đồng bộ trạng thái: Mở khóa khách hàng/nhân viên liên kết khi mở khóa tài khoản
+                    if (taiKhoan.TrangThai && !taiKhoanCu.TrangThai) // Đang mở khóa tài khoản
+                    {
+                        // Sử dụng liên kết cũ để đồng bộ trạng thái
+                        if (taiKhoanCu.KhachHangId.HasValue)
+                        {
+                            try
+                            {
+                                var khachHang = await _khachHangService.GetByIdAsync(taiKhoanCu.KhachHangId.Value);
+                                if (khachHang != null)
+                                {
+                                    khachHang.TrangThai = 1; // 1 = Đang hoạt động
+                                    await _khachHangService.UpdateAsync(khachHang.KhachHangId, khachHang);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error updating KhachHang status: {ex.Message}");
+                            }
+                        }
+
+                        if (taiKhoanCu.NhanVienId.HasValue)
+                        {
+                            try
+                            {
+                                var nhanVien = await _nhanVienService.GetByIdAsync(taiKhoanCu.NhanVienId.Value);
+                                if (nhanVien != null)
+                                {
+                                    nhanVien.TrangThai = true;
+                                    await _nhanVienService.UpdateAsync(nhanVien);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"Error updating NhanVien status: {ex.Message}");
+                            }
+                        }
+                    }
 
                     var userNameSession = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
                     await _thongBaoService.CreateAsync(new ThongBaoDTO
@@ -159,39 +254,85 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             return View(taiKhoan);
         }
 
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var taiKhoan = await _taiKhoanService.GetByIdAsync(id);
-            if (taiKhoan == null)
-            {
-                return NotFound();
-            }
-            return View(taiKhoan);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        // POST: /TaiKhoan/ToggleStatus/{id}
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus(Guid id)
         {
             try
             {
-                await _taiKhoanService.DeleteAsync(id);
-                TempData["Success"] = "Tài khoản đã được xóa thành công.";
-                return RedirectToAction(nameof(Index));
-            }
-            catch (KeyNotFoundException ex)
-            {
-                ModelState.AddModelError("", ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                ModelState.AddModelError("", ex.Message);
+                var taiKhoan = await _taiKhoanService.GetByIdAsync(id);
+                if (taiKhoan == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy tài khoản." });
+                }
+
+                // Toggle trạng thái
+                taiKhoan.TrangThai = !taiKhoan.TrangThai;
+                await _taiKhoanService.UpdateAsync(taiKhoan);
+                
+                // Đồng bộ trạng thái với khách hàng hoặc nhân viên liên kết
+                if (taiKhoan.KhachHangId.HasValue)
+                {
+                    try
+                    {
+                        var khachHang = await _khachHangService.GetByIdAsync(taiKhoan.KhachHangId.Value);
+                        if (khachHang != null)
+                        {
+                            // Đồng bộ trạng thái: tài khoản hoạt động thì khách hàng cũng hoạt động
+                            khachHang.TrangThai = taiKhoan.TrangThai ? 1 : 2; // 1 = hoạt động, 2 = đã khóa
+                            await _khachHangService.UpdateAsync(khachHang.KhachHangId, khachHang);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error updating KhachHang status: {ex.Message}");
+                    }
+                }
+                else if (taiKhoan.NhanVienId.HasValue)
+                {
+                    try
+                    {
+                        var nhanVien = await _nhanVienService.GetByIdAsync(taiKhoan.NhanVienId.Value);
+                        if (nhanVien != null)
+                        {
+                            // Đồng bộ trạng thái: tài khoản hoạt động thì nhân viên cũng hoạt động
+                            nhanVien.TrangThai = taiKhoan.TrangThai;
+                            await _nhanVienService.UpdateAsync(nhanVien);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error updating NhanVien status: {ex.Message}");
+                    }
+                }
+                
+                var action = taiKhoan.TrangThai ? "kích hoạt" : "vô hiệu hóa";
+                var message = $"Tài khoản '{taiKhoan.UserName}' đã được {action} thành công.";
+
+                // 🔔 Thêm thông báo
+                var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                await _thongBaoService.CreateAsync(new ThongBaoDTO
+                {
+                    TieuDe = taiKhoan.TrangThai ? "Kích hoạt tài khoản" : "Vô hiệu hóa tài khoản",
+                    NoiDung = $"Tài khoản '{taiKhoan.UserName}' đã được {action}",
+                    Loai = "TaiKhoan",
+                    UserName = userName,
+                    NgayTao = DateTime.Now,
+                    DaDoc = false
+                });
+
+                return Json(new { 
+                    success = true, 
+                    message = message,
+                    newStatus = taiKhoan.TrangThai,
+                    statusText = taiKhoan.TrangThai ? "Đang hoạt động" : "Không hoạt động",
+                    statusClass = taiKhoan.TrangThai ? "bg-success" : "bg-secondary"
+                });
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Lỗi: {ex.Message}");
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
             }
-            var taiKhoan = await _taiKhoanService.GetByIdAsync(id);
-            return View(taiKhoan);
         }
 
         [HttpPost]

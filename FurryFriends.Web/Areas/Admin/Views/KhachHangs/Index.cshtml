@@ -63,7 +63,6 @@
                 <label for="filterTrangThai" class="form-label mb-1">Trạng thái</label>
                 <select id="filterTrangThai" class="form-select">
                     <option value="">Tất cả trạng thái</option>
-                    <option value="Chưa kích hoạt">Chưa kích hoạt</option>
                     <option value="Đang hoạt động">Đang hoạt động</option>
                     <option value="Đã khóa">Đã khóa</option>
                 </select>
@@ -118,21 +117,18 @@
                     <td>@item.EmailCuaKhachHang</td>
                     <td><span class="badge bg-primary diem-value">@item.DiemKhachHang</span></td>
                     <td>@item.NgayTaoTaiKhoan.ToString("yyyy-MM-dd")</td>
-                    <td>
-                        @switch (item.TrangThai)
+                    <td class="status-cell">
+                        @if (item.TrangThai == 1)
                         {
-                            case 0:
-                                <span class="status-badge status-pending">Chưa kích hoạt</span>
-                                break;
-                            case 1:
-                                <span class="status-badge status-paid">Đang hoạt động</span>
-                                break;
-                            case 2:
-                                <span class="status-badge status-cancelled">Đã khóa</span>
-                                break;
-                            default:
-                                <span class="status-badge status-cancelled">Không xác định</span>
-                                break;
+                            <span class="badge bg-success">Đang hoạt động</span>
+                        }
+                        else if (item.TrangThai == 2)
+                        {
+                            <span class="badge bg-secondary">Đã khóa</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Không xác định</span>
                         }
                     </td>
                     <td>
@@ -148,9 +144,14 @@
                             }
                             @if (Context.Session.CanDelete())
                             {
-                                <a asp-action="Delete" asp-route-id="@item.KhachHangId" class="btn btn-danger btn-sm action-btn">
-                                    <i class="fas fa-trash"></i>
-                                </a>
+                                <button type="button" class="btn btn-warning btn-sm action-btn toggle-status-btn" 
+                                        data-id="@item.KhachHangId" 
+                                        data-controller="KhachHangs"
+                                        data-area="Admin"
+                                        data-current-status="@(item.TrangThai == 1 ? "1" : "2")"
+                                        title="@(item.TrangThai == 1 ? "Vô hiệu hóa" : "Kích hoạt")">
+                                    <i class="@(item.TrangThai == 1 ? "fas fa-ban" : "fas fa-check")"></i>
+                                </button>
                             }
                         </div>
                     </td>
@@ -161,6 +162,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/admin-toggle-status.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
@@ -276,12 +278,7 @@
                     }
                 }
             });
-            // Hiển thị giá trị slider
-            $('#filterDiem').on('input', function () {
-                var val = parseInt($(this).val());
-                $('#diemValue').text(val);
-                table.draw();
-            });
+
             // Filter
             $('#filterTrangThai, #filterNgayTu, #filterNgayDen').on('change', function () {
                 table.draw();
@@ -291,8 +288,6 @@
                 var trangThai = $('#filterTrangThai').val();
                 var ngayTu = $('#filterNgayTu').val();
                 var ngayDen = $('#filterNgayDen').val();
-                var diem = parseInt($('#filterDiem').val() || '0');
-                var rowDiem = parseInt($(table.row(dataIndex).node()).find('.diem-value').text() || '0');
                 var rowNgay = data[4];
                 var rowTrangThai = $(table.row(dataIndex).node()).find('td:eq(5)').text().trim();
                 
@@ -302,9 +297,6 @@
                 // Ngày tham gia
                 if (ngayTu && rowNgay < ngayTu) return false;
                 if (ngayDen && rowNgay > ngayDen) return false;
-                
-                // ✅ Điểm tích lũy - nếu giá trị là 0 thì không lọc (null)
-                if (diem > 0 && rowDiem !== diem) return false;
                 
                 return true;
             });

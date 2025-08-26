@@ -66,6 +66,12 @@ namespace FurryFriends.API.Services
 
             // 1. Ánh xạ thuộc tính chính của GiamGia
             var giamGiaEntity = _mapper.Map<GiamGia>(dto);
+            
+            // Đảm bảo thời gian được lưu theo giờ Việt Nam
+            giamGiaEntity.NgayBatDau = DateTime.SpecifyKind(dto.NgayBatDau, DateTimeKind.Local);
+            giamGiaEntity.NgayKetThuc = DateTime.SpecifyKind(dto.NgayKetThuc, DateTimeKind.Local);
+            giamGiaEntity.NgayTao = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
+            giamGiaEntity.NgayCapNhat = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
 
             // 2. Xây dựng danh sách các sản phẩm liên quan trong bộ nhớ
             if (dto.SanPhamChiTietIds?.Any() == true)
@@ -111,10 +117,10 @@ namespace FurryFriends.API.Services
                 // 2. Cập nhật các thuộc tính chính
                 existingEntity.TenGiamGia = dto.TenGiamGia;
                 existingEntity.PhanTramKhuyenMai = dto.PhanTramKhuyenMai;
-                existingEntity.NgayBatDau = dto.NgayBatDau;
-                existingEntity.NgayKetThuc = dto.NgayKetThuc;
+                existingEntity.NgayBatDau = DateTime.SpecifyKind(dto.NgayBatDau, DateTimeKind.Local);
+                existingEntity.NgayKetThuc = DateTime.SpecifyKind(dto.NgayKetThuc, DateTimeKind.Local);
                 existingEntity.TrangThai = dto.TrangThai;
-                existingEntity.NgayCapNhat = DateTime.UtcNow;
+                existingEntity.NgayCapNhat = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
 
                 // 3. Xử lý danh sách sản phẩm - Sử dụng cách tiếp cận đơn giản hơn
                 var newProductIds = dto.SanPhamChiTietIds ?? new List<Guid>();
@@ -160,20 +166,19 @@ namespace FurryFriends.API.Services
         
         public async Task<bool> DeleteAsync(Guid id)
         {
-            // Tải đối tượng cần xóa cùng với các liên kết
+            // Tải đối tượng cần xóa mềm
             var entityToDelete = await _giamGiaRepo.GetByIdAsync(id, includeProducts: true);
             if (entityToDelete == null)
             {
                 return false; // Không tìm thấy để xóa
             }
 
-            // Xóa các liên kết con trước
-            // EF Core sẽ tự động xử lý việc này khi bạn cấu hình Cascade Delete,
-            // nhưng xóa tường minh sẽ an toàn hơn.
-            entityToDelete.DotGiamGiaSanPhams.Clear();
+            // Thực hiện xóa mềm bằng cách đặt TrangThai = false
+            entityToDelete.TrangThai = false;
+            entityToDelete.NgayCapNhat = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local);
 
-            // Xóa đối tượng cha
-            _giamGiaRepo.Delete(entityToDelete);
+            // Cập nhật đối tượng thay vì xóa
+            _giamGiaRepo.Update(entityToDelete);
 
             // Lưu lại các thay đổi
             await _giamGiaRepo.SaveAsync();

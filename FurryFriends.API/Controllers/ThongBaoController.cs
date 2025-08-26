@@ -54,10 +54,17 @@ namespace FurryFriends.API.Controllers
             return NoContent();
         }
 
-        [HttpPost("mark-as-read/{id}")]
+        [HttpPut("mark-as-read/{id}")]
         public async Task<IActionResult> MarkAsRead(Guid id)
         {
             await _repo.MarkAsReadAsync(id);
+            return NoContent();
+        }
+
+        [HttpPut("mark-all-as-read")]
+        public async Task<IActionResult> MarkAllAsRead()
+        {
+            await _repo.MarkAllAsReadAsync();
             return NoContent();
         }
     }

@@ -91,47 +91,64 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             });
         }
 
-        // POST: /Admin/Anh/Delete
+        // POST: /Anh/ToggleStatus/{id}
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleStatus(Guid id)
+        {
+            try
+            {
+                var anh = await _anhService.GetByIdAsync(id);
+                if (anh == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy ảnh." });
+                }
+
+                // Toggle trạng thái
+                anh.TrangThai = !anh.TrangThai;
+                var updateResult = await _anhService.UpdateAsync(id, anh);
+                
+                if (updateResult)
+                {
+                    var action = anh.TrangThai ? "kích hoạt" : "vô hiệu hóa";
+                    var message = $"Ảnh '{anh.TenAnh}' đã được {action} thành công.";
+
+                    // 🔔 Thêm thông báo
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = anh.TrangThai ? "Kích hoạt ảnh" : "Vô hiệu hóa ảnh",
+                        NoiDung = $"Ảnh '{anh.TenAnh}' đã được {action}",
+                        Loai = "Anh",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
+                    return Json(new { 
+                        success = true, 
+                        message = message,
+                        newStatus = anh.TrangThai,
+                        statusText = anh.TrangThai ? "Đang hoạt động" : "Không hoạt động",
+                        statusClass = anh.TrangThai ? "bg-success" : "bg-secondary"
+                    });
+                }
+
+                return Json(new { success = false, message = "Cập nhật trạng thái thất bại!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
+            }
+        }
+
+        // GET: /Anh/Delete/{id}
         public async Task<IActionResult> Delete(Guid id)
         {
-            Console.WriteLine($"🗑️ [Anh/Delete] Yêu cầu xóa ảnh ID: {id}");
+            var item = await _anhService.GetByIdAsync(id);
+            if (item == null)
+                return NotFound();
 
-            if (id == Guid.Empty)
-            {
-                Console.WriteLine("❌ ID ảnh không hợp lệ!");
-                TempData["error"] = "❌ ID ảnh không hợp lệ!";
-                return RedirectToAction("Index");
-            }
-
-            // Lấy thông tin ảnh trước khi xoá
-            var anh = await _anhService.GetByIdAsync(id);
-            var success = await _anhService.DeleteAsync(id);
-            if (success)
-            {
-                // Nếu ảnh liên kết với sản phẩm chi tiết thì cập nhật lại sản phẩm chi tiết về chưa có ảnh
-                if (anh != null && anh.SanPhamChiTietId != Guid.Empty)
-                {
-                    // Gọi service cập nhật sản phẩm chi tiết về AnhId = null
-                    var updateDto = new FurryFriends.API.Models.DTO.SanPhamChiTietDTO
-                    {
-                        AnhId = null
-                    };
-                    // Cần inject ISanPhamChiTietService vào controller này để gọi UpdateAsync
-                    // Giả sử đã inject, gọi như sau:
-                    // await _sanPhamChiTietService.UpdateAsync(anh.SanPhamChiTietId, updateDto);
-                }
-                Console.WriteLine("✅ Ảnh đã được xóa!");
-                TempData["success"] = "🗑️ Ảnh đã được xóa!";
-            }
-            else
-            {
-                Console.WriteLine("❌ Không tìm thấy ảnh để xóa hoặc xóa thất bại!");
-                TempData["error"] = "❌ Không tìm thấy ảnh để xóa hoặc xóa thất bại!";
-            }
-
-            return RedirectToAction("Index");
+            return View(item);
         }
     }
 }

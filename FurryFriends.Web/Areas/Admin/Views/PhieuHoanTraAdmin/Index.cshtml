@@ -151,18 +151,21 @@
                                 <td class="text-center">@item.SoLuongHoan</td>
                                 <td>@(string.IsNullOrEmpty(ngay) ? "-" : DateTime.Parse(ngay).ToString("dd/MM/yyyy"))</td>
                                 <td class="text-truncate" style="max-width:380px">@item.LyDoHoanTra</td>
-                                <td class="text-center">
-                                    @if (item.TrangThai == 0)
+                                <td class="status-cell">
+                                    @switch (item.TrangThai)
                                     {
-                                        <span class="badge badge-pill s0">Chờ xử lý</span>
-                                    }
-                                    else if (item.TrangThai == 1)
-                                    {
-                                        <span class="badge badge-pill s1">Đã duyệt</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-pill s2">Từ chối</span>
+                                        case 0:
+                                            <span class="badge bg-warning">Chờ xử lý</span>
+                                            break;
+                                        case 1:
+                                            <span class="badge bg-success">Đã duyệt</span>
+                                            break;
+                                        case 2:
+                                            <span class="badge bg-danger">Từ chối</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">Không xác định</span>
+                                            break;
                                     }
                                 </td>
                                 <td class="text-end">
@@ -173,15 +176,14 @@
                                     @* Duyệt *@
                                     @if (item.TrangThai != 1)
                                     {
-                                        <form asp-action="UpdateTrangThai" method="post" class="d-inline"
-                                              onsubmit="return confirm('Duyệt phiếu này?');">
-                                            <input type="hidden" name="id" value="@item.PhieuHoanTraId" />
-                                            <input type="hidden" name="trangThai" value="1" />
-                                            <input type="hidden" name="hoaDonId" value="@hoaDonId" />
-                                            <button class="btn btn-success btn-sm" type="submit">
-                                                <i class="fas fa-check"></i> Duyệt
-                                            </button>
-                                        </form>
+                                        <button type="button" class="btn btn-outline-success btn-sm toggle-status-btn"
+                                                data-id="@item.PhieuHoanTraId" 
+                                                data-controller="PhieuHoanTraAdmin"
+                                                data-area="Admin"
+                                                data-current-status="@(item.TrangThai == 1 ? "true" : "false")"
+                                                title="Duyệt phiếu">
+                                            <i class="fas fa-check"></i> Duyệt
+                                        </button>
                                     }
 
                                     @* Từ chối *@
@@ -218,6 +220,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/admin-toggle-status.js"></script>
     <script>
         function filterRows(){
             const q=(document.getElementById('q').value||'').toLowerCase().trim();

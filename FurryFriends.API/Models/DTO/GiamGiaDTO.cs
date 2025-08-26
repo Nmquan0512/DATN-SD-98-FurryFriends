@@ -17,10 +17,10 @@ namespace FurryFriends.API.Models.DTO
         public decimal PhanTramKhuyenMai { get; set; }
 
         [Required(ErrorMessage = "Vui lòng chọn ngày bắt đầu")]
-        public DateTime NgayBatDau { get; set; } = DateTime.UtcNow.Date;
+        public DateTime NgayBatDau { get; set; } = DateTime.Now.Date;
 
         [Required(ErrorMessage = "Vui lòng chọn ngày kết thúc")]
-        public DateTime NgayKetThuc { get; set; } = DateTime.UtcNow.Date.AddDays(7);
+        public DateTime NgayKetThuc { get; set; } = DateTime.Now.Date.AddDays(7);
 
         public bool TrangThai { get; set; } = true;
 
@@ -29,7 +29,7 @@ namespace FurryFriends.API.Models.DTO
 
         // Các thuộc tính chỉ để hiển thị (không cần validate)
         public string TrangThaiDisplay => TrangThai ? "Đang hoạt động" : "Đã tắt";
-        public bool ConHieuLuc => TrangThai && NgayBatDau <= DateTime.UtcNow.Date && NgayKetThuc >= DateTime.UtcNow.Date;
+        public bool ConHieuLuc => TrangThai && NgayBatDau <= DateTime.Now && NgayKetThuc >= DateTime.Now;
         public int SoLuongSanPhamApDung => SanPhamChiTietIds?.Count ?? 0;
 
         // Validation logic đơn giản hóa

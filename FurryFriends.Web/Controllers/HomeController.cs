@@ -10,9 +10,11 @@ using FurryFriends.Web.Services.IService;
 using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.ViewModels;
 using FurryFriends.Web.Services;
+using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Controllers
 {
+    [ServiceFilter(typeof(AccountStatusFilter))]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

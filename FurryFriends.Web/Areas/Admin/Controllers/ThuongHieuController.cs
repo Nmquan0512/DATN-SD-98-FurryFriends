@@ -23,11 +23,11 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         // GET: /ThuongHieu
         public async Task<IActionResult> Index()
         {
-            var list = await _thuongHieuService.GetAllAsync();
-            ViewBag.TotalCount = list.Count();
-            ViewBag.ActiveCount = list.Count(x => x.TrangThai);
-            ViewBag.InactiveCount = list.Count(x => !x.TrangThai);
-            return View(list);
+            var allThuongHieus = await _thuongHieuService.GetAllAsync();
+            ViewBag.TotalCount = allThuongHieus.Count();
+            ViewBag.ActiveCount = allThuongHieus.Count(x => x.TrangThai);
+            ViewBag.InactiveCount = allThuongHieus.Count(x => !x.TrangThai);
+            return View(allThuongHieus);
         }
 
         // GET: /ThuongHieu/Create
@@ -120,6 +120,56 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             return View(dto);
         }
 
+        // POST: /ThuongHieu/ToggleStatus/{id}
+        [HttpPost]
+        public async Task<IActionResult> ToggleStatus(Guid id)
+        {
+            try
+            {
+                var thuongHieu = await _thuongHieuService.GetByIdAsync(id);
+                if (thuongHieu == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy thương hiệu." });
+                }
+
+                // Toggle trạng thái
+                thuongHieu.TrangThai = !thuongHieu.TrangThai;
+                var updateResult = await _thuongHieuService.UpdateAsync(id, thuongHieu);
+                
+                if (updateResult.Data)
+                {
+                    var action = thuongHieu.TrangThai ? "kích hoạt" : "vô hiệu hóa";
+                    var message = $"Thương hiệu '{thuongHieu.TenThuongHieu}' đã được {action} thành công.";
+
+                    // 🔔 Thêm thông báo
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = thuongHieu.TrangThai ? "Kích hoạt thương hiệu" : "Vô hiệu hóa thương hiệu",
+                        NoiDung = $"Thương hiệu '{thuongHieu.TenThuongHieu}' đã được {action}",
+                        Loai = "ThuongHieu",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
+                    return Json(new { 
+                        success = true, 
+                        message = message,
+                        newStatus = thuongHieu.TrangThai,
+                        statusText = thuongHieu.TrangThai ? "Đang hoạt động" : "Không hoạt động",
+                        statusClass = thuongHieu.TrangThai ? "bg-success" : "bg-secondary"
+                    });
+                }
+
+                return Json(new { success = false, message = "Cập nhật trạng thái thất bại!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
+            }
+        }
+
         // GET: /ThuongHieu/Delete/{id}
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -134,15 +184,46 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var success = await _thuongHieuService.DeleteAsync(id);
-            if (success)
+            try
             {
-                TempData["success"] = "Xóa thương hiệu thành công!";
-                return RedirectToAction("Index");
-            }
+                var thuongHieu = await _thuongHieuService.GetByIdAsync(id);
+                if (thuongHieu == null)
+                {
+                    TempData["Error"] = "Không tìm thấy thương hiệu.";
+                    return RedirectToAction(nameof(Index));
+                }
 
-            TempData["error"] = "Xóa thất bại!";
-            return RedirectToAction("Delete", new { id });
+                // Xóa mềm - đổi trạng thái thành không hoạt động
+                thuongHieu.TrangThai = false;
+                var updateResult = await _thuongHieuService.UpdateAsync(id, thuongHieu);
+                
+                if (updateResult.Data)
+                {
+                    TempData["Success"] = "Thương hiệu đã được vô hiệu hóa thành công.";
+
+                    // 🔔 Thêm thông báo
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = "Vô hiệu hóa thương hiệu",
+                        NoiDung = $"Thương hiệu '{thuongHieu.TenThuongHieu}' đã được vô hiệu hóa",
+                        Loai = "ThuongHieu",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
+                    return RedirectToAction(nameof(Index));
+                }
+
+                TempData["Error"] = "Vô hiệu hóa thất bại!";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Lỗi: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
     }
 }

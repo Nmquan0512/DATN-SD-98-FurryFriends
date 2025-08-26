@@ -624,7 +624,7 @@ namespace FurryFriends.API.Controllers
                 _logger.LogInformation($"🎫 Total order amount: {tongDonHang:N0} VNĐ");
                 
                 // ✅ Kiểm tra điều kiện voucher
-                var now = DateTime.UtcNow;
+                var now = DateTime.Now;
                 if (voucher.NgayBatDau > now || voucher.NgayKetThuc < now)
                 {
                     return BadRequest(new { success = false, message = "Voucher đã hết hạn hoặc chưa có hiệu lực" });
@@ -663,7 +663,7 @@ namespace FurryFriends.API.Controllers
                 {
                     hoaDonEntity.VoucherId = voucher.VoucherId;
                     hoaDonEntity.TongTienSauKhiGiam = tongTienSauGiam; // Sử dụng TongTienSauKhiGiam thay vì ThanhTien
-                    hoaDonEntity.ThoiGianThayDoiTrangThai = DateTime.UtcNow; // Sử dụng ThoiGianThayDoiTrangThai thay vì NgayCapNhat
+                    hoaDonEntity.ThoiGianThayDoiTrangThai = DateTime.Now; // Sử dụng ThoiGianThayDoiTrangThai thay vì NgayCapNhat
                     
                     // ✅ Giảm số lượng voucher
                     voucher.SoLuong -= 1;

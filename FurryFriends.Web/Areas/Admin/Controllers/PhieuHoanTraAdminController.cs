@@ -2,6 +2,7 @@
 using FurryFriends.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using FurryFriends.Web.Filter;
+using FurryFriends.API.Models.DTO;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -10,10 +11,12 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 	public class PhieuHoanTraAdminController : Controller
     {
 		private readonly IPhieuHoanTraService _phieuHoanTraService;
+		private readonly IThongBaoService _thongBaoService;
 
-		public PhieuHoanTraAdminController(IPhieuHoanTraService phieuHoanTraService)
+		public PhieuHoanTraAdminController(IPhieuHoanTraService phieuHoanTraService, IThongBaoService thongBaoService)
 		{
 			_phieuHoanTraService = phieuHoanTraService;
+			_thongBaoService = thongBaoService;
 		}
 
 		// GET: Hiển thị danh sách phiếu hoàn trả (Admin xem tất cả)
@@ -67,6 +70,56 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
 
 			ModelState.AddModelError("", "Cập nhật trạng thái thất bại");
 			return View();
+		}
+
+		// POST: /PhieuHoanTraAdmin/ToggleStatus/{id}
+		[HttpPost]
+		public async Task<IActionResult> ToggleStatus(Guid id)
+		{
+			try
+			{
+				var phieuHoanTra = await _phieuHoanTraService.GetByIdAsync(id);
+				if (phieuHoanTra == null)
+				{
+					return Json(new { success = false, message = "Không tìm thấy phiếu hoàn trả." });
+				}
+
+				// Toggle trạng thái (chuyển từ int sang int)
+				var newTrangThai = phieuHoanTra.TrangThai == 1 ? 0 : 1;
+				var updateResult = await _phieuHoanTraService.UpdateTrangThaiAsync(id, newTrangThai);
+				
+				if (updateResult)
+				{
+					var action = newTrangThai == 1 ? "kích hoạt" : "vô hiệu hóa";
+					var message = $"Phiếu hoàn trả '{phieuHoanTra.PhieuHoanTraId}' đã được {action} thành công.";
+
+					// 🔔 Thêm thông báo
+					var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+					await _thongBaoService.CreateAsync(new ThongBaoDTO
+					{
+						TieuDe = newTrangThai == 1 ? "Kích hoạt phiếu hoàn trả" : "Vô hiệu hóa phiếu hoàn trả",
+						NoiDung = $"Phiếu hoàn trả '{phieuHoanTra.PhieuHoanTraId}' đã được {action}",
+						Loai = "PhieuHoanTra",
+						UserName = userName,
+						NgayTao = DateTime.Now,
+						DaDoc = false
+					});
+
+					return Json(new { 
+						success = true, 
+						message = message,
+						newStatus = newTrangThai == 1,
+						statusText = newTrangThai == 1 ? "Đang hoạt động" : "Không hoạt động",
+						statusClass = newTrangThai == 1 ? "bg-success" : "bg-secondary"
+					});
+				}
+
+				return Json(new { success = false, message = "Cập nhật trạng thái thất bại!" });
+			}
+			catch (Exception ex)
+			{
+				return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
+			}
 		}
 
 		// GET: Xóa

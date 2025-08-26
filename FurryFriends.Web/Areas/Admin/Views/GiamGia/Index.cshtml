@@ -127,34 +127,32 @@
                                             <a asp-action="Edit" asp-route-id="@item.GiamGiaId" class="btn btn-outline-primary" title="Xem chi tiết & Chỉnh sửa">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-@*                                             <button type="button" class="btn btn-outline-danger" title="Xóa"
-                                                    data-bs-toggle="modal" data-bs-target="#deleteModal-@item.GiamGiaId">
+                                            
+                                            @if (item.TrangThai)
+                                            {
+                                                <form asp-action="ToggleStatus" method="post" style="display: inline;">
+                                                    <input type="hidden" name="id" value="@item.GiamGiaId" />
+                                                    <button type="submit" class="btn btn-outline-secondary" title="Tạm dừng hoạt động" 
+                                                            onclick="return confirm('Bạn có chắc muốn tạm dừng chương trình này?')">
+                                                        <i class="fas fa-pause"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form asp-action="ToggleStatus" method="post" style="display: inline;">
+                                                    <input type="hidden" name="id" value="@item.GiamGiaId" />
+                                                    <button type="submit" class="btn btn-outline-success" title="Kích hoạt lại" 
+                                                            onclick="return confirm('Bạn có chắc muốn kích hoạt lại chương trình này?')">
+                                                        <i class="fas fa-play"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                            
+                                            <a asp-action="Delete" asp-route-id="@item.GiamGiaId" class="btn btn-outline-danger" title="Vô hiệu hóa vĩnh viễn">
                                                 <i class="fas fa-trash"></i>
-                                            </button> *@
+                                            </a>
                                         </div>
-
-                                        <!-- Modal xóa -->
-                                        @* <div class="modal fade" id="deleteModal-@item.GiamGiaId" tabindex="-1">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header bg-danger text-white">
-                                                        <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i> Xác nhận xóa</h5>
-                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Bạn có chắc muốn xóa vĩnh viễn chương trình <strong>"@item.TenGiamGia"</strong>?</p>
-                                                        <p class="text-danger mt-3"><i class="fas fa-info-circle me-1"></i> Hành động này không thể hoàn tác.</p>
-                                                    </div>
-                                                    <div class="modal-footer border-0">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                                        <form id="deleteForm-@item.GiamGiaId" action="/Admin/GiamGia/Delete/@item.GiamGiaId" method="post" data-disable-loading="true">
-                                                            @Html.AntiForgeryToken()
-                                                            <button type="button" class="btn btn-danger" onclick="submitDeleteForm('@item.GiamGiaId')">Xác nhận xóa</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div> *@
                                     </td>
                                 </tr>
                             }

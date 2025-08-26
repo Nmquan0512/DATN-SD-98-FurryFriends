@@ -53,5 +53,19 @@ namespace FurryFriends.API.Repository
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task MarkAllAsReadAsync()
+        {
+            var unreadNotifications = await _context.ThongBaos
+                .Where(tb => !tb.DaDoc)
+                .ToListAsync();
+            
+            foreach (var notification in unreadNotifications)
+            {
+                notification.DaDoc = true;
+            }
+            
+            await _context.SaveChangesAsync();
+        }
     }
 } 

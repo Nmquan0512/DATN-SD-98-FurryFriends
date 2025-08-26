@@ -89,7 +89,7 @@ namespace FurryFriends.API.Controllers
         {
             try
             {
-                var now = DateTime.UtcNow;
+                var now = DateTime.Now;
                 var vouchers = await _context.Vouchers
                     .Where(v => v.TrangThai == 1 && 
                                v.NgayBatDau <= now && 

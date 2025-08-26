@@ -197,17 +197,65 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             return RedirectToAction("Index", new { sanPhamId = model.SanPhamId });
         }
 
-        // ------------ POST: Xóa chi tiết sản phẩm ------------
+        // POST: /SanPhamChiTiet/ToggleStatus/{id}
         [HttpPost]
+        public async Task<IActionResult> ToggleStatus(Guid id)
+        {
+            try
+            {
+                var sanPhamChiTiet = await _chiTietService.GetByIdAsync(id);
+                if (sanPhamChiTiet == null)
+                {
+                    return Json(new { success = false, message = "Không tìm thấy sản phẩm chi tiết." });
+                }
+
+                // Toggle trạng thái (chuyển từ int? sang bool)
+                sanPhamChiTiet.TrangThai = sanPhamChiTiet.TrangThai == 1 ? 0 : 1;
+                var updateResult = await _chiTietService.UpdateAsync(id, sanPhamChiTiet);
+                
+                if (updateResult.Data)
+                {
+                    var action = sanPhamChiTiet.TrangThai == 1 ? "kích hoạt" : "vô hiệu hóa";
+                    var message = $"Sản phẩm chi tiết '{sanPhamChiTiet.TenSanPham}' đã được {action} thành công.";
+
+                    // 🔔 Thêm thông báo
+                    var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
+                    await _thongBaoService.CreateAsync(new ThongBaoDTO
+                    {
+                        TieuDe = sanPhamChiTiet.TrangThai == 1 ? "Kích hoạt sản phẩm chi tiết" : "Vô hiệu hóa sản phẩm chi tiết",
+                        NoiDung = $"Sản phẩm chi tiết '{sanPhamChiTiet.TenSanPham}' đã được {action}",
+                        Loai = "SanPhamChiTiet",
+                        UserName = userName,
+                        NgayTao = DateTime.Now,
+                        DaDoc = false
+                    });
+
+                    return Json(new { 
+                        success = true, 
+                        message = message,
+                        newStatus = sanPhamChiTiet.TrangThai == 1,
+                        statusText = sanPhamChiTiet.TrangThai == 1 ? "Đang hoạt động" : "Không hoạt động",
+                        statusClass = sanPhamChiTiet.TrangThai == 1 ? "bg-success" : "bg-secondary"
+                    });
+                }
+
+                return Json(new { success = false, message = "Cập nhật trạng thái thất bại!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
+            }
+        }
+
+        // GET: /SanPhamChiTiet/Delete/{id}
         public async Task<IActionResult> Delete(Guid id, Guid sanPhamId)
         {
-            var success = await _chiTietService.DeleteAsync(id);
-            if (!success)
-            {
-                TempData["Error"] = "Không thể xóa sản phẩm chi tiết.";
-            }
+            var item = await _chiTietService.GetByIdAsync(id);
+            if (item == null)
+                return NotFound();
 
-            return RedirectToAction("Details", "SanPham", new { id = sanPhamId });
+            ViewBag.SanPhamId = sanPhamId;
+            return View(item);
         }
 
         [HttpPost]

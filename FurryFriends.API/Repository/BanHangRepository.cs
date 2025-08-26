@@ -126,7 +126,7 @@ namespace FurryFriends.API.Repository
                 // Chỉ giữ lại logic dọn dẹp hóa đơn rất cũ (sau 2 giờ) để tránh đầy database
                 var veryOldInvoices = await _context.HoaDons
                     .Where(h => h.TrangThai == (int)TrangThaiHoaDon.Offline_ChuaThanhToan && 
-                               h.NgayTao < DateTime.UtcNow.AddHours(-2))
+                               h.NgayTao < DateTime.Now.AddHours(-2))
                     .ToListAsync();
 
                 if (veryOldInvoices.Any())
@@ -490,7 +490,7 @@ namespace FurryFriends.API.Repository
                 var voucher = await _context.Vouchers.FirstOrDefaultAsync(v => v.TenVoucher.ToLower() == maVoucher.ToLower());
 
                 if (voucher == null) throw new KeyNotFoundException("Mã voucher không tồn tại.");
-                if (voucher.NgayKetThuc < DateTime.UtcNow) throw new InvalidOperationException("Voucher đã hết hạn.");
+                if (voucher.NgayKetThuc < DateTime.Now) throw new InvalidOperationException("Voucher đã hết hạn.");
                 if (voucher.SoLuong <= 0) throw new InvalidOperationException("Voucher đã hết lượt sử dụng.");
 
                 // Gỡ voucher cũ nếu có
@@ -738,7 +738,7 @@ namespace FurryFriends.API.Repository
 
             var khachHang = _mapper.Map<KhachHang>(request);
             khachHang.KhachHangId = Guid.NewGuid();
-            khachHang.NgayTaoTaiKhoan = DateTime.UtcNow;
+            khachHang.NgayTaoTaiKhoan = DateTime.Now;
             khachHang.TrangThai = 1;
 
             await _context.KhachHangs.AddAsync(khachHang);

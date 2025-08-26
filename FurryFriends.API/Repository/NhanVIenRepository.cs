@@ -50,10 +50,6 @@ namespace FurryFriends.API.Repository
                 {
                     throw new ArgumentException("TaiKhoanId does not exist.");
                 }
-                if (!taiKhoan.TrangThai)
-                {
-                    throw new ArgumentException("Tài khoản không ở trạng thái hoạt động.");
-                }
                 if (await _context.NhanViens.AnyAsync(nv => nv.TaiKhoanId == nhanVien.TaiKhoanId))
                 {
                     throw new ArgumentException("TaiKhoanId is already associated with another NhanVien.");
@@ -93,10 +89,6 @@ namespace FurryFriends.API.Repository
                 if (taiKhoan == null)
                 {
                     throw new ArgumentException("TaiKhoanId does not exist.");
-                }
-                if (!taiKhoan.TrangThai)
-                {
-                    throw new ArgumentException("Tài khoản không ở trạng thái hoạt động.");
                 }
                 if (await _context.NhanViens.AnyAsync(nv => nv.TaiKhoanId == nhanVien.TaiKhoanId && nv.NhanVienId != nhanVien.NhanVienId))
                 {

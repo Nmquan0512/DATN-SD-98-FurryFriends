@@ -1,16 +1,6 @@
-using FurryFriends.API.Models.DTO;
 using FurryFriends.Web.Filter;
-using FurryFriends.Web.Models;
 using FurryFriends.Web.Services.IService;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
@@ -25,47 +15,112 @@ namespace FurryFriends.Web.Areas.Admin.Controllers
             _thongBaoService = thongBaoService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 20)
         {
-            var listDto = await _thongBaoService.GetAllAsync();
+            var thongBaos = await _thongBaoService.GetAllAsync();
+            
+            // Phân trang
+            var totalCount = thongBaos.Count();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            var pagedThongBaos = thongBaos
+                .OrderByDescending(tb => tb.NgayTao)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
-            var listVm = listDto.Select(dto => new ThongBaoViewModel
-            {
-                ThongBaoId = dto.ThongBaoId,                // cần có trong ViewModel
-                TieuDe = dto.TieuDe,
-                NoiDung = dto.NoiDung,
-                NgayTao = dto.NgayTao,
-                DaDoc = dto.DaDoc,
-                Loai = dto.Loai,
-                UserName = dto.UserName
-            }).ToList();
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalCount = totalCount;
+            ViewBag.PageSize = pageSize;
 
-            return View(listVm);
-        }
-
-        public IActionResult Create()
-        {
-            return View();
+            return View(pagedThongBaos);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ThongBaoDTO dto)
+        public async Task<IActionResult> MarkAsRead(Guid id)
         {
-            if (!ModelState.IsValid) return View(dto);
+            try
+            {
+                await _thongBaoService.MarkAsReadAsync(id);
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
 
-            dto.Loai = "Admin";
-            dto.UserName = "admin";
+        [HttpPost]
+        public async Task<IActionResult> MarkAllAsRead()
+        {
+            try
+            {
+                await _thongBaoService.MarkAllAsReadAsync();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
 
-            await _thongBaoService.CreateAsync(dto);
 
-            return RedirectToAction("Index");
+
+        [HttpGet]
+        public async Task<IActionResult> GetNotificationCount()
+        {
+            try
+            {
+                var thongBaos = await _thongBaoService.GetAllAsync();
+                var unreadCount = thongBaos.Count(tb => !tb.DaDoc);
+                
+                // Format count: if > 100, show "99+"
+                var displayCount = unreadCount > 100 ? "99+" : unreadCount.ToString();
+                
+                return Json(new { 
+                    success = true, 
+                    count = unreadCount,
+                    displayCount = displayCount
+                });
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi để debug
+                System.Diagnostics.Debug.WriteLine($"GetNotificationCount error: {ex.Message}");
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetLatest()
+        public async Task<IActionResult> GetRecentNotifications()
         {
-            var list = await _thongBaoService.GetAllAsync();
-            return Json(list.Where(x => !x.DaDoc).Take(5));
+            try
+            {
+                var thongBaos = await _thongBaoService.GetAllAsync();
+                var recentNotifications = thongBaos
+                    .OrderByDescending(tb => tb.NgayTao)
+                    .Take(5)
+                    .Select(tb => new
+                    {
+                        tb.ThongBaoId,
+                        TieuDe = tb.NoiDung, // Sử dụng NoiDung làm TieuDe
+                        tb.NoiDung,
+                        tb.Loai,
+                        tb.UserName,
+                        tb.NgayTao,
+                        tb.DaDoc,
+                        FormattedDate = tb.NgayTao.ToString("dd/MM/yyyy HH:mm")
+                    })
+                    .ToList();
+
+                return Json(new { success = true, notifications = recentNotifications });
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi để debug
+                System.Diagnostics.Debug.WriteLine($"GetRecentNotifications error: {ex.Message}");
+                return Json(new { success = false, message = ex.Message });
+            }
         }
     }
 } 

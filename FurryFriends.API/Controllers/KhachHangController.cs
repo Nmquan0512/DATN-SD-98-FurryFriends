@@ -48,12 +48,7 @@ namespace FurryFriends.API.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            await _repository.DeleteAsync(id);
-            return NoContent();
-        }
+
 
         [HttpGet("email/{email}")]
         public async Task<ActionResult<KhachHang>> GetByEmail(string email)

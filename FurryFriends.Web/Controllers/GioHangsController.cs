@@ -11,9 +11,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Text;
+using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Controllers
 {
+    [ServiceFilter(typeof(AccountStatusFilter))]
     public class GioHangsController : Controller
     {
         private readonly IGioHangService _gioHangService;

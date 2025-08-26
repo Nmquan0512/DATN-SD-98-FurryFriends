@@ -137,8 +137,14 @@ namespace FurryFriends.API.Services
                     }
                 }
 
-                await _repository.DeleteAsync(id);
-                await _repository.SaveAsync(); // Cần gọi SaveAsync sau khi Delete
+                // Thực hiện xóa mềm bằng cách đặt TrangThai = false
+                var sanPham = await _repository.GetByIdAsync(id);
+                if (sanPham != null)
+                {
+                    sanPham.TrangThai = false;
+                    _repository.Update(sanPham);
+                    await _repository.SaveAsync();
+                }
                 Console.WriteLine($"Successfully deleted product {id}");
             }
             catch (Exception ex)

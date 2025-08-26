@@ -33,6 +33,24 @@ namespace FurryFriends.API.Controllers
             }
         }
 
+        [HttpGet("find-by-username")]
+        public async Task<IActionResult> FindByUserName([FromQuery] string userName)
+        {
+            try
+            {
+                var taiKhoan = await _taiKhoanRepository.FindByUserNameAsync(userName);
+                if (taiKhoan == null)
+                {
+                    return Ok(new List<TaiKhoan>());
+                }
+                return Ok(new List<TaiKhoan> { taiKhoan });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -226,7 +244,14 @@ namespace FurryFriends.API.Controllers
                 if (!taiKhoan.TrangThai)
                 {
                     _logger.LogWarning($"API: Tài khoản bị khóa cho UserName: {model.UserName}");
-                    return Unauthorized("Tài khoản đã bị khóa.");
+                    return Unauthorized("Tài khoản đã dừng hoạt động. Vui lòng liên hệ quản trị viên để được hỗ trợ.");
+                }
+
+                // Kiểm tra trạng thái nhân viên liên kết
+                if (taiKhoan.NhanVien != null && !taiKhoan.NhanVien.TrangThai)
+                {
+                    _logger.LogWarning($"API: Nhân viên liên kết bị khóa cho UserName: {model.UserName}");
+                    return Unauthorized("Tài khoản đã dừng hoạt động. Vui lòng liên hệ quản trị viên để được hỗ trợ.");
                 }
 
                 // Kiểm tra có phải admin/nhân viên không
@@ -286,7 +311,20 @@ namespace FurryFriends.API.Controllers
                 if (!taiKhoan.TrangThai)
                 {
                     _logger.LogWarning($"API: Tài khoản khách hàng bị khóa cho UserName: {model.UserName}");
-                    return Unauthorized("Tài khoản đã bị khóa.");
+                    return Unauthorized("Tài khoản đã dừng hoạt động. Vui lòng liên hệ quản trị viên để được hỗ trợ.");
+                }
+
+                // Kiểm tra trạng thái khách hàng/nhân viên liên kết
+                if (taiKhoan.KhachHang != null && taiKhoan.KhachHang.TrangThai != 1)
+                {
+                    _logger.LogWarning($"API: Khách hàng liên kết bị khóa cho UserName: {model.UserName}");
+                    return Unauthorized("Tài khoản đã dừng hoạt động. Vui lòng liên hệ quản trị viên để được hỗ trợ.");
+                }
+
+                if (taiKhoan.NhanVien != null && !taiKhoan.NhanVien.TrangThai)
+                {
+                    _logger.LogWarning($"API: Nhân viên liên kết bị khóa cho UserName: {model.UserName}");
+                    return Unauthorized("Tài khoản đã dừng hoạt động. Vui lòng liên hệ quản trị viên để được hỗ trợ.");
                 }
 
                 // Kiểm tra quyền thực tế của người dùng

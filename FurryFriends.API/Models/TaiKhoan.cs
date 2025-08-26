@@ -9,10 +9,13 @@ namespace FurryFriends.API.Models
         [Key]
         public Guid TaiKhoanId { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Tên đăng nhập không được để trống")]
+        [StringLength(50, MinimumLength = 6, ErrorMessage = "Tên đăng nhập phải có từ 6 đến 50 ký tự")]
         public string UserName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Mật khẩu không được để trống")]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Mật khẩu phải có từ 8 đến 100 ký tự")]
+
         public string Password { get; set; }
         [Required]
         public DateTime NgayTaoTaiKhoan { get; set
