@@ -7,62 +7,48 @@ namespace FurryFriends.API.Repository
 {
 	public class PhieuHoanTraRepository:IPhieuHoanTraRepository
 	{
-		private readonly AppDbContext _context; // đổi tên nếu DbContext của bạn khác
+		private readonly AppDbContext _context;
 
 		public PhieuHoanTraRepository(AppDbContext context)
 		{
 			_context = context;
 		}
 
-		public async Task<PhieuHoanTra?> GetByIdAsync(Guid id, bool includeHoaDonChiTiet = false)
-		{
-			IQueryable<PhieuHoanTra> q = _context.PhieuHoanTras.AsQueryable();
-
-			if (includeHoaDonChiTiet)
-			{
-				q = q.Include(p => p.HoaDonChiTiet);
-			}
-
-			return await q.AsNoTracking().FirstOrDefaultAsync(p => p.PhieuHoanTraId == id);
-		}
-
-		public async Task<IReadOnlyList<PhieuHoanTra>> GetByHoaDonIdAsync(Guid hoaDonId)
+		public async Task<IEnumerable<PhieuHoanTra>> GetAllAsync()
 		{
 			return await _context.PhieuHoanTras
 				.Include(p => p.HoaDonChiTiet)
-				.Where(p => p.HoaDonChiTiet != null && p.HoaDonChiTiet.HoaDonId == hoaDonId)
-				.OrderByDescending(p => p.NgayHoanTra)
-				.AsNoTracking()
+				.ThenInclude(ct => ct.HoaDon)               
+				.Include(p => p.HoaDonChiTiet)
+				.ThenInclude(ct => ct.PhieuHoanTras)        
 				.ToListAsync();
 		}
 
-
-		public async Task<IReadOnlyList<PhieuHoanTra>> GetByHoaDonChiTietIdAsync(Guid hoaDonChiTietId)
+		public async Task<PhieuHoanTra> GetByIdAsync(Guid id)
 		{
 			return await _context.PhieuHoanTras
-				.Where(p => p.HoaDonChiTietId == hoaDonChiTietId)
-				.OrderByDescending(p => p.NgayHoanTra)
-				.AsNoTracking()
-				.ToListAsync();
+			.Include(p => p.HoaDonChiTiet)
+			.ThenInclude(ct => ct.HoaDon)
+			.Include(p => p.HoaDonChiTiet)
+			.ThenInclude(ct => ct.PhieuHoanTras)       
+			.FirstOrDefaultAsync(p => p.PhieuHoanTraId == id);
 		}
 
-		public async Task<int> GetTongSoLuongHoanByHdctAsync(Guid hoaDonChiTietId)
+		public async Task<IEnumerable<PhieuHoanTra>> GetByKhachHangAsync(Guid khachHangId)
 		{
-			// tổng tất cả phiếu (kể cả trạng thái). Nếu bạn chỉ muốn tính những phiếu "đã duyệt/đã hoàn",
-			// hãy thêm điều kiện p.TrangThai == 1 || p.TrangThai == 3
 			return await _context.PhieuHoanTras
-				.Where(p => p.HoaDonChiTietId == hoaDonChiTietId)
-				.SumAsync(p => (int?)p.SoLuongHoan) ?? 0;
+			.Include(p => p.HoaDonChiTiet)
+			.ThenInclude(ct => ct.HoaDon)
+			.Include(p => p.HoaDonChiTiet)
+			.ThenInclude(ct => ct.PhieuHoanTras)       
+			.Where(p => p.HoaDonChiTiet.HoaDon.KhachHangId == khachHangId)
+			.ToListAsync();
 		}
 
-		public async Task<PhieuHoanTra> AddAsync(PhieuHoanTra entity)
+		public async Task AddAsync(PhieuHoanTra entity)
 		{
-			if (entity.PhieuHoanTraId == Guid.Empty)
-				entity.PhieuHoanTraId = Guid.NewGuid();
-
-			await _context.PhieuHoanTras.AddAsync(entity);
+			_context.PhieuHoanTras.Add(entity);
 			await _context.SaveChangesAsync();
-			return entity;
 		}
 
 		public async Task UpdateAsync(PhieuHoanTra entity)
@@ -71,27 +57,32 @@ namespace FurryFriends.API.Repository
 			await _context.SaveChangesAsync();
 		}
 
-		public async Task UpdateTrangThaiAsync(Guid id, int trangThai)
-		{
-			var phieu = await _context.PhieuHoanTras.FirstOrDefaultAsync(p => p.PhieuHoanTraId == id);
-			if (phieu == null) throw new KeyNotFoundException("Không tìm thấy phiếu hoàn trả.");
-
-			phieu.TrangThai = trangThai;
-			await _context.SaveChangesAsync();
-		}
-
 		public async Task DeleteAsync(Guid id)
 		{
-			var phieu = await _context.PhieuHoanTras.FirstOrDefaultAsync(p => p.PhieuHoanTraId == id);
-			if (phieu == null) return;
-
-			_context.PhieuHoanTras.Remove(phieu);
-			await _context.SaveChangesAsync();
+			var entity = await _context.PhieuHoanTras.FindAsync(id);
+			if (entity != null)
+			{
+				_context.PhieuHoanTras.Remove(entity);
+				await _context.SaveChangesAsync();
+			}
 		}
 
-		public async Task<bool> ExistsAsync(Guid id)
+		// ✅ Lấy đầy đủ chi tiết hóa đơn + sản phẩm + khách hàng
+		public async Task<HoaDonChiTiet?> GetHoaDonChiTietWithRelationsAsync(Guid hoaDonChiTietId)
 		{
-			return await _context.PhieuHoanTras.AnyAsync(p => p.PhieuHoanTraId == id);
+			return await _context.HoaDonChiTiets
+				.Include(ct => ct.HoaDon)
+					.ThenInclude(h => h.KhachHang)
+				.Include(ct => ct.SanPhamChiTiet)
+				.FirstOrDefaultAsync(ct => ct.HoaDonChiTietId == hoaDonChiTietId);
+		}
+
+		// ✅ Tính tổng số lượng đã hoàn trước đó
+		public async Task<int> GetTongSoLuongDaHoanAsync(Guid hoaDonChiTietId)
+		{
+			return await _context.PhieuHoanTras
+				.Where(p => p.HoaDonChiTietId == hoaDonChiTietId && p.TrangThai != 2) // loại bỏ yêu cầu bị từ chối
+				.SumAsync(p => p.SoLuongHoan);
 		}
 	}
 }

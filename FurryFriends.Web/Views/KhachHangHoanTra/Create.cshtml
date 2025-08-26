@@ -1,0 +1,78 @@
+﻿@model FurryFriends.Web.ViewModels.PhieuHoanTraCreateRequest
+@using FurryFriends.API.Models
+@{
+    ViewData["Title"] = "Tạo phiếu hoàn trả";
+    var ct = ViewBag.HoaDonChiTiet as HoaDonChiTiet;
+}
+
+<div class="container py-4">
+    <div class="cart-header rounded-4 mb-3">
+        <h1 class="mb-1"><i class="fas fa-clipboard-check"></i> @ViewData["Title"]</h1>
+        <p class="opacity-90">Gửi yêu cầu hoàn trả/đổi size, lỗi kỹ thuật…</p>
+    </div>
+
+    @if (ct != null)
+    {
+        <div class="card fancy-shadow border-0 mb-4">
+            <div class="card-body">
+                <div class="d-flex gap-3">
+                    <div class="rounded-3 bg-light overflow-hidden" style="width:120px;height:120px;">
+                        @if (!string.IsNullOrEmpty(ct.AnhSanPhamLucMua))
+                        {
+                            <img src="@ct.AnhSanPhamLucMua" class="w-100 h-100 object-cover" />
+                        }
+                        else { <div class="w-100 h-100 d-flex align-items-center justify-content-center">📦</div> }
+                    </div>
+                    <div class="flex-grow-1">
+                        <h5 class="mb-1">@ct.TenSanPhamLucMua</h5>
+                        <div class="text-muted small mb-1">
+                            @if (!string.IsNullOrWhiteSpace(ct.MauSacLucMua) || !string.IsNullOrWhiteSpace(ct.KichCoLucMua))
+                            { <span>Phân loại: @ct.MauSacLucMua@(string.IsNullOrWhiteSpace(ct.KichCoLucMua)?"":$" · Size {ct.KichCoLucMua}")</span><text> · </text> }
+                            <span>Đã mua: <strong>@ct.SoLuongSanPham</strong></span>
+                            @if (ct.GiaLucMua != null){ <text> · Giá: <strong>@ct.GiaLucMua?.ToString("n0")</strong></text> }
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(ct.MoTaSanPhamLucMua))
+                        { <div class="small text-secondary clamp-2">@ct.MoTaSanPhamLucMua</div> }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <form asp-action="Create" method="post" asp-route-hoaDonId="@ViewBag.HoaDonId" class="card fancy-shadow border-0">
+        @Html.AntiForgeryToken()
+        <div class="card-body">
+            <input type="hidden" asp-for="HoaDonChiTietId" />
+
+            <div class="mb-3">
+                <label asp-for="SoLuongHoan" class="form-label">Số lượng muốn hoàn</label>
+                <input asp-for="SoLuongHoan" class="form-control form-control-lg"
+                       min="1" @@(ct!=null?$"max=\"{ct.SoLuongSanPham}\"":"") />
+                <div class="form-text">Tối đa: @(ct?.SoLuongSanPham ?? 1). Vui lòng giữ nguyên tag/tem nếu chính sách yêu cầu.</div>
+                <span asp-validation-for="SoLuongHoan" class="text-danger"></span>
+            </div>
+
+            <div class="mb-1">
+                <label asp-for="LyDoHoanTra" class="form-label">Lý do hoàn trả</label>
+                <textarea asp-for="LyDoHoanTra" class="form-control" rows="4"
+                          placeholder="Không vừa size, lỗi kỹ thuật, giao nhầm màu..."></textarea>
+                <span asp-validation-for="LyDoHoanTra" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="card-footer bg-white border-0 d-flex gap-2">
+            <button class="btn btn-primary px-4"><i class="fas fa-paper-plane"></i> Gửi yêu cầu</button>
+            <a asp-controller="KhachHang" asp-action="LichSuDonHang" class="btn btn-outline-secondary">Quay lại đơn hàng</a>
+        </div>
+    </form>
+</div>
+
+@section Styles{
+<style>
+    .cart-header{background:var(--gradient-primary);color:#fff;padding:2rem 1.5rem;position:relative;overflow:hidden}
+    .fancy-shadow{ box-shadow:0 6px 18px rgba(0,0,0,.06); }
+    .object-cover{ object-fit:cover; }
+    .clamp-2{ display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+</style>
+}
+@section Scripts{ @{await Html.RenderPartialAsync("_ValidationScriptsPartial");} }
