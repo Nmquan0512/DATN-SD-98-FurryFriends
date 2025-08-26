@@ -1,4 +1,4 @@
-using FurryFriends.API.Models;
+﻿using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Repository.IRepository;
 using FurryFriends.API.Services.IServices;
@@ -379,8 +379,12 @@ namespace FurryFriends.API.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
+            _logger.LogInformation($"=== BẮT ĐẦU XỬ LÝ FORGOT PASSWORD ===");
+            _logger.LogInformation($"Email yêu cầu: {request.Email}");
+            
             // 1. Tìm tài khoản theo email
             var account = await _taiKhoanRepository.FindByEmailAsync(request.Email);
+            _logger.LogInformation($"Kết quả tìm kiếm email: {(account != null ? "TÌM THẤY" : "KHÔNG TÌM THẤY")}");
 
             // 2. Nếu KHÔNG tìm thấy, vẫn trả về thông báo "thành công" giống hệt nhau
             if (account == null)
@@ -391,14 +395,25 @@ namespace FurryFriends.API.Controllers
                 return Ok(new { message = "Nếu email của bạn tồn tại trong hệ thống, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu." });
             }
 
+            _logger.LogInformation($"Tìm thấy tài khoản: TaiKhoanId={account.TaiKhoanId}, UserName={account.UserName}");
+            _logger.LogInformation($"Thông tin liên kết: KhachHangId={account.KhachHangId}, NhanVienId={account.NhanVienId}");
+
             // 3. NẾU TÌM THẤY tài khoản, thì mới tạo mã và gửi email
             var code = new Random().Next(100000, 999999).ToString();
+            _logger.LogInformation($"Mã xác nhận được tạo: {code}");
+            
             _resetCodes[request.Email.ToLower()] = (code, DateTime.UtcNow.AddMinutes(10));
+            _logger.LogInformation($"Mã đã được lưu vào cache với thời gian hết hạn: {DateTime.UtcNow.AddMinutes(10)}");
 
             try
             {
                 var subject = "Yêu cầu đặt lại mật khẩu cho tài khoản Furry Friends";
                 var body = $"<p>Xin chào,</p><p>Mã xác nhận để đặt lại mật khẩu của bạn là: <strong>{code}</strong></p><p>Mã này sẽ hết hạn sau 10 phút.</p>";
+                
+                _logger.LogInformation($"Bắt đầu gửi email đến: {request.Email}");
+                _logger.LogInformation($"Subject: {subject}");
+                _logger.LogInformation($"Body: {body}");
+                
                 await _mailService.SendEmailAsync(request.Email, subject, body);
 
                 _logger.LogInformation($"Đã gửi mã xác nhận đến email: {request.Email}");
@@ -406,12 +421,16 @@ namespace FurryFriends.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Lỗi khi gửi email đặt lại mật khẩu cho {Email}", request.Email);
+                _logger.LogError($"Chi tiết lỗi: {ex.Message}");
+                _logger.LogError($"Stack trace: {ex.StackTrace}");
+                
                 // NGAY CẢ KHI GỬI EMAIL LỖI, vẫn trả về thông báo thành công cho người dùng
                 // return StatusCode(500, new { message = "Đã có lỗi xảy ra trong quá trình gửi email." }); // DÒNG NÀY SAI
                 // Sửa lại: Kể cả lỗi gửi mail cũng không được tiết lộ cho client
                 return Ok(new { message = "Nếu email của bạn tồn tại trong hệ thống, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu." });
             }
 
+            _logger.LogInformation($"=== HOÀN THÀNH XỬ LÝ FORGOT PASSWORD ===");
             // 4. Trả về thông báo thành công (giống hệt trường hợp không tìm thấy email)
             return Ok(new { message = "Nếu email của bạn tồn tại trong hệ thống, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu." });
         }
@@ -419,38 +438,83 @@ namespace FurryFriends.API.Controllers
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            var emailKey = request.Email.ToLower();
+            _logger.LogInformation($"=== BẮT ĐẦU XỬ LÝ RESET PASSWORD ===");
+            _logger.LogInformation($"Email: {request.Email}, Code: {request.Code}");
 
-            if (!_resetCodes.TryGetValue(emailKey, out var value) || value.Code != request.Code || value.Expiry < DateTime.UtcNow)
+            // 1. Kiểm tra mã xác nhận
+            var emailKey = request.Email.ToLower();
+            if (!_resetCodes.ContainsKey(emailKey))
             {
-                if (_resetCodes.ContainsKey(emailKey) && _resetCodes[emailKey].Expiry < DateTime.UtcNow)
-                {
-                    _resetCodes.Remove(emailKey);
-                }
-                return BadRequest(new { message = "Mã xác nhận không đúng hoặc đã hết hạn." });
+                _logger.LogWarning($"Không tìm thấy mã xác nhận cho email: {request.Email}");
+                return BadRequest(new { message = "Mã xác nhận không hợp lệ hoặc đã hết hạn." });
             }
 
+            var (storedCode, expiry) = _resetCodes[emailKey];
+            if (DateTime.UtcNow > expiry)
+            {
+                _logger.LogWarning($"Mã xác nhận đã hết hạn cho email: {request.Email}");
+                _resetCodes.Remove(emailKey);
+                return BadRequest(new { message = "Mã xác nhận đã hết hạn." });
+            }
+
+            if (storedCode != request.Code)
+            {
+                _logger.LogWarning($"Mã xác nhận không đúng cho email: {request.Email}");
+                return BadRequest(new { message = "Mã xác nhận không đúng." });
+            }
+
+            // 2. Tìm tài khoản
             var account = await _taiKhoanRepository.FindByEmailAsync(request.Email);
             if (account == null)
             {
-                return BadRequest(new { message = "Tài khoản không hợp lệ." });
+                _logger.LogWarning($"Không tìm thấy tài khoản cho email: {request.Email}");
+                return BadRequest(new { message = "Email không tồn tại trong hệ thống." });
             }
 
-            var newHashedPassword = HashPassword(request.NewPassword);
-            await _taiKhoanRepository.UpdatePasswordAsync(account.TaiKhoanId, newHashedPassword);
+            _logger.LogInformation($"Tìm thấy tài khoản: TaiKhoanId={account.TaiKhoanId}, UserName={account.UserName}");
 
-            _resetCodes.Remove(emailKey);
+            try
+            {
+                // 3. Cập nhật mật khẩu mới (không mã hóa)
+                await _taiKhoanRepository.UpdatePasswordAsync(account.TaiKhoanId, request.NewPassword);
+                
+                // 4. Xóa mã xác nhận đã sử dụng
+                _resetCodes.Remove(emailKey);
 
-            return Ok(new { message = "Mật khẩu của bạn đã được đặt lại thành công." });
+                _logger.LogInformation($"Đã cập nhật mật khẩu thành công cho tài khoản: {account.TaiKhoanId}");
+                _logger.LogInformation($"=== HOÀN THÀNH XỬ LÝ RESET PASSWORD ===");
+
+                return Ok(new { message = "Mật khẩu đã được đặt lại thành công." });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi cập nhật mật khẩu cho {Email}", request.Email);
+                return StatusCode(500, new { message = "Đã có lỗi xảy ra trong quá trình đặt lại mật khẩu." });
+            }
         }
 
-        private string HashPassword(string password)
+        // Xóa method HashPassword không cần thiết nữa
+
+        [HttpGet("test-email/{email}")]
+        public async Task<IActionResult> TestEmail(string email)
         {
-            using (var sha256 = SHA256.Create())
+            _logger.LogInformation($"=== TEST EMAIL ENDPOINT ===");
+            _logger.LogInformation($"Testing email: {email}");
+            
+            var account = await _taiKhoanRepository.FindByEmailAsync(email);
+            
+            if (account != null)
             {
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+                return Ok(new { 
+                    found = true, 
+                    taiKhoanId = account.TaiKhoanId,
+                    userName = account.UserName,
+                    khachHangId = account.KhachHangId,
+                    nhanVienId = account.NhanVienId
+                });
             }
+            
+            return Ok(new { found = false });
         }
     }
 }

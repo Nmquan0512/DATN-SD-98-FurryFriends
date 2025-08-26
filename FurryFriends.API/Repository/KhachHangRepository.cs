@@ -33,12 +33,58 @@ namespace FurryFriends.API.Repository
 
         public async Task AddAsync(KhachHang khachHang)
         {
+            // Kiểm tra email không được trùng với NhanVien
+            if (!string.IsNullOrWhiteSpace(khachHang.EmailCuaKhachHang))
+            {
+                var normalizedEmail = khachHang.EmailCuaKhachHang.ToLower().Trim();
+                var existingNhanVien = await _context.NhanViens
+                    .FirstOrDefaultAsync(nv => nv.Email != null && 
+                                              nv.Email.ToLower().Trim() == normalizedEmail);
+                if (existingNhanVien != null)
+                {
+                    throw new ArgumentException($"Email '{khachHang.EmailCuaKhachHang}' đã được sử dụng bởi nhân viên '{existingNhanVien.HoVaTen}'.");
+                }
+
+                // Kiểm tra email không được trùng với KhachHang khác
+                var existingKhachHang = await _context.KhachHangs
+                    .FirstOrDefaultAsync(kh => kh.EmailCuaKhachHang != null && 
+                                              kh.EmailCuaKhachHang.ToLower().Trim() == normalizedEmail &&
+                                              kh.KhachHangId != khachHang.KhachHangId);
+                if (existingKhachHang != null)
+                {
+                    throw new ArgumentException($"Email '{khachHang.EmailCuaKhachHang}' đã được sử dụng bởi khách hàng '{existingKhachHang.TenKhachHang}'.");
+                }
+            }
+
             await _context.KhachHangs.AddAsync(khachHang);
             await _context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(KhachHang khachHang)
         {
+            // Kiểm tra email không được trùng với NhanVien
+            if (!string.IsNullOrWhiteSpace(khachHang.EmailCuaKhachHang))
+            {
+                var normalizedEmail = khachHang.EmailCuaKhachHang.ToLower().Trim();
+                var existingNhanVien = await _context.NhanViens
+                    .FirstOrDefaultAsync(nv => nv.Email != null && 
+                                              nv.Email.ToLower().Trim() == normalizedEmail);
+                if (existingNhanVien != null)
+                {
+                    throw new ArgumentException($"Email '{khachHang.EmailCuaKhachHang}' đã được sử dụng bởi nhân viên '{existingNhanVien.HoVaTen}'.");
+                }
+
+                // Kiểm tra email không được trùng với KhachHang khác (trừ chính nó)
+                var existingKhachHang = await _context.KhachHangs
+                    .FirstOrDefaultAsync(kh => kh.EmailCuaKhachHang != null && 
+                                              kh.EmailCuaKhachHang.ToLower().Trim() == normalizedEmail &&
+                                              kh.KhachHangId != khachHang.KhachHangId);
+                if (existingKhachHang != null)
+                {
+                    throw new ArgumentException($"Email '{khachHang.EmailCuaKhachHang}' đã được sử dụng bởi khách hàng '{existingKhachHang.TenKhachHang}'.");
+                }
+            }
+
             _context.KhachHangs.Update(khachHang);
             await _context.SaveChangesAsync();
         }

@@ -7,7 +7,7 @@ using System.Net.Http.Json;
 using LoginRequest = FurryFriends.API.Models.LoginRequest;
 using LoginResponse = FurryFriends.API.Models.LoginResponse;
 using System.Text.Json;
-using FurryFriends.Web.Models.DTO;
+using FurryFriends.API.Models.DTO;
 
 namespace FurryFriends.Web.Services
 {

@@ -30,13 +30,15 @@ namespace FurryFriends.Web.Controllers
             if (!ModelState.IsValid)
             {
                 return View(model);
-
             }
 
             try
             {
                 var apiRequest = new ForgotPasswordRequest { Email = model.Email };
                 await _taiKhoanService.ForgotPasswordAsync(apiRequest);
+
+                // Lưu email vào session để sử dụng ở trang confirmation
+                HttpContext.Session.SetString("ResetPasswordEmail", model.Email);
 
                 return View("ForgotPasswordConfirmation");
             }

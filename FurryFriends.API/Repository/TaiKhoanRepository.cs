@@ -1,4 +1,4 @@
-using FurryFriends.API.Data;
+﻿using FurryFriends.API.Data;
 using FurryFriends.API.Models;
 using FurryFriends.API.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -53,10 +53,67 @@ namespace FurryFriends.API.Repository
                 throw new ArgumentException("NhanVienId does not exist.");
             }
 
+            // Kiểm tra email không được trùng lặp
+            if (taiKhoan.KhachHangId.HasValue)
+            {
+                var khachHang = await _context.KhachHangs.FindAsync(taiKhoan.KhachHangId.Value);
+                if (khachHang != null && !string.IsNullOrWhiteSpace(khachHang.EmailCuaKhachHang))
+                {
+                    var normalizedEmail = khachHang.EmailCuaKhachHang.ToLower().Trim();
+                    
+                    // Kiểm tra với NhanVien
+                    var existingNhanVien = await _context.NhanViens
+                        .FirstOrDefaultAsync(nv => nv.Email != null && 
+                                                  nv.Email.ToLower().Trim() == normalizedEmail);
+                    if (existingNhanVien != null)
+                    {
+                        throw new ArgumentException($"Email '{khachHang.EmailCuaKhachHang}' đã được sử dụng bởi nhân viên '{existingNhanVien.HoVaTen}'.");
+                    }
+
+                    // Kiểm tra với KhachHang khác
+                    var existingKhachHang = await _context.KhachHangs
+                        .FirstOrDefaultAsync(kh => kh.EmailCuaKhachHang != null && 
+                                                  kh.EmailCuaKhachHang.ToLower().Trim() == normalizedEmail &&
+                                                  kh.KhachHangId != taiKhoan.KhachHangId);
+                    if (existingKhachHang != null)
+                    {
+                        throw new ArgumentException($"Email '{khachHang.EmailCuaKhachHang}' đã được sử dụng bởi khách hàng '{existingKhachHang.TenKhachHang}'.");
+                    }
+                }
+            }
+
+            if (taiKhoan.NhanVienId.HasValue)
+            {
+                var nhanVien = await _context.NhanViens.FindAsync(taiKhoan.NhanVienId.Value);
+                if (nhanVien != null && !string.IsNullOrWhiteSpace(nhanVien.Email))
+                {
+                    var normalizedEmail = nhanVien.Email.ToLower().Trim();
+                    
+                    // Kiểm tra với KhachHang
+                    var existingKhachHang = await _context.KhachHangs
+                        .FirstOrDefaultAsync(kh => kh.EmailCuaKhachHang != null && 
+                                                  kh.EmailCuaKhachHang.ToLower().Trim() == normalizedEmail);
+                    if (existingKhachHang != null)
+                    {
+                        throw new ArgumentException($"Email '{nhanVien.Email}' đã được sử dụng bởi khách hàng '{existingKhachHang.TenKhachHang}'.");
+                    }
+
+                    // Kiểm tra với NhanVien khác
+                    var existingNhanVien = await _context.NhanViens
+                        .FirstOrDefaultAsync(nv => nv.Email != null && 
+                                                  nv.Email.ToLower().Trim() == normalizedEmail &&
+                                                  nv.NhanVienId != taiKhoan.NhanVienId);
+                    if (existingNhanVien != null)
+                    {
+                        throw new ArgumentException($"Email '{nhanVien.Email}' đã được sử dụng bởi nhân viên '{existingNhanVien.HoVaTen}'.");
+                    }
+                }
+            }
+
             taiKhoan.TaiKhoanId = Guid.NewGuid();
             taiKhoan.NgayTaoTaiKhoan = DateTime.Now;
             taiKhoan.NgayCapNhatCuoiCung = DateTime.Now;
-            // TODO: Mã hóa Password, ví dụ: taiKhoan.Password = BCrypt.Net.BCrypt.HashPassword(taiKhoan.Password);
+            // Lưu mật khẩu trực tiếp không mã hóa
 
             _context.TaiKhoans.Add(taiKhoan);
             await _context.SaveChangesAsync();
@@ -106,11 +163,69 @@ namespace FurryFriends.API.Repository
                 throw new ArgumentException("NhanVienId does not exist.");
             }
 
+            // Kiểm tra email không được trùng lặp khi thay đổi KhachHangId
+            if (taiKhoan.KhachHangId != existing.KhachHangId && taiKhoan.KhachHangId.HasValue)
+            {
+                var khachHang = await _context.KhachHangs.FindAsync(taiKhoan.KhachHangId.Value);
+                if (khachHang != null && !string.IsNullOrWhiteSpace(khachHang.EmailCuaKhachHang))
+                {
+                    var normalizedEmail = khachHang.EmailCuaKhachHang.ToLower().Trim();
+                    
+                    // Kiểm tra với NhanVien
+                    var existingNhanVien = await _context.NhanViens
+                        .FirstOrDefaultAsync(nv => nv.Email != null && 
+                                                  nv.Email.ToLower().Trim() == normalizedEmail);
+                    if (existingNhanVien != null)
+                    {
+                        throw new ArgumentException($"Email '{khachHang.EmailCuaKhachHang}' đã được sử dụng bởi nhân viên '{existingNhanVien.HoVaTen}'.");
+                    }
+
+                    // Kiểm tra với KhachHang khác
+                    var existingKhachHang = await _context.KhachHangs
+                        .FirstOrDefaultAsync(kh => kh.EmailCuaKhachHang != null && 
+                                                  kh.EmailCuaKhachHang.ToLower().Trim() == normalizedEmail &&
+                                                  kh.KhachHangId != taiKhoan.KhachHangId);
+                    if (existingKhachHang != null)
+                    {
+                        throw new ArgumentException($"Email '{khachHang.EmailCuaKhachHang}' đã được sử dụng bởi khách hàng '{existingKhachHang.TenKhachHang}'.");
+                    }
+                }
+            }
+
+            // Kiểm tra email không được trùng lặp khi thay đổi NhanVienId
+            if (taiKhoan.NhanVienId != existing.NhanVienId && taiKhoan.NhanVienId.HasValue)
+            {
+                var nhanVien = await _context.NhanViens.FindAsync(taiKhoan.NhanVienId.Value);
+                if (nhanVien != null && !string.IsNullOrWhiteSpace(nhanVien.Email))
+                {
+                    var normalizedEmail = nhanVien.Email.ToLower().Trim();
+                    
+                    // Kiểm tra với KhachHang
+                    var existingKhachHang = await _context.KhachHangs
+                        .FirstOrDefaultAsync(kh => kh.EmailCuaKhachHang != null && 
+                                                  kh.EmailCuaKhachHang.ToLower().Trim() == normalizedEmail);
+                    if (existingKhachHang != null)
+                    {
+                        throw new ArgumentException($"Email '{nhanVien.Email}' đã được sử dụng bởi khách hàng '{existingKhachHang.TenKhachHang}'.");
+                    }
+
+                    // Kiểm tra với NhanVien khác
+                    var existingNhanVien = await _context.NhanViens
+                        .FirstOrDefaultAsync(nv => nv.Email != null && 
+                                                  nv.Email.ToLower().Trim() == normalizedEmail &&
+                                                  nv.NhanVienId != taiKhoan.NhanVienId);
+                    if (existingNhanVien != null)
+                    {
+                        throw new ArgumentException($"Email '{nhanVien.Email}' đã được sử dụng bởi nhân viên '{existingNhanVien.HoVaTen}'.");
+                    }
+                }
+            }
+
             // Lưu KhachHangId cũ để xử lý liên kết
             var oldKhachHangId = existing.KhachHangId;
 
             existing.UserName = taiKhoan.UserName;
-            // TODO: Mã hóa Password
+            // Lưu mật khẩu trực tiếp không mã hóa
             existing.Password = taiKhoan.Password;
             existing.TrangThai = taiKhoan.TrangThai;
             existing.KhachHangId = taiKhoan.KhachHangId;
@@ -192,30 +307,78 @@ namespace FurryFriends.API.Repository
             if (string.IsNullOrWhiteSpace(email))
                 return null;
 
-            var normalizedEmail = email.ToLower();
+            var normalizedEmail = email.ToLower().Trim();
+            Console.WriteLine($"=== DEBUG FindByEmailAsync ===");
+            Console.WriteLine($"Email input: '{email}'");
+            Console.WriteLine($"Normalized email: '{normalizedEmail}'");
 
-            // Tìm trong bảng KhachHang trước
+            // Lấy tất cả KhachHang để debug
+            var allKhachHangs = await _context.KhachHangs.ToListAsync();
+            Console.WriteLine($"Tổng số KhachHang trong DB: {allKhachHangs.Count}");
+            foreach (var kh in allKhachHangs)
+            {
+                Console.WriteLine($"KhachHang: ID={kh.KhachHangId}, Email='{kh.EmailCuaKhachHang}', TaiKhoanId={kh.TaiKhoanId}");
+            }
+
+            // Lấy tất cả NhanVien để debug
+            var allNhanViens = await _context.NhanViens.ToListAsync();
+            Console.WriteLine($"Tổng số NhanVien trong DB: {allNhanViens.Count}");
+            foreach (var nv in allNhanViens)
+            {
+                Console.WriteLine($"NhanVien: ID={nv.NhanVienId}, Email='{nv.Email}', TaiKhoanId={nv.TaiKhoanId}");
+            }
+
+            // Tìm trong bảng KhachHang - ưu tiên tìm KhachHang có TaiKhoanId
             var khachHang = await _context.KhachHangs
-                .FirstOrDefaultAsync(kh => kh.EmailCuaKhachHang.ToLower() == normalizedEmail);
+                .Where(kh => kh.EmailCuaKhachHang != null && kh.EmailCuaKhachHang.ToLower().Trim() == normalizedEmail)
+                .OrderByDescending(kh => kh.TaiKhoanId != null) // Ưu tiên KhachHang có TaiKhoanId
+                .ThenBy(kh => kh.KhachHangId) // Nếu cùng có hoặc không có TaiKhoanId, lấy ID nhỏ hơn
+                .FirstOrDefaultAsync();
+
+            Console.WriteLine($"Tìm trong KhachHang: {(khachHang != null ? "TÌM THẤY" : "KHÔNG TÌM THẤY")}");
+            if (khachHang != null)
+            {
+                Console.WriteLine($"KhachHang: ID={khachHang.KhachHangId}, Email='{khachHang.EmailCuaKhachHang}', TaiKhoanId={khachHang.TaiKhoanId}");
+            }
 
             if (khachHang != null && khachHang.TaiKhoanId.HasValue)
             {
-                return await GetByIdAsync(khachHang.TaiKhoanId.Value);
+                var result = await GetByIdAsync(khachHang.TaiKhoanId.Value);
+                Console.WriteLine($"Kết quả từ KhachHang: {(result != null ? "TÌM THẤY TÀI KHOẢN" : "KHÔNG TÌM THẤY TÀI KHOẢN")}");
+                if (result != null)
+                {
+                    Console.WriteLine($"Tài khoản: ID={result.TaiKhoanId}, UserName={result.UserName}");
+                }
+                return result;
             }
 
             // Nếu không thấy, tìm trong bảng NhanVien
             var nhanVien = await _context.NhanViens
-                .FirstOrDefaultAsync(nv => nv.Email.ToLower() == normalizedEmail);
+                .FirstOrDefaultAsync(nv => nv.Email != null && nv.Email.ToLower().Trim() == normalizedEmail);
+
+            Console.WriteLine($"Tìm trong NhanVien: {(nhanVien != null ? "TÌM THẤY" : "KHÔNG TÌM THẤY")}");
+            if (nhanVien != null)
+            {
+                Console.WriteLine($"NhanVien: ID={nhanVien.NhanVienId}, Email='{nhanVien.Email}', TaiKhoanId={nhanVien.TaiKhoanId}");
+            }
 
             if (nhanVien != null && nhanVien.TaiKhoanId.HasValue)
             {
-                return await GetByIdAsync(nhanVien.TaiKhoanId.Value);
+                var result = await GetByIdAsync(nhanVien.TaiKhoanId.Value);
+                Console.WriteLine($"Kết quả từ NhanVien: {(result != null ? "TÌM THẤY TÀI KHOẢN" : "KHÔNG TÌM THẤY TÀI KHOẢN")}");
+                if (result != null)
+                {
+                    Console.WriteLine($"Tài khoản: ID={result.TaiKhoanId}, UserName={result.UserName}");
+                }
+                return result;
             }
 
+            Console.WriteLine("Không tìm thấy email ở đâu cả");
+            Console.WriteLine($"=== KẾT THÚC DEBUG FindByEmailAsync ===");
             return null; // Không tìm thấy email ở đâu cả
         }
 
-        public async Task UpdatePasswordAsync(Guid taiKhoanId, string newHashedPassword)
+        public async Task UpdatePasswordAsync(Guid taiKhoanId, string newPassword)
         {
             var existingAccount = await _context.TaiKhoans.FindAsync(taiKhoanId);
             if (existingAccount == null)
@@ -223,7 +386,8 @@ namespace FurryFriends.API.Repository
                 throw new KeyNotFoundException("Tài khoản không tồn tại.");
             }
 
-            existingAccount.Password = newHashedPassword; // Gán mật khẩu đã được băm
+            // Lưu mật khẩu trực tiếp không mã hóa
+            existingAccount.Password = newPassword;
             existingAccount.NgayCapNhatCuoiCung = DateTime.UtcNow;
 
             _context.TaiKhoans.Update(existingAccount);
