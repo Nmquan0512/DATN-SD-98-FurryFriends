@@ -1,4 +1,4 @@
-﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models;
 
 namespace FurryFriends.API.Repository.IRepository
 {
@@ -10,5 +10,7 @@ namespace FurryFriends.API.Repository.IRepository
         Task UpdateAsync(TaiKhoan taiKhoan);
         Task DeleteAsync(Guid id);
         Task<TaiKhoan?> FindByUserNameAsync(string userName);
+        Task<TaiKhoan?> FindByEmailAsync(string email);
+        Task UpdatePasswordAsync(Guid taiKhoanId, string newHashedPassword);
     }
 }

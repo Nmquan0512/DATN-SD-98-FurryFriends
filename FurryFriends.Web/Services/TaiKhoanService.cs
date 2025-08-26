@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using LoginRequest = FurryFriends.API.Models.LoginRequest;
 using LoginResponse = FurryFriends.API.Models.LoginResponse;
 using System.Text.Json;
+using FurryFriends.Web.Models.DTO;
 
 namespace FurryFriends.Web.Services
 {
@@ -151,6 +152,36 @@ namespace FurryFriends.Web.Services
                 throw new UnauthorizedAccessException(errorContent);
             }
             return await response.Content.ReadFromJsonAsync<LoginResponse>();
+        }
+
+        public async Task<string> ForgotPasswordAsync(ForgotPasswordRequest model)
+        {
+            var response = await _httpClient.PostAsJsonAsync("TaiKhoanApi/forgot-password", model);
+
+            var responseBody = await response.Content.ReadFromJsonAsync<JsonElement>();
+            var message = responseBody.GetProperty("message").GetString();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException(message ?? "Đã có lỗi xảy ra.");
+            }
+
+            return message ?? "Yêu cầu đã được gửi.";
+        }
+
+        public async Task<string> ResetPasswordAsync(ResetPasswordRequest model)
+        {
+            var response = await _httpClient.PostAsJsonAsync("TaiKhoanApi/reset-password", model);
+
+            var responseBody = await response.Content.ReadFromJsonAsync<JsonElement>();
+            var message = responseBody.GetProperty("message").GetString();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException(message ?? "Đã có lỗi xảy ra.");
+            }
+
+            return message ?? "Mật khẩu đã được đặt lại thành công.";
         }
     }
 }

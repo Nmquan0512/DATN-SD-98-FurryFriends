@@ -1,3 +1,4 @@
+using AutoMapper;
 using FurryFriends.API.Data;
 using FurryFriends.API.Models;
 using FurryFriends.API.Repositories;
@@ -5,15 +6,15 @@ using FurryFriends.API.Repository;
 using FurryFriends.API.Repository.IRepository;
 using FurryFriends.API.Services;
 using FurryFriends.API.Services.IServices;
+using FurryFriends.API.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using System.Text.Json.Serialization;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 
 try
 {
@@ -101,9 +102,10 @@ try
     builder.Services.AddScoped<VoucherCalculationService>();
     builder.Services.AddScoped<IPhieuHoanTraRepository, PhieuHoanTraRepository>();
 	builder.Services.AddScoped<IPhieuHoanTraService, PhieuHoanTraService>();
-
-	// ✅ Đăng ký Background Service để tự động hủy hóa đơn
-	builder.Services.AddHostedService<InvoiceCleanupService>();
+    builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+   builder.Services.AddTransient<IMailService, MailService>();
+    // ✅ Đăng ký Background Service để tự động hủy hóa đơn
+    builder.Services.AddHostedService<InvoiceCleanupService>();
 
     // Add CORS policy cho phép web admin truy cập API
     builder.Services.AddCors(options =>
