@@ -119,5 +119,47 @@ namespace FurryFriends.API.Repository
                 .Include(tk => tk.KhachHang)
                 .FirstOrDefaultAsync(tk => tk.UserName == userName); // Khớp chính xác
         }
+        public async Task<TaiKhoan?> FindByEmailAsync(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return null;
+
+            var normalizedEmail = email.ToLower();
+
+            // Tìm trong bảng KhachHang trước
+            var khachHang = await _context.KhachHangs
+                .FirstOrDefaultAsync(kh => kh.EmailCuaKhachHang.ToLower() == normalizedEmail);
+
+            if (khachHang != null && khachHang.TaiKhoanId.HasValue)
+            {
+                return await GetByIdAsync(khachHang.TaiKhoanId.Value);
+            }
+
+            // Nếu không thấy, tìm trong bảng NhanVien
+            var nhanVien = await _context.NhanViens
+                .FirstOrDefaultAsync(nv => nv.Email.ToLower() == normalizedEmail);
+
+            if (nhanVien != null && nhanVien.TaiKhoanId.HasValue)
+            {
+                return await GetByIdAsync(nhanVien.TaiKhoanId.Value);
+            }
+
+            return null; // Không tìm thấy email ở đâu cả
+        }
+
+        public async Task UpdatePasswordAsync(Guid taiKhoanId, string newHashedPassword)
+        {
+            var existingAccount = await _context.TaiKhoans.FindAsync(taiKhoanId);
+            if (existingAccount == null)
+            {
+                throw new KeyNotFoundException("Tài khoản không tồn tại.");
+            }
+
+            existingAccount.Password = newHashedPassword; // Gán mật khẩu đã được băm
+            existingAccount.NgayCapNhatCuoiCung = DateTime.UtcNow;
+
+            _context.TaiKhoans.Update(existingAccount);
+            await _context.SaveChangesAsync();
+        }
     }
 }

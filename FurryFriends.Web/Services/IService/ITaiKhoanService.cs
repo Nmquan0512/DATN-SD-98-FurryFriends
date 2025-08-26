@@ -1,4 +1,5 @@
 ﻿using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
 using LoginRequest = FurryFriends.API.Models.LoginRequest;
 using LoginResponse = FurryFriends.API.Models.LoginResponse;
 
@@ -15,5 +16,7 @@ namespace FurryFriends.Web.Services.IService
         Task<IEnumerable<TaiKhoan>> GetAllTaiKhoanAsync();
         Task<LoginResponse?> DangNhapAdminAsync(LoginRequest model);
         Task<LoginResponse?> DangNhapKhachHangAsync(LoginRequest model);
+        Task<string> ForgotPasswordAsync(ForgotPasswordRequest model);
+        Task<string> ResetPasswordAsync(ResetPasswordRequest model);
     }
 }

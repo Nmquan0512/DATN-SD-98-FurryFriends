@@ -62,7 +62,7 @@ namespace FurryFriends.Web.Controllers
             if (!ModelState.IsValid)
             {
                 ViewBag.Error = "Vui lòng kiểm tra lại thông tin!";
-                return View("Index", model); // Return view with model instead of redirect
+                return View("Index", model);
             }
 
             // Kiểm tra trùng username/email
@@ -71,7 +71,7 @@ namespace FurryFriends.Web.Controllers
             if (existingAccount != null)
             {
                 ViewBag.Error = "Tài khoản đã tồn tại! Vui lòng chọn tên đăng nhập khác.";
-                return View("Index", model); // Return view with model instead of redirect
+                return View("Index", model);
             }
 
             // Kiểm tra trùng số điện thoại
@@ -79,14 +79,14 @@ namespace FurryFriends.Web.Controllers
             if (existingPhone != null)
             {
                 ViewBag.Error = "Số điện thoại đã được sử dụng! Vui lòng sử dụng số điện thoại khác.";
-                return View("Index", model); // Return view with model instead of redirect
+                return View("Index", model);
             }
 
             var existingEmail = await _khachHangService.FindByEmailAsync(model.Email);
             if (existingEmail != null)
             {
                 ViewBag.Error = "Email đã được sử dụng! Vui lòng sử dụng email khác.";
-                return View("Index", model); // Return view with model instead of redirect
+                return View("Index", model);
             }
 
             try
@@ -113,13 +113,42 @@ namespace FurryFriends.Web.Controllers
                 };
                 await _taiKhoanService.AddAsync(taiKhoan);
 
+                // 3. ĐĂNG NHẬP LUÔN SAU KHI ĐĂNG KÝ THÀNH CÔNG
+                HttpContext.Session.SetString("TaiKhoanId", taiKhoan.TaiKhoanId.ToString());
+                HttpContext.Session.SetString("Role", "KhachHang");
+                HttpContext.Session.SetString("HoTen", khachHang.TenKhachHang);
+
+                // Commit session để đảm bảo được lưu
+                await HttpContext.Session.CommitAsync();
+
+                // 4. Tạo claims identity cho authentication cookie (nếu sử dụng)
+                var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, taiKhoan.TaiKhoanId.ToString()),
+            new Claim(ClaimTypes.Name, model.UserName),
+            new Claim(ClaimTypes.Role, "KhachHang"),
+            new Claim("HoTen", khachHang.TenKhachHang)
+        };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true, // Lưu đăng nhập lâu dài
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30) // 30 ngày
+                };
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
+
                 TempData["Success"] = "Đăng ký thành công! Chào mừng bạn đến với FurryFriends! 🎉";
-                return View("Index", model); // Return view with success message instead of redirect
+                return RedirectToAction("Index", "Home"); // Chuyển hướng về trang chủ
             }
             catch (Exception ex)
             {
                 ViewBag.Error = $"Đã xảy ra lỗi: {ex.Message}. Vui lòng thử lại sau.";
-                return View("Index", model); // Return view with model instead of redirect
+                return View("Index", model);
             }
         }
 

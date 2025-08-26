@@ -654,7 +654,7 @@
                 <span asp-validation-for="Password" class="field-validation-error"></span>
             </div>
             <div class="forgot-password">
-                <a href="#" onclick="showForgotPassword()">Quên mật khẩu?</a>
+                <a asp-controller="Account" asp-action="ForgotPassword">Quên mật khẩu?</a>
             </div>
             <button type="submit" class="login-btn" id="loginBtn">
                 <span class="loading"></span>
@@ -745,10 +745,6 @@
                 passwordInput.type = 'password';
                 toggleIcon.className = 'bi bi-eye password-toggle';
             }
-        }
-        
-        function showForgotPassword() {
-            showNotification('Chức năng quên mật khẩu sẽ được triển khai sau! 🐾', 'info');
         }
         
         function showSignup() {

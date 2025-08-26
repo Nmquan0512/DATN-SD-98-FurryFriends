@@ -64,8 +64,17 @@ namespace FurryFriends.API.Services
                 throw new InvalidOperationException("Tên chương trình giảm giá đã tồn tại.");
             }
 
-            // 1. Ánh xạ thuộc tính chính của GiamGia
-            var giamGiaEntity = _mapper.Map<GiamGia>(dto);
+            // 1. Ánh xạ thuộc tính chính của GiamGia (KHÔNG dùng AfterMap)
+            var giamGiaEntity = new GiamGia
+            {
+                TenGiamGia = dto.TenGiamGia,
+                PhanTramKhuyenMai = dto.PhanTramKhuyenMai,
+                NgayBatDau = dto.NgayBatDau,
+                NgayKetThuc = dto.NgayKetThuc,
+                TrangThai = dto.TrangThai,
+                NgayTao = DateTime.UtcNow,
+                NgayCapNhat = DateTime.UtcNow
+            };
 
             // 2. Xây dựng danh sách các sản phẩm liên quan trong bộ nhớ
             if (dto.SanPhamChiTietIds?.Any() == true)
@@ -76,7 +85,9 @@ namespace FurryFriends.API.Services
                     {
                         SanPhamChiTietId = productId,
                         PhanTramGiamGia = giamGiaEntity.PhanTramKhuyenMai,
-                        TrangThai = true
+                        TrangThai = true,
+                        NgayTao = DateTime.UtcNow,
+                        NgayCapNhat = DateTime.UtcNow
                     });
                 }
             }
@@ -84,11 +95,20 @@ namespace FurryFriends.API.Services
             // 3. Thêm toàn bộ "biểu đồ đối tượng" vào context
             await _giamGiaRepo.AddAsync(giamGiaEntity);
 
-            // 4. Lưu tất cả thay đổi (cả GiamGia và DotGiamGiaSanPhams) trong MỘT GIAO DỊCH
+            // 4. Lưu tất cả thay đổi
             await _giamGiaRepo.SaveAsync();
 
-            // Trả về DTO đã được tạo, ánh xạ lại để có đầy đủ thông tin
-            return _mapper.Map<GiamGiaDTO>(giamGiaEntity);
+            // 5. Trả về DTO - Ánh xạ đơn giản không dùng AfterMap
+            return new GiamGiaDTO
+            {
+                GiamGiaId = giamGiaEntity.GiamGiaId,
+                TenGiamGia = giamGiaEntity.TenGiamGia,
+                PhanTramKhuyenMai = giamGiaEntity.PhanTramKhuyenMai,
+                NgayBatDau = giamGiaEntity.NgayBatDau,
+                NgayKetThuc = giamGiaEntity.NgayKetThuc,
+                TrangThai = giamGiaEntity.TrangThai,
+                SanPhamChiTietIds = giamGiaEntity.DotGiamGiaSanPhams?.Select(d => d.SanPhamChiTietId).ToList() ?? new List<Guid>()
+            };
         }
 
         public async Task<GiamGiaDTO> UpdateAsync(GiamGiaDTO dto)

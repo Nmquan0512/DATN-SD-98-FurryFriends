@@ -103,8 +103,8 @@ namespace FurryFriends.API.Migrations
                         {
                             ChucVuId = new Guid("22222222-2222-2222-2222-222222222222"),
                             MoTaChucVu = "Quản trị viên hệ thống",
-                            NgayCapNhat = new DateTime(2025, 8, 24, 8, 4, 9, 447, DateTimeKind.Utc).AddTicks(106),
-                            NgayTao = new DateTime(2025, 8, 24, 8, 4, 9, 447, DateTimeKind.Utc).AddTicks(105),
+                            NgayCapNhat = new DateTime(2025, 8, 25, 0, 17, 29, 705, DateTimeKind.Utc).AddTicks(8881),
+                            NgayTao = new DateTime(2025, 8, 25, 0, 17, 29, 705, DateTimeKind.Utc).AddTicks(8881),
                             TenChucVu = "admin",
                             TrangThai = true
                         });
@@ -659,9 +659,9 @@ namespace FurryFriends.API.Migrations
                             Email = "admin@furryfriends.local",
                             GioiTinh = "Nam",
                             HoVaTen = "Admin hệ thống",
-                            NgayCapNhat = new DateTime(2025, 8, 24, 8, 4, 9, 447, DateTimeKind.Utc).AddTicks(169),
+                            NgayCapNhat = new DateTime(2025, 8, 25, 0, 17, 29, 705, DateTimeKind.Utc).AddTicks(8917),
                             NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayTao = new DateTime(2025, 8, 24, 8, 4, 9, 447, DateTimeKind.Utc).AddTicks(168),
+                            NgayTao = new DateTime(2025, 8, 25, 0, 17, 29, 705, DateTimeKind.Utc).AddTicks(8916),
                             SDT = "0123456789",
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
                             TrangThai = true
@@ -804,7 +804,7 @@ namespace FurryFriends.API.Migrations
                         new
                         {
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            NgayTaoTaiKhoan = new DateTime(2025, 8, 24, 8, 4, 9, 446, DateTimeKind.Utc).AddTicks(9677),
+                            NgayTaoTaiKhoan = new DateTime(2025, 8, 25, 0, 17, 29, 705, DateTimeKind.Utc).AddTicks(8631),
                             Password = "123456",
                             TrangThai = true,
                             UserName = "admin"

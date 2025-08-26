@@ -1,8 +1,12 @@
 ﻿using FurryFriends.API.Models;
 using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Repository.IRepository;
+using FurryFriends.API.Services;
+using FurryFriends.API.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace FurryFriends.API.Controllers
 {
@@ -12,11 +16,15 @@ namespace FurryFriends.API.Controllers
     {
         private readonly ITaiKhoanRepository _taiKhoanRepository;
         private readonly ILogger<TaiKhoanApiController> _logger;
+        private readonly IMailService _mailService;
 
-        public TaiKhoanApiController(ITaiKhoanRepository taiKhoanRepository, ILogger<TaiKhoanApiController> logger)
+        private static readonly Dictionary<string, (string Code, DateTime Expiry)> _resetCodes = new();
+
+        public TaiKhoanApiController(ITaiKhoanRepository taiKhoanRepository, ILogger<TaiKhoanApiController> logger, IMailService mailService)
         {
             _taiKhoanRepository = taiKhoanRepository;
             _logger = logger;
+            _mailService = mailService;
         }
 
         [HttpGet]
@@ -51,8 +59,7 @@ namespace FurryFriends.API.Controllers
             }
         }
 
-
-		[HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] TaiKhoan taiKhoan)
         {
             if (!ModelState.IsValid)
@@ -106,10 +113,8 @@ namespace FurryFriends.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-	
 
-
-		[HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
@@ -138,7 +143,7 @@ namespace FurryFriends.API.Controllers
             {
                 if (string.IsNullOrWhiteSpace(keyword) || keyword.Length < 2)
                 {
-                    return Ok(new List<object>()); // Không trả về gì nếu chưa đủ ký tự
+                    return Ok(new List<object>());
                 }
                 var all = await _taiKhoanRepository.GetAllAsync();
                 var result = all
@@ -169,7 +174,7 @@ namespace FurryFriends.API.Controllers
 
                 var taiKhoan = await _taiKhoanRepository.FindByUserNameAsync(model.UserName);
                 _logger.LogInformation($"API: Tìm thấy tài khoản: {(taiKhoan != null ? "Có" : "Không")}");
-                
+
                 if (taiKhoan == null)
                 {
                     _logger.LogWarning($"API: Không tìm thấy tài khoản với UserName: {model.UserName}");
@@ -177,7 +182,7 @@ namespace FurryFriends.API.Controllers
                 }
 
                 _logger.LogInformation($"API: So sánh password - DB: {taiKhoan.Password}, Input: {model.Password}");
-                
+
                 if (taiKhoan.Password != model.Password)
                 {
                     _logger.LogWarning($"API: Password không khớp cho UserName: {model.UserName}");
@@ -190,7 +195,6 @@ namespace FurryFriends.API.Controllers
                     return Unauthorized("Tài khoản đã bị khóa.");
                 }
 
-                // Kiểm tra có phải admin/nhân viên không
                 if (taiKhoan.NhanVien == null)
                 {
                     _logger.LogWarning($"API: Tài khoản không có quyền admin cho UserName: {model.UserName}");
@@ -250,18 +254,15 @@ namespace FurryFriends.API.Controllers
                     return Unauthorized("Tài khoản đã bị khóa.");
                 }
 
-                // Kiểm tra quyền thực tế của người dùng
                 string actualRole = "KhachHang";
                 string hoTen = "";
 
-                // Nếu có thông tin nhân viên, ưu tiên role nhân viên
                 if (taiKhoan.NhanVien != null)
                 {
                     actualRole = taiKhoan.NhanVien.ChucVu?.TenChucVu ?? "NhanVien";
                     hoTen = taiKhoan.NhanVien.HoVaTen;
                     _logger.LogInformation($"API: Tài khoản có quyền nhân viên với role: {actualRole}");
                 }
-                // Nếu không có nhân viên, kiểm tra khách hàng
                 else if (taiKhoan.KhachHang != null)
                 {
                     actualRole = "KhachHang";
@@ -277,7 +278,7 @@ namespace FurryFriends.API.Controllers
                 var response = new LoginResponse
                 {
                     TaiKhoanId = taiKhoan.TaiKhoanId,
-                    KhachHangId = taiKhoan.KhachHang?.KhachHangId ?? Guid.Empty, //sửa cho thêm dòng này
+                    KhachHangId = taiKhoan.KhachHang?.KhachHangId ?? Guid.Empty,
                     Role = actualRole,
                     HoTen = hoTen
                 };
@@ -292,5 +293,81 @@ namespace FurryFriends.API.Controllers
             }
         }
 
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
+        {
+            // 1. Tìm tài khoản theo email
+            var account = await _taiKhoanRepository.FindByEmailAsync(request.Email);
+
+            // 2. Nếu KHÔNG tìm thấy, vẫn trả về thông báo "thành công" giống hệt nhau
+            if (account == null)
+            {
+                // Ghi log để developer biết là có ai đó đang thử với email không tồn tại
+                _logger.LogWarning($"Yêu cầu đặt lại mật khẩu cho email không tồn tại: {request.Email}");
+                // Nhưng vẫn trả về response y hệt trường hợp thành công
+                return Ok(new { message = "Nếu email của bạn tồn tại trong hệ thống, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu." });
+            }
+
+            // 3. NẾU TÌM THẤY tài khoản, thì mới tạo mã và gửi email
+            var code = new Random().Next(100000, 999999).ToString();
+            _resetCodes[request.Email.ToLower()] = (code, DateTime.UtcNow.AddMinutes(10));
+
+            try
+            {
+                var subject = "Yêu cầu đặt lại mật khẩu cho tài khoản Furry Friends";
+                var body = $"<p>Xin chào,</p><p>Mã xác nhận để đặt lại mật khẩu của bạn là: <strong>{code}</strong></p><p>Mã này sẽ hết hạn sau 10 phút.</p>";
+                await _mailService.SendEmailAsync(request.Email, subject, body);
+
+                _logger.LogInformation($"Đã gửi mã xác nhận đến email: {request.Email}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi gửi email đặt lại mật khẩu cho {Email}", request.Email);
+                // NGAY CẢ KHI GỬI EMAIL LỖI, vẫn trả về thông báo thành công cho người dùng
+                // return StatusCode(500, new { message = "Đã có lỗi xảy ra trong quá trình gửi email." }); // DÒNG NÀY SAI
+                // Sửa lại: Kể cả lỗi gửi mail cũng không được tiết lộ cho client
+                return Ok(new { message = "Nếu email của bạn tồn tại trong hệ thống, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu." });
+            }
+
+            // 4. Trả về thông báo thành công (giống hệt trường hợp không tìm thấy email)
+            return Ok(new { message = "Nếu email của bạn tồn tại trong hệ thống, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu." });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var emailKey = request.Email.ToLower();
+
+            if (!_resetCodes.TryGetValue(emailKey, out var value) || value.Code != request.Code || value.Expiry < DateTime.UtcNow)
+            {
+                if (_resetCodes.ContainsKey(emailKey) && _resetCodes[emailKey].Expiry < DateTime.UtcNow)
+                {
+                    _resetCodes.Remove(emailKey);
+                }
+                return BadRequest(new { message = "Mã xác nhận không đúng hoặc đã hết hạn." });
+            }
+
+            var account = await _taiKhoanRepository.FindByEmailAsync(request.Email);
+            if (account == null)
+            {
+                return BadRequest(new { message = "Tài khoản không hợp lệ." });
+            }
+
+            var newHashedPassword = HashPassword(request.NewPassword);
+            await _taiKhoanRepository.UpdatePasswordAsync(account.TaiKhoanId, newHashedPassword);
+
+            _resetCodes.Remove(emailKey);
+
+            return Ok(new { message = "Mật khẩu của bạn đã được đặt lại thành công." });
+        }
+
+        private string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
+            }
+        }
     }
 }
