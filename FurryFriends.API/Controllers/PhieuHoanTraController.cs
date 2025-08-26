@@ -1,14 +1,17 @@
-﻿using FurryFriends.API.Models;
+﻿using FurryFriends.API.Data;
+using FurryFriends.API.Models;
+using FurryFriends.API.Models.DTO;
 using FurryFriends.API.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FurryFriends.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PhieuHoanTraController : ControllerBase
-    {
+	[Route("api/[controller]")]
+	[ApiController]
+	public class PhieuHoanTraController : ControllerBase
+	{
 		private readonly IPhieuHoanTraService _service;
 
 		public PhieuHoanTraController(IPhieuHoanTraService service)
@@ -16,83 +19,50 @@ namespace FurryFriends.API.Controllers
 			_service = service;
 		}
 
-		// Lấy phiếu hoàn trả theo Id
+		[HttpGet]
+		public async Task<IActionResult> GetAll()
+		{
+			var list = await _service.GetAllAsync();
+			return Ok(list);
+		}
+
 		[HttpGet("{id}")]
-		public async Task<IActionResult> GetById(Guid id, bool includeHoaDonChiTiet = false)
+		public async Task<IActionResult> GetById(Guid id)
 		{
-			var result = await _service.GetByIdAsync(id, includeHoaDonChiTiet);
-			if (result == null)
-				return NotFound();
-
-			return Ok(result);
+			var phieu = await _service.GetByIdAsync(id);
+			if (phieu == null) return NotFound();
+			return Ok(phieu);
 		}
 
-		// Lấy tất cả phiếu hoàn trả theo Hóa đơn Id
-		[HttpGet("GetByHoaDon/{hoaDonId}")]
-		public async Task<IActionResult> GetByHoaDonId(Guid hoaDonId)
+		[HttpGet("khachhang/{khachHangId}")]
+		public async Task<IActionResult> GetByKhachHang(Guid khachHangId)
 		{
-			var result = await _service.GetByHoaDonIdAsync(hoaDonId);
-			return Ok(result);
+			var list = await _service.GetByKhachHangAsync(khachHangId);
+			return Ok(list);
 		}
 
-		// Lấy tất cả phiếu hoàn trả theo Hóa đơn chi tiết Id
-		[HttpGet("GetByHoaDonChiTiet/{hoaDonChiTietId}")]
-		public async Task<IActionResult> GetByHoaDonChiTietId(Guid hoaDonChiTietId)
-		{
-			var result = await _service.GetByHoaDonChiTietIdAsync(hoaDonChiTietId);
-			return Ok(result);
-		}
-
-		// Lấy tổng số lượng hoàn trả theo chi tiết hóa đơn
-		[HttpGet("GetTongSoLuongHoan/{hoaDonChiTietId}")]
-		public async Task<IActionResult> GetTongSoLuongHoan(Guid hoaDonChiTietId)
-		{
-			var total = await _service.GetTongSoLuongHoanByHdctAsync(hoaDonChiTietId);
-			return Ok(total);
-		}
-
-		// Tạo phiếu hoàn trả
 		[HttpPost]
-		public async Task<IActionResult> Create([FromBody] PhieuHoanTra model)
+		public async Task<IActionResult> Create([FromBody] PhieuHoanTraCreateRequest request)
 		{
-			if (!ModelState.IsValid)
-				return BadRequest(ModelState);
-
-			var created = await _service.AddAsync(model);
-			return CreatedAtAction(nameof(GetById), new { id = created.PhieuHoanTraId }, created);
+			var result = await _service.CreateAsync(request);
+			if (result) return Ok();
+			return BadRequest("Tạo phiếu hoàn trả thất bại");
 		}
 
-		// Cập nhật phiếu hoàn trả
 		[HttpPut("{id}")]
-		public async Task<IActionResult> Update(Guid id, [FromBody] PhieuHoanTra model)
+		public async Task<IActionResult> Update(Guid id, [FromBody] PhieuHoanTraUpdateRequest request)
 		{
-			if (id != model.PhieuHoanTraId)
-				return BadRequest("Id không khớp");
-
-			await _service.UpdateAsync(model);
-			return NoContent();
+			var result = await _service.UpdateAsync(id, request);
+			if (result) return Ok();
+			return NotFound();
 		}
 
-		// Cập nhật trạng thái phiếu hoàn trả
-		[HttpPatch("{id}/TrangThai")]
-		public async Task<IActionResult> UpdateTrangThai(Guid id, [FromQuery] int trangThai)
-		{
-			if (!await _service.ExistsAsync(id))
-				return NotFound();
-
-			await _service.UpdateTrangThaiAsync(id, trangThai);
-			return NoContent();
-		}
-
-		// Xóa phiếu hoàn trả
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> Delete(Guid id)
 		{
-			if (!await _service.ExistsAsync(id))
-				return NotFound();
-
-			await _service.DeleteAsync(id);
-			return NoContent();
+			var result = await _service.DeleteAsync(id);
+			if (result) return Ok();
+			return NotFound();
 		}
 	}
 }

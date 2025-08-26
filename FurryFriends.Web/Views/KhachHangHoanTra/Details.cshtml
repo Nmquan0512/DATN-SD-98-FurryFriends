@@ -1,0 +1,76 @@
+﻿@model FurryFriends.Web.ViewModels.PhieuHoanTraViewModel
+@{
+    ViewData["Title"] = "Chi tiết phiếu hoàn";
+    string StatusText(int s) => s switch { 0 => "Yêu cầu", 1 => "Đã duyệt", 2 => "Từ chối", 3 => "Hoàn tất", _ => "Không xác định" };
+    string StatusBadge(int s) => s switch { 0 => "warning", 1 => "primary", 2 => "danger", 3 => "success", _ => "secondary" };
+}
+
+<div class="container py-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h3 class="fw-semibold m-0">@ViewData["Title"]</h3>
+        <span class="badge text-bg-@StatusBadge(Model.TrangThai) px-3 py-2">@StatusText(Model.TrangThai)</span>
+    </div>
+
+    <div class="card fancy-shadow border-0 mb-4">
+        <div class="card-body">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="rounded-3 bg-light overflow-hidden" style="width:100%;max-height:280px;">
+                        @if (!string.IsNullOrEmpty(Model?.AnhSanPham))
+                        {
+                            <img src="@Model.AnhSanPham" class="w-100" style="object-fit:cover;max-height:280px;" />
+                        }
+                        else
+                        {
+
+                            <div class="w-100 d-flex align-items-center justify-content-center" style="height:280px;">🛍️</div>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <h5 class="mb-1">@(!string.IsNullOrWhiteSpace(Model?.TenSanPham) ? Model.TenSanPham : "Sản phẩm")</h5>
+                    <div class="text-muted small mb-3">
+                        @if (!string.IsNullOrWhiteSpace(Model?.MauSac) || !string.IsNullOrWhiteSpace(Model?.KichCo))
+                        {
+                            <span>Phân loại: @Model.MauSac@(string.IsNullOrWhiteSpace(Model?.KichCo) ? "" : $" · Size {Model.KichCo}")</span>
+                        }
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="info-tile">
+                                <div class="text-muted small">Mã phiếu</div>
+                                <div class="fw-semibold small">@Model.PhieuHoanTraId</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-tile">
+                                <div class="text-muted small">Ngày gửi</div>
+                                <div class="fw-semibold">@Model.NgayHoanTra.ToString("dd/MM/yyyy HH:mm")</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-tile">
+                                <div class="text-muted small">Số lượng hoàn</div>
+                                <div class="fw-semibold">@Model.SoLuongHoan</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="info-tile">
+                                <div class="text-muted small">Mã chi tiết hóa đơn</div>
+                                <div class="fw-semibold small">@Model.HoaDonChiTietId</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <div class="text-muted small mb-1">Lý do hoàn trả</div>
+                        <div class="rounded-3 border bg-light p-3">@(!string.IsNullOrWhiteSpace(Model.LyDoHoanTra) ? Model.LyDoHoanTra : "—")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <di

@@ -1224,23 +1224,25 @@
                     {
                         <div class="product-card">
                             <div class="product-row">
-                                @{ 
+                                @{
                                     // ✅ Sử dụng ảnh snapshot nếu có, fallback sang ảnh hiện tại
-                                    string imgLink = null; 
+                                    string imgLink = null;
                                     var snapshotImg = product.AnhSanPhamLucMua ?? string.Empty;
                                     var currentImg = product.AnhSanPham ?? string.Empty;
                                     var dd = !string.IsNullOrWhiteSpace(snapshotImg) ? snapshotImg : currentImg;
-                                    
-                                    if (!string.IsNullOrWhiteSpace(dd)) { 
-                                        if (dd.StartsWith("http", StringComparison.OrdinalIgnoreCase)) 
-                                            imgLink = dd; 
-                                        else if (dd.Contains("/")) 
-                                            imgLink = "https://localhost:7289/" + dd.TrimStart('/'); 
-                                        else 
-                                            imgLink = $"https://localhost:7289/images/{System.IO.Path.GetFileName(dd)}"; 
-                                    } 
+
+                                    if (!string.IsNullOrWhiteSpace(dd))
+                                    {
+                                        if (dd.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                                            imgLink = dd;
+                                        else if (dd.Contains("/"))
+                                            imgLink = "https://localhost:7289/" + dd.TrimStart('/');
+                                        else
+                                            imgLink = $"https://localhost:7289/images/{System.IO.Path.GetFileName(dd)}";
+                                    }
                                 }
-                                @if (!string.IsNullOrEmpty(imgLink)) 
+
+                                @if (!string.IsNullOrEmpty(imgLink))
                                 {
                                     <img src="@imgLink" class="product-image" alt="@(product.TenSanPhamLucMua ?? product.TenSanPham)" />
                                 }
@@ -1250,7 +1252,7 @@
                                         <i class="fas fa-image text-muted"></i>
                                     </div>
                                 }
-                                
+
                                 <div class="product-info">
                                     <div class="product-name">@(product.TenSanPhamLucMua ?? product.TenSanPham)</div>
                                     <div class="product-variants">
@@ -1272,6 +1274,32 @@
 
                                 <div class="product-total">
                                     @product.ThanhTien.ToString("N0") VNĐ
+                                </div>
+
+                                <!-- ACTION: Nút yêu cầu hoàn trả -->
+                                <div class="product-action">
+                                    @* 
+                   Ví dụ rule: chỉ cho hoàn khi đơn đã giao (TrangThai >= 3).
+                   Nếu bạn không cần rule này, bỏ if và luôn hiện nút.
+                *@
+                                    @if (Model.TrangThai >= 3)
+                                    {
+                                        <a class="btn btn-sm btn-outline-danger"
+                                           asp-controller="KhachHangHoanTra"
+                                           asp-action="Create"
+                                           asp-route-hoaDonId="@Model.HoaDonId"
+                                           asp-route-hoaDonChiTietId="@product.HoaDonChiTietId"
+                                           title="Yêu cầu hoàn trả sản phẩm này">
+                                            <i class="fas fa-undo"></i> Yêu cầu hoàn trả
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-secondary" disabled
+                                                title="Sản phẩm chỉ có thể hoàn sau khi đơn đã giao">
+                                            <i class="fas fa-undo"></i> Yêu cầu hoàn trả
+                                        </button>
+                                    }
                                 </div>
                             </div>
                         </div>

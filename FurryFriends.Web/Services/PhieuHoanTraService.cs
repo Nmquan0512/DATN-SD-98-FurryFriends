@@ -6,36 +6,52 @@ namespace FurryFriends.Web.Services
 	public class PhieuHoanTraService : IPhieuHoanTraService
 	{
 		private readonly HttpClient _httpClient;
+		private const string baseUrl = "https://localhost:7289/api/PhieuHoanTra"; // URL API
+
 		public PhieuHoanTraService(HttpClient httpClient)
 		{
 			_httpClient = httpClient;
 		}
 
-		public async Task<IEnumerable<PhieuHoanTraViewModel>> GetByHoaDonIdAsync(Guid hoaDonId)
+		public async Task<IEnumerable<PhieuHoanTraViewModel>> GetAllAsync()
 		{
-			return await _httpClient.GetFromJsonAsync<IEnumerable<PhieuHoanTraViewModel>>($"api/PhieuHoanTra/GetByHoaDon/{hoaDonId}");
+			var response = await _httpClient.GetAsync(baseUrl);
+			if (!response.IsSuccessStatusCode) return new List<PhieuHoanTraViewModel>();
+
+			return await response.Content.ReadFromJsonAsync<IEnumerable<PhieuHoanTraViewModel>>();
 		}
 
-		public async Task<PhieuHoanTraViewModel?> GetByIdAsync(Guid id)
+		public async Task<PhieuHoanTraViewModel> GetByIdAsync(Guid id)
 		{
-			return await _httpClient.GetFromJsonAsync<PhieuHoanTraViewModel>($"api/PhieuHoanTra/{id}");
+			var response = await _httpClient.GetAsync($"{baseUrl}/{id}");
+			if (!response.IsSuccessStatusCode) return null;
+
+			return await response.Content.ReadFromJsonAsync<PhieuHoanTraViewModel>();
 		}
 
-		public async Task<bool> CreateAsync(PhieuHoanTraViewModel model)
+		public async Task<IEnumerable<PhieuHoanTraViewModel>> GetByKhachHangAsync(Guid khachHangId)
 		{
-			var response = await _httpClient.PostAsJsonAsync("api/PhieuHoanTra", model);
+			var response = await _httpClient.GetAsync($"{baseUrl}/khachhang/{khachHangId}");
+			if (!response.IsSuccessStatusCode) return new List<PhieuHoanTraViewModel>();
+
+			return await response.Content.ReadFromJsonAsync<IEnumerable<PhieuHoanTraViewModel>>();
+		}
+
+		public async Task<bool> CreateAsync(PhieuHoanTraCreateRequest request)
+		{
+			var response = await _httpClient.PostAsJsonAsync(baseUrl, request);
 			return response.IsSuccessStatusCode;
 		}
 
-		public async Task<bool> UpdateTrangThaiAsync(Guid id, int trangThai)
+		public async Task<bool> UpdateAsync(Guid id, PhieuHoanTraUpdateRequest request)
 		{
-			var response = await _httpClient.PutAsJsonAsync($"api/PhieuHoanTra/{id}/trang-thai", trangThai);
+			var response = await _httpClient.PutAsJsonAsync($"{baseUrl}/{id}", request);
 			return response.IsSuccessStatusCode;
 		}
 
 		public async Task<bool> DeleteAsync(Guid id)
 		{
-			var response = await _httpClient.DeleteAsync($"api/PhieuHoanTra/{id}");
+			var response = await _httpClient.DeleteAsync($"{baseUrl}/{id}");
 			return response.IsSuccessStatusCode;
 		}
 	}
