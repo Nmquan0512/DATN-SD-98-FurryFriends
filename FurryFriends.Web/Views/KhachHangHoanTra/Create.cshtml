@@ -94,9 +94,9 @@
             <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Thông tin hoàn trả</h5>
         </div>
         <form asp-action="Create" method="post" asp-route-hoaDonId="@ViewBag.HoaDonId">
-            @Html.AntiForgeryToken()
-            <div class="card-body">
-                <input type="hidden" asp-for="HoaDonChiTietId" />
+        @Html.AntiForgeryToken()
+        <div class="card-body">
+            <input type="hidden" asp-for="HoaDonChiTietId" />
 
                 <!-- Quantity Section -->
                 <div class="form-section mb-4">
@@ -121,8 +121,8 @@
                             </small>
                         </div>
                     </div>
-                    <span asp-validation-for="SoLuongHoan" class="text-danger"></span>
-                </div>
+                <span asp-validation-for="SoLuongHoan" class="text-danger"></span>
+            </div>
 
                 <!-- Reason Section -->
                 <div class="form-section mb-4">
@@ -159,7 +159,7 @@
                     </div>
                     <textarea asp-for="LyDoHoanTra" class="form-control reason-textarea" rows="4"
                               placeholder="Mô tả chi tiết lý do hoàn trả..."></textarea>
-                    <span asp-validation-for="LyDoHoanTra" class="text-danger"></span>
+                <span asp-validation-for="LyDoHoanTra" class="text-danger"></span>
                 </div>
 
                 <!-- Return Policy Notice -->
@@ -190,9 +190,9 @@
                     <button type="submit" class="btn btn-primary btn-lg">
                         <i class="fas fa-paper-plane me-2"></i>Gửi yêu cầu hoàn trả
                     </button>
-                </div>
-            </div>
-        </form>
+        </div>
+        </div>
+    </form>
     </div>
 </div>
 

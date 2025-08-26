@@ -1,149 +1,82 @@
 ﻿using FurryFriends.Web.Services.IService;
 using FurryFriends.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using FurryFriends.Web.Filter;
-using FurryFriends.API.Models.DTO;
 
 namespace FurryFriends.Web.Areas.Admin.Controllers
 {
-	[Area("Admin")]
-	[AuthorizeAdminOnly]
-	public class PhieuHoanTraAdminController : Controller
+    [Area("Admin")]
+    public class PhieuHoanTraController : Controller
     {
-		private readonly IPhieuHoanTraService _phieuHoanTraService;
-		private readonly IThongBaoService _thongBaoService;
+        private readonly IPhieuHoanTraService _service;
 
-		public PhieuHoanTraAdminController(IPhieuHoanTraService phieuHoanTraService, IThongBaoService thongBaoService)
-		{
-			_phieuHoanTraService = phieuHoanTraService;
-			_thongBaoService = thongBaoService;
-		}
+        public PhieuHoanTraController(IPhieuHoanTraService service)
+        {
+            _service = service;
+        }
 
-		// GET: Hiển thị danh sách phiếu hoàn trả (Admin xem tất cả)
-		public async Task<IActionResult> Index(Guid? hoaDonId)
-		{
-			IEnumerable<PhieuHoanTraViewModel> danhSach;
+        // Danh sách phiếu hoàn
+        public async Task<IActionResult> Index()
+        {
+            var list = await _service.GetAllAsync();
+            return View(list);
+        }
 
-			if (hoaDonId.HasValue)
-			{
-				danhSach = await _phieuHoanTraService.GetByHoaDonIdAsync(hoaDonId.Value);
-			}
-			else
-			{
-				// Trường hợp này bạn cần API trả về tất cả phiếu hoàn trả
-				// Nếu chưa có API thì tạm để rỗng hoặc mock data
-				danhSach = new List<PhieuHoanTraViewModel>();
-			}
+        // Xem chi tiết
+        public async Task<IActionResult> Details(Guid id)
+        {
+            var phieu = await _service.GetByIdAsync(id);
+            if (phieu == null) return NotFound();
+            return View(phieu);
+        }
 
-			return View(danhSach);
-		}
+        // Duyệt (chỉ đổi trạng thái)
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var phieu = await _service.GetByIdAsync(id);
+            if (phieu == null) return NotFound();
 
-		// GET: Xem chi tiết
-		public async Task<IActionResult> Details(Guid id)
-		{
-			var phieu = await _phieuHoanTraService.GetByIdAsync(id);
-			if (phieu == null) return NotFound();
+            // Trả về model edit chỉ để Hiển thị readonly + đổi trạng thái
+            var vm = new PhieuHoanTraUpdateRequest
+            {
+                SoLuongHoan = phieu.SoLuongHoan,     // readonly ở view
+                LyDoHoanTra = phieu.LyDoHoanTra,     // readonly ở view
+                TrangThai = phieu.TrangThai        // only field to change
+            };
 
-			return View(phieu);
-		}
+            // Có thể cần hiển thị thêm thông tin ở ViewBag
+            ViewBag.Header = phieu;
+            return View(vm);
+        }
 
-		// GET: Cập nhật trạng thái
-		public async Task<IActionResult> UpdateTrangThai(Guid id, int trangThai)
-		{
-			var phieu = await _phieuHoanTraService.GetByIdAsync(id);
-			if (phieu == null) return NotFound();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid id, PhieuHoanTraUpdateRequest request)
+        {
+            // Chỉ cho phép đổi trạng thái → đảm bảo không nhận thay đổi khác:
+            var current = await _service.GetByIdAsync(id);
+            if (current == null) return NotFound();
 
-			ViewBag.CurrentTrangThai = phieu.TrangThai;
-			return View(phieu);
-		}
+            // Khóa cứng các trường khác để tránh bị sửa ngoài ý muốn
+            var toUpdate = new PhieuHoanTraUpdateRequest
+            {
+                SoLuongHoan = current.SoLuongHoan,
+                LyDoHoanTra = current.LyDoHoanTra,
+                TrangThai = request.TrangThai      // chỉ field cho phép
+            };
 
-		// POST: Cập nhật trạng thái
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> UpdateTrangThai(Guid id, int trangThai, IFormCollection form)
-		{
-			var result = await _phieuHoanTraService.UpdateTrangThaiAsync(id, trangThai);
-			if (result)
-			{
-				return RedirectToAction(nameof(Index));
-			}
+            var ok = await _service.UpdateAsync(id, toUpdate);
+            if (ok)
+            {
+                TempData["Success"] = "Cập nhật trạng thái phiếu hoàn thành công.";
+                return RedirectToAction(nameof(Index));
+            }
 
-			ModelState.AddModelError("", "Cập nhật trạng thái thất bại");
-			return View();
-		}
+            ModelState.AddModelError(string.Empty, "Cập nhật thất bại.");
+            ViewBag.Header = current;
+            return View(request);
+        }
 
-		// POST: /PhieuHoanTraAdmin/ToggleStatus/{id}
-		[HttpPost]
-		public async Task<IActionResult> ToggleStatus(Guid id)
-		{
-			try
-			{
-				var phieuHoanTra = await _phieuHoanTraService.GetByIdAsync(id);
-				if (phieuHoanTra == null)
-				{
-					return Json(new { success = false, message = "Không tìm thấy phiếu hoàn trả." });
-				}
-
-				// Toggle trạng thái (chuyển từ int sang int)
-				var newTrangThai = phieuHoanTra.TrangThai == 1 ? 0 : 1;
-				var updateResult = await _phieuHoanTraService.UpdateTrangThaiAsync(id, newTrangThai);
-				
-				if (updateResult)
-				{
-					var action = newTrangThai == 1 ? "kích hoạt" : "vô hiệu hóa";
-					var message = $"Phiếu hoàn trả '{phieuHoanTra.PhieuHoanTraId}' đã được {action} thành công.";
-
-					// 🔔 Thêm thông báo
-					var userName = HttpContext.Session.GetString("HoTen") ?? "Hệ thống";
-					await _thongBaoService.CreateAsync(new ThongBaoDTO
-					{
-						TieuDe = newTrangThai == 1 ? "Kích hoạt phiếu hoàn trả" : "Vô hiệu hóa phiếu hoàn trả",
-						NoiDung = $"Phiếu hoàn trả '{phieuHoanTra.PhieuHoanTraId}' đã được {action}",
-						Loai = "PhieuHoanTra",
-						UserName = userName,
-						NgayTao = DateTime.Now,
-						DaDoc = false
-					});
-
-					return Json(new { 
-						success = true, 
-						message = message,
-						newStatus = newTrangThai == 1,
-						statusText = newTrangThai == 1 ? "Đang hoạt động" : "Không hoạt động",
-						statusClass = newTrangThai == 1 ? "bg-success" : "bg-secondary"
-					});
-				}
-
-				return Json(new { success = false, message = "Cập nhật trạng thái thất bại!" });
-			}
-			catch (Exception ex)
-			{
-				return Json(new { success = false, message = $"Lỗi: {ex.Message}" });
-			}
-		}
-
-		// GET: Xóa
-		public async Task<IActionResult> Delete(Guid id)
-		{
-			var phieu = await _phieuHoanTraService.GetByIdAsync(id);
-			if (phieu == null) return NotFound();
-
-			return View(phieu);
-		}
-
-		// POST: Xác nhận xóa
-		[HttpPost, ActionName("Delete")]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> DeleteConfirmed(Guid id)
-		{
-			var result = await _phieuHoanTraService.DeleteAsync(id);
-			if (result)
-			{
-				return RedirectToAction(nameof(Index));
-			}
-
-			ModelState.AddModelError("", "Xóa phiếu hoàn trả thất bại");
-			return View();
-		}
-	}
+        // ❌ Không có Delete. Nếu lỡ có route cũ gọi vào, có thể trả 404:
+        // public IActionResult Delete(Guid id) => NotFound();
+    }
 }

@@ -68,10 +68,10 @@
                         <i class="fas fa-box-open me-2"></i>Thông tin sản phẩm
                     </h5>
                 </div>
-                <div class="card-body">
+        <div class="card-body">
                     <div class="product-display">
                         <div class="product-image">
-                            @if (!string.IsNullOrEmpty(Model?.AnhSanPham))
+                        @if (!string.IsNullOrEmpty(Model?.AnhSanPham))
                             {
                                 <img src="@Img(Model.AnhSanPham)" alt="@Model.TenSanPham" />
                             }
@@ -162,7 +162,7 @@
                         }
                     </div>
                 </div>
-            </div>
+                    </div>
 
             <!-- Status Timeline -->
             <div class="section-card">
@@ -204,7 +204,7 @@
                                 <div class="timeline-content">
                                     <h6>Bị từ chối</h6>
                                     <p>Yêu cầu không được chấp thuận</p>
-                                </div>
+                        </div>
                             </div>
                         }
                         else
@@ -216,7 +216,7 @@
                                 <div class="timeline-content">
                                     <h6>Đang chờ duyệt</h6>
                                     <p>Yêu cầu đang được xem xét</p>
-                                </div>
+                        </div>
                             </div>
                         }
                         
@@ -229,8 +229,8 @@
                                 <div class="timeline-content">
                                     <h6>Hoàn tất</h6>
                                     <p>Quá trình hoàn trả đã hoàn thành</p>
-                                </div>
-                            </div>
+                        </div>
+                    </div>
                         }
                     </div>
                 </div>

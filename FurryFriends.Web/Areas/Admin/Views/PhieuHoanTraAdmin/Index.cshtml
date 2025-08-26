@@ -49,7 +49,7 @@
         }
 
         .dashboard-header h2 {
-            margin: 0;
+                margin: 0;
             font-weight: 800;
             font-size: 2rem;
             position: relative;
@@ -448,11 +448,11 @@
                 </div>
                 <div class="filter-group">
                     <select id="statusFilter" class="form-select filter-select">
-                        <option value="">Tất cả trạng thái</option>
-                        <option value="0">Chờ xử lý</option>
-                        <option value="1">Đã duyệt</option>
-                        <option value="2">Từ chối</option>
-                    </select>
+                <option value="">Tất cả trạng thái</option>
+                <option value="0">Chờ xử lý</option>
+                <option value="1">Đã duyệt</option>
+                <option value="2">Từ chối</option>
+            </select>
                     <input type="date" id="dateFrom" class="form-control filter-date" placeholder="Từ ngày" />
                     <input type="date" id="dateTo" class="form-control filter-date" placeholder="Đến ngày" />
                     <button class="btn btn-filter" onclick="applyFilters()">
@@ -467,7 +467,7 @@
                 <button class="btn btn-primary" onclick="exportData()">
                     <i class="fas fa-download me-2"></i>Xuất Excel
                 </button>
-            </div>
+        </div>
         </div>
     </div>
 
@@ -489,21 +489,21 @@
         }
 
         <div class="table-container">
-            <div class="table-responsive">
+        <div class="table-responsive">
                 <table class="table table-hover" id="returnsTable">
                     <thead>
                         <tr>
                             <th>Sản phẩm</th>
                             <th class="text-center">Số lượng</th>
                             <th>Ngày yêu cầu</th>
-                            <th>Lý do</th>
+                        <th>Lý do</th>
                             <th class="text-center">Trạng thái</th>
                             <th class="text-end">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (Model == null || !Model.Any())
-                        {
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model == null || !Model.Any())
+                    {
                             <tr>
                                 <td colspan="6">
                                     <div class="empty-state">
@@ -515,12 +515,12 @@
                                     </div>
                                 </td>
                             </tr>
-                        }
-                        else
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
                         {
-                            foreach (var item in Model)
-                            {
-                                var ngay = item.NgayHoanTra == default ? "" : item.NgayHoanTra.ToString("yyyy-MM-dd");
+                            var ngay = item.NgayHoanTra == default ? "" : item.NgayHoanTra.ToString("yyyy-MM-dd");
                                 <tr data-status="@item.TrangThai" data-date="@ngay" data-search="@item.TenSanPham.ToLower() @item.LyDoHoanTra.ToLower() @item.PhieuHoanTraId.ToString().ToLower()">
                                     <td>
                                         <div class="product-info">
@@ -557,70 +557,70 @@
                                         <div class="text-truncate" style="max-width: 300px;" title="@item.LyDoHoanTra">
                                             @item.LyDoHoanTra
                                         </div>
-                                    </td>
+                                </td>
                                     <td class="text-center">
-                                        @switch (item.TrangThai)
-                                        {
-                                            case 0:
+                                    @switch (item.TrangThai)
+                                    {
+                                        case 0:
                                                 <span class="status-badge status-pending">Chờ xử lý</span>
-                                                break;
-                                            case 1:
+                                            break;
+                                        case 1:
                                                 <span class="status-badge status-approved">Đã duyệt</span>
-                                                break;
-                                            case 2:
+                                            break;
+                                        case 2:
                                                 <span class="status-badge status-rejected">Từ chối</span>
-                                                break;
-                                            default:
-                                                <span class="badge bg-secondary">Không xác định</span>
-                                                break;
-                                        }
-                                    </td>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">Không xác định</span>
+                                            break;
+                                    }
+                                </td>
                                     <td>
                                         <div class="action-buttons">
                                             <a class="btn btn-action btn-view" asp-action="Details" asp-route-id="@item.PhieuHoanTraId" title="Xem chi tiết">
                                                 <i class="fas fa-eye"></i>
                                             </a>
 
-                                            @if (item.TrangThai != 1)
-                                            {
+                                    @if (item.TrangThai != 1)
+                                    {
                                                 <button type="button" class="btn btn-action btn-approve toggle-status-btn"
-                                                        data-id="@item.PhieuHoanTraId" 
-                                                        data-controller="PhieuHoanTraAdmin"
-                                                        data-area="Admin"
-                                                        data-current-status="@(item.TrangThai == 1 ? "true" : "false")"
-                                                        title="Duyệt phiếu">
+                                                data-id="@item.PhieuHoanTraId" 
+                                                data-controller="PhieuHoanTraAdmin"
+                                                data-area="Admin"
+                                                data-current-status="@(item.TrangThai == 1 ? "true" : "false")"
+                                                title="Duyệt phiếu">
                                                     <i class="fas fa-check"></i>
-                                                </button>
-                                            }
+                                        </button>
+                                    }
 
-                                            @if (item.TrangThai != 2)
-                                            {
-                                                <form asp-action="UpdateTrangThai" method="post" class="d-inline"
+                                    @if (item.TrangThai != 2)
+                                    {
+                                        <form asp-action="UpdateTrangThai" method="post" class="d-inline"
                                                       onsubmit="return confirm('Bạn có chắc muốn từ chối phiếu này?');">
-                                                    <input type="hidden" name="id" value="@item.PhieuHoanTraId" />
-                                                    <input type="hidden" name="trangThai" value="2" />
-                                                    <input type="hidden" name="hoaDonId" value="@hoaDonId" />
+                                            <input type="hidden" name="id" value="@item.PhieuHoanTraId" />
+                                            <input type="hidden" name="trangThai" value="2" />
+                                            <input type="hidden" name="hoaDonId" value="@hoaDonId" />
                                                     <button class="btn btn-action btn-reject" type="submit" title="Từ chối">
                                                         <i class="fas fa-times"></i>
-                                                    </button>
-                                                </form>
-                                            }
+                                            </button>
+                                        </form>
+                                    }
 
-                                            <form asp-action="Delete" method="post" class="d-inline"
+                                    <form asp-action="Delete" method="post" class="d-inline"
                                                   onsubmit="return confirm('Bạn có chắc muốn xóa phiếu này?');">
-                                                <input type="hidden" name="id" value="@item.PhieuHoanTraId" />
-                                                <input type="hidden" name="hoaDonId" value="@hoaDonId" />
+                                        <input type="hidden" name="id" value="@item.PhieuHoanTraId" />
+                                        <input type="hidden" name="hoaDonId" value="@hoaDonId" />
                                                 <button class="btn btn-action btn-delete" type="submit" title="Xóa">
                                                     <i class="fas fa-trash"></i>
-                                                </button>
-                                            </form>
+                                        </button>
+                                    </form>
                                         </div>
-                                    </td>
-                                </tr>
-                            }
+                                </td>
+                            </tr>
                         }
-                    </tbody>
-                </table>
+                    }
+                </tbody>
+            </table>
             </div>
         </div>
     </div>
