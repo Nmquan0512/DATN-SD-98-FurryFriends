@@ -11,11 +11,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Text;
-using FurryFriends.Web.Filter;
-
 namespace FurryFriends.Web.Controllers
 {
-    [ServiceFilter(typeof(AccountStatusFilter))]
     public class GioHangsController : Controller
     {
         private readonly IGioHangService _gioHangService;
@@ -167,8 +164,9 @@ namespace FurryFriends.Web.Controllers
                     return Ok(new { success = true });
                 }
 
-                // Ngược lại điều hướng như cũ
-                return RedirectToAction("Index", "GioHangs");
+                // ✅ Quay lại trang sản phẩm với thông báo thành công
+                TempData["SuccessMessage"] = "Đã thêm sản phẩm vào giỏ hàng thành công!";
+                return RedirectToAction("Index", "SanPhamKhachHang");
             }
             catch (Exception ex)
             {
@@ -402,22 +400,22 @@ namespace FurryFriends.Web.Controllers
                 {
                     // ✅ Kiểm tra Request.Form có tồn tại không
                     if (Request?.Form != null && Request.Form.ContainsKey("VoucherId"))
-                    {
-                        var vFromForm = Request.Form["VoucherId"].FirstOrDefault();
-                        if (Guid.TryParse(vFromForm, out var vid))
-                        {
-                            dto.VoucherId = vid;
-                        }
+            {
+                var vFromForm = Request.Form["VoucherId"].FirstOrDefault();
+                if (Guid.TryParse(vFromForm, out var vid))
+                {
+                    dto.VoucherId = vid;
+                }
                     }
                     
                     // ✅ Nếu không có trong form, thử lấy từ query
                     if (!dto.VoucherId.HasValue && Request?.Query != null && Request.Query.ContainsKey("voucherId"))
+                {
+                    var vFromQuery = Request.Query["voucherId"].FirstOrDefault();
+                    if (Guid.TryParse(vFromQuery, out var vid2))
                     {
-                        var vFromQuery = Request.Query["voucherId"].FirstOrDefault();
-                        if (Guid.TryParse(vFromQuery, out var vid2))
-                        {
-                            dto.VoucherId = vid2;
-                        }
+                        dto.VoucherId = vid2;
+                    }
                     }
                 }
                 catch (Exception ex)
@@ -544,7 +542,7 @@ namespace FurryFriends.Web.Controllers
                     return RedirectToAction("Index", "GioHangs");
                 }
                 
-                var result = await _gioHangService.ThanhToanAsync(dto);
+            var result = await _gioHangService.ThanhToanAsync(dto);
                 
                 _logger.LogInformation($"🔍 Debug - ThanhToanAsync completed, result type: {result?.GetType().Name ?? "NULL"}");
                 
@@ -555,10 +553,10 @@ namespace FurryFriends.Web.Controllers
                     TempData["Loi"] = "Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại.";
                     return RedirectToAction("Index", "GioHangs");
                 }
-                
-                // ✅ Gửi thông báo email cho admin khi đặt hàng thành công
-                try
-                {
+            
+            // ✅ Gửi thông báo email cho admin khi đặt hàng thành công
+            try
+            {
                     // ✅ Sử dụng dynamic để truy cập HoaDonId từ object
                     dynamic resultDynamic = result;
                     var hoaDonId = resultDynamic?.HoaDonId;
@@ -566,21 +564,21 @@ namespace FurryFriends.Web.Controllers
                     if (hoaDonId != null)
                     {
                         // ✅ Gửi thông báo email cho admin khi đặt hàng thành công
-                        await _emailNotificationService.SendOrderNotificationToAdminAsync(result);
+                await _emailNotificationService.SendOrderNotificationToAdminAsync(result);
                         _logger.LogInformation($"✅ Order created successfully: {hoaDonId}");
                     }
                     else
                     {
                         _logger.LogWarning("Không thể lấy HoaDonId từ kết quả thanh toán");
                     }
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"❌ Error sending admin notification: {ex.Message}");
-                    // Không throw exception để không ảnh hưởng đến luồng thanh toán
-                }
-                
-                return View("KetQuaThanhToan", result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"❌ Error sending admin notification: {ex.Message}");
+                // Không throw exception để không ảnh hưởng đến luồng thanh toán
+            }
+            
+            return View("KetQuaThanhToan", result);
             }
             catch (Exception ex)
             {
@@ -652,15 +650,15 @@ namespace FurryFriends.Web.Controllers
         public async Task<IActionResult> PaymentCallbackVnpay()
         {
             try
-            {
-                var response = _vnPayService.PaymentExecute(Request.Query);
+        {
+            var response = _vnPayService.PaymentExecute(Request.Query);
 
-                if (response.Success)
-                {
-                    // Lấy lại DTO từ Session
-                    var dtoJson = HttpContext.Session.GetString("ThanhToanDTO");
+            if (response.Success)
+            {
+                // Lấy lại DTO từ Session
+                var dtoJson = HttpContext.Session.GetString("ThanhToanDTO");
                     if (string.IsNullOrEmpty(dtoJson))
-                    {
+                {
                         TempData["Loi"] = "😔 Có lỗi xảy ra: Không tìm thấy thông tin thanh toán. Vui lòng thử lại.";
                         return RedirectToAction("Index", "GioHangs");
                     }
@@ -697,25 +695,25 @@ namespace FurryFriends.Web.Controllers
                     // ✅ Lưu thời gian thanh toán VNPay vào session
                     HttpContext.Session.SetString(sessionKey, DateTime.Now.ToString("O"));
 
-                    var result = await _gioHangService.ThanhToanAsync(dto);
-                    
-                    // ✅ Gửi thông báo email cho admin khi thanh toán VNPay thành công
-                    try
-                    {
-                        await _emailNotificationService.SendOrderNotificationToAdminAsync(result);
-                        _logger.LogInformation($"✅ Admin notification sent for VNPay order {result.HoaDonId}");
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError($"❌ Error sending admin notification for VNPay: {ex.Message}");
-                        // Không throw exception để không ảnh hưởng đến luồng thanh toán
-                    }
-                    
-                    HttpContext.Session.Remove("ThanhToanDTO"); // Xóa sau khi xử lý
-                    return View("KetQuaThanhToan", result);
-                }
+                        var result = await _gioHangService.ThanhToanAsync(dto);
+                        
+                        // ✅ Gửi thông báo email cho admin khi thanh toán VNPay thành công
+                        try
+                        {
+                            await _emailNotificationService.SendOrderNotificationToAdminAsync(result);
+                            _logger.LogInformation($"✅ Admin notification sent for VNPay order {result.HoaDonId}");
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($"❌ Error sending admin notification for VNPay: {ex.Message}");
+                            // Không throw exception để không ảnh hưởng đến luồng thanh toán
+                        }
+                        
+                        HttpContext.Session.Remove("ThanhToanDTO"); // Xóa sau khi xử lý
+                        return View("KetQuaThanhToan", result);
+            }
 
-                return View("ThanhToanThatBai", response);
+            return View("ThanhToanThatBai", response);
             }
             catch (Exception ex)
             {

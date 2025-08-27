@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FurryFriends.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250825184244_nm")]
-    partial class nm
+    [Migration("20250827071259_nmq")]
+    partial class nmq
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,8 +106,8 @@ namespace FurryFriends.API.Migrations
                         {
                             ChucVuId = new Guid("22222222-2222-2222-2222-222222222222"),
                             MoTaChucVu = "Quản trị viên hệ thống",
-                            NgayCapNhat = new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8135),
-                            NgayTao = new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8134),
+                            NgayCapNhat = new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8645),
+                            NgayTao = new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8645),
                             TenChucVu = "admin",
                             TrangThai = true
                         },
@@ -115,8 +115,8 @@ namespace FurryFriends.API.Migrations
                         {
                             ChucVuId = new Guid("44444444-4444-4444-4444-444444444444"),
                             MoTaChucVu = "Nhân viên bán hàng tại quầy",
-                            NgayCapNhat = new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8165),
-                            NgayTao = new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8164),
+                            NgayCapNhat = new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8687),
+                            NgayTao = new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8687),
                             TenChucVu = "nhanvien",
                             TrangThai = true
                         });
@@ -671,9 +671,9 @@ namespace FurryFriends.API.Migrations
                             Email = "admin@furryfriends.local",
                             GioiTinh = "Nam",
                             HoVaTen = "Admin hệ thống",
-                            NgayCapNhat = new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8207),
+                            NgayCapNhat = new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8744),
                             NgaySinh = new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayTao = new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8206),
+                            NgayTao = new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8743),
                             SDT = "0123456789",
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
                             TrangThai = true
@@ -686,9 +686,9 @@ namespace FurryFriends.API.Migrations
                             Email = "nhanvien@furryfriends.local",
                             GioiTinh = "Nữ",
                             HoVaTen = "Nhân viên bán hàng",
-                            NgayCapNhat = new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8237),
+                            NgayCapNhat = new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8783),
                             NgaySinh = new DateTime(1995, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            NgayTao = new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8236),
+                            NgayTao = new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8782),
                             SDT = "0987654321",
                             TaiKhoanId = new Guid("55555555-5555-5555-5555-555555555555"),
                             TrangThai = true
@@ -810,7 +810,8 @@ namespace FurryFriends.API.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("TrangThai")
                         .ValueGeneratedOnAdd()
@@ -819,7 +820,8 @@ namespace FurryFriends.API.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("TaiKhoanId");
 
@@ -834,7 +836,7 @@ namespace FurryFriends.API.Migrations
                         new
                         {
                             TaiKhoanId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            NgayTaoTaiKhoan = new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8039),
+                            NgayTaoTaiKhoan = new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8506),
                             Password = "123456",
                             TrangThai = true,
                             UserName = "admin"
@@ -842,7 +844,7 @@ namespace FurryFriends.API.Migrations
                         new
                         {
                             TaiKhoanId = new Guid("55555555-5555-5555-5555-555555555555"),
-                            NgayTaoTaiKhoan = new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8092),
+                            NgayTaoTaiKhoan = new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8589),
                             Password = "123456",
                             TrangThai = true,
                             UserName = "nhanvien"

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FurryFriends.API.Migrations
 {
     /// <inheritdoc />
-    public partial class nm : Migration
+    public partial class nmq : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -259,8 +259,8 @@ namespace FurryFriends.API.Migrations
                 columns: table => new
                 {
                     TaiKhoanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     NgayTaoTaiKhoan = table.Column<DateTime>(type: "datetime2", nullable: false),
                     NgayCapNhatCuoiCung = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TrangThai = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
@@ -640,8 +640,8 @@ namespace FurryFriends.API.Migrations
                 columns: new[] { "ChucVuId", "MoTaChucVu", "NgayCapNhat", "NgayTao", "TenChucVu", "TrangThai" },
                 values: new object[,]
                 {
-                    { new Guid("22222222-2222-2222-2222-222222222222"), "Quản trị viên hệ thống", new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8135), new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8134), "admin", true },
-                    { new Guid("44444444-4444-4444-4444-444444444444"), "Nhân viên bán hàng tại quầy", new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8165), new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8164), "nhanvien", true }
+                    { new Guid("22222222-2222-2222-2222-222222222222"), "Quản trị viên hệ thống", new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8645), new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8645), "admin", true },
+                    { new Guid("44444444-4444-4444-4444-444444444444"), "Nhân viên bán hàng tại quầy", new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8687), new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8687), "nhanvien", true }
                 });
 
             migrationBuilder.InsertData(
@@ -658,8 +658,8 @@ namespace FurryFriends.API.Migrations
                 columns: new[] { "TaiKhoanId", "KhachHangId", "NgayCapNhatCuoiCung", "NgayTaoTaiKhoan", "NhanVienId", "Password", "TrangThai", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("11111111-1111-1111-1111-111111111111"), null, null, new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8039), null, "123456", true, "admin" },
-                    { new Guid("55555555-5555-5555-5555-555555555555"), null, null, new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8092), null, "123456", true, "nhanvien" }
+                    { new Guid("11111111-1111-1111-1111-111111111111"), null, null, new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8506), null, "123456", true, "admin" },
+                    { new Guid("55555555-5555-5555-5555-555555555555"), null, null, new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8589), null, "123456", true, "nhanvien" }
                 });
 
             migrationBuilder.InsertData(
@@ -667,8 +667,8 @@ namespace FurryFriends.API.Migrations
                 columns: new[] { "NhanVienId", "ChucVuId", "DiaChi", "Email", "GioiTinh", "HoVaTen", "NgayCapNhat", "NgaySinh", "NgayTao", "SDT", "TaiKhoanId", "TrangThai" },
                 values: new object[,]
                 {
-                    { new Guid("33333333-3333-3333-3333-333333333333"), new Guid("22222222-2222-2222-2222-222222222222"), "Hà Nội", "admin@furryfriends.local", "Nam", "Admin hệ thống", new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8207), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8206), "0123456789", new Guid("11111111-1111-1111-1111-111111111111"), true },
-                    { new Guid("66666666-6666-6666-6666-666666666666"), new Guid("44444444-4444-4444-4444-444444444444"), "Hà Nội", "nhanvien@furryfriends.local", "Nữ", "Nhân viên bán hàng", new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8237), new DateTime(1995, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 8, 25, 18, 42, 41, 823, DateTimeKind.Utc).AddTicks(8236), "0987654321", new Guid("55555555-5555-5555-5555-555555555555"), true }
+                    { new Guid("33333333-3333-3333-3333-333333333333"), new Guid("22222222-2222-2222-2222-222222222222"), "Hà Nội", "admin@furryfriends.local", "Nam", "Admin hệ thống", new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8744), new DateTime(1990, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8743), "0123456789", new Guid("11111111-1111-1111-1111-111111111111"), true },
+                    { new Guid("66666666-6666-6666-6666-666666666666"), new Guid("44444444-4444-4444-4444-444444444444"), "Hà Nội", "nhanvien@furryfriends.local", "Nữ", "Nhân viên bán hàng", new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8783), new DateTime(1995, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 8, 27, 7, 12, 54, 180, DateTimeKind.Utc).AddTicks(8782), "0987654321", new Guid("55555555-5555-5555-5555-555555555555"), true }
                 });
 
             migrationBuilder.CreateIndex(

@@ -140,6 +140,112 @@ namespace FurryFriends.API.Controllers
             }
         }
 
+
+
+        [HttpPost("ap-dung-voucher")]
+        public async Task<IActionResult> ApDungVoucher([FromBody] GioHangVoucherDTO dto)
+        {
+            Console.WriteLine($"👉 Nhận được yêu cầu áp dụng voucher với KhachHangId = {dto.KhachHangId}, VoucherId = {dto.VoucherId}");
+
+            var gioHang = await _repo.GetGioHangEntityByKhachHangIdAsync(dto.KhachHangId);
+            if (gioHang == null)
+            {
+                Console.WriteLine("❌ Không tìm thấy giỏ hàng.");
+                return NotFound("Không tìm thấy giỏ hàng hoặc giỏ hàng trống.");
+            }
+
+            if (gioHang.GioHangChiTiets == null || !gioHang.GioHangChiTiets.Any())
+            {
+                Console.WriteLine("❌ Giỏ hàng không có sản phẩm nào.");
+                return NotFound("Không tìm thấy giỏ hàng hoặc giỏ hàng trống.");
+            }
+
+            var voucher = await _context.Vouchers
+                .FirstOrDefaultAsync(v => v.VoucherId == dto.VoucherId && v.TrangThai == 1);
+
+            if (voucher == null)
+            {
+                Console.WriteLine("❌ Không tìm thấy voucher hoặc voucher bị khóa.");
+                return BadRequest("Voucher không hợp lệ hoặc đã hết hạn.");
+            }
+
+            Console.WriteLine($"🔎 Voucher tìm thấy: {voucher.TenVoucher}, Phần trăm giảm: {voucher.PhanTramGiam}, Số lượng: {voucher.SoLuong}, Bắt đầu: {voucher.NgayBatDau}, Kết thúc: {voucher.NgayKetThuc}");
+
+            var tongTienHang = gioHang.GioHangChiTiets.Sum(ct => ct.ThanhTien);
+            
+            Console.WriteLine($"🔍 [Controller] Chi tiết giỏ hàng:");
+            foreach (var item in gioHang.GioHangChiTiets)
+            {
+                Console.WriteLine($"  - Sản phẩm: {item.SanPhamChiTiet?.SanPham?.TenSanPham}, Số lượng: {item.SoLuong}, Đơn giá: {item.DonGia:N0}, Thành tiền: {item.ThanhTien:N0}");
+            }
+            Console.WriteLine($"🔍 [Controller] Tổng tiền hàng (Sum): {tongTienHang:N0}");
+            
+            // Kiểm tra tính toán thủ công
+            var tongTienHangTinhLai = 0m;
+            foreach (var item in gioHang.GioHangChiTiets)
+            {
+                var thanhTienTinhLai = item.DonGia * item.SoLuong;
+                tongTienHangTinhLai += thanhTienTinhLai;
+                Console.WriteLine($"  - Kiểm tra: {item.DonGia:N0} × {item.SoLuong} = {thanhTienTinhLai:N0}");
+            }
+            Console.WriteLine($"🔍 [Controller] Tổng tiền hàng tính lại: {tongTienHangTinhLai:N0}");
+            Console.WriteLine($"🔍 [Controller] Chênh lệch: {tongTienHang - tongTienHangTinhLai:N0}");
+            
+            // Tính phí vận chuyển: trên 500k thì freeship, dưới 500k thì tính ship 30k
+            var phiVanChuyen = _voucherCalc.CalculateShippingFee(tongTienHang, 30000, 500000);
+            var tongDonHang = tongTienHang + phiVanChuyen;
+            
+            Console.WriteLine($"🔍 [Controller] Phí vận chuyển: {phiVanChuyen:N0}");
+            Console.WriteLine($"🔍 [Controller] Tổng đơn hàng: {tongDonHang:N0}");
+
+            Console.WriteLine($"💰 Tổng tiền hàng: {tongTienHang:N0} VNĐ");
+            Console.WriteLine($"🚚 Phí vận chuyển: {phiVanChuyen:N0} VNĐ");
+            Console.WriteLine($"💳 Tổng đơn hàng: {tongDonHang:N0} VNĐ");
+
+            // Tính giảm với giới hạn tối đa (dựa trên tổng đơn hàng bao gồm phí ship)
+            var apply = _voucherCalc.GetVoucherApplication(voucher, tongTienHang, phiVanChuyen);
+            
+            if (!apply.IsValid)
+            {
+                Console.WriteLine($"❌ Voucher không hợp lệ: {apply.LyDoKhongHopLe}");
+                return BadRequest(apply.LyDoKhongHopLe);
+            }
+
+            Console.WriteLine($"✅ Voucher hợp lệ - tính toán giảm giá");
+
+            // Tính giảm với giới hạn tối đa (dựa trên tổng đơn hàng bao gồm phí ship)
+            var soTienGiam = apply.SoTienGiam;
+            var tongTienSauGiam = tongDonHang - soTienGiam;
+            
+            Console.WriteLine($"🔍 [Controller] Số tiền giảm: {soTienGiam:N0}");
+            Console.WriteLine($"🔍 [Controller] Tổng sau giảm: {tongTienSauGiam:N0}");
+            
+            // Kiểm tra tính toán cuối cùng
+            Console.WriteLine($"🔍 [Controller] Kiểm tra tính toán cuối cùng:");
+            Console.WriteLine($"  - Tổng tiền hàng: {tongTienHang:N0}");
+            Console.WriteLine($"  - Phí vận chuyển: {phiVanChuyen:N0}");
+            Console.WriteLine($"  - Tổng trước giảm: {tongDonHang:N0}");
+            Console.WriteLine($"  - Số tiền giảm: {soTienGiam:N0}");
+            Console.WriteLine($"  - Tổng sau giảm: {tongTienSauGiam:N0}");
+            Console.WriteLine($"  - Kiểm tra: {tongDonHang:N0} - {soTienGiam:N0} = {tongTienSauGiam:N0}");
+
+            Console.WriteLine($"🎫 Phần trăm giảm: {voucher.PhanTramGiam}%");
+            Console.WriteLine($"💸 Số tiền giảm: {soTienGiam:N0} VNĐ");
+            Console.WriteLine($"💳 Tổng sau giảm: {tongTienSauGiam:N0} VNĐ");
+
+            return Ok(new
+            {
+                TongTienHang = tongTienHang,
+                PhiVanChuyen = phiVanChuyen,
+                TongDonHang = tongDonHang,
+                GiamGia = soTienGiam,
+                TienSauGiam = tongTienSauGiam,
+                PhanTramGiam = voucher.PhanTramGiam,
+                TenVoucher = voucher.TenVoucher,
+                MaVoucher = voucher.MaVoucher
+            });
+        }
+
         [HttpPost("thanh-toan")]
         public async Task<IActionResult> ThanhToan([FromBody] ThanhToanDTO dto)
         {

@@ -1,11 +1,8 @@
 using FurryFriends.Web.Services.IService;
 using FurryFriends.Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using FurryFriends.Web.Filter;
-
 namespace FurryFriends.Web.Controllers
 {
-    [ServiceFilter(typeof(AccountStatusFilter))]
     public class DonHangController : Controller
     {
         private readonly IHoaDonService _hoaDonService;
