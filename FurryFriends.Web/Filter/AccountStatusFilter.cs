@@ -10,13 +10,21 @@ namespace FurryFriends.Web.Filter
     {
         public override async void OnActionExecuting(ActionExecutingContext context)
         {
-            var httpContext = context.HttpContext;
-            var taiKhoanId = httpContext.Session.GetString("TaiKhoanId");
-            
-            // Chỉ kiểm tra nếu đã đăng nhập
-            if (!string.IsNullOrEmpty(taiKhoanId) && Guid.TryParse(taiKhoanId, out var id))
+            try
             {
-                try
+                var httpContext = context.HttpContext;
+                
+                // ✅ Kiểm tra HttpContext có hợp lệ không
+                if (httpContext?.RequestServices == null)
+                {
+                    base.OnActionExecuting(context);
+                    return;
+                }
+                
+                var taiKhoanId = httpContext.Session.GetString("TaiKhoanId");
+                
+                // Chỉ kiểm tra nếu đã đăng nhập
+                if (!string.IsNullOrEmpty(taiKhoanId) && Guid.TryParse(taiKhoanId, out var id))
                 {
                     // Lấy service từ DI container
                     var taiKhoanService = httpContext.RequestServices.GetService<ITaiKhoanService>();
@@ -63,15 +71,34 @@ namespace FurryFriends.Web.Filter
                         }
                     }
                 }
-                catch (Exception ex)
+            }
+            catch (ObjectDisposedException)
+            {
+                // ✅ Bỏ qua lỗi ObjectDisposedException
+                // HttpContext đã bị dispose, không cần xử lý gì thêm
+            }
+            catch (Exception ex)
+            {
+                // Log lỗi nhưng không block request
+                try
                 {
-                    // Log lỗi nhưng không block request
-                    var logger = httpContext.RequestServices.GetService<ILogger<AccountStatusFilter>>();
-                    logger?.LogError(ex, "Lỗi khi kiểm tra trạng thái tài khoản");
+                    var httpContext = context.HttpContext;
+                    if (httpContext?.RequestServices != null)
+                    {
+                        var logger = httpContext.RequestServices.GetService<ILogger<AccountStatusFilter>>();
+                        logger?.LogError(ex, "Lỗi khi kiểm tra trạng thái tài khoản");
+                    }
+                }
+                catch
+                {
+                    // Bỏ qua nếu không thể log
                 }
             }
-            
-            base.OnActionExecuting(context);
+            finally
+            {
+                // ✅ Luôn gọi base method
+                base.OnActionExecuting(context);
+            }
         }
     }
 }

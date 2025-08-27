@@ -14,7 +14,6 @@ using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Controllers
 {
-    [ServiceFilter(typeof(AccountStatusFilter))]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

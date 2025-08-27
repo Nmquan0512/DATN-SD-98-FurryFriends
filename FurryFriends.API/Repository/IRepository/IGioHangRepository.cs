@@ -13,5 +13,8 @@ namespace FurryFriends.API.Repository.IRepository
         Task<GioHangChiTietDTO> ConvertToDTOAsync(GioHangChiTiet gioHangChiTiet);
         Task<GioHang> GetGioHangEntityByKhachHangIdAsync(Guid khachHangId);
         Task<object> ThanhToanAsync(ThanhToanDTO dto);
+        Task<string> TestDatabaseLockAsync(Guid sanPhamChiTietId);
+        Task<string> TestVoucherLockAsync(Guid voucherId);
+        Task<string> KiemTraVaXoaDonTrungLapAsync(Guid khachHangId);
     }
 }

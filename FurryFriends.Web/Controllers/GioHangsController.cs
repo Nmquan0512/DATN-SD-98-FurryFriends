@@ -205,7 +205,6 @@ namespace FurryFriends.Web.Controllers
             return RedirectToAction("Index", new { voucherId }); // Truyền lại voucherId
         }
 
-
         [HttpGet]
         public async Task<IActionResult> ThanhToan(Guid khachHangId, Guid? voucherId)
         {
@@ -242,6 +241,38 @@ namespace FurryFriends.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ThanhToan(ThanhToanDTO dto)
         {
+            // ✅ Kiểm tra dto có null không
+            if (dto == null)
+            {
+                TempData["Loi"] = "😔 Có lỗi xảy ra: Dữ liệu thanh toán không hợp lệ. Vui lòng thử lại.";
+                return RedirectToAction("Index", "GioHangs");
+            }
+
+            // ✅ Kiểm tra KhachHangId có hợp lệ không
+            if (dto.KhachHangId == Guid.Empty)
+            {
+                TempData["Loi"] = "😔 Có lỗi xảy ra: Không tìm thấy thông tin khách hàng. Vui lòng đăng nhập lại.";
+                return RedirectToAction("Index", "GioHangs");
+            }
+
+            // ✅ Ngăn chặn double order: Kiểm tra session
+            var sessionKey = $"ThanhToan_{dto.KhachHangId}";
+            var lastThanhToanTime = HttpContext.Session.GetString(sessionKey);
+            
+            if (!string.IsNullOrEmpty(lastThanhToanTime) && 
+                DateTime.TryParse(lastThanhToanTime, out var lastTime))
+            {
+                var timeDiff = DateTime.Now - lastTime;
+                if (timeDiff.TotalSeconds < 30) // 30 giây
+                {
+                    TempData["Loi"] = $"😔 Rất tiếc! Bạn vừa thực hiện thanh toán cách đây {timeDiff.TotalSeconds:F0} giây. Vui lòng chờ một chút trước khi thử lại.";
+                    return RedirectToAction("Index", "GioHangs");
+                }
+            }
+            
+            // ✅ Lưu thời gian thanh toán vào session
+            HttpContext.Session.SetString(sessionKey, DateTime.Now.ToString("O"));
+
             // ✅ Validation: Kiểm tra địa chỉ giao hàng
             if (dto.DiaChiGiaoHangId == Guid.Empty)
             {
@@ -308,7 +339,15 @@ namespace FurryFriends.Web.Controllers
 
             var gioHang = await _gioHangService.GetGioHangAsync(dto.KhachHangId);
 
-            if (gioHang == null || !gioHang.GioHangChiTiets.Any())
+            // ✅ Kiểm tra gioHang có null không
+            if (gioHang == null)
+            {
+                TempData["Loi"] = "😔 Có lỗi xảy ra: Không thể tải thông tin giỏ hàng. Vui lòng thử lại.";
+                return RedirectToAction("Index", "GioHangs");
+            }
+
+            // ✅ Kiểm tra giỏ hàng có sản phẩm không
+            if (gioHang.GioHangChiTiets == null || !gioHang.GioHangChiTiets.Any())
             {
                 TempData["Loi"] = "Giỏ hàng của bạn đang trống.";
                 return RedirectToAction("Index", "GioHangs");
@@ -338,7 +377,19 @@ namespace FurryFriends.Web.Controllers
 
                 if (spct.SoLuong < item.SoLuong)
                 {
-                    TempData["Loi"] = $"Sản phẩm {sanPham.TenSanPham ?? "N/A"} trong kho không đủ. Hiện tại còn {spct.SoLuong} sản phẩm.";
+                    // ✅ Thông báo lỗi thân thiện hơn
+                    var tenSanPham = sanPham.TenSanPham ?? "N/A";
+                    var soLuongHienTai = spct.SoLuong;
+                    var soLuongCanMua = item.SoLuong;
+                    
+                    if (soLuongHienTai == 0)
+                    {
+                        TempData["Loi"] = $"😔 Rất tiếc! Sản phẩm \"{tenSanPham}\" đã hết hàng. Vui lòng xóa khỏi giỏ hàng hoặc chọn sản phẩm khác.";
+                    }
+                    else
+                    {
+                        TempData["Loi"] = $"😔 Rất tiếc! Sản phẩm \"{tenSanPham}\" chỉ còn {soLuongHienTai} sản phẩm trong kho, nhưng bạn muốn mua {soLuongCanMua} sản phẩm. Vui lòng giảm số lượng hoặc chọn sản phẩm khác.";
+                    }
                     return RedirectToAction("Index", "GioHangs");
                 }
             }
@@ -347,18 +398,31 @@ namespace FurryFriends.Web.Controllers
             // Bổ sung: nếu VoucherId không bind được từ form, thử lấy từ form/query thủ công
             if (!dto.VoucherId.HasValue)
             {
-                var vFromForm = Request.Form["VoucherId"].FirstOrDefault();
-                if (Guid.TryParse(vFromForm, out var vid))
+                try
                 {
-                    dto.VoucherId = vid;
-                }
-                else
-                {
-                    var vFromQuery = Request.Query["voucherId"].FirstOrDefault();
-                    if (Guid.TryParse(vFromQuery, out var vid2))
+                    // ✅ Kiểm tra Request.Form có tồn tại không
+                    if (Request?.Form != null && Request.Form.ContainsKey("VoucherId"))
                     {
-                        dto.VoucherId = vid2;
+                        var vFromForm = Request.Form["VoucherId"].FirstOrDefault();
+                        if (Guid.TryParse(vFromForm, out var vid))
+                        {
+                            dto.VoucherId = vid;
+                        }
                     }
+                    
+                    // ✅ Nếu không có trong form, thử lấy từ query
+                    if (!dto.VoucherId.HasValue && Request?.Query != null && Request.Query.ContainsKey("voucherId"))
+                    {
+                        var vFromQuery = Request.Query["voucherId"].FirstOrDefault();
+                        if (Guid.TryParse(vFromQuery, out var vid2))
+                        {
+                            dto.VoucherId = vid2;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning($"Không thể lấy VoucherId từ form/query: {ex.Message}");
                 }
             }
 
@@ -467,21 +531,115 @@ namespace FurryFriends.Web.Controllers
             }
 
             // Nếu không phải VNPay, xử lý thanh toán thông thường
-            var result = await _gioHangService.ThanhToanAsync(dto);
-            
-            // ✅ Gửi thông báo email cho admin khi đặt hàng thành công
             try
             {
-                await _emailNotificationService.SendOrderNotificationToAdminAsync(result);
-                _logger.LogInformation($"✅ Admin notification sent for order {result.HoaDonId}");
+                _logger.LogInformation($"🔍 Debug - About to call ThanhToanAsync with KhachHangId: {dto.KhachHangId}");
+                _logger.LogInformation($"🔍 Debug - DTO properties: HinhThucThanhToanId={dto.HinhThucThanhToanId}, VoucherId={dto.VoucherId}");
+                
+                // ✅ Kiểm tra dto trước khi gọi API
+                if (dto == null)
+                {
+                    _logger.LogError("DTO is null before calling ThanhToanAsync");
+                    TempData["Loi"] = "😔 Có lỗi xảy ra: Dữ liệu thanh toán không hợp lệ. Vui lòng thử lại.";
+                    return RedirectToAction("Index", "GioHangs");
+                }
+                
+                var result = await _gioHangService.ThanhToanAsync(dto);
+                
+                _logger.LogInformation($"🔍 Debug - ThanhToanAsync completed, result type: {result?.GetType().Name ?? "NULL"}");
+                
+                // ✅ Kiểm tra kết quả có null không
+                if (result == null)
+                {
+                    _logger.LogError("ThanhToanAsync trả về null");
+                    TempData["Loi"] = "Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại.";
+                    return RedirectToAction("Index", "GioHangs");
+                }
+                
+                // ✅ Gửi thông báo email cho admin khi đặt hàng thành công
+                try
+                {
+                    // ✅ Sử dụng dynamic để truy cập HoaDonId từ object
+                    dynamic resultDynamic = result;
+                    var hoaDonId = resultDynamic?.HoaDonId;
+                    
+                    if (hoaDonId != null)
+                    {
+                        // ✅ Gửi thông báo email cho admin khi đặt hàng thành công
+                        await _emailNotificationService.SendOrderNotificationToAdminAsync(result);
+                        _logger.LogInformation($"✅ Order created successfully: {hoaDonId}");
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Không thể lấy HoaDonId từ kết quả thanh toán");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"❌ Error sending admin notification: {ex.Message}");
+                    // Không throw exception để không ảnh hưởng đến luồng thanh toán
+                }
+                
+                return View("KetQuaThanhToan", result);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"❌ Error sending admin notification: {ex.Message}");
-                // Không throw exception để không ảnh hưởng đến luồng thanh toán
+                _logger.LogError(ex, "Lỗi khi xử lý thanh toán");
+                
+                // ✅ Xóa session key để tránh bị khóa vĩnh viễn khi có lỗi
+                try
+                {
+                    HttpContext.Session.Remove(sessionKey);
+                }
+                catch
+                {
+                    // Ignore session removal errors
+                }
+                
+                // ✅ Cải thiện thông báo lỗi thân thiện hơn
+                string errorMessage;
+                if (ex.Message.Contains("Rất tiếc!"))
+                {
+                    // Sử dụng thông báo lỗi đã được cải thiện từ API
+                    errorMessage = ex.Message;
+                }
+                else if (ex.Message.Contains("vừa tạo đơn hàng") || ex.Message.Contains("cách đây"))
+                {
+                    // ✅ Thông báo lỗi double order
+                    errorMessage = ex.Message;
+                }
+                else if (ex.Message.Contains("không đủ số lượng"))
+                {
+                    errorMessage = "😔 Rất tiếc! Sản phẩm trong giỏ hàng của bạn hiện không đủ số lượng để mua. Có thể có người khác vừa mua sản phẩm này. Vui lòng kiểm tra lại giỏ hàng.";
+                }
+                else if (ex.Message.Contains("Voucher") || ex.Message.Contains("voucher"))
+                {
+                    // ✅ Cải thiện thông báo lỗi voucher
+                    if (ex.Message.Contains("hết lượt sử dụng"))
+                    {
+                        errorMessage = "😔 Rất tiếc! Voucher bạn đang sử dụng đã hết lượt. Có thể có người khác vừa sử dụng voucher này. Vui lòng thử voucher khác hoặc thanh toán không sử dụng voucher.";
+                    }
+                    else if (ex.Message.Contains("hết hạn"))
+                    {
+                        errorMessage = "😔 Rất tiếc! Voucher bạn đang sử dụng đã hết hạn. Vui lòng chọn voucher khác hoặc thanh toán không sử dụng voucher.";
+                    }
+                    else if (ex.Message.Contains("không đủ điều kiện"))
+                    {
+                        errorMessage = "😔 Rất tiếc! Voucher không đủ điều kiện áp dụng cho đơn hàng này. Vui lòng kiểm tra điều kiện sử dụng voucher hoặc thanh toán không sử dụng voucher.";
+                    }
+                    else
+                    {
+                        errorMessage = "😔 Rất tiếc! Có vấn đề với voucher bạn đang sử dụng. Vui lòng kiểm tra lại voucher hoặc thử thanh toán không sử dụng voucher.";
+                    }
+                }
+                else
+                {
+                    errorMessage = "😔 Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại hoặc liên hệ hỗ trợ nếu vấn đề vẫn tiếp tục.";
+                }
+                
+                TempData["Loi"] = errorMessage;
+                return RedirectToAction("Index", "GioHangs");
             }
-            
-            return View("KetQuaThanhToan", result);
         }
 
         public IActionResult CreatePaymentUrlVnpay(PaymentInformationModel model)
@@ -493,38 +651,78 @@ namespace FurryFriends.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> PaymentCallbackVnpay()
         {
-            var response = _vnPayService.PaymentExecute(Request.Query);
-
-            if (response.Success)
+            try
             {
-                // Lấy lại DTO từ Session
-                var dtoJson = HttpContext.Session.GetString("ThanhToanDTO");
-                if (!string.IsNullOrEmpty(dtoJson))
-                {
-                    var dto = System.Text.Json.JsonSerializer.Deserialize<ThanhToanDTO>(dtoJson);
-                    if (dto != null)
-                    {
-                        var result = await _gioHangService.ThanhToanAsync(dto);
-                        
-                        // ✅ Gửi thông báo email cho admin khi thanh toán VNPay thành công
-                        try
-                        {
-                            await _emailNotificationService.SendOrderNotificationToAdminAsync(result);
-                            _logger.LogInformation($"✅ Admin notification sent for VNPay order {result.HoaDonId}");
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError($"❌ Error sending admin notification for VNPay: {ex.Message}");
-                            // Không throw exception để không ảnh hưởng đến luồng thanh toán
-                        }
-                        
-                        HttpContext.Session.Remove("ThanhToanDTO"); // Xóa sau khi xử lý
-                        return View("KetQuaThanhToan", result);
-                    }
-                }
-            }
+                var response = _vnPayService.PaymentExecute(Request.Query);
 
-            return View("ThanhToanThatBai", response);
+                if (response.Success)
+                {
+                    // Lấy lại DTO từ Session
+                    var dtoJson = HttpContext.Session.GetString("ThanhToanDTO");
+                    if (string.IsNullOrEmpty(dtoJson))
+                    {
+                        TempData["Loi"] = "😔 Có lỗi xảy ra: Không tìm thấy thông tin thanh toán. Vui lòng thử lại.";
+                        return RedirectToAction("Index", "GioHangs");
+                    }
+
+                    var dto = System.Text.Json.JsonSerializer.Deserialize<ThanhToanDTO>(dtoJson);
+                    if (dto == null)
+                    {
+                        TempData["Loi"] = "😔 Có lỗi xảy ra: Dữ liệu thanh toán không hợp lệ. Vui lòng thử lại.";
+                        return RedirectToAction("Index", "GioHangs");
+                    }
+
+                    // ✅ Kiểm tra KhachHangId có hợp lệ không
+                    if (dto.KhachHangId == Guid.Empty)
+                    {
+                        TempData["Loi"] = "😔 Có lỗi xảy ra: Không tìm thấy thông tin khách hàng. Vui lòng đăng nhập lại.";
+                        return RedirectToAction("Index", "GioHangs");
+                    }
+
+                    // ✅ Ngăn chặn double order cho VNPay callback
+                    var sessionKey = $"VNPayThanhToan_{dto.KhachHangId}";
+                    var lastVNPayTime = HttpContext.Session.GetString(sessionKey);
+                    
+                    if (!string.IsNullOrEmpty(lastVNPayTime) && 
+                        DateTime.TryParse(lastVNPayTime, out var lastTime))
+                    {
+                        var timeDiff = DateTime.Now - lastTime;
+                        if (timeDiff.TotalSeconds < 30) // 30 giây
+                        {
+                            TempData["Loi"] = $"😔 Rất tiếc! Bạn vừa thực hiện thanh toán VNPay cách đây {timeDiff.TotalSeconds:F0} giây. Vui lòng chờ một chút trước khi thử lại.";
+                            return RedirectToAction("Index", "GioHangs");
+                        }
+                    }
+                    
+                    // ✅ Lưu thời gian thanh toán VNPay vào session
+                    HttpContext.Session.SetString(sessionKey, DateTime.Now.ToString("O"));
+
+                    var result = await _gioHangService.ThanhToanAsync(dto);
+                    
+                    // ✅ Gửi thông báo email cho admin khi thanh toán VNPay thành công
+                    try
+                    {
+                        await _emailNotificationService.SendOrderNotificationToAdminAsync(result);
+                        _logger.LogInformation($"✅ Admin notification sent for VNPay order {result.HoaDonId}");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"❌ Error sending admin notification for VNPay: {ex.Message}");
+                        // Không throw exception để không ảnh hưởng đến luồng thanh toán
+                    }
+                    
+                    HttpContext.Session.Remove("ThanhToanDTO"); // Xóa sau khi xử lý
+                    return View("KetQuaThanhToan", result);
+                }
+
+                return View("ThanhToanThatBai", response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi trong PaymentCallbackVnpay");
+                TempData["Loi"] = "😔 Có lỗi xảy ra khi xử lý thanh toán VNPay. Vui lòng thử lại.";
+                return RedirectToAction("Index", "GioHangs");
+            }
         }
     }
 }

@@ -178,12 +178,11 @@ namespace FurryFriends.API.Repository
 
         public async Task<GioHangChiTiet> AddSanPhamVaoGioAsync(Guid khachHangId, Guid sanPhamChiTietId, int soLuong)
         {
-            // Lấy giỏ hàng hiện tại (không cần Include để tránh track các entity cũ gây xung đột)
+            // Lấy giỏ hàng hiện tại (không cần Include để tránh track các entity cũ gây xung đột tracking)
             if (soLuong <= 0)
             {
                 throw new Exception("Số lượng phải lớn hơn 0.");
             }
-
 
             var gioHang = await _context.GioHangs
                 .FirstOrDefaultAsync(g => g.KhachHangId == khachHangId);
@@ -201,11 +200,12 @@ namespace FurryFriends.API.Repository
                 _context.GioHangs.Add(gioHang);
                 await _context.SaveChangesAsync(); // Lưu giỏ hàng trước để đảm bảo có ID trong DB
             }
-            var sanPhamChiTiet = await _context.SanPhamChiTiets.FirstOrDefaultAsync(spc => spc.SanPhamChiTietId == sanPhamChiTietId);
+
+            // ✅ Sử dụng database lock để lấy thông tin sản phẩm mới nhất
+            var sanPhamChiTiet = await GetSanPhamChiTietWithLockAsync(sanPhamChiTietId);
             if (sanPhamChiTiet == null) return null;
 
-
-            if (sanPhamChiTiet == null || sanPhamChiTiet.SanPham == null)
+            if (sanPhamChiTiet.SanPham == null)
             {
                 throw new Exception("Sản phẩm không tồn tại.");
             }
@@ -216,12 +216,12 @@ namespace FurryFriends.API.Repository
                 throw new Exception("Sản phẩm đã tạm dừng hoạt động.");
             }
 
-
             // 🔹 Check số lượng tồn kho
             if (soLuong > sanPhamChiTiet.SoLuong)
             {
                 throw new Exception($"Số lượng sản phẩm trong kho không đủ. Chỉ còn {sanPhamChiTiet.SoLuong} sản phẩm.");
             }
+
             // Lấy trực tiếp chi tiết giỏ hàng từ DB để tránh xung đột tracking
             var existingItem = await _context.GioHangChiTiets
                 .FirstOrDefaultAsync(x => x.GioHangId == gioHang.GioHangId && x.SanPhamChiTietId == sanPhamChiTietId);
@@ -237,28 +237,6 @@ namespace FurryFriends.API.Repository
             }
 
             // Thêm sản phẩm mới vào giỏ
-            //var sanPhamChiTiet = await _context.SanPhamChiTiets.FirstOrDefaultAsync(spc => spc.SanPhamChiTietId == sanPhamChiTietId);
-            //if (sanPhamChiTiet == null) return null;
-
-
-            //if (sanPhamChiTiet == null || sanPhamChiTiet.SanPham == null)
-            //{
-            //    throw new Exception("Sản phẩm không tồn tại.");
-            //}
-
-            //// 🔹 Kiểm tra trạng thái hoạt động
-            //if (sanPhamChiTiet.TrangThai == 0 || sanPhamChiTiet.SanPham.TrangThai == false)
-            //{
-            //    throw new Exception("Sản phẩm đã tạm dừng hoạt động.");
-            //}
-
-
-            //// 🔹 Check số lượng tồn kho
-            //if (soLuong > sanPhamChiTiet.SoLuong)
-            //{
-            //    throw new Exception($"Số lượng sản phẩm trong kho không đủ. Chỉ còn {sanPhamChiTiet.SoLuong} sản phẩm.");
-            //}
-
             var giaGoc = sanPhamChiTiet.Gia;
             var giamMax = await LayPhanTramGiamToiDaAsync(sanPhamChiTietId);
             var donGiaSau = TinhDonGiaSauGiam(giaGoc, giamMax);
@@ -291,13 +269,12 @@ namespace FurryFriends.API.Repository
                     .ThenInclude(spc => spc.SanPham)
                 .FirstOrDefaultAsync(gc => gc.GioHangChiTietId == gioHangChiTietId);
 
-
             if (gioHangChiTiet == null)
                 return null;
 
-            var soLuongTonKho = gioHangChiTiet.SanPhamChiTiet?.SoLuong ?? 0;
-
-            var spc = gioHangChiTiet.SanPhamChiTiet;
+            // ✅ Sử dụng database lock để lấy thông tin sản phẩm mới nhất
+            var spc = await GetSanPhamChiTietWithLockAsync(gioHangChiTiet.SanPhamChiTietId.Value);
+            var soLuongTonKho = spc?.SoLuong ?? 0;
 
             if (spc == null || spc.SanPham == null)
             {
@@ -322,7 +299,6 @@ namespace FurryFriends.API.Repository
                 throw new InvalidOperationException("Số lượng phải lớn hơn 0.");
             }
 
-
             Console.WriteLine($"🔍 [Repository] UpdateSoLuongAsync - Trước khi cập nhật:");
             Console.WriteLine($"  - Số lượng cũ: {gioHangChiTiet.SoLuong}");
             Console.WriteLine($"  - Đơn giá cũ: {gioHangChiTiet.DonGia:N0}");
@@ -334,7 +310,7 @@ namespace FurryFriends.API.Repository
             var donGiaHienTai = gioHangChiTiet.DonGia;
             if (donGiaHienTai <= 0)
             {
-                var giaGoc = gioHangChiTiet.SanPhamChiTiet?.Gia ?? 0m;
+                var giaGoc = spc.Gia;
                 var giamMax = gioHangChiTiet.SanPhamChiTietId.HasValue
                     ? await LayPhanTramGiamToiDaAsync(gioHangChiTiet.SanPhamChiTietId.Value)
                     : 0m;
@@ -434,11 +410,142 @@ namespace FurryFriends.API.Repository
                 .FirstOrDefaultAsync(g => g.KhachHangId == khachHangId);
         }
 
+        // ✅ Method mới: Sử dụng database lock để tránh race condition
+        private async Task<SanPhamChiTiet> GetSanPhamChiTietWithLockAsync(Guid sanPhamChiTietId)
+        {
+            // Sử dụng raw SQL với UPDLOCK để lock row
+            var spct = await _context.SanPhamChiTiets
+                .FromSqlRaw("SELECT * FROM SanPhamChiTiets WITH (UPDLOCK) WHERE SanPhamChiTietId = {0}", sanPhamChiTietId)
+                .Include(x => x.SanPham)
+                    .ThenInclude(sp => sp.ThuongHieu)
+                .Include(x => x.MauSac)
+                .Include(x => x.KichCo)
+                .Include(x => x.Anh)
+                .FirstOrDefaultAsync();
+            
+            return spct;
+        }
+
+        // ✅ Method mới: Kiểm tra và trừ tồn kho atomically
+        private async Task<bool> TryUpdateProductStockAsync(Guid sanPhamChiTietId, int soLuongCanTru)
+        {
+            // Sử dụng raw SQL để update atomically với điều kiện
+            var affectedRows = await _context.Database.ExecuteSqlRawAsync(
+                "UPDATE SanPhamChiTiets SET SoLuong = SoLuong - {0} WHERE SanPhamChiTietId = {1} AND SoLuong >= {0}",
+                soLuongCanTru, sanPhamChiTietId);
+            
+            return affectedRows > 0;
+        }
+
+        // ✅ Method test để kiểm tra database lock
+        public async Task<string> TestDatabaseLockAsync(Guid sanPhamChiTietId)
+        {
+            try
+            {
+                // Lấy sản phẩm với lock
+                var spct = await GetSanPhamChiTietWithLockAsync(sanPhamChiTietId);
+                if (spct == null)
+                    return "Sản phẩm không tồn tại";
+
+                var soLuongBanDau = spct.SoLuong;
+                
+                // Thử update atomically
+                var updateSuccess = await TryUpdateProductStockAsync(sanPhamChiTietId, 1);
+                
+                if (updateSuccess)
+                {
+                    // Lấy lại thông tin sản phẩm để kiểm tra
+                    var spctSau = await _context.SanPhamChiTiets
+                        .FirstOrDefaultAsync(x => x.SanPhamChiTietId == sanPhamChiTietId);
+                    
+                    return $"✅ Database lock hoạt động tốt! Số lượng: {soLuongBanDau} → {spctSau?.SoLuong}";
+                }
+                else
+                {
+                    return $"❌ Không thể update sản phẩm. Số lượng hiện tại: {soLuongBanDau}";
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"❌ Lỗi: {ex.Message}";
+            }
+        }
+
+        // ✅ Method mới: Lấy voucher với lock để tránh race condition
+        private async Task<Voucher> GetVoucherWithLockAsync(Guid voucherId)
+        {
+            // Sử dụng raw SQL với UPDLOCK để lock row
+            var voucher = await _context.Vouchers
+                .FromSqlRaw("SELECT * FROM Vouchers WITH (UPDLOCK) WHERE VoucherId = {0}", voucherId)
+                .FirstOrDefaultAsync();
+            
+            return voucher;
+        }
+
+        // ✅ Method mới: Kiểm tra và trừ số lượng voucher atomically
+        private async Task<bool> TryUpdateVoucherQuantityAsync(Guid voucherId)
+        {
+            // Sử dụng raw SQL để update atomically với điều kiện
+            var affectedRows = await _context.Database.ExecuteSqlRawAsync(
+                "UPDATE Vouchers SET SoLuong = SoLuong - 1 WHERE VoucherId = {0} AND SoLuong > 0",
+                voucherId);
+            
+            return affectedRows > 0;
+        }
+
+        // ✅ Method test để kiểm tra voucher lock
+        public async Task<string> TestVoucherLockAsync(Guid voucherId)
+        {
+            try
+            {
+                // Lấy voucher với lock
+                var voucher = await GetVoucherWithLockAsync(voucherId);
+                if (voucher == null)
+                    return "Voucher không tồn tại";
+
+                var soLuongBanDau = voucher.SoLuong;
+                
+                // Thử update atomically
+                var updateSuccess = await TryUpdateVoucherQuantityAsync(voucherId);
+                
+                if (updateSuccess)
+                {
+                    // Lấy lại thông tin voucher để kiểm tra
+                    var voucherSau = await _context.Vouchers
+                        .FirstOrDefaultAsync(x => x.VoucherId == voucherId);
+                    
+                    return $"✅ Voucher lock hoạt động tốt! Số lượng: {soLuongBanDau} → {voucherSau?.SoLuong}";
+                }
+                else
+                {
+                    return $"❌ Không thể update voucher. Số lượng hiện tại: {soLuongBanDau}";
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"❌ Lỗi: {ex.Message}";
+            }
+        }
+
         public async Task<object> ThanhToanAsync(ThanhToanDTO dto)
         {
             await using var tran = await _context.Database.BeginTransactionAsync();
             try
             {
+                // ✅ Ngăn chặn double order: Kiểm tra đơn hàng gần đây (trong 30 giây)
+                var thoiGianGanDay = DateTime.Now.AddSeconds(-30);
+                var donHangGanDay = await _context.HoaDons
+                    .Where(h => h.KhachHangId == dto.KhachHangId && 
+                               h.NgayTao >= thoiGianGanDay &&
+                               h.TrangThai >= 0) // Chỉ kiểm tra đơn hàng hợp lệ
+                    .OrderByDescending(h => h.NgayTao)
+                    .FirstOrDefaultAsync();
+                
+                if (donHangGanDay != null)
+                {
+                    throw new Exception($"😔 Rất tiếc! Bạn vừa tạo đơn hàng #{donHangGanDay.HoaDonId} cách đây {(DateTime.Now - donHangGanDay.NgayTao).TotalSeconds:F0} giây. Vui lòng chờ một chút trước khi tạo đơn hàng mới.");
+                }
+
                 // Lấy giỏ hàng
                 var gioHang = await _context.GioHangs
                     .Include(g => g.GioHangChiTiets)
@@ -449,14 +556,12 @@ namespace FurryFriends.API.Repository
                 if (gioHang == null || !gioHang.GioHangChiTiets.Any())
                     throw new Exception("Giỏ hàng trống");
 
-                // Kiểm tra tồn kho đủ
-                // Kiểm tra tồn kho, trạng thái và null
+                // ✅ Kiểm tra tồn kho đủ với database lock
+                var sanPhamChiTiets = new List<SanPhamChiTiet>();
                 foreach (var item in gioHang.GioHangChiTiets)
                 {
-                    var spct = await _context.SanPhamChiTiets
-                        .Include(x => x.SanPham)
-                        .FirstOrDefaultAsync(x => x.SanPhamChiTietId == item.SanPhamChiTietId);
-
+                    var spct = await GetSanPhamChiTietWithLockAsync(item.SanPhamChiTietId.Value);
+                    
                     if (spct == null || spct.SanPham == null)
                         throw new Exception("Sản phẩm không tồn tại.");
 
@@ -467,6 +572,8 @@ namespace FurryFriends.API.Repository
                     // ✅ Kiểm tra tồn kho
                     if (spct.SoLuong < item.SoLuong)
                         throw new Exception($"Sản phẩm {spct.SanPham?.TenSanPham ?? "N/A"} trong kho không đủ. Hiện tại còn {spct.SoLuong} sản phẩm.");
+                    
+                    sanPhamChiTiets.Add(spct);
                 }
 
                 var soDonChoDuyet = await _context.HoaDons
@@ -476,6 +583,7 @@ namespace FurryFriends.API.Repository
                 {
                     throw new Exception("Bạn đã có 5 đơn hàng đang chờ duyệt, không thể có nhiều hơn 5 đơn cùng lúc.");
                 }
+
                 // ✅ Xác định trạng thái dựa trên hình thức thanh toán
                 int trangThai;
                 var hinhThucThanhToan = await _context.HinhThucThanhToans
@@ -515,30 +623,43 @@ namespace FurryFriends.API.Repository
 
                 // ✅ Lưu snapshot địa chỉ giao hàng lúc mua
                 var diaChi = await _context.DiaChiKhachHangs.FindAsync(dto.DiaChiGiaoHangId);
-                    if (diaChi != null)
-                    {
-                        hoaDon.DiaChiGiaoHangLucMua = $"{diaChi.TenDiaChi}, {diaChi.PhuongXa}, {diaChi.ThanhPho}";
+                if (diaChi != null)
+                {
+                    hoaDon.DiaChiGiaoHangLucMua = $"{diaChi.TenDiaChi}, {diaChi.PhuongXa}, {diaChi.ThanhPho}";
                 }
 
                 decimal tongSauDotGiam = 0m;
-                foreach (var gioHangChiTiet in gioHang.GioHangChiTiets)
+                var gioHangChiTietsList = gioHang.GioHangChiTiets.ToList();
+                for (int i = 0; i < gioHangChiTietsList.Count; i++)
                 {
-                    // Trừ tồn kho và lấy đầy đủ thông tin sản phẩm
-                    var spct = await _context.SanPhamChiTiets
-                        .Include(x => x.SanPham)
-                            .ThenInclude(sp => sp.ThuongHieu)
-                        .Include(x => x.MauSac)
-                        .Include(x => x.KichCo)
-                        .Include(x => x.Anh)
-                        .FirstOrDefaultAsync(x => x.SanPhamChiTietId == gioHangChiTiet.SanPhamChiTietId);
+                    var gioHangChiTiet = gioHangChiTietsList[i];
+                    var spct = sanPhamChiTiets[i]; // Sử dụng sản phẩm đã lock
                     
-                    if (spct == null) throw new Exception("Không tìm thấy chi tiết sản phẩm");
-                    if (spct.SoLuong < gioHangChiTiet.SoLuong)
-                        throw new Exception("Số lượng tồn không đủ");
-                    spct.SoLuong -= gioHangChiTiet.SoLuong;
+                    // ✅ Trừ tồn kho atomically
+                    var updateSuccess = await TryUpdateProductStockAsync(spct.SanPhamChiTietId, gioHangChiTiet.SoLuong);
+                    if (!updateSuccess)
+                    {
+                        // ✅ Thông báo lỗi thân thiện hơn
+                        var tenSanPham = spct.SanPham?.TenSanPham ?? "N/A";
+                        var soLuongHienTai = spct.SoLuong;
+                        var soLuongCanMua = gioHangChiTiet.SoLuong;
+                        
+                        if (soLuongHienTai == 0)
+                        {
+                            throw new Exception($"😔 Rất tiếc! Sản phẩm \"{tenSanPham}\" đã hết hàng. Vui lòng chọn sản phẩm khác hoặc quay lại sau.");
+                        }
+                        else if (soLuongHienTai < soLuongCanMua)
+                        {
+                            throw new Exception($"😔 Rất tiếc! Sản phẩm \"{tenSanPham}\" chỉ còn {soLuongHienTai} sản phẩm trong kho, nhưng bạn muốn mua {soLuongCanMua} sản phẩm. Vui lòng giảm số lượng hoặc chọn sản phẩm khác.");
+                        }
+                        else
+                        {
+                            throw new Exception($"😔 Rất tiếc! Sản phẩm \"{tenSanPham}\" hiện không đủ số lượng để mua. Có thể có người khác vừa mua sản phẩm này. Vui lòng thử lại hoặc chọn sản phẩm khác.");
+                        }
+                    }
 
-                    // Tính giá sau giảm theo đợt giảm giá (nếu có)
-                    decimal giaGoc = spct.Gia;
+                    // Tính giá sau giảm theo đợt giảm giá (nếu có) - sử dụng giá hiện tại
+                    decimal giaGoc = spct.Gia; // Sử dụng giá hiện tại thay vì giá trong giỏ hàng
                     decimal giamMax = await LayPhanTramGiamToiDaAsync(spct.SanPhamChiTietId);
                     decimal donGiaSau = TinhDonGiaSauGiam(giaGoc, giamMax);
                     tongSauDotGiam += donGiaSau * gioHangChiTiet.SoLuong;
@@ -575,11 +696,27 @@ namespace FurryFriends.API.Repository
                 decimal tienGiamVoucher = 0m;
                 if (dto.VoucherId.HasValue)
                 {
-                    var voucher = await _context.Vouchers
-                        .FirstOrDefaultAsync(v => v.VoucherId == dto.VoucherId.Value);
+                    // ✅ Lấy voucher với lock để tránh race condition
+                    var voucher = await GetVoucherWithLockAsync(dto.VoucherId.Value);
                     
                     if (voucher != null)
                     {
+                        // ✅ Kiểm tra điều kiện voucher
+                        if (voucher.TrangThai == 0)
+                        {
+                            throw new Exception($"😔 Rất tiếc! Voucher \"{voucher.TenVoucher}\" đang ở trạng thái không hoạt động.");
+                        }
+                        
+                        if (voucher.NgayKetThuc < DateTime.Now)
+                        {
+                            throw new Exception($"😔 Rất tiếc! Voucher \"{voucher.TenVoucher}\" đã hết hạn sử dụng.");
+                        }
+                        
+                        if (voucher.SoLuong <= 0)
+                        {
+                            throw new Exception($"😔 Rất tiếc! Voucher \"{voucher.TenVoucher}\" đã hết lượt sử dụng. Có thể có người khác vừa sử dụng voucher này.");
+                        }
+                        
                         // Tính phí ship dùng cho điều kiện voucher (giống phần preview)
                         var phiShipForEligibility = _voucherService.CalculateShippingFee(tongSauDotGiam, 30000, 500000);
                         var voucherResult = _voucherService.GetVoucherApplication(voucher, tongSauDotGiam, phiShipForEligibility);
@@ -594,10 +731,21 @@ namespace FurryFriends.API.Repository
                                 (voucher.SoTienApDungToiThieu.HasValue ? $" - Đơn tối thiểu {voucher.SoTienApDungToiThieu.Value:N0} VNĐ" : "") +
                                 $" - Tiết kiệm: {tienGiamVoucher:N0} VNĐ";
                             
-                            // Giảm số lượng voucher
-                            voucher.SoLuong -= 1;
-                            _context.Vouchers.Update(voucher);
+                            // ✅ Trừ số lượng voucher atomically
+                            var voucherUpdateSuccess = await TryUpdateVoucherQuantityAsync(voucher.VoucherId);
+                            if (!voucherUpdateSuccess)
+                            {
+                                throw new Exception($"😔 Rất tiếc! Voucher \"{voucher.TenVoucher}\" đã hết lượt sử dụng. Có thể có người khác vừa sử dụng voucher này.");
+                            }
                         }
+                        else
+                        {
+                            throw new Exception($"😔 Rất tiếc! Voucher \"{voucher.TenVoucher}\" không đủ điều kiện áp dụng cho đơn hàng này.");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("😔 Rất tiếc! Voucher không tồn tại hoặc đã bị xóa.");
                     }
                 }
 
@@ -647,6 +795,43 @@ namespace FurryFriends.API.Repository
             {
                 await tran.RollbackAsync();
                 throw;
+            }
+        }
+
+        // ✅ Method mới: Kiểm tra và xóa đơn hàng trùng lặp
+        public async Task<string> KiemTraVaXoaDonTrungLapAsync(Guid khachHangId)
+        {
+            try
+            {
+                // Tìm các đơn hàng trùng lặp (cùng khách hàng, cùng thời gian, cùng trạng thái)
+                var thoiGianGanDay = DateTime.Now.AddMinutes(-5); // 5 phút gần đây
+                
+                var donHangTrungLap = await _context.HoaDons
+                    .Where(h => h.KhachHangId == khachHangId && 
+                               h.NgayTao >= thoiGianGanDay &&
+                               h.TrangThai >= 0)
+                    .GroupBy(h => new { h.KhachHangId, h.TongTien, h.HinhThucThanhToanId })
+                    .Where(g => g.Count() > 1)
+                    .SelectMany(g => g.OrderByDescending(h => h.NgayTao).Skip(1)) // Giữ lại đơn hàng mới nhất, xóa các đơn cũ hơn
+                    .ToListAsync();
+                
+                if (donHangTrungLap.Any())
+                {
+                    var soDonXoa = donHangTrungLap.Count;
+                    var donHangIds = donHangTrungLap.Select(h => h.HoaDonId).ToList();
+                    
+                    // Xóa các đơn hàng trùng lặp
+                    _context.HoaDons.RemoveRange(donHangTrungLap);
+                    await _context.SaveChangesAsync();
+                    
+                    return $"✅ Đã xóa {soDonXoa} đơn hàng trùng lặp: {string.Join(", ", donHangIds)}";
+                }
+                
+                return "✅ Không có đơn hàng trùng lặp";
+            }
+            catch (Exception ex)
+            {
+                return $"❌ Lỗi khi kiểm tra đơn hàng trùng lặp: {ex.Message}";
             }
         }
     }

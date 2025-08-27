@@ -91,126 +91,84 @@ namespace FurryFriends.API.Controllers
             return Ok(new { success = result });
         }
 
-        [HttpPost("ap-dung-voucher")]
-        public async Task<IActionResult> ApDungVoucher([FromBody] GioHangVoucherDTO dto)
+        // ✅ Method test database lock
+        [HttpGet("test-lock/{sanPhamChiTietId}")]
+        public async Task<IActionResult> TestDatabaseLock(Guid sanPhamChiTietId)
         {
-            Console.WriteLine($"👉 Nhận được yêu cầu áp dụng voucher với KhachHangId = {dto.KhachHangId}, VoucherId = {dto.VoucherId}");
-
-            var gioHang = await _repo.GetGioHangEntityByKhachHangIdAsync(dto.KhachHangId);
-            if (gioHang == null)
+            try
             {
-                Console.WriteLine("❌ Không tìm thấy giỏ hàng.");
-                return NotFound("Không tìm thấy giỏ hàng hoặc giỏ hàng trống.");
+                var result = await _repo.TestDatabaseLockAsync(sanPhamChiTietId);
+                return Ok(new { message = result });
             }
-
-            if (gioHang.GioHangChiTiets == null || !gioHang.GioHangChiTiets.Any())
+            catch (Exception ex)
             {
-                Console.WriteLine("❌ Giỏ hàng không có sản phẩm nào.");
-                return NotFound("Không tìm thấy giỏ hàng hoặc giỏ hàng trống.");
+                return BadRequest(new { message = ex.Message });
             }
+        }
 
-            var voucher = await _context.Vouchers
-                .FirstOrDefaultAsync(v => v.VoucherId == dto.VoucherId && v.TrangThai == 1);
-
-            if (voucher == null)
+        [HttpGet("test-voucher-lock/{voucherId}")]
+        public async Task<IActionResult> TestVoucherLock(Guid voucherId)
+        {
+            try
             {
-                Console.WriteLine("❌ Không tìm thấy voucher hoặc voucher bị khóa.");
-                return BadRequest("Voucher không hợp lệ hoặc đã hết hạn.");
+                var result = await _repo.TestVoucherLockAsync(voucherId);
+                return Ok(new { message = result });
             }
-
-            Console.WriteLine($"🔎 Voucher tìm thấy: {voucher.TenVoucher}, Phần trăm giảm: {voucher.PhanTramGiam}, Số lượng: {voucher.SoLuong}, Bắt đầu: {voucher.NgayBatDau}, Kết thúc: {voucher.NgayKetThuc}");
-
-            var tongTienHang = gioHang.GioHangChiTiets.Sum(ct => ct.ThanhTien);
-            
-            Console.WriteLine($"🔍 [Controller] Chi tiết giỏ hàng:");
-            foreach (var item in gioHang.GioHangChiTiets)
+            catch (Exception ex)
             {
-                Console.WriteLine($"  - Sản phẩm: {item.SanPhamChiTiet?.SanPham?.TenSanPham}, Số lượng: {item.SoLuong}, Đơn giá: {item.DonGia:N0}, Thành tiền: {item.ThanhTien:N0}");
+                return BadRequest(new { message = ex.Message });
             }
-            Console.WriteLine($"🔍 [Controller] Tổng tiền hàng (Sum): {tongTienHang:N0}");
-            
-            // Kiểm tra tính toán thủ công
-            var tongTienHangTinhLai = 0m;
-            foreach (var item in gioHang.GioHangChiTiets)
+        }
+
+        [HttpGet("kiem-tra-don-trung-lap/{khachHangId}")]
+        public async Task<IActionResult> KiemTraDonTrungLap(Guid khachHangId)
+        {
+            try
             {
-                var thanhTienTinhLai = item.DonGia * item.SoLuong;
-                tongTienHangTinhLai += thanhTienTinhLai;
-                Console.WriteLine($"  - Kiểm tra: {item.DonGia:N0} × {item.SoLuong} = {thanhTienTinhLai:N0}");
+                var result = await _repo.KiemTraVaXoaDonTrungLapAsync(khachHangId);
+                return Ok(new { 
+                    success = true, 
+                    message = result 
+                });
             }
-            Console.WriteLine($"🔍 [Controller] Tổng tiền hàng tính lại: {tongTienHangTinhLai:N0}");
-            Console.WriteLine($"🔍 [Controller] Chênh lệch: {tongTienHang - tongTienHangTinhLai:N0}");
-            
-            // Tính phí vận chuyển: trên 500k thì freeship, dưới 500k thì tính ship 30k
-            var phiVanChuyen = _voucherCalc.CalculateShippingFee(tongTienHang, 30000, 500000);
-            var tongDonHang = tongTienHang + phiVanChuyen;
-            
-            Console.WriteLine($"🔍 [Controller] Phí vận chuyển: {phiVanChuyen:N0}");
-            Console.WriteLine($"🔍 [Controller] Tổng đơn hàng: {tongDonHang:N0}");
-
-            Console.WriteLine($"💰 Tổng tiền hàng: {tongTienHang:N0} VNĐ");
-            Console.WriteLine($"🚚 Phí vận chuyển: {phiVanChuyen:N0} VNĐ");
-            Console.WriteLine($"💳 Tổng đơn hàng: {tongDonHang:N0} VNĐ");
-
-            // Tính giảm với giới hạn tối đa (dựa trên tổng đơn hàng bao gồm phí ship)
-            var apply = _voucherCalc.GetVoucherApplication(voucher, tongTienHang, phiVanChuyen);
-            
-            if (!apply.IsValid)
+            catch (Exception ex)
             {
-                Console.WriteLine($"❌ Voucher không hợp lệ: {apply.LyDoKhongHopLe}");
-                return BadRequest(apply.LyDoKhongHopLe);
+                return BadRequest(new { 
+                    success = false, 
+                    message = ex.Message 
+                });
             }
-
-            Console.WriteLine($"✅ Voucher hợp lệ - tính toán giảm giá");
-
-            // Tính giảm với giới hạn tối đa (dựa trên tổng đơn hàng bao gồm phí ship)
-            var soTienGiam = apply.SoTienGiam;
-            var tongTienSauGiam = tongDonHang - soTienGiam;
-            
-            Console.WriteLine($"🔍 [Controller] Số tiền giảm: {soTienGiam:N0}");
-            Console.WriteLine($"🔍 [Controller] Tổng sau giảm: {tongTienSauGiam:N0}");
-            
-            // Kiểm tra tính toán cuối cùng
-            Console.WriteLine($"🔍 [Controller] Kiểm tra tính toán cuối cùng:");
-            Console.WriteLine($"  - Tổng tiền hàng: {tongTienHang:N0}");
-            Console.WriteLine($"  - Phí vận chuyển: {phiVanChuyen:N0}");
-            Console.WriteLine($"  - Tổng trước giảm: {tongDonHang:N0}");
-            Console.WriteLine($"  - Số tiền giảm: {soTienGiam:N0}");
-            Console.WriteLine($"  - Tổng sau giảm: {tongTienSauGiam:N0}");
-            Console.WriteLine($"  - Kiểm tra: {tongDonHang:N0} - {soTienGiam:N0} = {tongTienSauGiam:N0}");
-
-            Console.WriteLine($"🎫 Phần trăm giảm: {voucher.PhanTramGiam}%");
-            Console.WriteLine($"💸 Số tiền giảm: {soTienGiam:N0} VNĐ");
-            Console.WriteLine($"💳 Tổng sau giảm: {tongTienSauGiam:N0} VNĐ");
-
-            return Ok(new
-            {
-                TongTienHang = tongTienHang,
-                PhiVanChuyen = phiVanChuyen,
-                TongDonHang = tongDonHang,
-                GiamGia = soTienGiam,
-                TienSauGiam = tongTienSauGiam,
-                PhanTramGiam = voucher.PhanTramGiam,
-                TenVoucher = voucher.TenVoucher,
-                MaVoucher = voucher.MaVoucher
-            });
         }
 
         [HttpPost("thanh-toan")]
         public async Task<IActionResult> ThanhToan([FromBody] ThanhToanDTO dto)
         {
-            // ✅ Validation: Kiểm tra địa chỉ giao hàng
-            if (dto.DiaChiGiaoHangId == Guid.Empty)
+            try
             {
+                // ✅ Validation: Kiểm tra địa chỉ giao hàng
+                if (dto.DiaChiGiaoHangId == Guid.Empty)
+                {
+                    return BadRequest(new { 
+                        success = false, 
+                        message = "Vui lòng chọn địa chỉ giao hàng trước khi thanh toán!" 
+                    });
+                }
+
+                var result = await _repo.ThanhToanAsync(dto);
+                Console.WriteLine($"[Controller] Kết quả thanh toán: {System.Text.Json.JsonSerializer.Serialize(result)}");
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // ✅ Xử lý exception và trả về thông báo lỗi thân thiện
+                Console.WriteLine($"[Controller] Lỗi thanh toán: {ex.Message}");
+                
                 return BadRequest(new { 
                     success = false, 
-                    message = "Vui lòng chọn địa chỉ giao hàng trước khi thanh toán!" 
+                    message = ex.Message 
                 });
             }
-
-            var result = await _repo.ThanhToanAsync(dto);
-            Console.WriteLine($"[Controller] Kết quả thanh toán: {System.Text.Json.JsonSerializer.Serialize(result)}");
-
-            return Ok(result);
         }
 
         [HttpGet("cho-duyet-count/{khachHangId}")]

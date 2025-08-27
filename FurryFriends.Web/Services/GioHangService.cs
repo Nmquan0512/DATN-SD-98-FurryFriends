@@ -149,7 +149,30 @@ namespace FurryFriends.Web.Services
             {
                 Console.WriteLine("❌ Lỗi từ server:");
                 Console.WriteLine(responseContent);
-                throw new Exception($"Thanh toán thất bại ({response.StatusCode}): {responseContent}");
+                
+                // ✅ Cải thiện xử lý lỗi để hiển thị thông báo thân thiện từ API
+                try
+                {
+                    // Thử parse JSON error response từ API
+                    var errorResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    if (errorResponse?.message != null)
+                    {
+                        // Sử dụng thông báo lỗi thân thiện từ API
+                        throw new Exception((string)errorResponse.message);
+                    }
+                }
+                catch (JsonReaderException)
+                {
+                    // Nếu không phải JSON, sử dụng response content trực tiếp
+                    if (responseContent.Contains("Rất tiếc!"))
+                    {
+                        // Nếu có thông báo thân thiện trong response, sử dụng nó
+                        throw new Exception(responseContent);
+                    }
+                }
+                
+                // Fallback: thông báo lỗi chung
+                throw new Exception("😔 Có lỗi xảy ra khi xử lý thanh toán. Vui lòng thử lại hoặc liên hệ hỗ trợ.");
             }
 
             return await response.Content.ReadFromJsonAsync<ThanhToanResultViewModel>();
@@ -164,6 +187,26 @@ namespace FurryFriends.Web.Services
             dynamic obj = JsonConvert.DeserializeObject(body);
             int count = obj?.count ?? 0;
             return count;
+        }
+
+        public async Task<(bool CoThayDoi, List<string> ThongBao)> KiemTraThayDoiGiaAsync(Guid khachHangId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"/api/GioHang/kiem-tra-thay-doi-gia/{khachHangId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = await response.Content.ReadFromJsonAsync<dynamic>();
+                    var coThayDoi = result?.coThayDoi ?? false;
+                    var thongBao = result?.thongBao?.ToObject<List<string>>() ?? new List<string>();
+                    return (coThayDoi, thongBao);
+                }
+                return (false, new List<string>());
+            }
+            catch
+            {
+                return (false, new List<string>());
+            }
         }
         public class ApiErrorResponse
         {

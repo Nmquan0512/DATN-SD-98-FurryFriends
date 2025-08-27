@@ -7,7 +7,6 @@ using FurryFriends.Web.Filter;
 
 namespace FurryFriends.Web.Controllers
 {
-    [ServiceFilter(typeof(AccountStatusFilter))]
     public class SanPhamKhachHangController : Controller
     {
         private readonly ISanPhamService _sanPhamService;
