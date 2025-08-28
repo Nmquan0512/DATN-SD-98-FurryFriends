@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FurryFriends.API\FurryFriends.API.csproj" />
+    <ProjectReference Include="..\FurryFriends.Web\FurryFriends.Web.csproj" />
   </ItemGroup>
 
 </Project> 

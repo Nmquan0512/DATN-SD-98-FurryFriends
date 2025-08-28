@@ -670,9 +670,10 @@ namespace UnitTest.SanPhamTest
                 // Act
                 await service.DeleteAsync(id);
 
-                // Assert
+                // Assert - Kiểm tra soft delete (TrangThai = false thay vì xóa hoàn toàn)
                 var deletedProduct = await context.SanPhams.FindAsync(id);
-                deletedProduct.Should().BeNull();
+                deletedProduct.Should().NotBeNull();
+                deletedProduct!.TrangThai.Should().BeFalse();
             }
         }
 
