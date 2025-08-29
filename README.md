@@ -9,7 +9,7 @@
 ### Công Nghệ Sử Dụng
 - **Backend**: ASP.NET Core 8.0 MVC
 - **Database**: SQL Server với Entity Framework Core
-- **Frontend**: Razor Views, Bootstrap, JavaScript
+- **Frontend**: Cshtml Views, Bootstrap, JavaScript
 - **Authentication**: Cookie-based Authentication
 - **Testing**: xUnit, Moq, FluentAssertions
 
